@@ -1,0 +1,63 @@
+name: Publish GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    permissions:
+      contents: read
+      pages: read
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: voidzero-dev/setup-vp@v1.22.0
+        with:
+          version: 1.5.1
+          node-version-file: .node-version
+          cache: true
+          run-install: false
+      - run: vp install --frozen-lockfile
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v6.0.0
+      - run: vp check
+      - run: vp test run
+      - run: vp build
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+      - run: vp exec playwright install --with-deps chromium
+      - run: vp exec playwright test
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+      - uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1

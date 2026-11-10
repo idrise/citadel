@@ -279,7 +279,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** No milestone started. **Next: M01.** Update this line whenever work changes state.
+**Current position:** M01 in progress — repository scaffold delivered; playable prototype remains. **Next: resume M01.** Update this line whenever work changes state.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
@@ -312,17 +312,17 @@ When asked to **"do the next milestone"**:
 
 ### Current milestone work record
 
-- **Milestone:** None yet.
-- **Implemented / remaining:** Not started.
-- **Checks and evidence:** None yet; never substitute planned checks for executed results.
-- **Review decisions / blockers:** None yet.
-- **Next action:** Implement M01 when requested.
+- **Milestone:** M01, scaffold portion only (requested separately on 10 November 2026).
+- **Implemented / remaining:** Pinned Vite+/pnpm/Node toolchain, strict TypeScript, modular React shell and procedural Three.js stage, resource cleanup, local unit/browser tests, CI and Pages publishing workflows. Remaining: actual arena/rails/paddles, input, simulation, physical health, bots, revenge serves, elimination and rematch. No M01 acceptance or approval implied by scaffolding.
+- **Checks and evidence:** `pnpm check` passed (format/lint/typecheck); `pnpm test` passed (17 tests); `PAGES_BASE_PATH=/citadel/ pnpm build` passed; `pnpm test:browser` passed (3 Chromium cases: project-path load/refresh, narrow viewport, unavailable WebGL2 fallback); both workflow YAML files parsed; `git diff --check` passed. Rendered screenshot reviewed at `test-results/scaffold-production-app-lo-dc453-e-GitHub-Pages-project-path-chromium/scaffold-desktop.png` (generated, ignored). Local dev: `pnpm dev`.
+- **Review decisions / blockers:** React retained for DOM UI after user discussion. Use `gh` only after asking; never push without explicit instruction. GitHub workflow runs, repository Pages settings and live deployment are unverified and unchanged. Build reports a >500 kB chunk warning for the combined React/Three.js bundle; consider splitting renderer loading as the app grows.
+- **Next action:** Resume M01 gameplay when requested. Scaffold commit: `8de11d5`; follow-up workflow/documentation commit recorded in Git history.
 
 ### Progress / approval ledger
 
 | ID | Stage | Reviewable deliverable | Status | Approval | Commit |
 |---|---|---|---|---|---|
-| M01 | **First playable** | Four-seat prototype: human + bots, physical damage, revenge serve, rematch | Not started | — | — |
+| M01 | **First playable** | Four-seat prototype: human + bots, physical damage, revenge serve, rematch | In progress | — | 8de11d5 (scaffold) |
 | M02 | Desktop core | Refine responsive controls, contact aiming, preview/slowdown experiments | Not started | — | — |
 | M03 | Desktop core | Real ball physics, swept collisions and deflections | Not started | — | — |
 | M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Not started | — | — |
