@@ -21,7 +21,8 @@ click or press Space to serve. A/D or Left/Right also steer. Escape/P pauses.
 Leaving the browser pauses the entire match and clears held input; resume explicitly.
 
 Each hit destroys the actual piece struck. The damaged survivor gets the revenge
-serve. Gaps remain open; the outer walls rebound balls back into play. Aim toward
+serve. Surviving pieces grow slightly and gather into a compact formation using damped springs.
+A ball can pass through any current gap; the outer walls rebound it back into play. Aim toward
 either end of your arc to bank off the walls beside your bat. The serve guide
 shows the first wall bounce; opponents can intercept it.
 
@@ -29,10 +30,12 @@ Rounds start with one ball and add another every 15 playing seconds, up to four.
 The experiment panel exposes the interval/cap, a conditional return preview,
 approach slowdown (off by default), reduced effects and the auto-serve deadline.
 The new ball size/speed and bank-shot reach reflect the initial hands-on feedback.
-The live 2.5D camera gently orbits a raised 3D arena with extruded bats and health
-pieces, directional shadows and restrained bloom. Pointer projection follows the
+The live 2.5D camera sits behind your selected fortress and gently orbits a raised
+3D arena. Dark frosted faces reflect the neon edges; bloom keeps its spread with
+lower intensity. Pieces occupy compact staggered rows and grow by 3.5% per loss
+(up to 24.5%), with visible geometry matching the moving collision bodies. Pointer projection follows the
 rendered view; camera motion never changes a stationary mouse target. Reduced
-effects & motion disables bloom and holds the current camera pose without a snap.
+effects & motion disables bloom/floor reflection and holds the current camera pose without a snap.
 
 ## Check and build
 

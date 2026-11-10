@@ -1,130 +1,107 @@
 # M01 — first playable prototype
 
-Status: awaiting user review of the corrected 3D presentation. The user reported
-that the gameplay plays well; M02 has not started.
+Status: awaiting review of the behind-player view, frosted materials and clustered
+health. Gameplay feedback was positive before these requested amendments. M02 has
+not started.
 
-Run `pnpm dev` and open the local URL. The four-player square has one human,
-three basic bots, eight physical pieces per fortress, revenge serves, elimination,
-a winner and rematch. No network or account is involved.
+## Current build
 
-## 3D presentation correction
+Run `pnpm dev` and open the local URL. One human plays three bots in the square
+arena, with physical health targets, revenge serves, elimination, results and rematch.
 
-3D height, a 2.5D camera and bloom were part of the intended M01 baseline. They are
-implemented now rather than deferred to a later aesthetic milestone:
+- Ball radius **0.187**, 10% larger than the first prototype; speed **24 units/s**,
+  doubled from 12. Start with one ball; add another every **15 playing seconds** to
+  a provisional cap of **four**. Interval/cap are editable in the experiment panel.
+- The live camera sits **behind the selected human fortress**, looking down into
+  the arena at about 45°. Selecting another fortress rotates the view and its
+  cutaway walls. A bounded slow orbit/tilt and breathing zoom keep it alive.
+- Pointer events use the current rendered camera and the bat plane. A stationary
+  cursor retains its world-space target; the camera cannot steer it. Pausing or
+  enabling reduced effects holds the current camera pose without a jump.
+- The arena has a deep raised plinth, extruded curved bats, taller pieces,
+  directional shadows and low foreground walls that cannot hide the ball.
+- Broad faces are **dark rough metal**, with subdued procedural neon reflections.
+  A softened planar floor reflection captures actual moving geometry. The
+  reflection environment uses procedural light cards, with no image/HDRI assets.
+- Bloom radius remains **0.22**; its strength drops from **0.45 to 0.22** to reduce
+  opacity without changing the halo spread. Reduced effects disables bloom and
+  the floor reflection; the real 3D geometry remains.
 
-- Gently animated orthographic camera with both tilt and yaw, so the arena reads as a solid
-  object with side faces. Resize fitting includes the full raised base and pieces.
-- A roughly 2.7-unit-deep bevelled plinth, extruded bats and taller health columns.
-  The columns retain the simulation's circular footprint; only presentation height
-  and materials changed.
-- Directional lighting, shadows, darker side materials and bright top edges give
-  form to the geometry. The two camera-facing walls sit below the bottom of a ball
-  so height does not hide the action.
-- Bloom uses a thresholded postprocess and output colour conversion. Reduced
-  effects bypasses bloom, retaining the same camera and actual 3D geometry.
-- A bounded slow orbit (about ±1.7° yaw / ±0.9° tilt) and small breathing zoom
-  (±0.45%) keep the camera alive in the lobby and during play. There is no hit shake.
-  Pause and reduced effects/motion hold the current pose; resuming does not jump.
-- Input is projected back onto the visible bat plane using the rendered camera.
-  Only actual pointer events update its world-space target, so camera movement
-  cannot steer a stationary cursor. Unit tests cover every fortress/arc end across
-  the moving view, framing in wide/narrow views and freeze/resume continuity.
-  A real browser test holds the mouse still while the live camera moves.
+## Physical health cluster
 
-Simulation files are unchanged. The SHA-256 of three seeded 90-second traces
-matched exactly before/after, including positions, damage, serving and results:
-`e5bfc9f9ff060cbf3ffb1b993a16baf7131f785c5e77c8f4c118675342330ef5`.
+Eight pieces begin in two staggered rows inside each fortress, behind the defence
+rail. After a loss, surviving IDs spring toward a tighter formation, with damping,
+soft separation and bounded movement speed. This is a provisional attraction
+experiment anchored inside the fortress, not a rigid-body pile or extra ball force.
 
-## Current feel and feedback incorporated
+Survivors gradually grow by **3.5% of their original size per loss**, capped at
+**24.5%** for the last piece. Their current position/radius belongs to simulation;
+rendering uses the same state, and ball collision sweeps relative to moving targets.
+Gaps are real at each instant, although pieces can move into them. No nearest-piece
+substitution is allowed. A ball can legitimately pass through a front gap and hit
+an actual piece in the rear row.
 
-- Ball radius **0.187**, up 10% from 0.17; speed **24 units/s**, doubled from 12.
-- One initial ball; another every **15 playing seconds**, to a provisional cap of
-  **four**. Countdown and pause do not advance the arrival clock. Interval/cap are
-  editable under the prototype experiments. The simulation supports up to eight.
-- Responsive, speed-limited bats. Each bat's **2.2-unit face curvature** is separate
-  from its **4.4-unit travel rail**; visible shape and collisions agree. Returns
-  use the actual face normal with a contact-offset adjustment. No spin yet.
-- Both adjacent rivals are reachable. Serves and actual bat contacts can bank off
-  **either wall beside the bat**, at every fortress. Serve aiming spans the field
-  instead of being constrained to the narrow rail normal. The serve guide includes
-  one wall rebound; actual defenders can intercept it. Serves have no random spread.
-- A swept collision destroys the piece actually contacted. Empty gaps never
-  substitute damage to a nearby piece. The damaged survivor gets the revenge serve;
-  an eliminating hit uses the documented seeded surviving-seat fallback.
-- One click launches at most one queued ball. Held balls auto-launch; pending
-  serves move to surviving seats if their defender is eliminated.
-- Mouse, A/D or arrows, click/Space/Enter serving, Escape/P pause, explicit resume
-  after focus loss, immediate restart and an optional spectator finish after death.
-- Return preview and approach slowdown are experiments, both off by default.
-  Slowdown applies symmetrically to all defenders; reduced effects are available.
+A physical hit destroys exactly the contacted piece and returns that ball to the
+damaged survivor. Eliminating hits use the documented seeded surviving-seat
+fallback. One click serves at most one queued ball; every ball has an automatic
+serve deadline. Bat movement/limits, speed, serving, banks and input controls remain
+as previously agreed. Health trajectories intentionally change in this revision;
+the older presentation-only trace hash is not a baseline for these new rules.
 
 ## Validation actually run
 
 - `pnpm check`: formatting, lint and strict TypeScript passed.
-- `pnpm test`: **63 tests across ten files** passed. Covers physical hits and
-  gaps, moving curved contact, high-speed crossings, speed caps, serve deadlines,
-  queued recipient elimination, deterministic simultaneous balls, bank reach from
-  all corners, eight-ball slowdown stress, replay, GPU cleanup and fixed-tick timing.
-- `PAGES_BASE_PATH=/citadel/ pnpm build`: production build passed.
-- `pnpm test:browser`: **eight production Chromium tests passed**, covering project-path load/refresh,
-  small-window fit, WebGL2 fallback, live-camera pointer stability, bloom/reduced rendering, keyboard/held-key clearing, focus pause,
-  second/third balls, both mouse arc limits, a complete round, results and rematch.
-  Long match/input tests use reduced effects and an explicitly controlled browser clock to keep software rendering predictable; they do not edit match state. A separate render test exercises bloom on/off. WebGL concurrency is capped at two workers. An initial six-worker run exceeded the old 30-second test budget; the corrected suite passed.
-- `pnpm exec vpx tooling/benchmark.ts`: five all-bot matches finished naturally
-  with zero collision-loop caps. This is simulation evidence, not a human playtest.
-- `git diff --check`: passed.
+- `pnpm test`: **80 tests in 12 files** passed. Includes all remaining health counts,
+  growth limits, spring settling/separation, moving-target swept collision,
+  render/collider agreement, camera placement behind all four seats, projection
+  throughout camera motion, stationary-pointer safety, reflection resource cleanup,
+  and the existing damage/serve/elimination/replay/stress contracts.
+- `PAGES_BASE_PATH=/citadel/ pnpm build`: static production build passed.
+- `pnpm test:browser`: **eight Chromium tests passed**, including full round/results/
+  rematch, live-camera input, both mouse travel limits, focus/held-key clearing,
+  project-path refresh, WebGL2 fallback and bloom/reduced rendering. Longer match
+  checks use reduced effects and controlled browser clocks; render checks exercise
+  the default effects. WebGL workers remain capped at two.
+- Five seeded all-bot matches finished with **zero collision-loop caps**. These are
+  simulation benchmarks, not human playtest or retention evidence.
+- `git diff --check` passed. Rendered screenshots were inspected and a desktop
+  gameplay clip recorded locally.
 
-| Seed | All-bot duration | Returns | Pieces destroyed |
-| ---- | ---------------: | ------: | ---------------: |
-| 1    |            74.6s |      94 |               31 |
-| 21   |            64.6s |      79 |               31 |
-| 2026 |            68.7s |      89 |               30 |
-| 100  |            59.0s |      89 |               31 |
-| 300  |            59.2s |      85 |               29 |
+| Seed | Bot-only duration | Returns | Pieces destroyed |
+| ---- | ----------------: | ------: | ---------------: |
+| 1    |             53.4s |      62 |               30 |
+| 21   |             45.0s |      46 |               30 |
+| 2026 |             61.6s |      93 |               27 |
+| 100  |             60.5s |      63 |               30 |
+| 300  |             59.8s |      66 |               30 |
 
-The bot-only median is about 65 seconds. The two-minute target and human survival
-are still tuning questions; no retention or balance claim is made.
+A separate idle-human seed 2026 simulation finished at 57.1 seconds. Pacing and
+spring/growth tuning still need hands-on review; no two-minute human-duration
+claim is made.
 
-## Rendered evidence
+## Evidence and review
 
-- [Raised arena with 2.5D camera and bloom](reviews/m01/arena-depth.png).
-- [Reduced effects, same 3D geometry](reviews/m01/arena-reduced.png).
-- [Earlier four-fortress game with three balls](reviews/m01/arena.png) — previous flat-looking presentation, retained for comparison.
-- [Bank toward one adjacent wall](reviews/m01/bank-left.png) — earlier camera; shot geometry is unchanged.
-- [Bank toward the other adjacent wall](reviews/m01/bank-right.png) — earlier camera; shot geometry is unchanged.
-- An updated desktop gameplay capture is available locally at
-  `/tmp/citadel-depth-review/gameplay.webm`; it uses scripted mouse/serve input at
-  normal simulation speed. The temporary video is not checked into the repository.
+- [Behind-player view and frosted neon surfaces](reviews/m01/arena-frosted.png).
+- [Health formation after a hit](reviews/m01/cluster-after-hit.png).
+- [Reduced-effects view](reviews/m01/arena-frosted-reduced.png).
+- Local updated gameplay capture: `/tmp/citadel-frost-review/gameplay.webm`.
+  It uses scripted mouse/serve input at normal simulation speed, not state edits.
+  Temporary video is not checked into the repository.
 
-Screenshots were visually inspected. The previously discussed layout sketch is
-not available in this workspace, so no claim of matching it is made.
+Try the camera from different fortress seats. Check that the darker faces still
+show height, that the lighter bloom keeps the ball obvious, and that growing,
+gathering pieces feel fair to attack and defend. Both adjacent rivals and wall
+banks remain covered by the aiming tests.
 
-## Limits and provisional rules
+Only four seats and one basic bot controller are implemented. Mobile, audio,
+advanced spin, multiplayer and broader effects/performance work remain later
+milestones. Same-tick balls resolve in ID order. No exhaustive collision or real-
+hardware frame-rate claim is made. Settings reset on rematch; a lower live ball
+cap stops additions without deleting existing balls. The bundle still emits a
 
-- Only the four-player layout and one basic bot controller are implemented.
-  Mobile, audio, further effects polish, advanced spin and multiplayer remain later work.
-- Physics is 120 Hz. Moving curved centres/endcaps use short fixed-tick chord
-  approximations; M03 remains the broader collision-hardening gate. No claim of
-  exhaustive collision correctness or measured hardware frame-rate coverage.
-- Same-tick impacts resolve in ball-ID order; a declared winner ends the tick's
-  match logic before subsequent balls can overturn it. This deterministic tie rule
-  is provisional for review.
-- Balls do not collide with one another. Experiment settings reset on rematch.
-  Reducing a live ball cap stops further additions rather than removing active
-  balls; changing the interval can add balls immediately to catch up with elapsed
-  playing time. These are prototype tuning controls.
-- The static bundle currently emits a >500 kB chunk warning (about 836 kB minified,
-  226 kB gzip). Splitting renderer loading remains future work.
-- Local checks validate the existing CI/Pages files and project-path build. No
-  remote workflow, Pages settings, push, deployment or `gh` command was executed.
+> 500 kB warning (about 852 kB minified / 230 kB gzip).
 
-## What to try
-
-1. Check the arena height, visible side faces, tilted view and bloom first. Then pick a fortress, play a round and try both ends of the arc. Can you deliberately
-   bank off either adjacent wall and attack the next corner?
-2. Let the second and third balls join. Does the faster pace feel exciting while
-   leaving enough time for a deserved save? Try 10/15/20-second arrival intervals.
-3. Lose a piece, then use the revenge serve. Are the damage, gaps and next serve
-   obvious? Compare return preview and approach slowdown independently.
+The original sketch remains unavailable. No remote workflow, push, deployment,
+repository-setting change or `gh` command was performed.
 
 REVIEW REQUIRED — M01
