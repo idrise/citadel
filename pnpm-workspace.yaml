@@ -1,0 +1,7 @@
+overrides:
+  vite@*: npm:@voidzero-dev/vite-plus-core@1.5.1
+  vitest@*: 5.1.0
+# The bundled Vite core uses the Vite+ version number, not upstream Vite's.
+peerDependencyRules:
+  allowedVersions:
+    vite: 1.5.1

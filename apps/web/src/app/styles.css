@@ -1,0 +1,86 @@
+:root {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  color: #e3ebfa;
+  background: #070b14;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 280px;
+}
+.shell {
+  max-width: 1080px;
+  margin: auto;
+  padding: clamp(24px, 5vw, 64px) 24px 32px;
+}
+.masthead {
+  margin-bottom: 28px;
+}
+.eyebrow {
+  color: #75d9e3;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  font-weight: 650;
+}
+h1 {
+  margin: 12px 0;
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+h1 span {
+  color: #75e2eb;
+}
+.intro {
+  color: #a7b6ce;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.arena-preview {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #26354c;
+  border-radius: 12px;
+  background: #090f1c;
+}
+.viewport {
+  height: clamp(260px, 50vw, 500px);
+}
+.viewport canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.render-message {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  padding: 32px;
+  line-height: 1.6;
+  text-align: center;
+}
+.status {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin-top: 20px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.status-label {
+  color: #e7c487;
+}
+.status p {
+  margin: 0;
+  color: #98a9c2;
+}
