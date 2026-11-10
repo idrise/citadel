@@ -1,4 +1,4 @@
-import { ExtrudeGeometry, Mesh, MeshStandardMaterial, Shape } from "three";
+import { Color, ExtrudeGeometry, Mesh, MeshStandardMaterial, Shape } from "three";
 
 export function arcMesh(
   radius: number,
@@ -23,12 +23,22 @@ export function arcMesh(
     curveSegments: 32,
   });
   geometry.rotateX(Math.PI / 2);
-  const material = new MeshStandardMaterial({
+  const cap = new MeshStandardMaterial({
     color: colour,
     emissive: colour,
     emissiveIntensity: intensity,
-    roughness: 0.45,
+    roughness: 0.3,
     metalness: 0.35,
   });
-  return new Mesh(geometry, material);
+  const side = new MeshStandardMaterial({
+    color: new Color(colour).multiplyScalar(0.35),
+    emissive: colour,
+    emissiveIntensity: 0.06,
+    roughness: 0.35,
+    metalness: 0.5,
+  });
+  const mesh = new Mesh(geometry, [cap, side]);
+  mesh.castShadow = height > 0.1;
+  mesh.receiveShadow = true;
+  return mesh;
 }

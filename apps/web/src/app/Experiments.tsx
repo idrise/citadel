@@ -72,7 +72,7 @@ export function Experiments({
             checked={value.reducedEffects}
             onChange={(event) => onChange({ ...value, reducedEffects: event.target.checked })}
           />{" "}
-          Reduced effects
+          Reduced effects & motion
         </label>
         <label>
           Automatic serve{" "}

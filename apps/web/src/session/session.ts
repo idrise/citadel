@@ -92,7 +92,7 @@ export function createSession(
       preview: experiments.preview,
       reducedEffects: experiments.reducedEffects,
     };
-    viewport.render({ ...state, events }, paused ? 0 : delta, view);
+    viewport.render({ ...state, events }, paused && started ? 0 : delta, view);
     if (timestamp - lastReport > 80 || events.some((event) => event.type === "victory")) {
       lastReport = timestamp;
       report();

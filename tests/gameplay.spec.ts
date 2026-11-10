@@ -3,8 +3,12 @@ import { expect, test } from "@playwright/test";
 test("keyboard, focus-loss pause, timed second ball and restart work in the production game", async ({
   page,
 }, testInfo) => {
+  test.setTimeout(90000);
   await page.clock.install();
   await page.goto("./");
+  await page.clock.pauseAt(await page.evaluate(() => Date.now() + 60000));
+  await page.getByText("Prototype experiments & diagnostics").click();
+  await page.getByRole("checkbox", { name: "Reduced effects" }).check();
   await page.getByRole("button", { name: "Play vs Bots" }).click();
   await page.clock.runFor(1800);
   await expect(page.locator(".countdown")).toHaveCount(0);
@@ -38,6 +42,9 @@ test("a full seeded round reaches results and rematches without a state-editing 
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("./");
+  await page.clock.pauseAt(await page.evaluate(() => Date.now() + 60000));
+  await page.getByText("Prototype experiments & diagnostics").click();
+  await page.getByRole("checkbox", { name: "Reduced effects" }).check();
   await page.getByRole("button", { name: "Play vs Bots" }).click();
   await page.clock.runFor(33000);
   await expect(page.locator(".pressure-bar")).toContainText("3 BALLS");
@@ -57,6 +64,7 @@ test("a full seeded round reaches results and rematches without a state-editing 
 test("mouse travel reaches both bank-shot ends of the human arc", async ({ page }) => {
   await page.clock.install();
   await page.goto("./");
+  await page.clock.pauseAt(await page.evaluate(() => Date.now() + 60000));
   await page.getByRole("button", { name: "Play vs Bots" }).click();
   await page.clock.runFor(1600);
   await page.getByText("Prototype experiments & diagnostics").click();

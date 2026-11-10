@@ -7,7 +7,7 @@ export function createBallView(root: Group) {
   const ballMaterial = new MeshStandardMaterial({
     color: 0xffffff,
     emissive: 0xcfeaff,
-    emissiveIntensity: 2,
+    emissiveIntensity: 1.4,
     roughness: 0.2,
   });
   const trailMaterial = new MeshStandardMaterial({
@@ -19,6 +19,7 @@ export function createBallView(root: Group) {
   });
   const balls = Array.from({ length: 8 }, () => {
     const mesh = new Mesh(sphere, ballMaterial);
+    mesh.castShadow = true;
     root.add(mesh);
     const trail = Array.from({ length: 8 }, (_, index) => {
       const particle = new Mesh(sphere, trailMaterial);
