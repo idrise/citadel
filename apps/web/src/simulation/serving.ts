@@ -45,7 +45,7 @@ export function damagePiece(state: MatchState, ball: BallState, seat: number, pi
   if (!player?.health[piece]) return;
   player.health[piece] = false;
   state.stats.damage++;
-  emit(state, "damage", ball.position, seat, piece);
+  emit(state, "damage", player.pieces[piece]!.position, seat, piece);
   if (!alive(player)) emit(state, "elimination", ball.position, seat);
   const survivors = state.players.filter(alive);
   if (survivors.length <= 1) {

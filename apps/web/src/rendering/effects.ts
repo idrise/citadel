@@ -1,5 +1,4 @@
 import { Group, Mesh, MeshStandardMaterial, TetrahedronGeometry, Vector3 } from "three";
-import { fortress } from "../simulation/arena";
 import type { GameEvent } from "../simulation/types";
 import { SEATS } from "./palette";
 
@@ -19,7 +18,7 @@ export function createEffects(root: Group) {
   return {
     emit(event: GameEvent, reduced: boolean) {
       if (event.type !== "damage" || event.piece === null) return;
-      const centre = fortress(event.seat).pieces[event.piece]!;
+      const centre = event.position;
       for (let part = 0; part < 8; part++) {
         const shard = shards[event.seat * 8 + part]!;
         shard.age = 0;

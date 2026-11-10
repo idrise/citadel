@@ -4,7 +4,7 @@ import { createMatch, stepMatch } from "./match";
 import { alive, DEFAULT_OPTIONS, IDLE_INTENT, type MatchState } from "./types";
 import { add, length, normalise, scale, sub, unit } from "./vector";
 
-function shotAtPiece(piece = 3): MatchState {
+function shotAtPiece(piece = 7): MatchState {
   const state = createMatch(7);
   state.phase = "playing";
   const seat = fortress(0);
@@ -15,7 +15,7 @@ function shotAtPiece(piece = 3): MatchState {
     seat: 2,
     age: 0,
     slowSeat: null,
-    position: add(seat.anchor, scale(direction, 3.1)),
+    position: add(seat.anchor, scale(direction, 3.6)),
     velocity: scale(direction, -120),
   };
   return state;
@@ -52,7 +52,7 @@ describe("match rules", () => {
   it("destroys only the physically struck piece and gives the damaged defender the revenge serve", () => {
     const next = stepMatch(shotAtPiece());
     expect(next.players[0]!.health.filter(Boolean)).toHaveLength(7);
-    expect(next.players[0]!.health[3]).toBe(false);
+    expect(next.players[0]!.health[7]).toBe(false);
     expect(next.balls[0]!.phase).toBe("ready");
     expect(next.balls[0]!.seat).toBe(0);
     expect(next.stats.damage).toBe(1);
@@ -60,7 +60,7 @@ describe("match rules", () => {
   });
   it("does not replace a gap with nearest-piece damage", () => {
     const state = shotAtPiece();
-    state.players[0]!.health[3] = false;
+    state.players[0]!.health[7] = false;
     const next = stepMatch(state);
     expect(next.players[0]!.health).toEqual(state.players[0]!.health);
     expect(next.balls[0]!.phase).toBe("active");
@@ -76,7 +76,7 @@ describe("match rules", () => {
   });
   it("selects a seeded surviving recipient after an elimination", () => {
     const state = shotAtPiece();
-    state.players[0]!.health = state.players[0]!.health.map((_, piece) => piece === 3);
+    state.players[0]!.health = state.players[0]!.health.map((_, piece) => piece === 7);
     const next = stepMatch(state);
     expect(alive(next.players[0]!)).toBe(false);
     expect(next.balls[0]!.phase).toBe("ready");
@@ -86,7 +86,7 @@ describe("match rules", () => {
   });
   it("ends on the last opponent and never serves or steps after victory", () => {
     const state = shotAtPiece();
-    state.players[0]!.health = state.players[0]!.health.map((_, piece) => piece === 3);
+    state.players[0]!.health = state.players[0]!.health.map((_, piece) => piece === 7);
     state.players[1]!.health.fill(false);
     state.players[2]!.health.fill(false);
     const next = stepMatch(state);
@@ -231,7 +231,7 @@ describe("timed multi-ball pressure", () => {
   });
   it("reassigns already queued revenge serves when their defender is eliminated", () => {
     const state = shotAtPiece();
-    state.players[0]!.health = state.players[0]!.health.map((_, piece) => piece === 3);
+    state.players[0]!.health = state.players[0]!.health.map((_, piece) => piece === 7);
     state.balls.push({ ...state.balls[0]!, id: 1, phase: "ready", seat: 0, age: 0 });
     state.nextBallId = 2;
     const next = stepMatch(state);

@@ -1,10 +1,12 @@
 import { BufferGeometry, Float32BufferAttribute, Line, LineBasicMaterial } from "three";
+import { ARENA } from "../simulation/arena";
 import { serveDirection } from "../simulation/aim";
 import { alive, type MatchState } from "../simulation/types";
 import { paddleReturn, sweepPaddle, sweepWalls } from "../simulation/collision";
 import { add, dot, normalise, scale, sub, type Vec2 } from "../simulation/vector";
 import { createEffects } from "./effects";
 import { createBallView } from "./ball-view";
+import { createFloorReflection } from "./floor-reflection";
 import { createStage } from "./stage";
 
 export interface ViewOptions {
@@ -12,8 +14,10 @@ export interface ViewOptions {
   reducedEffects: boolean;
   humanSeat: number;
 }
-export function createArenaView() {
-  const stage = createStage();
+export function createArenaView(humanSeat = 0) {
+  const stage = createStage(humanSeat);
+  const reflection = createFloorReflection();
+  stage.root.add(reflection.mesh);
   const balls = createBallView(stage.root);
   const geometry = new BufferGeometry();
   geometry.setAttribute("position", new Float32BufferAttribute(new Float32Array(9), 3));
@@ -41,13 +45,18 @@ export function createArenaView() {
   let lastEvent = -1;
   return {
     root: stage.root,
+    dispose: () => reflection.dispose(),
     update(state: MatchState, dt: number, options: ViewOptions) {
+      reflection.mesh.visible = !options.reducedEffects;
       state.players.forEach((player) => {
         const paddle = stage.paddles[player.id]!;
         paddle.rotation.y = -player.angle;
         paddle.visible = alive(player);
         stage.health[player.id]!.forEach((piece, index) => {
           piece.visible = Boolean(player.health[index]);
+          const body = player.pieces[index]!;
+          piece.position.set(body.position.x, 0, body.position.y);
+          piece.scale.setScalar(body.radius / ARENA.pieceRadius);
         });
       });
       for (const event of state.events) {

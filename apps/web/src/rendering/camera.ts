@@ -1,10 +1,13 @@
+import { fortress } from "../simulation/arena";
 import { Box3, OrthographicCamera, Plane, Raycaster, Vector2, Vector3 } from "three";
 
 export const INPUT_PLANE_HEIGHT = 0.52;
 export const CAMERA_TARGET = { x: 0, y: -0.6, z: 0 } as const;
-export function createArenaCamera(): OrthographicCamera {
+export function createArenaCamera(humanSeat = 0): OrthographicCamera {
   const camera = new OrthographicCamera(-12, 12, 12, -12, 0.1, 150);
-  camera.position.set(11, 24, 16);
+  const anchor = fortress(humanSeat).anchor;
+  const distance = Math.hypot(anchor.x, anchor.y);
+  camera.position.set((anchor.x / distance) * 25, 24, (anchor.y / distance) * 25);
   camera.lookAt(CAMERA_TARGET.x, CAMERA_TARGET.y, CAMERA_TARGET.z);
   camera.updateMatrixWorld();
   return camera;

@@ -1,3 +1,4 @@
+import { healthFormation } from "./health-layout";
 import { add, angleDifference, clamp, scale, unit, type Vec2 } from "./vector";
 
 export const ARENA = {
@@ -9,7 +10,6 @@ export const ARENA = {
   batHalfAngle: 0.48,
   paddleThickness: 0.28,
   paddleSpeed: 3.2,
-  healthRadius: 2.7,
   pieceRadius: 0.26,
   pieces: 8,
   ballRadius: 0.187,
@@ -30,11 +30,7 @@ export const FORTRESSES: readonly Fortress[] = [
 ].map((sign, id) => {
   const anchor = { x: sign.x * ARENA.halfSize, y: sign.y * ARENA.halfSize };
   const direction = Math.atan2(-anchor.y, -anchor.x);
-  const pieces = Array.from({ length: ARENA.pieces }, (_, index) => {
-    const angle =
-      direction - ARENA.sectorHalfAngle + ((index + 0.5) * Math.PI) / (2 * ARENA.pieces);
-    return add(anchor, scale(unit(angle), ARENA.healthRadius));
-  });
+  const pieces = healthFormation(anchor, direction, ARENA.pieces, ARENA.pieceRadius);
   return { id, anchor, direction, pieces };
 });
 

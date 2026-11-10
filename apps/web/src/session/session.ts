@@ -26,7 +26,7 @@ export function createSession(
   humanSeat: number,
   onSnapshot: (snapshot: SessionSnapshot) => void,
 ) {
-  const viewport = createViewport(container);
+  const viewport = createViewport(container, humanSeat);
   const clock = createFixedClock();
   let state = createMatch(seed);
   let paused = true;

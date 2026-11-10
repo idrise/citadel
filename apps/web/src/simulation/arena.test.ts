@@ -8,7 +8,9 @@ describe("four-corner arena", () => {
     for (const seat of FORTRESSES) {
       expect(seat.pieces).toHaveLength(8);
       for (const piece of seat.pieces) {
-        expect(length(sub(piece, seat.anchor))).toBeCloseTo(ARENA.healthRadius);
+        expect(length(sub(piece, seat.anchor)) + ARENA.pieceRadius).toBeLessThan(
+          ARENA.railRadius - ARENA.paddleThickness,
+        );
         expect(Math.abs(piece.x) + ARENA.pieceRadius).toBeLessThan(ARENA.halfSize + 0.02);
         expect(Math.abs(piece.y) + ARENA.pieceRadius).toBeLessThan(ARENA.halfSize + 0.02);
         expect(
@@ -16,7 +18,9 @@ describe("four-corner arena", () => {
         ).toBeLessThan(ARENA.sectorHalfAngle);
       }
       expect(length(sub(railPosition(seat.id, seat.direction), seat.anchor))).toBeGreaterThan(
-        ARENA.healthRadius,
+        Math.max(
+          ...seat.pieces.map((piece) => length(sub(piece, seat.anchor)) + ARENA.pieceRadius),
+        ),
       );
     }
     expect(FORTRESSES[0]!.pieces.map((piece) => ({ x: -piece.x, y: -piece.y }))).toEqual(

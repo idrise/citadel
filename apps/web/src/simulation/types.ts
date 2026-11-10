@@ -7,10 +7,16 @@ export interface PlayerIntent {
   launch: boolean;
 }
 export const IDLE_INTENT: PlayerIntent = { version: 1, targetAngle: null, steer: 0, launch: false };
+export interface PieceBody {
+  position: Vec2;
+  velocity: Vec2;
+  radius: number;
+}
 export interface PlayerState {
   id: number;
   angle: number;
   health: boolean[];
+  pieces: PieceBody[];
 }
 export interface BotState {
   targetAngle: number;

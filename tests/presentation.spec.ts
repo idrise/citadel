@@ -42,7 +42,7 @@ test("live camera does not steer a stationary pointer and keeps mouse aim usable
   const canvas = page.getByRole("application", { name: "Neon Citadel arena" });
   await canvas.scrollIntoViewIfNeeded();
   const bounds = (await canvas.boundingBox())!;
-  await page.mouse.move(bounds.x + bounds.width * 0.3, bounds.y + bounds.height * 0.52);
+  await page.mouse.move(bounds.x + bounds.width * 0.5, bounds.y + bounds.height * 0.65);
   await page.clock.runFor(400);
   const angle = await page.getByLabel("Bat angle", { exact: true }).textContent();
   await page.clock.runFor(5000);

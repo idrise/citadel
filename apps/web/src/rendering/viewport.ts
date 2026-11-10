@@ -13,10 +13,11 @@ import { createArenaView, type ViewOptions } from "./arena-view";
 import { createArenaCamera, fitArenaCamera, screenToArena } from "./camera";
 import { createCameraMotion } from "./camera-motion";
 import { createBloom } from "./bloom";
+import { createNeonEnvironment } from "./neon-environment";
 import { lightArena } from "./lighting";
 
 /** Owns camera, projection and graphics resources. Gameplay stays in the simulation. */
-export function createViewport(container: HTMLElement) {
+export function createViewport(container: HTMLElement, humanSeat = 0) {
   const renderer = new WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = ACESFilmicToneMapping;
@@ -30,13 +31,15 @@ export function createViewport(container: HTMLElement) {
   canvas.setAttribute("role", "application");
   const scene = new Scene();
   scene.background = new Color(0x080f1c);
-  const arena = createArenaView();
+  const arena = createArenaView(humanSeat);
   scene.add(arena.root);
   const disposeLighting = lightArena(scene);
-  const camera = createArenaCamera();
+  const disposeEnvironment = createNeonEnvironment(renderer, scene);
+  const camera = createArenaCamera(humanSeat);
   const motion = createCameraMotion(camera);
   let aspect = 1;
   const bounds = new Box3().setFromObject(arena.root);
+  bounds.max.y = Math.max(bounds.max.y, 1.6);
   const bloom = createBloom(renderer, scene, camera);
   container.append(canvas);
   const resize = () => {
@@ -68,7 +71,9 @@ export function createViewport(container: HTMLElement) {
     dispose() {
       observer.disconnect();
       bloom.dispose();
+      arena.dispose();
       disposeLighting();
+      disposeEnvironment();
       disposeScene(scene);
       renderer.dispose();
       renderer.forceContextLoss();

@@ -1,4 +1,5 @@
-import { Color, CylinderGeometry, Group, Mesh, MeshStandardMaterial } from "three";
+import { Color, CylinderGeometry, Group, Mesh, MeshBasicMaterial, TorusGeometry } from "three";
+import { frostedMaterial } from "./frosted-material";
 import { ARENA } from "../simulation/arena";
 
 /** The circular footprint matches simulation; height and cap are presentation only. */
@@ -11,20 +12,10 @@ export function createHealthFactory(colour: number) {
     24,
   );
   const baseGeometry = new CylinderGeometry(ARENA.pieceRadius, ARENA.pieceRadius, 0.08, 24);
-  const bodyMaterial = new MeshStandardMaterial({
-    color: new Color(colour).multiplyScalar(0.48),
-    emissive: colour,
-    emissiveIntensity: 0.06,
-    roughness: 0.3,
-    metalness: 0.5,
-  });
-  const capMaterial = new MeshStandardMaterial({
-    color: colour,
-    emissive: colour,
-    emissiveIntensity: 1.15,
-    roughness: 0.35,
-    metalness: 0.3,
-  });
+  const bodyMaterial = frostedMaterial(0x283442);
+  const capMaterial = frostedMaterial(0x354150);
+  const rimGeometry = new TorusGeometry(ARENA.pieceRadius * 0.88, 0.018, 6, 24);
+  const rimMaterial = new MeshBasicMaterial({ color: new Color(colour).multiplyScalar(2.2) });
   return () => {
     const root = new Group();
     for (const [geometry, material, height] of [
@@ -38,6 +29,10 @@ export function createHealthFactory(colour: number) {
       part.receiveShadow = true;
       root.add(part);
     }
+    const rim = new Mesh(rimGeometry, rimMaterial);
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = 1.17;
+    root.add(rim);
     return root;
   };
 }

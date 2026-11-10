@@ -1,4 +1,6 @@
-import { DirectionalLight, HemisphereLight, Scene } from "three";
+import { FORTRESSES } from "../simulation/arena";
+import { SEATS } from "./palette";
+import { DirectionalLight, HemisphereLight, PointLight, Scene } from "three";
 
 export function lightArena(scene: Scene): () => void {
   scene.add(new HemisphereLight(0xa6d4fa, 0x070c18, 0.85));
@@ -19,6 +21,15 @@ export function lightArena(scene: Scene): () => void {
   const rim = new DirectionalLight(0x6e9bde, 1.5);
   rim.position.set(10, 6, -12);
   scene.add(rim);
+  for (const seat of FORTRESSES) {
+    const glow = new PointLight(SEATS[seat.id]!.colour, 6, 10, 2);
+    glow.position.set(
+      seat.anchor.x + Math.cos(seat.direction) * 2.7,
+      1.8,
+      seat.anchor.y + Math.sin(seat.direction) * 2.7,
+    );
+    scene.add(glow);
+  }
   return () => {
     key.shadow.dispose();
     rim.shadow.dispose();

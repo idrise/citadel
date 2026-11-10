@@ -1,5 +1,6 @@
+import { visibleTargets } from "./health";
 import { aimServeAt } from "./aim";
-import { ARENA, FORTRESSES, clampPaddleAngle, fortress } from "./arena";
+import { ARENA, clampPaddleAngle, fortress } from "./arena";
 import { sweepCircle } from "./collision";
 import { sample } from "./random";
 import { alive, type MatchState, type PlayerIntent } from "./types";
@@ -26,9 +27,9 @@ export function botIntent(state: MatchState, seat: number): PlayerIntent {
     threats[0] ?? ownServe ?? state.balls.find((candidate) => candidate.phase === "active");
   if (ball?.phase === "ready" && ball.seat === seat) {
     if (!bot.serveTarget) {
-      const targets = state.players
-        .filter((other) => other.id !== seat && alive(other))
-        .flatMap((other) => FORTRESSES[other.id]!.pieces.filter((_, index) => other.health[index]));
+      const targets = visibleTargets(
+        state.players.filter((other) => other.id !== seat && alive(other)),
+      );
       bot.serveTarget = targets[Math.floor(sample(state) * targets.length)] ?? null;
     }
     if (bot.serveTarget) bot.targetAngle = aimServeAt(seat, bot.serveTarget);
@@ -46,9 +47,9 @@ export function botIntent(state: MatchState, seat: number): PlayerIntent {
     );
     const forecast = add(ball.position, scale(ball.velocity, collision?.time ?? 0.22));
     const contactAngle = angleOf(sub(forecast, base.anchor));
-    const targets = state.players
-      .filter((other) => other.id !== seat && alive(other))
-      .flatMap((other) => FORTRESSES[other.id]!.pieces.filter((_, index) => other.health[index]));
+    const targets = visibleTargets(
+      state.players.filter((other) => other.id !== seat && alive(other)),
+    );
     const target = targets[Math.floor(sample(state) * targets.length)];
     const desiredAngle = target ? angleOf(sub(target, forecast)) : base.direction;
     const aimOffset = clamp(angleDifference(desiredAngle, contactAngle) / 0.85, -0.8, 0.8);

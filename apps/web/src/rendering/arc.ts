@@ -1,4 +1,5 @@
-import { Color, ExtrudeGeometry, Mesh, MeshStandardMaterial, Shape } from "three";
+import { frostedMaterial } from "./frosted-material";
+import { ExtrudeGeometry, Mesh, MeshStandardMaterial, Shape } from "three";
 
 export function arcMesh(
   radius: number,
@@ -23,20 +24,15 @@ export function arcMesh(
     curveSegments: 32,
   });
   geometry.rotateX(Math.PI / 2);
-  const cap = new MeshStandardMaterial({
-    color: colour,
-    emissive: colour,
-    emissiveIntensity: intensity,
-    roughness: 0.3,
-    metalness: 0.35,
-  });
-  const side = new MeshStandardMaterial({
-    color: new Color(colour).multiplyScalar(0.35),
-    emissive: colour,
-    emissiveIntensity: 0.06,
-    roughness: 0.35,
-    metalness: 0.5,
-  });
+  const cap =
+    height > 0.1
+      ? frostedMaterial(0x354150)
+      : new MeshStandardMaterial({ color: colour, emissive: colour, emissiveIntensity: intensity });
+  if (height > 0.1) {
+    cap.emissive.setHex(colour);
+    cap.emissiveIntensity = 0.1;
+  }
+  const side = frostedMaterial(0x202c3a);
   const mesh = new Mesh(geometry, [cap, side]);
   mesh.castShadow = height > 0.1;
   mesh.receiveShadow = true;

@@ -1,13 +1,22 @@
-import { CylinderGeometry, Group, Mesh, MeshStandardMaterial } from "three";
+import {
+  Color,
+  CylinderGeometry,
+  EdgesGeometry,
+  Group,
+  LineBasicMaterial,
+  LineSegments,
+  Mesh,
+  MeshStandardMaterial,
+} from "three";
 import { ARENA, FORTRESSES } from "../simulation/arena";
 import { arcMesh } from "./arc";
 import { createArenaBase } from "./base";
 import { createHealthFactory } from "./health-piece";
 import { SEATS } from "./palette";
 
-export function createStage() {
+export function createStage(humanSeat = 0) {
   const root = new Group();
-  root.add(createArenaBase());
+  root.add(createArenaBase(humanSeat));
   const paddles: Mesh[] = [];
   const health: Group[][] = [];
   for (const seat of FORTRESSES) {
@@ -33,6 +42,12 @@ export function createStage() {
       1.5,
     );
     paddle.geometry.translate(ARENA.railRadius - ARENA.batRadius, 0, 0);
+    paddle.add(
+      new LineSegments(
+        new EdgesGeometry(paddle.geometry, 25),
+        new LineBasicMaterial({ color: new Color(colour).multiplyScalar(2.2) }),
+      ),
+    );
     paddle.position.set(seat.anchor.x, 0.95, seat.anchor.y);
     paddles.push(paddle);
     root.add(paddle);
@@ -45,8 +60,9 @@ export function createStage() {
     });
     const healthPiece = createHealthFactory(colour);
     health.push(
-      seat.pieces.map((position) => {
+      seat.pieces.map((position, index) => {
         const piece = healthPiece();
+        piece.name = `health-${seat.id}-${index}`;
         piece.position.set(position.x, 0, position.y);
         root.add(piece);
         return piece;

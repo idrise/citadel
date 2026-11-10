@@ -2,7 +2,7 @@ import { ARENA, FORTRESSES } from "./arena";
 import { paddleReturn, sweepCircle, sweepPaddle, sweepWalls, type Contact } from "./collision";
 import { damagePiece, emit } from "./serving";
 import { alive, type BallState, type MatchOptions, type MatchState } from "./types";
-import { add, angleDifference, angleOf, dot, length, scale, sub } from "./vector";
+import { add, angleDifference, angleOf, dot, length, scale, sub, type Vec2 } from "./vector";
 
 interface Impact extends Contact {
   type: "paddle" | "piece" | "wall";
@@ -47,6 +47,7 @@ export function advanceBall(
   previousAngles: number[],
   dt: number,
   options: MatchOptions,
+  previousPieces: Vec2[][],
 ): void {
   let remaining = dt;
   let elapsed = 0;
@@ -77,13 +78,16 @@ export function advanceBall(
             remaining,
           );
       if (paddle) contacts.push({ ...paddle, type: "paddle", seat: player.id, piece: -1 });
-      FORTRESSES[player.id]!.pieces.forEach((centre, piece) => {
+      player.pieces.forEach((body, piece) => {
         if (!player.health[piece]) return;
+        const beforePiece = previousPieces[player.id]![piece]!;
+        const pieceVelocity = scale(sub(body.position, beforePiece), 1 / dt);
+        const centre = add(beforePiece, scale(pieceVelocity, elapsed));
         const contact = sweepCircle(
           ball.position,
-          velocity,
+          sub(velocity, pieceVelocity),
           centre,
-          ARENA.pieceRadius + ARENA.ballRadius,
+          body.radius + ARENA.ballRadius,
           remaining,
         );
         if (contact)

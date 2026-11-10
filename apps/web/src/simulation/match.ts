@@ -1,4 +1,5 @@
 import { ARENA, FIXED_DT, FORTRESSES, clampPaddleAngle, railPosition } from "./arena";
+import { createPieceBodies, stepHealth } from "./health";
 import { advanceBall } from "./ball";
 import { botIntent } from "./bots";
 import { sample } from "./random";
@@ -25,6 +26,7 @@ export function createMatch(seed = 1): MatchState {
       id: seat.id,
       angle: seat.direction,
       health: Array<boolean>(ARENA.pieces).fill(true),
+      pieces: createPieceBodies(seat.id),
     })),
     bots: FORTRESSES.map((seat) => ({
       targetAngle: seat.direction,
@@ -57,7 +59,15 @@ export function stepMatch(
     ...previous,
     tick: previous.tick + 1,
     events: [],
-    players: previous.players.map((player) => ({ ...player, health: [...player.health] })),
+    players: previous.players.map((player) => ({
+      ...player,
+      health: [...player.health],
+      pieces: player.pieces.map((body) => ({
+        ...body,
+        position: { ...body.position },
+        velocity: { ...body.velocity },
+      })),
+    })),
     bots: previous.bots.map((bot) => ({ ...bot })),
     balls: previous.balls.map((ball) => ({
       ...ball,
@@ -69,6 +79,10 @@ export function stepMatch(
   const inputs = state.players.map((player) =>
     player.id === options.humanSeat ? human : botIntent(state, player.id),
   );
+  const previousPieces = previous.players.map((player) =>
+    player.pieces.map((body) => body.position),
+  );
+  state.players.forEach((player) => stepHealth(player, dt));
   const previousAngles = state.players.map((player) => player.angle);
   state.players.forEach((player, seat) => {
     if (!alive(player)) return;
@@ -108,7 +122,7 @@ export function stepMatch(
         served.add(ball.seat);
         launchBall(state, ball, options);
       }
-    } else advanceBall(state, ball, previousAngles, dt, options);
+    } else advanceBall(state, ball, previousAngles, dt, options, previousPieces);
   }
   if (state.phase === "playing") {
     const desired = Math.min(
