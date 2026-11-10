@@ -8,6 +8,7 @@ export function Experiments({
   damage,
   caps,
   seed,
+  paddleAngle,
 }: {
   value: Settings;
   onChange: (value: Settings) => void;
@@ -16,6 +17,7 @@ export function Experiments({
   damage: number;
   caps: number;
   seed: number;
+  paddleAngle: number;
 }) {
   return (
     <details className="experiments">
@@ -88,6 +90,10 @@ export function Experiments({
       <p className="diagnostics">
         Seed {seed} · {elapsed.toFixed(1)}s · {hits} returns · {damage} pieces lost · {caps}{" "}
         collision caps
+      </p>
+      <p className="diagnostics">
+        Bat angle{" "}
+        <output aria-label="Bat angle">{((paddleAngle * 180) / Math.PI).toFixed(1)}</output>°
       </p>
       <p className="fine-print">
         Preview assumes contact at your current paddle position. Slowdown changes ball speed near

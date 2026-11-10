@@ -39,7 +39,9 @@ The desired game loop is simple: **move → aim a deflection → launch/return �
 | Elimination/winner | No health left = eliminated; last survivor wins |
 | Aiming | Mouse movement first; keyboard alternative; touch later |
 | Serving | Mouse click / Space / Enter initially; mobile tap later |
-| Pacing | Roughly two minutes; challenge ramps over time, not an instant artificial win |
+| Pacing | Adrenaline first: start with one ball and add balls over time; roughly two minutes remains a tuning target |
+| Current ball tuning | Radius 0.187 (10% larger), speed 24 units/s (double the first prototype); provisional extra-ball interval 15s and cap four |
+| Shot reach | Every defender can attack both adjacent rivals and bank off both walls beside their bat |
 | Client/runtime | Strict TypeScript; Three.js/WebGL; fixed-step 2D simulation |
 | Offline hosting | GitHub Pages (static HTML/CSS/JS only) |
 | Multiplayer | WebRTC DataChannels; one browser is authoritative host; *no dedicated simulation server* |
@@ -55,7 +57,7 @@ Do not quietly make these permanent rules without a review:
 1. **Shot attribution:** The damaged defender receiving the next serve is confirmed and supersedes return-to-attacker/owner. Whether last-hit attribution needs a visible ball mark remains open; it must not determine the post-damage serve recipient.
 2. **Serve allocation:** Choose fair initial serves and the recipient after an eliminating hit. Prototype default: seeded initial selection; after an elimination, choose a surviving seat by seeded selection, unless the match has ended. These defaults need review. Ordinary non-eliminating damage always gives the damaged defender the serve.
 3. **Damage geometry:** Choose whether health pieces are crystals, blocks, spheres or another distinctive extruded form at the M01 review. Every one must be individually readable.
-4. **Escalation:** Do not decide in advance that speed, extra balls, shrinkage or a hybrid is best. Experiment with these at M06.
+4. **Escalation tuning:** User feedback during M01 explicitly calls for a 10% larger ball, double its initial speed and timed additions of extra balls for adrenaline. Prototype default: radius 0.187, speed 24, one initial ball and another every 15 playing seconds, capped at four. The 15-second interval and cap are provisional tuning choices. M06 revisits pacing evidence; it must preserve this agreed direction unless reviewed with the user.
 5. **Two-player layout proportions:** Rectangle defenders are at the centres of opposite short ends, not two corners of a four-player arena. Tune length/width experimentally.
 6. **Ties and the final simultaneous hit:** Define a deterministic policy, then validate its feel.
 7. **End-of-life fortress:** After elimination the paddle becomes non-defending and no health remains. Prototype default: balls continue through the empty sector and rebound from the outer wall. Validate escape/stall cases and serve allocation after eliminating hits.
@@ -66,10 +68,10 @@ These are starting experiments authorised for the prototype, not permanent desig
 
 - **Feel:** Start with precise, responsive defence and deliberate contact-position aiming, then explore escalating arcade pressure. The balance between precision, survival and targeting rivals is still open.
 - **Movement:** Track the pointer closely with a maximum paddle speed; start without pronounced acceleration lag. A late save should initially feel like moving too late rather than fighting momentum. Keyboard uses the same speed limits.
-- **Aiming:** Centre contacts return approximately along the paddle's inward normal; contacts toward either end create wider outgoing angles. Tune a bounded angle range in play. Add movement-driven spin later, after basic aiming feels good.
+- **Aiming and bat curvature:** The bat's curved face is independent of its travel rail: rail radius 4.4, bat-face radius 2.2 and half-angle 0.48 radians. Rendering and swept collision use the same shape. Contact normals plus a bounded contact-offset adjustment govern returns. Serve aiming spans twice the paddle-centre angle relative to the sector bisector, giving deliberate attacks on adjacent rivals and banks off either neighbouring wall. A short serve guide shows one wall rebound; defenders may intercept it. Actual serve direction has no random spread. Add movement-driven spin later.
 - **Gaps:** Destroyed pieces leave genuine holes. A ball passing through a hole continues until another physical collision, including the outer wall; never substitute damage to a nearby piece. Initially paddles can intercept from either side so returning balls do not require an invisible exception. Review whether deeper rebounds are interesting or confusing.
 - **Aim help:** Try a short, conditional outgoing-direction preview for an imminent paddle contact. It describes a hit at the current paddle position, not a guaranteed future trajectory. Keep an off switch and compare assisted/unassisted play.
-- **Approach slowdown:** Expose a developer toggle, off initially, for bounded slowdown near a paddle when a ball is approaching from the arena side. Use one shared simulation rule for humans and bots. Make it non-stacking, restore normal speed on leaving the region or hitting the paddle, and avoid repeated slow/fast boundary flicker. Compare preview only, slowdown only, both and neither; multiple-ball legibility is a later gate.
+- **Approach slowdown:** Expose a developer toggle, off initially, for bounded slowdown near a paddle when a ball is approaching from the arena side. Use one shared simulation rule for humans and bots. Make it non-stacking, restore normal speed on leaving the region or hitting the paddle, and avoid repeated slow/fast boundary flicker. Compare preview only, slowdown only, both and neither; compare multiple-ball legibility in M01 now that timed additions are requested, then refine at M06.
 - **Serve rhythm:** Click to launch during a short ready window, followed by automatic launch to prevent indefinite holding. The deadline is tunable; test whether it gives a satisfying revenge opportunity without breaking the rally's rhythm.
 - **Early elimination:** Prototype a clear result with immediate rematch available; spectating bots is optional. Record time until human elimination separately from total match length.
 
@@ -116,7 +118,7 @@ The previously discussed sketch is a **layout reference**, not a requirement to 
 - Damage requires a swept collision with an intact health piece. Destroy exactly that piece, emit its destruction effect, consume the active ball and put it into a short attached/ready-to-serve state at the damaged defender if they survive. Crossing the defence arc or a missing piece causes no damage. Resolve simultaneous piece contacts deterministically; one ball can destroy at most one piece before returning. If the defender is eliminated, apply the explicitly labelled prototype serve fallback above; never attach a ball to an eliminated seat or serve after match end.
 - Elimination at zero health; removed players can spectate. Edge cases include last piece lost simultaneously, serve recipient eliminated while another ball is active/returning, balls trapped near geometry and no survivors.
 - No random competitive power-ups in the default rule set; randomness (including bots/serves if needed) uses a seed and can be replayed.
-- Start with **one ball for the quickest readable prototype**. Keep the sim model capable of **1–8 balls** and add them only when the gameplay justifies it. More balls are not automatically better.
+- Start each round with **one ball**, then add one every **15 playing seconds** to a provisional default cap of **four**, as requested during M01 hands-on feedback. Ball radius is **0.187** and speed **24 units/s**, respectively 10% larger and twice the initial prototype values. Expose arrival interval (5–30s) and cap (1–8) in the experiment panel. Pausing/countdown never advance arrivals. Balls do not collide with each other in this prototype. One click launches at most one queued ball, while each ball still has an automatic deadline; eliminating a defender reassigns their pending serves. Keep zero-spin behaviour and all ball IDs deterministic.
 - Provide configuration for player count, bot difficulty, ball count, spin strength, paddle width, ball speed and starting health (eight default). Keep the main menu very small; put experimental knobs in a developer/advanced panel.
 
 ### Input progression
@@ -136,7 +138,7 @@ Bots arrive **before** advanced polish and before mobile/networking:
 - Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. Difficulty levels: **Beginner / Standard / Expert**, tuned by skill parameters rather than cheating.
 - Bot randomness is seeded for repeatable test runs. Instrument who takes damage, causes deflections, survives and wins, plus mean/median duration. Bots must not all make exactly the same decisions.
 - Use separate match test seeds, not hand-scripted victories. One human vs five bots must be playable locally with **no network or account**.
-- The same bots can later fill unoccupied multiplayer seats, take over a disconnect or support practice. Their behaviour belongs in `packages/simulation`, not networking/UI.
+- The same bots can later fill unoccupied multiplayer seats, take over a disconnect or support practice. Their behaviour belongs in the pure simulation module (`apps/web/src/simulation` initially; extract `packages/simulation` when useful), not networking/UI.
 
 ### Pacing hypothesis
 
@@ -148,7 +150,7 @@ A **two-minute match** is the product target, not a fixed timer that awards a wi
 
 ### First genuinely playable milestone: **M01**
 
-Build a small four-player game immediately: one human, three basic bots, one ball, physical health pieces, revenge serves, elimination and rematch. Use modest procedural 2.5D presentation. M02–M04 refine controls, physics and rules; M05 broadens the proven interaction to all five layouts and meaningful bot difficulties. Immediately evaluate: "Would I voluntarily play three more rounds?" If not, fix the core interaction before expanding layouts, advanced polish, mobile or multiplayer.
+Build a small four-player game immediately: one human, three basic bots, one initial ball with timed additions, physical health pieces, revenge serves, elimination and rematch. Use modest procedural 2.5D presentation. M02–M04 refine controls, physics and rules; M05 broadens the proven interaction to all five layouts and meaningful bot difficulties. Immediately evaluate: "Would I voluntarily play three more rounds?" If not, fix the core interaction before expanding layouts, advanced polish, mobile or multiplayer.
 
 ### First release candidate for outside feedback: **M08**
 
@@ -279,7 +281,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** M01 in progress — repository scaffold delivered; playable prototype remains. **Next: resume M01.** Update this line whenever work changes state.
+**Current position:** M01 implemented and awaiting user review. **Next: review M01 or request changes; an instruction to proceed selects M02 under the resume rules.** Update this line whenever work changes state.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
@@ -312,17 +314,17 @@ When asked to **"do the next milestone"**:
 
 ### Current milestone work record
 
-- **Milestone:** M01, scaffold portion only (requested separately on 10 November 2026).
-- **Implemented / remaining:** Pinned Vite+/pnpm/Node toolchain, strict TypeScript, modular React shell and procedural Three.js stage, resource cleanup, local unit/browser tests, CI and Pages publishing workflows. Remaining: actual arena/rails/paddles, input, simulation, physical health, bots, revenge serves, elimination and rematch. No M01 acceptance or approval implied by scaffolding.
-- **Checks and evidence:** `pnpm check` passed (format/lint/typecheck); `pnpm test` passed (17 tests); `PAGES_BASE_PATH=/citadel/ pnpm build` passed; `pnpm test:browser` passed (3 Chromium cases: project-path load/refresh, narrow viewport, unavailable WebGL2 fallback); both workflow YAML files parsed; `git diff --check` passed. Rendered screenshot reviewed at `test-results/scaffold-production-app-lo-dc453-e-GitHub-Pages-project-path-chromium/scaffold-desktop.png` (generated, ignored). Local dev: `pnpm dev`.
-- **Review decisions / blockers:** React retained for DOM UI after user discussion. Use `gh` only after asking; never push without explicit instruction. GitHub workflow runs, repository Pages settings and live deployment are unverified and unchanged. Build reports a >500 kB chunk warning for the combined React/Three.js bundle; consider splitting renderer loading as the app grows.
-- **Next action:** Resume M01 gameplay when requested. Scaffold commit: `8de11d5`; follow-up workflow/documentation commit recorded in Git history.
+- **Milestone:** M01 — implemented, **Awaiting review**; checkbox remains unchecked until approved.
+- **Implemented / remaining:** Four-seat playable game, pure 120 Hz simulation, physical health collisions/gaps, revenge serves and eliminated-recipient fallback, basic seeded bots, responsive desktop controls, focus pause, results/rematch, procedural depth/destruction effects, conditional return preview and symmetric approach slowdown. Incorporated user feedback: ball 10% larger, double speed, timed additions, independently curved bat face, attacks on adjacent rivals and deliberate banks off both neighbouring walls. M02 and later work remain unstarted.
+- **Checks and evidence:** `pnpm check` passed; `pnpm test` passed (51 tests); `PAGES_BASE_PATH=/citadel/ pnpm build` passed; `pnpm test:browser` passed (six tests, including actual mouse arc limits and complete round/result/rematch without editing game state); `pnpm exec vpx tooling/benchmark.ts` completed five seeded all-bot matches with zero collision caps; `git diff --check` passed. Review evidence and limits: `docs/M01_REVIEW.md`, screenshots in `docs/reviews/m01/`, local gameplay capture `/tmp/citadel-m01-review/gameplay.webm`. Local demo: `pnpm dev`, http://127.0.0.1:5173/.
+- **Review decisions / blockers:** No blocking implementation failures. Initial reference sketch remains unavailable. The 15-second arrival interval and four-ball cap are provisional; both are tunable. Same-tick balls resolve in ID order; first declared winner ends remaining tick processing. No mobile/audio/spin/multiplayer or measured real-hardware performance claim. Production bundle still has a >500 kB chunk warning. No GitHub workflow run, push, deployment, Pages-setting change or `gh` command was performed.
+- **Next action:** User plays M01 and reviews shot reach, bank control, adrenaline/legibility and revenge serves. Request amendments or approve before M02. Local implementation commits: `8fd4bed` (simulation), `41a2100` (playable view and bank-shot geometry); follow-up evidence/input checks recorded in Git history.
 
 ### Progress / approval ledger
 
 | ID | Stage | Reviewable deliverable | Status | Approval | Commit |
 |---|---|---|---|---|---|
-| M01 | **First playable** | Four-seat prototype: human + bots, physical damage, revenge serve, rematch | In progress | — | 8de11d5 (scaffold) |
+| M01 | **First playable** | Four-seat prototype: human + bots, physical damage, revenge serve, rematch | Awaiting review | — | 8fd4bed, 41a2100; see work record |
 | M02 | Desktop core | Refine responsive controls, contact aiming, preview/slowdown experiments | Not started | — | — |
 | M03 | Desktop core | Real ball physics, swept collisions and deflections | Not started | — | — |
 | M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Not started | — | — |
@@ -342,7 +344,7 @@ When asked to **"do the next milestone"**:
 
 #### M01 — First playable four-player prototype
 
-**Implement:** Scaffold strict TypeScript with Vite+ and a procedural Three.js view, keeping simulation independent. Add the required GitHub Actions CI and Pages publishing workflows described above. Build only the four-corner square: one human, three basic bots using normal intents, one ball, curved responsive paddles, contact-position aiming, walls and eight physically collidable health pieces per fortress. Include swept collision for supported prototype speeds, visible piece destruction, return to the surviving damaged defender, tunable serve deadline, elimination, a basic winner/result and immediate rematch. Use the labelled seeded elimination-serve fallback and empty-sector wall rebounds. Add mouse/keyboard input, stable tilted camera, modest luminous geometry and minimal diagnostics. Include a short conditional aim-preview toggle and an approach-slowdown toggle, initially off; keep these simple experiments. No advanced spin, other layouts, networking or elaborate polish.
+**Implement:** Scaffold strict TypeScript with Vite+ and a procedural Three.js view, keeping simulation independent. Add the required GitHub Actions CI and Pages publishing workflows described above. Build only the four-corner square: one human, three basic bots using normal intents, one initial ball with timed additions, curved responsive paddles, contact-position aiming, walls and eight physically collidable health pieces per fortress. Include swept collision for supported prototype speeds, visible piece destruction, return to the surviving damaged defender, tunable serve deadline, elimination, a basic winner/result and immediate rematch. Use the labelled seeded elimination-serve fallback and empty-sector wall rebounds. Add mouse/keyboard input, stable tilted camera, modest luminous geometry and minimal diagnostics. Include a short conditional aim-preview toggle and an approach-slowdown toggle, initially off; keep these simple experiments. No advanced spin, other layouts, networking or elaborate polish.
 
 **Acceptance:** One person can play and rematch complete four-player rounds without editing state. Physical hits destroy only the contacted piece; gaps cause no automatic damage; a surviving damaged defender receives the next serve; eliminated seats never receive serves; a winner ends serving. Focus loss pauses solo play and clears held inputs. Run focused geometry, collision, damage, serve and elimination tests plus typecheck/lint/build. Provide a four-seat screenshot, a short gameplay capture and a local demo. Identify the missing sketch rather than claiming reference fidelity. Validate the production asset base and inspect the CI/Pages workflow configuration; report actual remote-run/deployment evidence only when available.
 
@@ -356,7 +358,7 @@ When asked to **"do the next milestone"**:
 
 #### M03 — Harden ball physics and paddle contact
 
-**Implement:** Extend the existing fixed-step swept collision system to stress speeds, corners, grazing hits, moving paddles, health-piece gaps and rebounds from behind the defence. Define deterministic impact ordering and bounded collision iterations. Add impact logs, seeded replay fixtures and frame-rate independence checks. Keep one ball and no complex spin.
+**Implement:** Extend the existing fixed-step swept collision system to stress speeds, corners, grazing hits, moving paddles, health-piece gaps and rebounds from behind the defence. Define deterministic impact ordering and bounded collision iterations. Add impact logs, seeded replay fixtures and frame-rate independence checks. Cover isolated single-ball fixtures and the existing timed multi-ball mode; do not add complex spin.
 
 **Acceptance:** No tunnelling in documented stress scenarios; no physics-dependent render frame rate; repeated fixtures reproduce impact ordering; balls cannot become permanently trapped in empty fortresses. **Review:** Are rebounds predictable and readable at useful play speeds? **STOP: REVIEW REQUIRED — M03.**
 
@@ -374,7 +376,7 @@ When asked to **"do the next milestone"**:
 
 #### M06 — Curved shots, multiple balls and **pacing design gate**
 
-**Implement:** Add measured paddle spin and bounded curving trajectories; 1–8 ball handling with revenge serves, sensible initial serves, elimination reassignments and multiple attached-ball handling. Revalidate any approved approach slowdown and preview under multiple-ball pressure. Add a tuning interface and replay harness. Create `docs/MATCH_PACING.md` comparing **at least three** escalation systems, test the best two, run seeded bot benchmarks by arena size, and report distribution of match length and damage. Propose (do not silently lock) a default escalation curve and anti-stall rule.
+**Implement:** Add measured paddle spin and bounded curving trajectories. Extend the M01 multi-ball foundations and tune the approved timed-addition direction using evidence across layouts, revenge serves and simultaneous contacts. Revalidate any approved approach slowdown and preview under multiple-ball pressure. Add a tuning interface and replay harness. Create `docs/MATCH_PACING.md` comparing **at least three** escalation systems, test the best two, run seeded bot benchmarks by arena size, and report distribution of match length and damage. Propose (do not silently lock) a default escalation curve and anti-stall rule.
 
 **Acceptance:** Zero-spin behaves normally; replayable fixtures hold for simultaneous balls; bot-only pacing data is clearly labelled. **Review:** Pick escalation, ball counts, spin limits and approximate 2-minute profile based on evidence. **STOP: REVIEW REQUIRED — M06.**
 
@@ -474,7 +476,7 @@ Cloudflare documentation to check when implementing (product behaviour and plan 
 
 ## 8. Testing matrix and evidence
 
-**Every phase:** Vitest unit/property fixtures for polygon geometry, paddle limits, ball collisions, deterministic event ordering, physical health damage, revenge-serve allocation, elimination and bot decisions. Stage coverage with implemented features: M01 covers the four-player prototype; expand to all layouts at M05 and multiple balls at M06. Playwright desktop flows for initial play through rematch. Seeded logs and a locally replayable test scenario for regressions.
+**Every phase:** Vitest unit/property fixtures for polygon geometry, paddle limits, ball collisions, deterministic event ordering, physical health damage, revenge-serve allocation, elimination and bot decisions. Stage coverage with implemented features: M01 covers the four-player prototype; cover timed multi-ball pressure in M01 and expand to all layouts at M05; further pacing/spin work belongs to M06. Playwright desktop flows for initial play through rematch. Seeded logs and a locally replayable test scenario for regressions.
 
 | Dimension | Minimum cases |
 |---|---|
@@ -499,8 +501,8 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ---
 
-## 10. First action
+## 10. Next action
 
-**Start revised M01 only when implementation is requested.** Build a playable four-player square in the browser: one human, three basic bots, one ball, responsive curved paddles, eight physical pieces per fortress, visible destruction, revenge serves and immediate rematch. Include simple preview/slowdown experiments for hands-on comparison. Keep enough procedural thickness and luminous edges to communicate the intended style, using a stable camera.
+**Review M01 before proceeding.** Run `pnpm dev`, play the four-player prototype and consult `docs/M01_REVIEW.md`. Check that the faster ball and timed additions create pressure while preserving readable saves, and that both adjacent rivals and both neighbouring wall banks are deliberately reachable.
 
-Judge the rally and damage loop before spending milestones on five layouts or presentation polish. The sketch is currently unavailable; follow the written layout and disclose that limitation. Do not silently proceed beyond the M01 review; prepare CI and Pages publishing under the established trigger policy. The remaining roadmap follows only after the core interaction proves worthwhile.
+M01 is implemented and awaiting approval; do not restart the scaffold or silently begin M02. Apply requested feel/rule amendments to M01. An instruction to do the next milestone follows the resume rules above. Preserve the existing GitHub Pages publishing workflow, frequent local commits and explicit user control over pushes and `gh` usage.

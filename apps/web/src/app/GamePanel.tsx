@@ -179,6 +179,7 @@ export function GamePanel({
         damage={state.stats.damage}
         caps={state.stats.collisionCaps}
         seed={seed}
+        paddleAngle={state.players[humanSeat]!.angle}
       />
     </>
   );

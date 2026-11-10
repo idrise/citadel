@@ -1,7 +1,8 @@
 # Neon Citadel
 
 A local-first paddle arena, built with strict TypeScript, React, Three.js and Vite+.
-The current scaffold renders a procedural stage; gameplay is still to be implemented.
+The M01 prototype plays a four-fortress round: one human versus three bots, physical
+health pieces, revenge serves, timed ball additions and rematch. It is awaiting review.
 
 ## Develop
 
@@ -12,6 +13,22 @@ A global Vite+ install is optional: the repository supplies the local `vp` CLI.
 pnpm install --frozen-lockfile
 pnpm dev
 ```
+
+## Play locally
+
+Click **Play vs Bots**. Move the mouse over the arena to position your curved bat;
+click or press Space to serve. A/D or Left/Right also steer. Escape/P pauses.
+Leaving the browser pauses the entire match and clears held input; resume explicitly.
+
+Each hit destroys the actual piece struck. The damaged survivor gets the revenge
+serve. Gaps remain open; the outer walls rebound balls back into play. Aim toward
+either end of your arc to bank off the walls beside your bat. The serve guide
+shows the first wall bounce; opponents can intercept it.
+
+Rounds start with one ball and add another every 15 playing seconds, up to four.
+The experiment panel exposes the interval/cap, a conditional return preview,
+approach slowdown (off by default), reduced effects and the auto-serve deadline.
+The new ball size/speed and bank-shot reach reflect the initial hands-on feedback.
 
 ## Check and build
 
@@ -47,13 +64,25 @@ variable. No history router is installed; later room links must remain static-ho
 
 - `apps/web/src/app/`: React composition, DOM UI and styles.
 - `apps/web/src/rendering/`: Three.js presentation and GPU resource lifecycle.
-- `tooling/`: build configuration helpers and their tests.
+- `apps/web/src/simulation/`: pure fixed-step geometry, collisions, rules and bots.
+- `apps/web/src/input/`: browser input adapters emitting versioned player intents.
+- `apps/web/src/session/`: local loop, focus/pause and adapter composition.
+- `tooling/`: build helpers, tests and a reproducible all-bot benchmark.
 - `tests/`: production-browser smoke tests.
 
-Add input and pure simulation modules with gameplay. They must not depend on React,
-Three.js or the DOM. Keep the entry point and app component as composition only;
+Simulation must not depend on React, Three.js or the DOM. Input adapters translate
+browser events; rendering owns camera projection and GPU resources. Keep the entry point and app component as composition only;
 prefer focused modules over a large game class. Create shared packages when there
 is a real consumer or boundary that benefits from them, not empty placeholder packages.
+
+To reproduce the seeded all-bot timing run:
+
+```sh
+pnpm exec vpx tooling/benchmark.ts
+```
+
+This reports bot-only simulation results, not human playtest evidence. See
+[the M01 review](docs/M01_REVIEW.md) for validation, limitations and review prompts.
 
 ## GitHub Pages
 
