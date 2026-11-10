@@ -1,10 +1,39 @@
 # M01 — first playable prototype
 
-Status: awaiting user review. No approval or work on M02 is implied.
+Status: awaiting user review of the corrected 3D presentation. The user reported
+that the gameplay plays well; M02 has not started.
 
 Run `pnpm dev` and open the local URL. The four-player square has one human,
 three basic bots, eight physical pieces per fortress, revenge serves, elimination,
 a winner and rematch. No network or account is involved.
+
+## 3D presentation correction
+
+3D height, a 2.5D camera and bloom were part of the intended M01 baseline. They are
+implemented now rather than deferred to a later aesthetic milestone:
+
+- Gently animated orthographic camera with both tilt and yaw, so the arena reads as a solid
+  object with side faces. Resize fitting includes the full raised base and pieces.
+- A roughly 2.7-unit-deep bevelled plinth, extruded bats and taller health columns.
+  The columns retain the simulation's circular footprint; only presentation height
+  and materials changed.
+- Directional lighting, shadows, darker side materials and bright top edges give
+  form to the geometry. The two camera-facing walls sit below the bottom of a ball
+  so height does not hide the action.
+- Bloom uses a thresholded postprocess and output colour conversion. Reduced
+  effects bypasses bloom, retaining the same camera and actual 3D geometry.
+- A bounded slow orbit (about ±1.7° yaw / ±0.9° tilt) and small breathing zoom
+  (±0.45%) keep the camera alive in the lobby and during play. There is no hit shake.
+  Pause and reduced effects/motion hold the current pose; resuming does not jump.
+- Input is projected back onto the visible bat plane using the rendered camera.
+  Only actual pointer events update its world-space target, so camera movement
+  cannot steer a stationary cursor. Unit tests cover every fortress/arc end across
+  the moving view, framing in wide/narrow views and freeze/resume continuity.
+  A real browser test holds the mouse still while the live camera moves.
+
+Simulation files are unchanged. The SHA-256 of three seeded 90-second traces
+matched exactly before/after, including positions, damage, serving and results:
+`e5bfc9f9ff060cbf3ffb1b993a16baf7131f785c5e77c8f4c118675342330ef5`.
 
 ## Current feel and feedback incorporated
 
@@ -32,15 +61,15 @@ a winner and rematch. No network or account is involved.
 ## Validation actually run
 
 - `pnpm check`: formatting, lint and strict TypeScript passed.
-- `pnpm test`: **51 tests across seven files** passed. Covers physical hits and
+- `pnpm test`: **63 tests across ten files** passed. Covers physical hits and
   gaps, moving curved contact, high-speed crossings, speed caps, serve deadlines,
   queued recipient elimination, deterministic simultaneous balls, bank reach from
   all corners, eight-ball slowdown stress, replay, GPU cleanup and fixed-tick timing.
 - `PAGES_BASE_PATH=/citadel/ pnpm build`: production build passed.
-- `pnpm test:browser`: **six production Chromium tests passed**, covering for project-path load/refresh,
-  small-window fit, WebGL2 fallback, keyboard/held-key clearing, focus pause,
+- `pnpm test:browser`: **eight production Chromium tests passed**, covering project-path load/refresh,
+  small-window fit, WebGL2 fallback, live-camera pointer stability, bloom/reduced rendering, keyboard/held-key clearing, focus pause,
   second/third balls, both mouse arc limits, a complete round, results and rematch.
-  The full-round test advances the browser clock; it does not edit match state.
+  Long match/input tests use reduced effects and an explicitly controlled browser clock to keep software rendering predictable; they do not edit match state. A separate render test exercises bloom on/off. WebGL concurrency is capped at two workers. An initial six-worker run exceeded the old 30-second test budget; the corrected suite passed.
 - `pnpm exec vpx tooling/benchmark.ts`: five all-bot matches finished naturally
   with zero collision-loop caps. This is simulation evidence, not a human playtest.
 - `git diff --check`: passed.
@@ -58,11 +87,13 @@ are still tuning questions; no retention or balance claim is made.
 
 ## Rendered evidence
 
-- [Four-fortress game with three balls](reviews/m01/arena.png).
-- [Bank toward one adjacent wall](reviews/m01/bank-left.png).
-- [Bank toward the other adjacent wall](reviews/m01/bank-right.png).
-- A roughly 38-second desktop gameplay capture is available locally at
-  `/tmp/citadel-m01-review/gameplay.webm`; it uses scripted mouse/serve input at
+- [Raised arena with 2.5D camera and bloom](reviews/m01/arena-depth.png).
+- [Reduced effects, same 3D geometry](reviews/m01/arena-reduced.png).
+- [Earlier four-fortress game with three balls](reviews/m01/arena.png) — previous flat-looking presentation, retained for comparison.
+- [Bank toward one adjacent wall](reviews/m01/bank-left.png) — earlier camera; shot geometry is unchanged.
+- [Bank toward the other adjacent wall](reviews/m01/bank-right.png) — earlier camera; shot geometry is unchanged.
+- An updated desktop gameplay capture is available locally at
+  `/tmp/citadel-depth-review/gameplay.webm`; it uses scripted mouse/serve input at
   normal simulation speed. The temporary video is not checked into the repository.
 
 Screenshots were visually inspected. The previously discussed layout sketch is
@@ -71,7 +102,7 @@ not available in this workspace, so no claim of matching it is made.
 ## Limits and provisional rules
 
 - Only the four-player layout and one basic bot controller are implemented.
-  Mobile, audio, bloom polish, advanced spin and multiplayer remain later work.
+  Mobile, audio, further effects polish, advanced spin and multiplayer remain later work.
 - Physics is 120 Hz. Moving curved centres/endcaps use short fixed-tick chord
   approximations; M03 remains the broader collision-hardening gate. No claim of
   exhaustive collision correctness or measured hardware frame-rate coverage.
@@ -82,14 +113,14 @@ not available in this workspace, so no claim of matching it is made.
   Reducing a live ball cap stops further additions rather than removing active
   balls; changing the interval can add balls immediately to catch up with elapsed
   playing time. These are prototype tuning controls.
-- The static bundle currently emits a >500 kB chunk warning (about 813 kB minified,
-  220 kB gzip). Splitting renderer loading remains future work.
+- The static bundle currently emits a >500 kB chunk warning (about 836 kB minified,
+  226 kB gzip). Splitting renderer loading remains future work.
 - Local checks validate the existing CI/Pages files and project-path build. No
   remote workflow, Pages settings, push, deployment or `gh` command was executed.
 
 ## What to try
 
-1. Pick a fortress, play a round and try both ends of the arc. Can you deliberately
+1. Check the arena height, visible side faces, tilted view and bloom first. Then pick a fortress, play a round and try both ends of the arc. Can you deliberately
    bank off either adjacent wall and attack the next corner?
 2. Let the second and third balls join. Does the faster pace feel exciting while
    leaving enough time for a deserved save? Try 10/15/20-second arrival intervals.

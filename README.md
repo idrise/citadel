@@ -29,6 +29,10 @@ Rounds start with one ball and add another every 15 playing seconds, up to four.
 The experiment panel exposes the interval/cap, a conditional return preview,
 approach slowdown (off by default), reduced effects and the auto-serve deadline.
 The new ball size/speed and bank-shot reach reflect the initial hands-on feedback.
+The live 2.5D camera gently orbits a raised 3D arena with extruded bats and health
+pieces, directional shadows and restrained bloom. Pointer projection follows the
+rendered view; camera motion never changes a stationary mouse target. Reduced
+effects & motion disables bloom and holds the current camera pose without a snap.
 
 ## Check and build
 
