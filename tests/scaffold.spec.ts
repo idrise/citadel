@@ -10,21 +10,22 @@ test("production app loads and refreshes under the GitHub Pages project path", a
   });
   await page.goto("./");
   await expect(page.getByRole("heading", { name: "NEON CITADEL" })).toBeVisible();
-  await expect(page.getByRole("img", { name: "Three-dimensional arena stage" })).toBeVisible();
-  await expect(page.getByRole("status")).toHaveCount(0);
+  await expect(page.getByRole("application", { name: "Neon Citadel arena" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Play vs Bots" })).toBeVisible();
   await expect(page.locator("canvas")).toHaveCount(1);
   await page.reload();
-  await expect(page.getByRole("img", { name: "Three-dimensional arena stage" })).toBeVisible();
+  await expect(page.getByRole("application", { name: "Neon Citadel arena" })).toBeVisible();
   expect(errors).toEqual([]);
-  await page.screenshot({ path: testInfo.outputPath("scaffold-desktop.png"), fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath("m01-lobby.png"), fullPage: true });
 });
 
-test("narrow windows keep the page within the viewport", async ({ page }) => {
+test("narrow windows keep the arena and controls within the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 740 });
   await page.goto("./");
-  await expect(page.getByRole("heading", { name: "NEON CITADEL" })).toBeVisible();
-  const fits = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
-  expect(fits).toBe(true);
+  await expect(page.getByRole("button", { name: "Play vs Bots" })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
 });
 
 test("missing WebGL2 leaves a readable fallback rather than a broken page", async ({ page }) => {

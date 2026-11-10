@@ -1,3 +1,4 @@
+import { aimServeAt } from "./aim";
 import { ARENA, FORTRESSES, clampPaddleAngle, fortress } from "./arena";
 import { sweepCircle } from "./collision";
 import { sample } from "./random";
@@ -30,11 +31,7 @@ export function botIntent(state: MatchState, seat: number): PlayerIntent {
         .flatMap((other) => FORTRESSES[other.id]!.pieces.filter((_, index) => other.health[index]));
       bot.serveTarget = targets[Math.floor(sample(state) * targets.length)] ?? null;
     }
-    if (bot.serveTarget)
-      bot.targetAngle = clampPaddleAngle(
-        seat,
-        angleOf(sub(bot.serveTarget, fortress(seat).anchor)),
-      );
+    if (bot.serveTarget) bot.targetAngle = aimServeAt(seat, bot.serveTarget);
   } else {
     bot.serveTarget = null;
   }

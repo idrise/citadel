@@ -1,11 +1,11 @@
-import { Mesh, type BufferGeometry, type Material, type Object3D } from "three";
+import { Line, Mesh, type BufferGeometry, type Material, type Object3D } from "three";
 
 /** Shared geometry/materials are disposed exactly once per scene. */
 export function disposeScene(scene: Object3D): void {
   const geometries = new Set<BufferGeometry>();
   const materials = new Set<Material>();
   scene.traverse((object) => {
-    if (!(object instanceof Mesh)) return;
+    if (!(object instanceof Mesh) && !(object instanceof Line)) return;
     geometries.add(object.geometry);
     for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
       materials.add(material);

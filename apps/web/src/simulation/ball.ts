@@ -106,7 +106,7 @@ export function advanceBall(
       return;
     }
     if (hit.type === "paddle") {
-      ball.velocity = paddleReturn(ball.position, ball.velocity, hit.seat, hit.offset, hit.normal);
+      ball.velocity = paddleReturn(ball.velocity, hit.offset, hit.normal);
       ball.slowSeat = null;
       struckPaddles.add(hit.seat);
       state.stats.paddleHits++;

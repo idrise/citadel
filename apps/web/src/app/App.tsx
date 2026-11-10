@@ -1,20 +1,29 @@
-import { ArenaPreview } from "./ArenaPreview";
+import { useState } from "react";
+import { GamePanel } from "./GamePanel";
 
 export function App() {
+  const [seed, setSeed] = useState(2026);
+  const [humanSeat, setHumanSeat] = useState(0);
   return (
     <main className="shell">
       <header className="masthead">
-        <p className="eyebrow">An arena worth defending</p>
-        <h1>
-          NEON <span>CITADEL</span>
-        </h1>
-        <p className="intro">Read the angle. Make the return. Get your revenge.</p>
+        <div>
+          <p className="eyebrow">An arena worth defending</p>
+          <h1>
+            NEON <span>CITADEL</span>
+          </h1>
+        </div>
+        <p className="build-label">
+          LOCAL PROTOTYPE <span>01 / FOUR FORTRESSES</span>
+        </p>
       </header>
-      <ArenaPreview />
-      <footer className="status">
-        <span className="status-label">Prototype in development</span>
-        <p>The arena is taking shape. Playable rounds are next.</p>
-      </footer>
+      <GamePanel
+        key={`${seed}-${humanSeat}`}
+        seed={seed}
+        humanSeat={humanSeat}
+        onRematch={() => setSeed((value) => value + 1)}
+        onSeat={setHumanSeat}
+      />
     </main>
   );
 }

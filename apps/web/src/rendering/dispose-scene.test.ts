@@ -1,4 +1,4 @@
-import { BoxGeometry, Group, Mesh, MeshBasicMaterial } from "three";
+import { BoxGeometry, Group, Line, LineBasicMaterial, Mesh, MeshBasicMaterial } from "three";
 import { expect, it, vi } from "vite-plus/test";
 import { disposeScene } from "./dispose-scene";
 
@@ -19,4 +19,14 @@ it("releases shared GPU resources once, including nested meshes and material arr
   expect(disposeGeometry).toHaveBeenCalledTimes(1);
   expect(disposeFirst).toHaveBeenCalledTimes(1);
   expect(disposeSecond).toHaveBeenCalledTimes(1);
+});
+
+it("also releases geometry and materials owned by trajectory preview lines", () => {
+  const geometry = new BoxGeometry();
+  const material = new LineBasicMaterial();
+  const geometryDisposal = vi.spyOn(geometry, "dispose");
+  const materialDisposal = vi.spyOn(material, "dispose");
+  disposeScene(new Line(geometry, material));
+  expect(geometryDisposal).toHaveBeenCalledTimes(1);
+  expect(materialDisposal).toHaveBeenCalledTimes(1);
 });

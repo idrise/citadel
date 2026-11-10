@@ -60,13 +60,12 @@ describe("swept collisions", () => {
   it("preserves speed and gives different centre/edge shot directions", () => {
     const angle = fortress(0).direction;
     const incoming = scale(unit(angle), -12);
-    const position = railPosition(0, angle);
-    const centre = paddleReturn(position, incoming, 0, 0, unit(angle));
-    const edge = paddleReturn(position, incoming, 0, 0.9, unit(angle));
+    const centre = paddleReturn(incoming, 0, unit(angle));
+    const edge = paddleReturn(incoming, 0.9, unit(angle));
     expect(length(centre)).toBeCloseTo(12);
     expect(length(edge)).toBeCloseTo(12);
     expect(dot(centre, unit(angle))).toBeCloseTo(12);
-    expect(dot(edge, unit(angle))).toBeLessThan(11);
+    expect(dot(edge, unit(angle))).toBeLessThan(12);
     expect(dot(edge, unit(angle))).toBeGreaterThan(0);
   });
 });

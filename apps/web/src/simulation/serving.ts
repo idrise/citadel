@@ -1,7 +1,8 @@
+import { serveDirection } from "./aim";
 import { ARENA, fortress, railPosition } from "./arena";
 import { sample } from "./random";
 import { alive, type BallState, type GameEvent, type MatchState, type MatchOptions } from "./types";
-import { scale, unit, type Vec2 } from "./vector";
+import { scale, type Vec2 } from "./vector";
 
 export function emit(
   state: MatchState,
@@ -34,7 +35,7 @@ export function readyBall(state: MatchState, seat: number, id = 0): BallState {
 }
 export function launchBall(state: MatchState, ball: BallState, options: MatchOptions): void {
   const angle = state.players[ball.seat]?.angle ?? fortress(ball.seat).direction;
-  ball.velocity = scale(unit(angle + (sample(state) - 0.5) * 0.04), options.ballSpeed);
+  ball.velocity = scale(serveDirection(ball.seat, angle), options.ballSpeed);
   ball.phase = "active";
   ball.slowSeat = null;
   emit(state, "launch", ball.position, ball.seat);

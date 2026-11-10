@@ -1,4 +1,4 @@
-import { ARENA, fortress } from "./arena";
+import { ARENA, batCentre } from "./arena";
 import {
   add,
   angleDifference,
@@ -75,37 +75,38 @@ export function sweepPaddle(
   angularVelocity: number,
   duration: number,
 ): PaddleContact | null {
-  const anchor = fortress(seat).anchor;
+  const anchor = batCentre(seat, angle);
+  const finishCentre = batCentre(seat, angle + angularVelocity * duration);
+  const centreVelocity =
+    duration > 0 ? scale(sub(finishCentre, anchor), 1 / duration) : { x: 0, y: 0 };
   const relative = sub(position, anchor);
+  const relativeVelocity = sub(velocity, centreVelocity);
   const inflation = ARENA.ballRadius + ARENA.paddleThickness / 2;
   const candidates: PaddleContact[] = [];
-  const a = dot(velocity, velocity);
-  const b = dot(relative, velocity);
+  const a = dot(relativeVelocity, relativeVelocity);
+  const b = dot(relative, relativeVelocity);
   if (a > EPS) {
     for (const side of [-1, 1]) {
-      const radius = ARENA.railRadius + side * inflation;
+      const radius = ARENA.batRadius + side * inflation;
       const discriminant = b * b - a * (dot(relative, relative) - radius * radius);
       if (discriminant < 0) continue;
       for (const root of [(-b - Math.sqrt(discriminant)) / a, (-b + Math.sqrt(discriminant)) / a]) {
         if (root < -EPS || root > duration + EPS) continue;
         const time = Math.max(0, root);
-        const point = add(relative, scale(velocity, time));
+        const point = add(relative, scale(relativeVelocity, time));
         const normal = scale(normalise(point), side);
         const offset =
-          angleDifference(angleOf(point), angle + angularVelocity * time) / ARENA.paddleHalfAngle;
-        if (Math.abs(offset) <= 1 && dot(velocity, normal) < -EPS)
+          angleDifference(angleOf(point), angle + angularVelocity * time) / ARENA.batHalfAngle;
+        if (Math.abs(offset) <= 1 && dot(relativeVelocity, normal) < -EPS)
           candidates.push({ time, normal, offset });
       }
     }
   }
   for (const end of [-1, 1]) {
-    const start = add(anchor, scale(unit(angle + end * ARENA.paddleHalfAngle), ARENA.railRadius));
+    const start = add(anchor, scale(unit(angle + end * ARENA.batHalfAngle), ARENA.batRadius));
     const finish = add(
-      anchor,
-      scale(
-        unit(angle + angularVelocity * duration + end * ARENA.paddleHalfAngle),
-        ARENA.railRadius,
-      ),
+      finishCentre,
+      scale(unit(angle + angularVelocity * duration + end * ARENA.batHalfAngle), ARENA.batRadius),
     );
     const capVelocity = duration > 0 ? scale(sub(finish, start), 1 / duration) : { x: 0, y: 0 };
     const hit = sweepCircle(position, sub(velocity, capVelocity), start, inflation, duration);
@@ -114,16 +115,9 @@ export function sweepPaddle(
   return candidates.sort((left, right) => left.time - right.time)[0] ?? null;
 }
 
-export function paddleReturn(
-  position: Vec2,
-  incoming: Vec2,
-  seat: number,
-  offset: number,
-  contactNormal: Vec2,
-): Vec2 {
-  const radial = normalise(sub(position, fortress(seat).anchor));
-  const side = dot(incoming, radial) <= 0 ? 1 : -1;
-  let direction = scale(unit(angleOf(radial) + Math.max(-1, Math.min(1, offset)) * 0.85), side);
+export function paddleReturn(incoming: Vec2, offset: number, contactNormal: Vec2): Vec2 {
+  const faceAngle = angleOf(contactNormal);
+  let direction = unit(faceAngle + Math.max(-1, Math.min(1, offset)) * 0.32);
   // A rounded-end hit must still leave its actual contact surface.
   const outward = dot(direction, contactNormal);
   if (outward < 0.15) direction = normalise(add(direction, scale(contactNormal, 0.15 - outward)));

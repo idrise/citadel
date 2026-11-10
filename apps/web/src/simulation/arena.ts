@@ -5,6 +5,8 @@ export const ARENA = {
   railRadius: 4.4,
   sectorHalfAngle: Math.PI / 4,
   paddleHalfAngle: 0.24,
+  batRadius: 2.2,
+  batHalfAngle: 0.48,
   paddleThickness: 0.28,
   paddleSpeed: 3.2,
   healthRadius: 2.7,
@@ -21,11 +23,12 @@ export interface Fortress {
 }
 
 export const FORTRESSES: readonly Fortress[] = [
-  { x: -9, y: 9 },
-  { x: 9, y: 9 },
-  { x: 9, y: -9 },
-  { x: -9, y: -9 },
-].map((anchor, id) => {
+  { x: -1, y: 1 },
+  { x: 1, y: 1 },
+  { x: 1, y: -1 },
+  { x: -1, y: -1 },
+].map((sign, id) => {
+  const anchor = { x: sign.x * ARENA.halfSize, y: sign.y * ARENA.halfSize };
   const direction = Math.atan2(-anchor.y, -anchor.x);
   const pieces = Array.from({ length: ARENA.pieces }, (_, index) => {
     const angle =
@@ -43,11 +46,16 @@ export function fortress(id: number): Fortress {
 export function clampPaddleAngle(seat: number, angle: number): number {
   const base = fortress(seat).direction;
   const endClearance = Math.asin(
-    (ARENA.ballRadius + ARENA.paddleThickness / 2 + 0.01) / ARENA.railRadius,
+    (ARENA.ballRadius + ARENA.paddleThickness / 2 + 0.01) / (ARENA.railRadius - 0.2),
   );
   const limit = ARENA.sectorHalfAngle - ARENA.paddleHalfAngle - endClearance;
   return base + clamp(angleDifference(angle, base), -limit, limit);
 }
 export function railPosition(seat: number, angle: number, radius: number = ARENA.railRadius): Vec2 {
   return add(fortress(seat).anchor, scale(unit(angle), radius));
+}
+
+/** Bat curvature is independent of the arc along which its midpoint travels. */
+export function batCentre(seat: number, angle: number): Vec2 {
+  return railPosition(seat, angle, ARENA.railRadius - ARENA.batRadius);
 }

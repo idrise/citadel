@@ -14,73 +14,332 @@ body {
   margin: 0;
   min-width: 280px;
 }
+button,
+select,
+input {
+  font: inherit;
+}
+button,
+select {
+  color: #dfeafa;
+  border: 1px solid #35465e;
+  background: #142034;
+  border-radius: 6px;
+  padding: 9px 14px;
+}
+button {
+  cursor: pointer;
+}
+button:hover {
+  background: #21334c;
+  border-color: #67819e;
+}
+button:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #92f1f5;
+  outline-offset: 4px;
+}
+input {
+  accent-color: #68dce5;
+}
 .shell {
-  max-width: 1080px;
+  max-width: 1200px;
   margin: auto;
-  padding: clamp(24px, 5vw, 64px) 24px 32px;
+  padding: 24px 24px 32px;
 }
 .masthead {
-  margin-bottom: 28px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 .eyebrow {
   color: #75d9e3;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 650;
 }
 h1 {
-  margin: 12px 0;
-  font-size: clamp(2rem, 6vw, 4rem);
+  margin: 8px 0 0;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
   line-height: 1;
   letter-spacing: -0.045em;
 }
 h1 span {
   color: #75e2eb;
 }
-.intro {
-  color: #a7b6ce;
-  font-size: 1rem;
-  line-height: 1.6;
+.build-label {
+  color: #8eabc3;
+  letter-spacing: 0.12em;
+  font-size: 0.6rem;
+  text-align: right;
+  line-height: 1.8;
+}
+.build-label span {
+  display: block;
+  color: #667f99;
+}
+.scoreboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.score-card {
+  padding: 10px 12px;
+  background: #0f1827;
+  border: 1px solid #223149;
+  border-top: 2px solid var(--seat-colour);
+  border-radius: 6px;
+}
+.your-seat {
+  background: #152232;
+}
+.seat-name {
+  color: var(--seat-colour);
+  font-weight: 650;
+  font-size: 0.8rem;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.seat-name small {
+  color: #91a4bb;
+  margin-left: auto;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+}
+.health-pieces {
+  display: flex;
+  gap: 4px;
+  margin-top: 10px;
+}
+.health-pieces span {
+  flex: 1;
+  height: 5px;
+  border-radius: 1px;
+}
+.intact {
+  background: var(--seat-colour);
+}
+.lost {
+  background: #293445;
+}
+.eliminated {
+  opacity: 0.4;
 }
 .arena-preview {
   position: relative;
   overflow: hidden;
   border: 1px solid #26354c;
-  border-radius: 12px;
-  background: #090f1c;
+  border-radius: 10px;
+  background: #080f1c;
 }
 .viewport {
-  height: clamp(260px, 50vw, 500px);
+  height: clamp(360px, 61vh, 680px);
 }
 .viewport canvas {
   display: block;
   width: 100%;
   height: 100%;
 }
-.render-message {
+.viewport canvas:focus-visible {
+  outline: 1px solid #5b95a8;
+  outline-offset: -3px;
+}
+.game-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #050b1666;
+}
+.overlay-card {
+  width: min(420px, 100%);
+  padding: 28px;
+  border: 1px solid #324659;
+  border-radius: 10px;
+  background: #0d1828f2;
+  box-shadow: 0 10px 50px #0005;
+}
+.overlay-card h2 {
+  font-size: 1.65rem;
+  letter-spacing: -0.03em;
+  margin: 12px 0;
+}
+.overlay-card p {
+  color: #adbed1;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.overlay-card label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8rem;
+  margin: 24px 0 16px;
+  color: #b4c8dc;
+}
+.primary {
+  width: 100%;
+  border-color: #78dee4;
+  color: #061521;
+  background: #78dee4;
+  font-weight: 700;
+  padding: 12px 18px;
+}
+.primary:hover {
+  background: #a4f0f4;
+  border-color: #a4f0f4;
+}
+.countdown {
   position: absolute;
   inset: 0;
   display: grid;
   place-content: center;
-  padding: 32px;
-  line-height: 1.6;
-  text-align: center;
+  font-size: 4rem;
+  font-weight: 750;
+  color: #d1f8ff;
+  pointer-events: none;
 }
-.status {
+.elimination-banner {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  padding: 12px 16px;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px 24px;
-  margin-top: 20px;
+  gap: 12px;
+  background: #101b2cf0;
+  border: 1px solid #536079;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+.round-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 58px;
+}
+.round-notice {
+  color: #c3d3e7;
   font-size: 0.8rem;
   line-height: 1.5;
 }
-.status-label {
-  color: #e7c487;
+.round-actions {
+  display: flex;
+  gap: 8px;
 }
-.status p {
-  margin: 0;
-  color: #98a9c2;
+.round-actions button {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+}
+.controls-hint {
+  margin: 4px 0 20px;
+  font-size: 0.75rem;
+  color: #8dacc4;
+  line-height: 1.6;
+}
+.experiments {
+  border-top: 1px solid #243246;
+  padding-top: 16px;
+  color: #9eafc4;
+  font-size: 0.75rem;
+}
+.experiments summary {
+  cursor: pointer;
+  width: fit-content;
+  padding: 2px;
+}
+.experiment-options {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  margin: 20px 0;
+}
+.experiment-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.experiment-options input[type="range"] {
+  width: 90px;
+}
+.diagnostics {
+  font-variant-numeric: tabular-nums;
+  color: #9cbdcf;
+  line-height: 1.6;
+}
+.fine-print {
+  color: #8295ac;
+  line-height: 1.6;
+  max-width: 750px;
+}
+@media (max-width: 600px) {
+  .shell {
+    padding: 20px 12px;
+  }
+  .masthead {
+    align-items: start;
+  }
+  .build-label {
+    font-size: 0.5rem;
+  }
+  .scoreboard {
+    gap: 5px;
+  }
+  .score-card {
+    padding: 8px 6px;
+  }
+  .seat-name {
+    font-size: 0.65rem;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+  .seat-name small {
+    width: 100%;
+    margin-left: 0;
+  }
+  .health-pieces {
+    gap: 2px;
+  }
+  .viewport {
+    height: 420px;
+  }
+  .overlay-card {
+    padding: 20px;
+  }
+  .overlay-card h2 {
+    font-size: 1.3rem;
+  }
+  .round-bar {
+    flex-wrap: wrap;
+    padding-bottom: 12px;
+    gap: 0;
+  }
+  .elimination-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+.pressure-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2px 10px;
+  color: #91afc9;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+}
+.pressure-bar span:first-child {
+  color: #8fe7ed;
 }

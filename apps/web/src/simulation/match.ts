@@ -112,7 +112,7 @@ export function stepMatch(
   }
   if (state.phase === "playing") {
     const desired = Math.min(
-      options.maxBalls,
+      clamp(Math.floor(options.maxBalls), 1, 8),
       1 + Math.floor(state.elapsed / Math.max(1, options.ballInterval)),
     );
     while (state.balls.length < desired) {
