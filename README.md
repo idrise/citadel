@@ -1,8 +1,9 @@
 # Neon Citadel
 
 A local-first paddle arena, built with strict TypeScript, React, Three.js and Vite+.
-The M01 prototype plays a four-fortress round: one human versus three bots, physical
-health pieces, revenge serves, timed ball additions and rematch. It is awaiting review.
+The four-fortress game plays one human versus three bots, with physical health
+pieces, revenge serves, timed ball additions and rematch. M01 is approved; M02
+controls and aiming refinements are awaiting review.
 
 ## Develop
 
@@ -20,7 +21,10 @@ Click **Play** to capture the mouse. Move left/right to steer your curved bat;
 click or press Space to serve. A/D or Left/Right also steer. **Escape/P** pauses
 and releases the cursor. Focus loss or capture loss pauses and clears held input;
 click **Resume** to recapture and continue. While paused, **H** hides/restores the
-small corner controls for screenshots. Settings are available in the menus.
+small corner controls for screenshots. Settings offers 0.5–2× mouse sensitivity
+and Neither / Preview only / Pressure slowdown / Both assistance modes. Settings
+survive Restart, Rematch and seat changes in the current page. Restart repeats
+the same opening; Rematch starts a new seeded round.
 The scene fills the viewport, with no visible HUD or surrounding text during play.
 
 Each hit destroys the actual piece struck. The damaged survivor gets the revenge
@@ -30,8 +34,13 @@ either end of your arc to bank off the walls beside your bat. The serve guide
 shows the first wall bounce; opponents can intercept it.
 
 Rounds start with one ball and add another every 15 playing seconds, up to four.
-The Settings menu exposes the interval/cap, a conditional return preview,
-approach slowdown (off by default), reduced effects and the auto-serve deadline.
+The Settings menu exposes the interval/cap, reduced effects and the auto-serve
+deadline. Preview only is the default: near your fortress, dots forecast the
+ball through your stationary bat's bounce toward the next impact, with bounce
+and end markers. Moving actors can change that forecast. Pressure slowdown
+remains optional and off. It only helps with later arrivals when two separated
+shots demand a fast move; ordinary shots and bat input stay at normal speed.
+The same rule applies to humans and bots.
 The new ball size/speed and bank-shot reach reflect the initial hands-on feedback.
 The live perspective camera sits behind your selected fortress at about 38° over
 solid raised walls and a deep 3D arena. Foreground panels are translucent to keep
@@ -78,7 +87,9 @@ PAGES_BASE_PATH=/citadel/ pnpm preview --host 127.0.0.1
 
 Open the displayed server URL at `/citadel/`. For a custom domain or user site,
 use `PAGES_BASE_PATH=/` when building and previewing. Browser tests accept the same
-variable. No history router is installed; later room links must remain static-host compatible.
+variable. For a local host-GPU run, use
+`PLAYWRIGHT_RENDERER=hardware pnpm test:browser --workers=1`; CI defaults to
+software WebGL. No history router is installed; later room links must remain static-host compatible.
 
 ## Module ownership
 
@@ -102,7 +113,7 @@ pnpm exec vpx tooling/benchmark.ts
 ```
 
 This reports bot-only simulation results, not human playtest evidence. See
-[the M01 review](docs/M01_REVIEW.md) for validation, limitations and review prompts.
+[the M02 review and comparison](docs/M02_REVIEW.md) for validation, limitations and review prompts.
 
 ## GitHub Pages
 

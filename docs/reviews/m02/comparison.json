@@ -1,0 +1,339 @@
+{
+  "description": "Deterministic stationary-bat contacts and all-bot outcomes; not human feel evidence",
+  "baselineSpeed": 24,
+  "startingGap": 1.5,
+  "paddleSpeed": 3.2,
+  "batBulge": 0.249,
+  "fullRailDegrees": 53.294,
+  "minimumRailTraversalMs": 290.671,
+  "mouseTravelPixels": [
+    {
+      "sensitivity": 0.5,
+      "pixels": 465.074
+    },
+    {
+      "sensitivity": 1,
+      "pixels": 232.537
+    },
+    {
+      "sensitivity": 2,
+      "pixels": 116.268
+    }
+  ],
+  "pressureCatchComparison": [
+    {
+      "enabled": false,
+      "catches": 1,
+      "firstCatchMs": 75,
+      "maxAngularSpeed": 3.2
+    },
+    {
+      "enabled": true,
+      "catches": 2,
+      "firstCatchMs": 75,
+      "maxAngularSpeed": 3.2
+    }
+  ],
+  "modes": [
+    {
+      "mode": "none",
+      "contacts": [
+        {
+          "offset": -0.75,
+          "contactMs": 62.5,
+          "returnDegrees": -34.377,
+          "preview": false
+        },
+        {
+          "offset": 0,
+          "contactMs": 62.5,
+          "returnDegrees": 0,
+          "preview": false
+        },
+        {
+          "offset": 0.75,
+          "contactMs": 62.5,
+          "returnDegrees": 34.377,
+          "preview": false
+        }
+      ],
+      "pressuredContacts": [
+        {
+          "offset": -0.75,
+          "contactMs": 62.5,
+          "returnDegrees": -34.377,
+          "preview": false
+        },
+        {
+          "offset": 0,
+          "contactMs": 62.5,
+          "returnDegrees": 0,
+          "preview": false
+        },
+        {
+          "offset": 0.75,
+          "contactMs": 62.5,
+          "returnDegrees": 34.377,
+          "preview": false
+        }
+      ],
+      "matches": [
+        {
+          "seed": 1,
+          "phase": "finished",
+          "seconds": 53.417,
+          "winner": 3,
+          "paddleHits": 62,
+          "damage": 30,
+          "collisionCaps": 0,
+          "outcomeDigest": "022f41c6c9e2d53d"
+        },
+        {
+          "seed": 21,
+          "phase": "finished",
+          "seconds": 45.042,
+          "winner": 3,
+          "paddleHits": 46,
+          "damage": 30,
+          "collisionCaps": 0,
+          "outcomeDigest": "a17e4bf2c858fe33"
+        },
+        {
+          "seed": 2026,
+          "phase": "finished",
+          "seconds": 61.558,
+          "winner": 2,
+          "paddleHits": 93,
+          "damage": 27,
+          "collisionCaps": 0,
+          "outcomeDigest": "3b336a11edc7fe74"
+        }
+      ]
+    },
+    {
+      "mode": "preview",
+      "contacts": [
+        {
+          "offset": -0.75,
+          "contactMs": 62.5,
+          "returnDegrees": -34.377,
+          "preview": true
+        },
+        {
+          "offset": 0,
+          "contactMs": 62.5,
+          "returnDegrees": 0,
+          "preview": true
+        },
+        {
+          "offset": 0.75,
+          "contactMs": 62.5,
+          "returnDegrees": 34.377,
+          "preview": true
+        }
+      ],
+      "pressuredContacts": [
+        {
+          "offset": -0.75,
+          "contactMs": 62.5,
+          "returnDegrees": -34.377,
+          "preview": true
+        },
+        {
+          "offset": 0,
+          "contactMs": 62.5,
+          "returnDegrees": 0,
+          "preview": true
+        },
+        {
+          "offset": 0.75,
+          "contactMs": 62.5,
+          "returnDegrees": 34.377,
+          "preview": true
+        }
+      ],
+      "matches": [
+        {
+          "seed": 1,
+          "phase": "finished",
+          "seconds": 53.417,
+          "winner": 3,
+          "paddleHits": 62,
+          "damage": 30,
+          "collisionCaps": 0,
+          "outcomeDigest": "022f41c6c9e2d53d"
+        },
+        {
+          "seed": 21,
+          "phase": "finished",
+          "seconds": 45.042,
+          "winner": 3,
+          "paddleHits": 46,
+          "damage": 30,
+          "collisionCaps": 0,
+          "outcomeDigest": "a17e4bf2c858fe33"
+        },
+        {
+          "seed": 2026,
+          "phase": "finished",
+          "seconds": 61.558,
+          "winner": 2,
+          "paddleHits": 93,
+          "damage": 27,
+          "collisionCaps": 0,
+          "outcomeDigest": "3b336a11edc7fe74"
+        }
+      ]
+    },
+    {
+      "mode": "slowdown",
+      "contacts": [
+        {
+          "offset": -0.75,
+          "contactMs": 62.5,
+          "returnDegrees": -34.377,
+          "preview": false
+        },
+        {
+          "offset": 0,
+          "contactMs": 62.5,
+          "returnDegrees": 0,
+          "preview": false
+        },
+        {
+          "offset": 0.75,
+          "contactMs": 62.5,
+          "returnDegrees": 34.377,
+          "preview": false
+        }
+      ],
+      "pressuredContacts": [
+        {
+          "offset": -0.75,
+          "contactMs": 113.636,
+          "returnDegrees": -34.377,
+          "preview": false
+        },
+        {
+          "offset": 0,
+          "contactMs": 113.636,
+          "returnDegrees": 0,
+          "preview": false
+        },
+        {
+          "offset": 0.75,
+          "contactMs": 113.636,
+          "returnDegrees": 34.377,
+          "preview": false
+        }
+      ],
+      "matches": [
+        {
+          "seed": 1,
+          "phase": "finished",
+          "seconds": 60.992,
+          "winner": 2,
+          "paddleHits": 78,
+          "damage": 31,
+          "collisionCaps": 0,
+          "outcomeDigest": "d37c51d9847f04b5"
+        },
+        {
+          "seed": 21,
+          "phase": "finished",
+          "seconds": 57.7,
+          "winner": 2,
+          "paddleHits": 76,
+          "damage": 31,
+          "collisionCaps": 0,
+          "outcomeDigest": "a7bf56d419183221"
+        },
+        {
+          "seed": 2026,
+          "phase": "finished",
+          "seconds": 57.958,
+          "winner": 0,
+          "paddleHits": 80,
+          "damage": 31,
+          "collisionCaps": 0,
+          "outcomeDigest": "50e4ff8d00fb8724"
+        }
+      ]
+    },
+    {
+      "mode": "both",
+      "contacts": [
+        {
+          "offset": -0.75,
+          "contactMs": 62.5,
+          "returnDegrees": -34.377,
+          "preview": true
+        },
+        {
+          "offset": 0,
+          "contactMs": 62.5,
+          "returnDegrees": 0,
+          "preview": true
+        },
+        {
+          "offset": 0.75,
+          "contactMs": 62.5,
+          "returnDegrees": 34.377,
+          "preview": true
+        }
+      ],
+      "pressuredContacts": [
+        {
+          "offset": -0.75,
+          "contactMs": 113.636,
+          "returnDegrees": -34.377,
+          "preview": true
+        },
+        {
+          "offset": 0,
+          "contactMs": 113.636,
+          "returnDegrees": 0,
+          "preview": true
+        },
+        {
+          "offset": 0.75,
+          "contactMs": 113.636,
+          "returnDegrees": 34.377,
+          "preview": true
+        }
+      ],
+      "matches": [
+        {
+          "seed": 1,
+          "phase": "finished",
+          "seconds": 60.992,
+          "winner": 2,
+          "paddleHits": 78,
+          "damage": 31,
+          "collisionCaps": 0,
+          "outcomeDigest": "d37c51d9847f04b5"
+        },
+        {
+          "seed": 21,
+          "phase": "finished",
+          "seconds": 57.7,
+          "winner": 2,
+          "paddleHits": 76,
+          "damage": 31,
+          "collisionCaps": 0,
+          "outcomeDigest": "a7bf56d419183221"
+        },
+        {
+          "seed": 2026,
+          "phase": "finished",
+          "seconds": 57.958,
+          "winner": 0,
+          "paddleHits": 80,
+          "damage": 31,
+          "collisionCaps": 0,
+          "outcomeDigest": "50e4ff8d00fb8724"
+        }
+      ]
+    }
+  ]
+}

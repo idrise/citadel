@@ -71,8 +71,8 @@ These are starting experiments authorised for the prototype, not permanent desig
 - **Movement:** Accumulate captured horizontal mouse deltas into a bounded bat-angle target, with a maximum paddle speed; start without pronounced acceleration lag. A late save should initially feel like moving too late rather than fighting momentum. Keyboard uses the same speed limits.
 - **Aiming and bat curvature:** The bat's curved face is independent of its travel rail: rail radius 4.4, bat-face radius 2.2 and half-angle 0.48 radians. Rendering and swept collision use the same shape. Contact normals plus a bounded contact-offset adjustment govern returns. Serve aiming spans twice the paddle-centre angle relative to the sector bisector, giving deliberate attacks on adjacent rivals and banks off either neighbouring wall. A short serve guide shows one wall rebound; defenders may intercept it. Actual serve direction has no random spread. Add movement-driven spin later.
 - **Piece placement and gaps:** User feedback replaces the long fixed health arc with a compact two-row formation inside the fortress. A destroyed piece leaves a real gap, but remaining pieces can subsequently move into that space under damped spring attraction and soft separation. Only an actual collision with a surviving piece causes damage; never substitute nearest-piece damage. Survivors gradually grow by 3.5% of their original size per loss, capped at 24.5%. Visible position and scale must match authoritative moving colliders. Initially paddles can intercept from either side so returning balls do not require an invisible exception. Review whether deeper rebounds are interesting or confusing.
-- **Aim help:** Try a short, conditional outgoing-direction preview for an imminent paddle contact. It describes a hit at the current paddle position, not a guaranteed future trajectory. Keep an off switch and compare assisted/unassisted play.
-- **Approach slowdown:** Expose a developer toggle, off initially, for bounded slowdown near a paddle when a ball is approaching from the arena side. Use one shared simulation rule for humans and bots. Make it non-stacking, restore normal speed on leaving the region or hitting the paddle, and avoid repeated slow/fast boundary flicker. Compare preview only, slowdown only, both and neither; compare multiple-ball legibility in M01 now that timed additions are requested, then refine at M06.
+- **Aim help:** M02 user clarification selects a dotted forecast from the nearby ball through a bounce off the stationary current bat and onward toward the next impact. Use actual fixed-step trajectory samples, show bounce/end markers, and leave room for future curved shots. Consider the earliest incoming ball within 8.4 units of the human fortress anchor, with a 0.45-second incoming horizon and up to 0.9 seconds after contact / one bank. Freeze current actor poses for this conditional forecast; it is not a guaranteed destination. Keep Neither / Preview only / Pressure slowdown only / Both choices. Preview only is the proposed default following this feedback.
+- **Approach slowdown:** M02 feedback rejects routine delay. Keep optional **pressure-only relief**, off by default: detect two separated incoming catches within 0.45 seconds which demand a rapid move, and arm only the later arrival. It retains normal speed until the near-defence band, then uses a bounded 55% travel factor. Preserve the first catch's timing and ordinary bat responsiveness; maintain the existing speed cap. Latched relief can survive the first catch, and clears on departure/contact/exit/disable/elimination. Exclude paths already intercepted by another object and avoid triggering for shots one bat pose can cover. Apply equally to humans/bots; compare neither / preview / pressure-only / both. Thresholds remain reviewable and must be revisited with future spin.
 - **Serve rhythm:** Click to launch during a short ready window, followed by automatic launch to prevent indefinite holding. The deadline is tunable; test whether it gives a satisfying revenge opportunity without breaking the rally's rhythm.
 - **Early elimination:** Prototype a clear result with immediate rematch available; spectating bots is optional. Record time until human elimination separately from total match length.
 
@@ -283,7 +283,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** M01 approved on 11 November 2026 following “Looks good! … shall we carry on with the plan?” M02 is **In progress**. Implement controls/aiming refinement and compare all four assistance modes, then stop for M02 review.
+**Current position:** M01 approved on 11 November 2026. M02 controls and deliberate aiming are implemented and **Awaiting review**. Review `docs/M02_REVIEW.md`, try the dotted forecast and assistance modes, then approve or request changes. M03 remains unstarted.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
@@ -316,23 +316,24 @@ When asked to **"do the next milestone"**:
 
 ### Current milestone work record
 
-- **Milestone:** M02 — **In progress**. M01 approved by the user's request to continue on 11 November 2026, at `415b2df`; implementation and evidence remain in `docs/M01_REVIEW.md` and Git history.
+- **Milestone:** M02 — implemented, **Awaiting review**; checkbox remains unchecked. M01 approved by the user's 11 November 2026 request to continue, at `415b2df`; recorded in `a5d5652`.
 - **Task checklist:**
-  - [ ] Refine captured mouse sensitivity, keyboard handover, capture lifecycle and one-press launch semantics.
-  - [ ] Keep settings across rematches/seat changes; exercise all four human seats and resize/focus transitions.
-  - [ ] Make neither/preview/slowdown/both easy to compare; keep previews conditional and use the actual collision/return rules.
-  - [ ] Test clamps, common movement caps, centre/edge returns and slowdown restoration/non-stacking.
-  - [ ] Provide a local comparison, rendered evidence, reproducible measurements and recommended defaults in `docs/M02_REVIEW.md`.
-- **Scope:** Preserve the approved M01 visual direction, ball speed/arrival ramp and fixed-step architecture. Keep responsive movement without adding inertia unless comparison warrants it. No M03 stress/replay expansion, touch, new layouts, audio or networking.
-- **Checks / evidence:** Implementation audit in progress. Existing M01 acceptance evidence is recorded in `docs/M01_REVIEW.md` (96 unit tests, static Pages-path build, previous focused browser runs and native GPU grid capture).
-- **Next action:** Implement and validate M02, then stop at `REVIEW REQUIRED — M02`. No push or `gh` usage is authorised.
+  - [x] Refine captured mouse sensitivity, keyboard handover, capture lifecycle and one-press launch semantics.
+  - [x] Keep settings across rematches/seat changes; exercise all four human seats and resize/focus transitions.
+  - [x] Compare neither/preview/slowdown/both; predict from the nearby ball through the frozen bat and onward, using actual simulation samples.
+  - [x] Test clamps, common movement caps, centre/edge returns and slowdown restoration/non-stacking.
+  - [x] Provide local play, rendered centre/edge examples, reproducible comparison data and recommendations in `docs/M02_REVIEW.md`.
+- **Implemented:** 0.5–2× sensitivity without teleporting or added inertia; robust capture/pause races and one-press serve input; persistent in-page settings; same-opening Restart/new-seed Rematch; four assistance presets. Dots follow the earliest nearby incoming ball through a stationary-bat bounce, one bank and the next impact or projection limit. The display consumes sampled trajectories so future curvature can use it. The existing convex bat gives measured centre/edge aim differences; no spin or new curvature was added.
+- **User clarification / proposed defaults:** The user requested a dotted path from the ball through the predicted bounce and destination while the bat remains still, with slowdown kept optional and enough bat bulge for contact aiming. Applied **Preview only**, slowdown off, sensitivity 1× and the existing 2.2-radius convex bat. Moving actors can invalidate the forecast. The existing serve guide remains in every mode. Subsequent feedback rejects routine delay: optional slowdown now targets later arrivals only when two separated shots demand rapid movement. The counter fixture catches 1 ball without relief and 2 with it, with the same 75 ms first catch and 3.2 rad/s cap.
+- **Checks / evidence:** `pnpm check`; 136 unit tests across 19 files; Pages-path production build; all 12 Chromium browser tests on host GPU; final 2/2 rendering rerun; native gameplay capture and visually inspected centre/edge fixtures. Twelve mode/seed all-bot runs finished with zero collision caps; informational-preview pairs have identical outcomes. See `docs/M02_REVIEW.md`, `docs/reviews/m02/comparison.json` and images; local clip `/tmp/citadel-m02-review/gameplay.webm`. Full software-WebGL suite was not rerun. The large bundle warning remains. No push, deployment or `gh` use.
+- **Commits / next action:** `0d5f7c0` (controls and assistance), `ecf2090` (user-requested dotted forecast), `1642607` (pressure-only later-arrival relief and counter fixture). User reviews forecast activation/legibility, aiming feel and assistance defaults. Stop at `REVIEW REQUIRED — M02`; M03 remains unstarted.
 
 ### Progress / approval ledger
 
 | ID | Stage | Reviewable deliverable | Status | Approval | Commit |
 |---|---|---|---|---|---|
 | M01 | **First playable** | Four-seat prototype: human + bots, physical damage, revenge serve, rematch | Approved | 11 Nov 2026: user requested continuation | 415b2df; earlier checkpoints in Git |
-| M02 | Desktop core | Refine responsive controls, contact aiming, preview/slowdown experiments | In progress | — | — |
+| M02 | Desktop core | Refine responsive controls, contact aiming, preview/slowdown experiments | Awaiting review | — | 0d5f7c0, ecf2090, 1642607; see work record |
 | M03 | Desktop core | Real ball physics, swept collisions and deflections | Not started | — | — |
 | M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Not started | — | — |
 | M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Not started | — | — |
@@ -510,4 +511,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Complete M02 controls/aiming refinement, then stop for review.** M01 is approved by the user's 11 November 2026 request to continue. Follow the current M02 work record and acceptance criteria. Preserve the approved visual direction, GitHub Pages workflow, frequent local commits and user control over pushes and `gh` usage. M03 remains unstarted.
+**Review M02 before proceeding.** Run `pnpm dev`, reload the page and consult `docs/M02_REVIEW.md`. Try Preview only and Both with the same-opening Restart, check the dotted bounce/end forecast and small bat adjustments, and tune mouse sensitivity if needed. M01 is approved; M02 is awaiting review. Request amendments or approve before M03. Preserve the approved visual direction, GitHub Pages workflow, frequent local commits and user control over pushes and `gh` usage.
