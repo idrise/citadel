@@ -283,7 +283,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** Desktop implementation and the latest M07/M08 presentation corrections are locally validated and Awaiting review. The procedural CITADEL title, −/+ controls, Start, floating result/rematch and neon victory fireworks replace landing/result popups; advanced settings remain in Pause by explicit user choice. Menus are camera-relative, remain fixed when player count changes, and darken the arena behind title, win and loss text. Ball colours show last-striker credit and the default human is coral. Independent enemy capsule audio and a finite victory coda are verified. The user requested a plan checkpoint and GitHub Pages setup instructions before the first push; no push is authorised. M06 pacing comparisons, external tester feedback and public-site verification remain pending.
+**Current position:** On 11 November 2026 the user said “I think 7 and 8 are good.” M07 is Approved; the delivered local M08 build is approved, with M08 In progress only for publication and public-site verification. The procedural CITADEL title, −/+ controls, Start, floating result/rematch and neon victory fireworks replace landing/result popups; advanced settings remain in Pause by explicit user choice. Menus are camera-relative, remain fixed when player count changes, and darken the arena behind title, win and loss text. Ball colours show last-striker credit and the default human is coral. Independent enemy capsule audio and a finite victory coda are verified. The user requested GitHub Pages setup instructions before the first push; no push is authorised. M06 pacing comparisons and external tester feedback remain outstanding; M09 is not authorised.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
@@ -293,7 +293,7 @@ Check a milestone only when implemented, validated and approved. A delivered mil
 - [x] **M04** — Physical destruction, revenge serves, elimination and result rules.
 - [x] **M05** — All 2–6-seat layouts and tuned bot difficulties.
 - [ ] **M06** — Spin, multiple balls and pacing decision.
-- [ ] **M07** — Visual legibility, effects, sound and in-arena cues.
+- [x] **M07** — Visual legibility, effects, sound and in-arena cues.
 - [ ] **M08** — Desktop MVP release readiness and playtest validation.
 - [ ] **M09** — Responsive touch interaction.
 - [ ] **M10** — Mobile performance and usability validation.
@@ -343,7 +343,14 @@ When asked to **"do the next milestone"**:
 - **Transition intuition:** Normally 2.8 seconds, smooth easing, maximum fortress translation 6 units/s. Retargets keep the remaining time, adding only what is needed for the speed bound. A convex moving boundary carries live ball floor coordinates without changing flight velocity/spin; targets and physical pieces follow the fortress. Retarget from the current shape after another elimination. Identity/health/serves persist; the final survivor ends the match immediately. Review fairness, intermediate supports, dimensions and difficulty before considering these permanent.
 - **Checkpoints:** `67ddd15` simulation/input; `b63db58` rendering, setup/results, audio compatibility and validation tools; `7618c47` stable bot serve targets during morphs; `80e95b8` minimal/faster wall transitions and full bat reach. No push, deployment or `gh`; the separate AGENTS edit remains unstaged. M06/M07 were unstarted at the M05 handoff.
 
-### Current milestone work record — M07 / M08 scene presentation Awaiting review
+### Current milestone work record — M07 Approved / M08 local build approved, publication pending
+
+**User approval, 11 November 2026:** “I think 7 and 8 are good.” This approves
+M07 and the delivered M08 desktop implementation, including the latest title and
+result legibility corrections. M07 is checked complete. M08 retains its open
+publication/public-verification tasks and is In progress until those are done;
+approval is not evidence of a successful public deployment. External feedback is
+still uncollected. Do not start M09, change pacing, push or deploy from this approval.
 
 **Latest title amendment:** The user accepted the title geometry and requested a
 darker background and placement relative to the camera. `2318be7` separates the
@@ -355,7 +362,7 @@ restoring normal brightness for gameplay. Both composer and direct/reduced paths
 are covered. 282 unit tests and four focused production browser checks pass for
 this correction, following the previous full 27-check run. Native clicks confirm
 identical control bounds across every count. Updated screenshots and layout data:
-`docs/SCENE_PRESENTATION_REVIEW.md`. Awaiting review; no push, deployment or `gh`.
+`docs/SCENE_PRESENTATION_REVIEW.md`. Subsequently approved as recorded above; no push, deployment or `gh`.
 
 **11 November checkpoint — delivered locally:**
 
@@ -374,7 +381,8 @@ identical control bounds across every count. Updated screenshots and layout data
 - [ ] User explicitly authorises the first push. Local commits and this setup checklist do not authorise pushing or manually running a deployment.
 - [ ] After that push, confirm **CI** and **Publish GitHub Pages** succeed, then record the deployment's actual URL and commit.
 - [ ] Verify a freshly opened public URL: assets/audio load, 2/4/6-player selection, Start, captured controls, complete win/loss flow, readable results, Pause settings and rematch. Expected default URL: `https://idrise.github.io/citadel/`; not yet verified live.
-- [ ] Record desktop playtest feedback and the user's M07/M08 approval separately from deployment success. M06 pacing study and M09 touch remain unstarted.
+- [x] Record the user's M07/M08 local-build approval separately from deployment success; received 11 November 2026.
+- [ ] Record external desktop feedback when available. M06 pacing study and M09 touch remain unstarted.
 
 The user rejected the abrupt DOM landing/result panels and requested a procedural
 neon CITADEL title over the arena, +/− selection for 2–6 players, Start, and neon
@@ -402,7 +410,8 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 - [x] Add local-only statistics export and resilient persisted solo preferences.
 - [x] Revalidate Pages workflow/project path against `idrise/citadel`, without push or `gh`. Pages was disabled at the last repository check; its setting has not been refreshed during this plan checkpoint. No public deployment has been verified.
 - [x] Complete local tests, fresh six-seat round/rematch, screenshots/audio evidence and `docs/PLAYTEST.md`; distinguish scripted evidence from tester feedback.
-- [ ] Collect optional external desktop playtests and the user's visual/audio/fun approval. Do not infer approval from passing tests.
+- [x] Receive the user's visual/audio/fun approval of M07 and the local M08 build, 11 November 2026.
+- [ ] Collect optional external desktop playtests; none claimed so far.
 - [ ] Verify the actual public build after publishing is enabled and authorised. No deployment performed in this task.
 
 - **Evidence:** `docs/M07_REVIEW.md`, `docs/M08_REVIEW.md`, `docs/PLAYTEST.md`. Vite+ checks, 258 unit tests in 44 files, Pages build and all 25 native Chromium production checks pass. Three focused software-WebGL checks pass across initial/rerun checks after correcting the quality smoke test's render budget. Fresh six-seat scripted round: 67.69s, human survival 57.58s, zero collision caps; exported JSON reconciles totals. No human timing/retention claim.
@@ -434,8 +443,8 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 | M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Approved | 11 Nov 2026: user requested M05 | 8fe9f47, 711d15d; review docs |
 | M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Approved | 11 Nov 2026: brilliant; user requested M08 | 67ddd15, b63db58, 7618c47, 80e95b8; docs/M05_REVIEW.md |
 | M06 | Solo proof | Spin/ball tuning and evidence-based 2-minute escalation | Not started | — | — |
-| M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Awaiting review | — | f729bd1, 0c84d6b, 551f559; docs/M07_REVIEW.md and docs/SCENE_PRESENTATION_REVIEW.md |
-| M08 | **Desktop validation gate** | Public-ready static solo build, playtests and decision | Awaiting review | — | 643f704, 6727aac, 2318be7, df309ef; docs/SCENE_PRESENTATION_REVIEW.md; local checks complete, Pages setup/first push/public verification and feedback pending |
+| M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Approved | 11 Nov 2026: “I think 7 and 8 are good.” | f729bd1, 0c84d6b, 551f559; docs/M07_REVIEW.md and docs/SCENE_PRESENTATION_REVIEW.md |
+| M08 | **Desktop validation gate** | Public-ready static solo build, playtests and decision | In progress | 11 Nov 2026: local build approved; public verification outstanding | 643f704, 6727aac, 2318be7, df309ef; docs/SCENE_PRESENTATION_REVIEW.md; Pages setup/first push/public verification pending, external feedback uncollected |
 | M09 | Mobile | Touch steering, tap launch and responsive layouts | Not started | — | — |
 | M10 | **Mobile validation gate** | Mobile GPU/performance/accessibility and real-device tests | Not started | — | — |
 | M11 | Multiplayer | WebRTC host/client prototype with local/manual signalling | Not started | — | — |
@@ -610,4 +619,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Prepare the first desktop publication; M07 / M08 remain Awaiting review.** Follow the first-publish checklist above: the owner selects GitHub Actions as the Pages source, then explicitly authorises a push when ready. The existing workflow builds, checks and publishes on `main`. After an authorised publication, verify the actual public build and record its URL/commit and playtest feedback. See `docs/SCENE_PRESENTATION_REVIEW.md` for the delivered scene, audio and legibility evidence. Preserve current pacing; M06/M09 remain unstarted. This plan update does not approve milestones, authorise pushing, manually deploying or using `gh`.
+**Prepare the first desktop publication; M07 is Approved and the local M08 build is approved.** Follow the first-publish checklist above: the owner selects GitHub Actions as the Pages source, then explicitly authorises a push when ready. The existing workflow builds, checks and publishes on `main`. After an authorised publication, verify the actual public build and record its URL/commit; finish M08's release record rather than starting M09. External feedback remains uncollected. See `docs/SCENE_PRESENTATION_REVIEW.md` for the delivered scene, audio and legibility evidence. Preserve current pacing; M06/M09 remain unstarted. The approval does not authorise pushing, manually deploying or using `gh`.
