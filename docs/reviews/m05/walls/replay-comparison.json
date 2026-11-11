@@ -1,0 +1,58 @@
+[
+  {
+    "name": "corner-240",
+    "previousDigest": "15763fcab8ecfa09d93f23d3135c4171149056a68406849ccba4d38153889918",
+    "digest": "15763fcab8ecfa09d93f23d3135c4171149056a68406849ccba4d38153889918",
+    "sameInitialContact": true,
+    "changedEvents": 0,
+    "eventCounts": [40, 40]
+  },
+  {
+    "name": "grazing-120",
+    "previousDigest": "4c304cb75adae65d75ba538a48f16e6d7b0ee407ceb9ef91ed8c846e37c4b785",
+    "digest": "b59017dfb8eadcf694bfe76249e6217adf5dac9168e62974d2c071102f9e5fa3",
+    "sameInitialContact": true,
+    "changedEvents": 3,
+    "eventCounts": [6, 6]
+  },
+  {
+    "name": "swipe-positive",
+    "previousDigest": "b49233a7c1aa8449d7e86a8f99c1fbc58c436ecbd12b022281434ee69a2c9e41",
+    "digest": "8ea723d07bf21c7ca557a4d9258d2baa642c2fee666eb9c5e1fbca058c300099",
+    "sameInitialContact": true,
+    "changedEvents": 0,
+    "eventCounts": [3, 3]
+  },
+  {
+    "name": "swipe-negative",
+    "previousDigest": "fed82e911f5186e66db8802122a59bd9443e242edd75862cd9f59dfe110876ab",
+    "digest": "260ed241948fd9bd27a3bbeeff16b935b6d6208127c747467a202ba45d053790",
+    "sameInitialContact": true,
+    "changedEvents": 0,
+    "eventCounts": [3, 3]
+  },
+  {
+    "name": "health-gap",
+    "previousDigest": "27dc002805fca3f3b99b6890f7077c8f0c387d320eaa1ce7617c348f4076546f",
+    "digest": "6d2a182b8095fb5a0a5b75c1a2bb8f933d0575f0b798981c00ca14f97dd9b3c9",
+    "sameInitialContact": true,
+    "changedEvents": 0,
+    "eventCounts": [1, 1]
+  },
+  {
+    "name": "empty-sector",
+    "previousDigest": "db458e7c38d79def0d69b165575eec28b6579f79c82445ebc2c7aa4734cb40b4",
+    "digest": "01d31e626f9a68c871dcc1a88929cc47480f3d81a59938bb3fc978dbecaf2d24",
+    "sameInitialContact": true,
+    "changedEvents": 2,
+    "eventCounts": [6, 6]
+  },
+  {
+    "name": "eight-curves",
+    "previousDigest": "da0710c24c2a50cf4dece1a267684007b45ea1f48c8bfc59ca7c6038c5e84498",
+    "digest": "da0710c24c2a50cf4dece1a267684007b45ea1f48c8bfc59ca7c6038c5e84498",
+    "sameInitialContact": true,
+    "changedEvents": 0,
+    "eventCounts": [112, 112]
+  }
+]

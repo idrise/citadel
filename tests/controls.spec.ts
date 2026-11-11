@@ -30,8 +30,8 @@ test("aid modes and sensitivity survive restart and every human fortress", async
     await page.clock.runFor(300);
     const angle = Number(await page.getByLabel("Bat angle", { exact: true }).textContent());
     const base = [-45, -135, 135, 45][Number(seat)]!;
-    expect(angle - base).toBeGreaterThan(20);
-    expect(angle - base).toBeLessThan(27.5);
+    expect(angle - base).toBeGreaterThan(28.5);
+    expect(angle - base).toBeLessThan(29.6);
     await pause(page);
     await settings(page);
   }

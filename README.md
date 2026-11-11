@@ -3,8 +3,9 @@
 A local-first paddle arena, built with strict TypeScript, React, Three.js and Vite+.
 Choose 2–6 fortresses: one human versus 1–5 bots, with physical health pieces,
 revenge serves, timed ball additions and rematch. The arena gradually changes
-shape as players fall. M01–M04 are approved; M05 layouts/difficulties/morphs are
-[awaiting review](docs/M05_REVIEW.md).
+shape as players fall, normally over 2.8 seconds. M01–M04 are approved; M05 layouts/difficulties/morphs are
+[awaiting review](docs/M05_REVIEW.md). The latest [wall/reach revision](docs/M05_WALL_REVIEW.md)
+reduces transition travel and lets the bat reach both end walls in every layout.
 
 ## Develop
 

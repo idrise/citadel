@@ -1,6 +1,8 @@
 # M05 — 2–6 seats and a changing arena
 
-Status: **Awaiting review**, 11 November 2026. M03/M04 are approved to advance;
+Status: **Awaiting review**, 11 November 2026. **Latest amendments:**
+[Wall rendering, faster catch-up and bat reach](M05_WALL_REVIEW.md) supersede
+the original transition/range behavior described below. M03/M04 are approved to advance;
 the music detour was accepted for now. This milestone includes the user's added
 request for the board to change shape gradually after elimination. M06 remains
 unstarted: default ball speed, interval/cap, spin and optional relief are retained.
@@ -30,7 +32,7 @@ moves remain readable/defendable during a morph, whether the rectangle feels too
 narrow, and whether the three difficulties feel usefully different. Automated
 rounds below establish operation, not human enjoyment or approval.
 
-## Shared geometry and transitions
+## Initial shared geometry and transitions (see revision above)
 
 A per-match polygon now supplies the walls, fortress anchors, inward bisectors,
 rail limits, spawn/serve positions, aiming, forecasts and physical colliders.
@@ -97,7 +99,7 @@ Music now has six separate player parts. A scheduler guard skips overdue notes
 if the main thread stalls, preventing repeated mono attacks at one native audio
 time; this does not alter gameplay or the authored musical grid.
 
-## Validation actually run
+## Initial validation (latest checks in the revision above)
 
 - `pnpm check`: formatting, lint and strict types pass without warnings.
 - `pnpm test`: **235 tests in 37 files pass**. Added coverage includes every

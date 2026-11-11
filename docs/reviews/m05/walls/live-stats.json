@@ -1,0 +1,24 @@
+{
+  "kind": "Actual six-to-five gameplay; fast-forwarded normally to first elimination, then resumed for real-time capture. Music muted. Emulated RAF is not a native performance benchmark.",
+  "samples": [
+    {
+      "second": 1,
+      "arena": "5",
+      "survivors": "5",
+      "transition": "moving"
+    },
+    {
+      "second": 3,
+      "arena": "5",
+      "survivors": "5",
+      "transition": "settled"
+    },
+    {
+      "second": 8,
+      "arena": "5",
+      "survivors": "5",
+      "transition": "settled"
+    }
+  ],
+  "errors": []
+}
