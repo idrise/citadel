@@ -11,12 +11,12 @@ function blocked(
   velocity: Vec2,
   time: number,
 ): boolean {
-  if (sweepWalls(position, velocity, time).length) return true;
+  if (sweepWalls(position, velocity, time, state.arena).length) return true;
   for (const defender of state.players) {
     if (!alive(defender)) continue;
     if (
       defender.id !== seat &&
-      sweepPaddle(position, velocity, defender.id, defender.angle, 0, time)
+      sweepPaddle(position, velocity, defender.id, defender.angle, 0, time, state.arena)
     )
       return true;
     for (let index = 0; index < defender.pieces.length; index++) {
@@ -31,7 +31,7 @@ function blocked(
 
 /** Nominal arrival estimate for pressure relief. Curved shots use the shared fixed-step flight model. */
 export function pressureArrival(state: MatchState, ball: BallState, seat: number, horizon: number) {
-  const anchor = fortress(seat).anchor;
+  const anchor = fortress(seat, state.arena).anchor;
   const offset = sub(ball.position, anchor);
   const speed = length(ball.velocity);
   const radius = ARENA.railRadius + 0.4;

@@ -14,11 +14,11 @@ export function approachSlowdown(
   if (enabled)
     for (const player of state.players) {
       if (!alive(player)) continue;
-      const delta = sub(ball.position, fortress(player.id).anchor);
+      const delta = sub(ball.position, fortress(player.id, state.arena).anchor);
       const distance = length(delta);
       const nearAngle =
-        Math.abs(angleDifference(angleOf(delta), fortress(player.id).direction)) <
-        ARENA.sectorHalfAngle;
+        Math.abs(angleDifference(angleOf(delta), fortress(player.id, state.arena).direction)) <
+        fortress(player.id, state.arena).halfAngle;
       const pendingLimit = ARENA.railRadius + 0.4 + length(ball.velocity) * PRESSURE_HORIZON;
       if (
         nearAngle &&

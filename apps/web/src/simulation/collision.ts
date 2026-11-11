@@ -1,4 +1,5 @@
-import { ARENA, batCentre } from "./arena";
+import { ARENA, batCentre, SQUARE_ARENA, type ArenaGeometry } from "./arena";
+import { polygonEdges } from "./polygon";
 import {
   add,
   angleDifference,
@@ -46,24 +47,22 @@ export function sweepCircle(
   };
 }
 
-export function sweepWalls(position: Vec2, velocity: Vec2, duration: number): Contact[] {
-  const limit = ARENA.halfSize - ARENA.ballRadius;
+export function sweepWalls(
+  position: Vec2,
+  velocity: Vec2,
+  duration: number,
+  arena: ArenaGeometry = SQUARE_ARENA,
+): Contact[] {
   const contacts: Contact[] = [];
-  for (const axis of ["x", "y"] as const) {
-    const speed = velocity[axis];
-    if (Math.abs(speed) < EPS) continue;
-    const sign = Math.sign(speed);
-    const outside = Math.abs(position[axis]) > limit && Math.sign(position[axis]) === sign;
-    const time = outside ? 0 : (sign * limit - position[axis]) / speed;
-    if (time >= -EPS && time <= duration + EPS) {
-      contacts.push({
-        time: Math.max(0, time),
-        normal: axis === "x" ? { x: -sign, y: 0 } : { x: 0, y: -sign },
-        separation: outside ? Math.abs(position[axis]) - limit : 0,
-      });
-    }
+  for (const { start, normal } of polygonEdges(arena.vertices)) {
+    const distance = dot(sub(position, start), normal) - ARENA.ballRadius;
+    const speed = dot(velocity, normal);
+    if (speed >= -EPS) continue;
+    const time = distance <= 0 ? 0 : -distance / speed;
+    if (time >= -EPS && time <= duration + EPS)
+      contacts.push({ time: Math.max(0, time), normal, separation: Math.max(0, -distance) });
   }
-  return contacts;
+  return contacts.sort((a, b) => Math.abs(b.normal.x) - Math.abs(a.normal.x));
 }
 
 /** Radial faces are exact circles; moving rounded ends use their short fixed-tick chords. */
@@ -74,9 +73,10 @@ export function sweepPaddle(
   angle: number,
   angularVelocity: number,
   duration: number,
+  arena: ArenaGeometry = SQUARE_ARENA,
 ): PaddleContact | null {
-  const anchor = batCentre(seat, angle);
-  const finishCentre = batCentre(seat, angle + angularVelocity * duration);
+  const anchor = batCentre(seat, angle, arena);
+  const finishCentre = batCentre(seat, angle + angularVelocity * duration, arena);
   const centreVelocity =
     duration > 0 ? scale(sub(finishCentre, anchor), 1 / duration) : { x: 0, y: 0 };
   const relative = sub(position, anchor);

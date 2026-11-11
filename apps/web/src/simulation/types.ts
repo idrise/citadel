@@ -1,3 +1,4 @@
+import type { ArenaGeometry } from "./arena";
 import type { Vec2 } from "./vector";
 import type { BatSwipe } from "./flight";
 
@@ -55,7 +56,9 @@ export interface GameEvent {
   returnTo?: Vec2;
   impact?: ImpactDetails;
 }
+export type BotDifficulty = "beginner" | "standard" | "expert";
 export interface MatchOptions {
+  botDifficulty?: BotDifficulty;
   humanSeat: number;
   slowdown: boolean;
   serveTimeout: number;
@@ -63,7 +66,16 @@ export interface MatchOptions {
   ballInterval: number;
   maxBalls: number;
 }
+export interface ArenaMorph {
+  from: ArenaGeometry;
+  to: ArenaGeometry;
+  elapsed: number;
+  duration: number;
+}
 export interface MatchState {
+  arena: ArenaGeometry;
+  morph: ArenaMorph | null;
+  eliminations: { seat: number; elapsed: number }[];
   tick: number;
   elapsed: number;
   countdown: number;

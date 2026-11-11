@@ -12,9 +12,9 @@ export function pressureReliefBalls(state: MatchState, seat: number): Set<number
   const relief = new Set<number>();
   const player = state.players[seat];
   if (!player || !alive(player)) return relief;
-  const home = fortress(seat);
-  const low = clampPaddleAngle(seat, home.direction - 1),
-    high = clampPaddleAngle(seat, home.direction + 1);
+  const home = fortress(seat, state.arena);
+  const low = clampPaddleAngle(seat, home.direction - 1, state.arena),
+    high = clampPaddleAngle(seat, home.direction + 1, state.arena);
   const threats = state.balls
     .flatMap((ball) => {
       if (ball.phase !== "active") return [];

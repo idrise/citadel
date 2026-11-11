@@ -60,7 +60,7 @@ export function predictReturn(
   for (const source of state.balls) {
     if (
       source.phase !== "active" ||
-      length(sub(source.position, fortress(seat).anchor)) > PREVIEW_ACTIVATION_RADIUS
+      length(sub(source.position, fortress(seat, state.arena).anchor)) > PREVIEW_ACTIVATION_RADIUS
     )
       continue;
     const ball: BallState = {
@@ -129,14 +129,16 @@ function guideContact(
   distance: number,
   ignoreSeat: number,
 ): GuideContact | undefined {
-  const contacts: GuideContact[] = sweepWalls(start, direction, distance).map((hit) => ({
-    ...hit,
-    wall: true,
-  }));
+  const contacts: GuideContact[] = sweepWalls(start, direction, distance, state.arena).map(
+    (hit) => ({
+      ...hit,
+      wall: true,
+    }),
+  );
   for (const player of state.players) {
     if (!alive(player)) continue;
     if (player.id !== ignoreSeat) {
-      const hit = sweepPaddle(start, direction, player.id, player.angle, 0, distance);
+      const hit = sweepPaddle(start, direction, player.id, player.angle, 0, distance, state.arena);
       if (hit) contacts.push({ ...hit, wall: false });
     }
     for (let piece = 0; piece < player.pieces.length; piece++) {

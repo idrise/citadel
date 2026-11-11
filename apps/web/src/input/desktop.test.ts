@@ -1,11 +1,17 @@
 import { afterEach, expect, it, vi } from "vite-plus/test";
-import { clampPaddleAngle, fortress, railPosition } from "../simulation/arena";
+import {
+  clampPaddleAngle,
+  fortress,
+  railPosition,
+  SQUARE_ARENA,
+  type ArenaGeometry,
+} from "../simulation/arena";
 import { createMatch, stepMatch } from "../simulation/match";
 import { scale, unit } from "../simulation/vector";
 import { createDesktopInput, MOUSE_RADIANS_PER_PIXEL } from "./desktop";
 
 afterEach(() => vi.unstubAllGlobals());
-function inputFixture(seat = 0) {
+function inputFixture(seat = 0, geometry: () => ArenaGeometry = () => SQUARE_ARENA) {
   const canvas = new EventTarget() as HTMLCanvasElement;
   const windowEvents = new EventTarget();
   const documentEvents = Object.assign(new EventTarget(), {
@@ -23,7 +29,7 @@ function inputFixture(seat = 0) {
   });
   vi.stubGlobal("window", windowEvents);
   vi.stubGlobal("document", documentEvents);
-  let currentAngle = fortress(seat).direction;
+  let currentAngle = fortress(seat, geometry()).direction;
   let sensitivity = 1;
   const lost = vi.fn();
   const controls = createDesktopInput(
@@ -33,6 +39,7 @@ function inputFixture(seat = 0) {
     vi.fn(),
     lost,
     () => sensitivity,
+    geometry,
   );
   const move = (amount: number) =>
     canvas.dispatchEvent(Object.assign(new Event("mousemove"), { movementX: amount }));
@@ -287,5 +294,28 @@ it("handles legacy pointer-lock errors and synchronous capture failures", () => 
   input.controls.capture();
   input.documentEvents.dispatchEvent(new Event("pointerlockerror"));
   expect(input.lost).toHaveBeenCalledTimes(2);
+  input.controls.dispose();
+});
+
+it("carries a captured relative target with a moving fortress without synthesising mouse motion", async () => {
+  let geometry = structuredClone(SQUARE_ARENA);
+  const input = inputFixture(0, () => geometry);
+  input.controls.capture();
+  await Promise.resolve();
+  input.move(25);
+  const before = input.controls.read().targetAngle!;
+  geometry = {
+    ...geometry,
+    fortresses: geometry.fortresses.map((seat) => ({ ...seat, direction: seat.direction + 0.3 })),
+  };
+  expect(input.controls.read().targetAngle).toBeCloseTo(before + 0.3);
+  expect(input.controls.read().targetAngle).toBeCloseTo(before + 0.3);
+  input.move(10);
+  expect(input.controls.read().targetAngle).toBeCloseTo(
+    before + 0.3 + 10 * MOUSE_RADIANS_PER_PIXEL,
+  );
+  input.controls.clear();
+  input.setAngle(fortress(0, geometry).direction);
+  expect(input.controls.read().targetAngle).toBeNull();
   input.controls.dispose();
 });

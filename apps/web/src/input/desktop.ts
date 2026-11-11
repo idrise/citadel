@@ -1,4 +1,4 @@
-import { clampPaddleAngle, fortress } from "../simulation/arena";
+import { clampPaddleAngle, fortress, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
 import { IDLE_INTENT, type PlayerIntent } from "../simulation/types";
 
 export const MOUSE_RADIANS_PER_PIXEL = 0.004;
@@ -11,6 +11,7 @@ export function createDesktopInput(
   togglePause: () => void,
   lostCapture: () => void,
   sensitivity: () => number = () => 1,
+  geometry: () => ArenaGeometry = () => SQUARE_ARENA,
 ) {
   const keys = new Set<string>();
   let angle: number | null = null;
@@ -18,8 +19,12 @@ export function createDesktopInput(
   let disposed = false;
   let captureWanted = false;
   let captureEpoch = 0;
-  const lower = clampPaddleAngle(seat, fortress(seat).direction - Math.PI / 2);
-  const upper = clampPaddleAngle(seat, fortress(seat).direction + Math.PI / 2);
+  let base = fortress(seat, geometry()).direction;
+  function rebase() {
+    const next = fortress(seat, geometry()).direction;
+    if (angle !== null) angle = clampPaddleAngle(seat, angle + next - base, geometry());
+    base = next;
+  }
   const abort = new AbortController();
   const options = { signal: abort.signal };
   function clear() {
@@ -31,14 +36,19 @@ export function createDesktopInput(
     "mousemove",
     (event) => {
       if (document.pointerLockElement !== canvas || !Number.isFinite(event.movementX)) return;
+      rebase();
       const configured = sensitivity();
       const multiplier = Number.isFinite(configured) ? Math.max(0.5, Math.min(2, configured)) : 1;
-      angle = Math.max(
-        lower,
-        Math.min(
-          upper,
-          (angle ?? currentAngle()) + event.movementX * MOUSE_RADIANS_PER_PIXEL * multiplier,
+      angle = clampPaddleAngle(
+        seat,
+        Math.max(
+          clampPaddleAngle(seat, base - 2, geometry()),
+          Math.min(
+            clampPaddleAngle(seat, base + 2, geometry()),
+            (angle ?? currentAngle()) + event.movementX * MOUSE_RADIANS_PER_PIXEL * multiplier,
+          ),
         ),
+        geometry(),
       );
     },
     options,
@@ -130,6 +140,7 @@ export function createDesktopInput(
       if (document.pointerLockElement === canvas) document.exitPointerLock();
     },
     read(): PlayerIntent {
+      rebase();
       const steer =
         Number(keys.has("ArrowRight") || keys.has("KeyD")) -
         Number(keys.has("ArrowLeft") || keys.has("KeyA"));

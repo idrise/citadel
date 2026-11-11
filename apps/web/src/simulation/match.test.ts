@@ -1,3 +1,5 @@
+import { polygonEdges } from "./polygon";
+import { dot } from "./vector";
 import { describe, expect, it } from "vite-plus/test";
 import { ARENA, FIXED_DT, fortress, railPosition } from "./arena";
 import { createMatch, stepMatch } from "./match";
@@ -169,8 +171,10 @@ it("seeded all-bot rounds reach a winner without stuck balls or collision-loop c
       const ball = state.balls[0];
       if (ball) {
         expect(Number.isFinite(ball.position.x + ball.position.y)).toBe(true);
-        expect(Math.abs(ball.position.x)).toBeLessThan(ARENA.halfSize);
-        expect(Math.abs(ball.position.y)).toBeLessThan(ARENA.halfSize);
+        for (const { start, normal } of polygonEdges(state.arena.vertices))
+          expect(
+            dot({ x: ball.position.x - start.x, y: ball.position.y - start.y }, normal),
+          ).toBeGreaterThanOrEqual(ARENA.ballRadius - 1e-6);
       }
     }
     durations.push(state.elapsed);
@@ -274,8 +278,10 @@ describe("timed multi-ball pressure", () => {
       state = stepMatch(state, IDLE_INTENT, options);
       replay = stepMatch(replay, IDLE_INTENT, options);
       for (const ball of state.balls) {
-        expect(Math.abs(ball.position.x)).toBeLessThan(ARENA.halfSize);
-        expect(Math.abs(ball.position.y)).toBeLessThan(ARENA.halfSize);
+        for (const { start, normal } of polygonEdges(state.arena.vertices))
+          expect(
+            dot({ x: ball.position.x - start.x, y: ball.position.y - start.y }, normal),
+          ).toBeGreaterThanOrEqual(ARENA.ballRadius - 1e-6);
         if (ball.phase === "ready") expect(alive(state.players[ball.seat]!)).toBe(true);
       }
     }

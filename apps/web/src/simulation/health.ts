@@ -1,10 +1,11 @@
-import { ARENA, fortress } from "./arena";
+import { ARENA, fortress, SQUARE_ARENA, type ArenaGeometry } from "./arena";
 import { HEALTH_GROWTH_PER_LOSS, healthFormation } from "./health-layout";
 import type { PieceBody, PlayerState } from "./types";
-import { add, clamp, length, normalise, scale, sub } from "./vector";
+import { containCircle } from "./polygon";
+import { add, length, normalise, scale, sub } from "./vector";
 
-export function createPieceBodies(seat: number): PieceBody[] {
-  return fortress(seat).pieces.map((position) => ({
+export function createPieceBodies(seat: number, arena: ArenaGeometry = SQUARE_ARENA): PieceBody[] {
+  return fortress(seat, arena).pieces.map((position) => ({
     position: { ...position },
     velocity: { x: 0, y: 0 },
     radius: ARENA.pieceRadius,
@@ -12,12 +13,21 @@ export function createPieceBodies(seat: number): PieceBody[] {
 }
 
 /** Deterministic damped attraction, with soft separation and a bounded speed. */
-export function stepHealth(player: PlayerState, dt: number): void {
+export function stepHealth(
+  player: PlayerState,
+  dt: number,
+  arena: ArenaGeometry = SQUARE_ARENA,
+): void {
   const indices = player.health.flatMap((intact, index) => (intact ? [index] : []));
   if (!indices.length) return;
   const radius = ARENA.pieceRadius * (1 + (ARENA.pieces - indices.length) * HEALTH_GROWTH_PER_LOSS);
-  const seat = fortress(player.id);
-  const targets = healthFormation(seat.anchor, seat.direction, indices.length, radius);
+  const seat = fortress(player.id, arena);
+  const inset = Math.max(0, (Math.PI / 4 - seat.halfAngle) / (Math.PI / 12)) * 0.6;
+  const anchor = add(
+    seat.anchor,
+    scale({ x: Math.cos(seat.direction), y: Math.sin(seat.direction) }, inset),
+  );
+  const targets = healthFormation(anchor, seat.direction, indices.length, radius);
   const forces = indices.map((index, rank) => {
     const body = player.pieces[index]!;
     return sub(scale(sub(targets[rank]!, body.position), 28), scale(body.velocity, 10));
@@ -40,12 +50,10 @@ export function stepHealth(player: PlayerState, dt: number): void {
     body.velocity = add(body.velocity, scale(forces[rank]!, dt));
     if (length(body.velocity) > 2.2) body.velocity = scale(normalise(body.velocity), 2.2);
     body.position = add(body.position, scale(body.velocity, dt));
-    const limit = ARENA.halfSize - body.radius - 0.03;
-    const x = clamp(body.position.x, -limit, limit),
-      y = clamp(body.position.y, -limit, limit);
-    if (x !== body.position.x) body.velocity.x = 0;
-    if (y !== body.position.y) body.velocity.y = 0;
-    body.position = { x, y };
+    const contained = containCircle(body.position, body.radius + 0.03, arena.vertices);
+    if (Math.abs(contained.x - body.position.x) > 1e-9) body.velocity.x = 0;
+    if (Math.abs(contained.y - body.position.y) > 1e-9) body.velocity.y = 0;
+    body.position = contained;
   });
 }
 

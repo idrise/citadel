@@ -39,13 +39,15 @@ export function advanceBall(
     const { seat, factor } = approachSlowdown(state, ball, options.slowdown);
     ball.slowSeat = seat;
     const velocity = scale(ball.velocity, factor);
-    const contacts: Impact[] = sweepWalls(ball.position, velocity, remaining).map((contact) => ({
-      ...contact,
-      type: "wall",
-      seat: -1,
-      piece: -1,
-      offset: 0,
-    }));
+    const contacts: Impact[] = sweepWalls(ball.position, velocity, remaining, state.arena).map(
+      (contact) => ({
+        ...contact,
+        type: "wall",
+        seat: -1,
+        piece: -1,
+        offset: 0,
+      }),
+    );
     for (const player of state.players) {
       if (!alive(player)) continue;
       const before = previousAngles[player.id] ?? player.angle;
@@ -59,6 +61,7 @@ export function advanceBall(
             before + angularVelocity * elapsed,
             angularVelocity,
             remaining,
+            state.arena,
           );
       if (paddle) contacts.push({ ...paddle, type: "paddle", seat: player.id, piece: -1 });
       player.pieces.forEach((body, piece) => {

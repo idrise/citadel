@@ -1,4 +1,12 @@
-import { ARENA, FIXED_DT, FORTRESSES, clampPaddleAngle, railPosition } from "./arena";
+import {
+  ARENA,
+  FIXED_DT,
+  createArena,
+  clampPaddleAngle,
+  railPosition,
+  type PlayerCount,
+} from "./arena";
+import { beginArenaMorph, stepArenaMorph } from "./arena-morph";
 import { createPieceBodies, stepHealth } from "./health";
 import { advanceBall } from "./ball";
 import { botIntent } from "./bots";
@@ -15,21 +23,25 @@ import {
 import { angleDifference, clamp } from "./vector";
 import { rememberSwipe } from "./flight";
 
-export function createMatch(seed = 1): MatchState {
+export function createMatch(seed = 1, count: PlayerCount = 4): MatchState {
+  const arena = createArena(count);
   const state: MatchState = {
+    arena,
+    morph: null,
+    eliminations: [],
     tick: 0,
     elapsed: 0,
     countdown: 1.5,
     phase: "countdown",
     rng: seed >>> 0,
     nextBallId: 1,
-    players: FORTRESSES.map((seat) => ({
+    players: arena.fortresses.map((seat) => ({
       id: seat.id,
       angle: seat.direction,
       health: Array<boolean>(ARENA.pieces).fill(true),
-      pieces: createPieceBodies(seat.id),
+      pieces: createPieceBodies(seat.id, arena),
     })),
-    bots: FORTRESSES.map((seat) => ({
+    bots: arena.fortresses.map((seat) => ({
       targetAngle: seat.direction,
       reactionAt: 0,
       serveDelay: 0.65,
@@ -44,7 +56,7 @@ export function createMatch(seed = 1): MatchState {
   state.bots.forEach((bot) => {
     bot.serveDelay += sample(state) * 0.45;
   });
-  state.balls = [readyBall(state, Math.floor(sample(state) * 4))];
+  state.balls = [readyBall(state, Math.floor(sample(state) * count))];
   return state;
 }
 
@@ -78,14 +90,15 @@ export function stepMatch(
       }))
       .sort((a, b) => a.id - b.id),
     stats: { ...previous.stats },
+    eliminations: [...previous.eliminations],
   };
+  beginArenaMorph(state);
+  if (state.phase === "playing") stepArenaMorph(state, dt);
   const inputs = state.players.map((player) =>
-    player.id === options.humanSeat ? human : botIntent(state, player.id),
+    player.id === options.humanSeat ? human : botIntent(state, player.id, options.botDifficulty),
   );
-  const previousPieces = previous.players.map((player) =>
-    player.pieces.map((body) => body.position),
-  );
-  state.players.forEach((player) => stepHealth(player, dt));
+  const previousPieces = state.players.map((player) => player.pieces.map((body) => body.position));
+  state.players.forEach((player) => stepHealth(player, dt, state.arena));
   const previousAngles = state.players.map((player) => player.angle);
   state.players.forEach((player, seat) => {
     if (!alive(player)) {
@@ -98,10 +111,14 @@ export function stepMatch(
       input.targetAngle !== null && Number.isFinite(input.targetAngle)
         ? input.targetAngle
         : player.angle + clamp(input.steer || 0, -1, 1) * ARENA.paddleSpeed * dt;
-    const difference = angleDifference(clampPaddleAngle(seat, requested), player.angle);
+    const difference = angleDifference(
+      clampPaddleAngle(seat, requested, state.arena),
+      player.angle,
+    );
     player.angle = clampPaddleAngle(
       seat,
       player.angle + clamp(difference, -ARENA.paddleSpeed * dt, ARENA.paddleSpeed * dt),
+      state.arena,
     );
     player.swipe = rememberSwipe(player.swipe, (player.angle - before) / dt, dt);
   });
@@ -120,6 +137,7 @@ export function stepMatch(
         ball.seat,
         state.players[ball.seat]!.angle,
         ARENA.railRadius + 0.4 + queueIndex * ARENA.ballRadius * 2.3,
+        state.arena,
       );
       if (state.phase !== "playing") continue;
       ball.age += dt;

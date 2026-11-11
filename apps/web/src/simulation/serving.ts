@@ -33,21 +33,21 @@ export function emit(
 }
 export function readyBall(state: MatchState, seat: number, id = 0): BallState {
   const player = state.players[seat];
-  const angle = player?.angle ?? fortress(seat).direction;
+  const angle = player?.angle ?? fortress(seat, state.arena).direction;
   return {
     id,
     phase: "ready",
     seat,
     age: 0,
-    position: railPosition(seat, angle, ARENA.railRadius + 0.4),
+    position: railPosition(seat, angle, ARENA.railRadius + 0.4, state.arena),
     velocity: { x: 0, y: 0 },
     slowSeat: null,
     spin: 0,
   };
 }
 export function launchBall(state: MatchState, ball: BallState, options: MatchOptions): void {
-  const angle = state.players[ball.seat]?.angle ?? fortress(ball.seat).direction;
-  ball.velocity = scale(serveDirection(ball.seat, angle), options.ballSpeed);
+  const angle = state.players[ball.seat]?.angle ?? fortress(ball.seat, state.arena).direction;
+  ball.velocity = scale(serveDirection(ball.seat, angle, state.arena), options.ballSpeed);
   ball.phase = "active";
   ball.slowSeat = null;
   ball.spin = 0;
@@ -69,7 +69,10 @@ export function damagePiece(
     radius: player.pieces[piece]!.radius,
     ...(impact ? { impact } : {}),
   });
-  if (!alive(player)) emit(state, "elimination", ball.position, seat, null, { ballId: ball.id });
+  if (!alive(player)) {
+    state.eliminations.push({ seat, elapsed: state.elapsed });
+    emit(state, "elimination", ball.position, seat, null, { ballId: ball.id });
+  }
   const survivors = state.players.filter(alive);
   if (survivors.length <= 1) {
     state.phase = "finished";
