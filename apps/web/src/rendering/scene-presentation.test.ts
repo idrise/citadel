@@ -4,7 +4,7 @@ import { createNeonLettering } from "./neon-lettering";
 import { createSceneMenu } from "./scene-menu";
 import { createVictoryFireworks } from "./victory-fireworks";
 import { disposeScene } from "./dispose-scene";
-import { createMenuOverlay, TITLE_BACKGROUND_GAIN } from "./menu-overlay";
+import { createMenuOverlay, MENU_BACKGROUND_GAIN } from "./menu-overlay";
 
 it("builds CITADEL as low-polygon solid bevelled geometry with the arena neon shader", () => {
   const text = createNeonLettering("CITADEL", 2.15),
@@ -102,20 +102,25 @@ it("keeps the same camera-relative title/control layout through every player cou
   disposeScene(camera);
 });
 
-it("dims only the title's world background and restores normal exposure for play and victory", () => {
-  const overlay = createMenuOverlay(),
-    state = { mode: "title" as const, count: 4, elapsed: 0, reduced: false };
-  overlay.update(state, 0, 1280, 900);
-  expect(overlay.backgroundGain).toBe(TITLE_BACKGROUND_GAIN);
-  expect(TITLE_BACKGROUND_GAIN).toBeLessThan(0.3);
-  expect(overlay.dimmer.enabled).toBe(true);
-  expect(overlay.visible).toBe(true);
-  overlay.update({ ...state, mode: "hidden" }, 2, 1280, 900);
-  expect(overlay.backgroundGain).toBe(1);
-  expect(overlay.dimmer.enabled).toBe(false);
-  expect(overlay.visible).toBe(false);
-  overlay.update({ ...state, mode: "victory", reduced: true }, 0, 1280, 900);
-  expect(overlay.backgroundGain).toBe(1);
-  expect(overlay.visible).toBe(true);
-  overlay.dispose();
-});
+it.each(["title", "victory", "defeat"] as const)(
+  "dims the %s background while keeping its foreground visible and restores normal play",
+  (mode) => {
+    const overlay = createMenuOverlay(),
+      state = { mode, count: 4, elapsed: 0, reduced: false };
+    overlay.update(state, 0, 1280, 900);
+    expect(overlay.backgroundGain).toBe(MENU_BACKGROUND_GAIN);
+    expect(MENU_BACKGROUND_GAIN).toBeLessThan(0.3);
+    expect(overlay.dimmer.enabled).toBe(true);
+    expect(overlay.visible).toBe(true);
+    overlay.update({ ...state, mode: "hidden" }, 2, 1280, 900);
+    expect(overlay.backgroundGain).toBe(1);
+    expect(overlay.dimmer.enabled).toBe(false);
+    expect(overlay.visible).toBe(false);
+    overlay.update(state, 0.5, 1280, 900);
+    expect(overlay.backgroundGain).toBeLessThan(0.2);
+    overlay.update({ ...state, reduced: true }, 0, 1280, 900);
+    expect(overlay.backgroundGain).toBe(MENU_BACKGROUND_GAIN);
+    expect(overlay.visible).toBe(true);
+    overlay.dispose();
+  },
+);

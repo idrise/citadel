@@ -11,7 +11,8 @@ same foreground camera projects the invisible accessible click targets.
 The title's world background uses 0.14 linear gain while the foreground retains
 its neon brightness. Starting play smoothly restores normal world gain; reduced
 effects uses the direct renderer with a black veil and immediate transitions.
-Gameplay and victory retain normal brightness. The foreground is composited after
+Gameplay retains normal brightness; win and loss menus now dim their backgrounds
+too, following the owner's readability feedback. The foreground is composited after
 the world and does not appear in the arena's floor reflections.
 
 Current screenshots: [2 players](reviews/m08/anchored-menu/title-2.png),
@@ -26,8 +27,15 @@ the same pixel, idle camera movement and successful Start capture. At 1280×900,
 Start remains **x505, y298, 271×49 px**. No page errors. Unit checks also cover
 different camera poses, responsive bounds and brightness restoration.
 
-Current validation: **280 unit tests / 48 files**, **27 production native Chromium
-checks**, Vite+ check and `/citadel/` build pass. Initial JS is 919.17 kB / 253.66 kB
+The end-of-round correction is rendered in [High](reviews/m08/anchored-menu/victory-high.png)
+and [Low](reviews/m08/anchored-menu/victory-low.png). All visible menu modes share
+the dimming; hiding the menu restores normal play. Fireworks continue behind the
+bright foreground text. Regression tests cover title, win and loss, including
+returning from gameplay and reduced effects.
+
+Current validation: **282 unit tests / 48 files**, **four focused production native
+Chromium checks**, Vite+ check and `/citadel/` build pass. The previous camera-layout
+revision passed the full 27-check run. Initial JS is 919.17 kB / 253.66 kB
 gzip; the existing large-chunk warning remains. No physics, sound, pacing or input
 rules changed. Local commits only; no push or deployment. Current title screenshots
 supersede the earlier world-anchored title placement below. The earlier winning

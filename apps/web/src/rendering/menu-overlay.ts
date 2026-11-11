@@ -13,7 +13,7 @@ import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { createSceneMenu, type SceneMenuState, type SceneAction } from "./scene-menu";
 import { disposeScene } from "./dispose-scene";
 
-export const TITLE_BACKGROUND_GAIN = 0.14;
+export const MENU_BACKGROUND_GAIN = 0.14;
 /** A camera-mounted 3D foreground. The arena keeps its own camera and exposure. */
 export function createMenuOverlay() {
   const scene = new Scene(),
@@ -56,7 +56,7 @@ export function createMenuOverlay() {
       return gain;
     },
     update(state: SceneMenuState, dt: number, width: number, height: number) {
-      const target = state.mode === "title" ? TITLE_BACKGROUND_GAIN : 1;
+      const target = state.mode === "hidden" ? 1 : MENU_BACKGROUND_GAIN;
       gain =
         initial || state.reduced
           ? target

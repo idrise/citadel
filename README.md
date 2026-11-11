@@ -32,7 +32,9 @@ bots and any human fortress. Two seats use a rectangle, then triangle, square,
 pentagon and hexagon. Eliminations gradually move walls and surviving fortresses
 to the new layout, preserving health and relative steering. Wins celebrate in the
 arena with neon fireworks, a musical closing phrase and a floating **AGAIN** button.
-Other results show **ROUND OVER** in the scene. Pause has optional Round statistics
+Other results show **ROUND OVER** in the scene.
+Both win and loss text retain the title's darkened backdrop while the foreground
+lettering stays bright. Pause has optional Round statistics
 and **Export round** for a local JSON summary; nothing is uploaded. How to play and
 version/build details stay in Pause.
 

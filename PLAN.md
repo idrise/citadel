@@ -348,10 +348,12 @@ When asked to **"do the next milestone"**:
 **Latest title amendment:** The user accepted the title geometry and requested a
 darker background and placement relative to the camera. `2318be7` separates the
 camera-mounted 3D foreground from arena framing, so changing 2–6-player layouts
-and background camera motion cannot move the controls. Title-only world dimming
-leaves the lettering bright and restores normal gameplay/victory brightness.
-Both composer and direct/reduced paths are covered. 280 unit tests and all 27
-production native browser checks pass; native clicks at the same pixel confirm
+and background camera motion cannot move the controls. The user subsequently found
+end-of-round text unreadable because dimming was title-only. Title, win and loss
+menus now share the darker backdrop, keeping foreground lettering bright and
+restoring normal brightness for gameplay. Both composer and direct/reduced paths
+are covered. 282 unit tests and four focused production browser checks pass for
+this correction, following the previous full 27-check run. Native clicks confirm
 identical control bounds across every count. Updated screenshots and layout data:
 `docs/SCENE_PRESENTATION_REVIEW.md`. Awaiting review; no push, deployment or `gh`.
 
