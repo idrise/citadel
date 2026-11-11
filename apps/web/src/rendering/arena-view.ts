@@ -43,7 +43,7 @@ export function createArenaView(humanSeat = 0) {
         effects.emit(event, options.reducedEffects);
         lastEvent = event.id;
       }
-      effects.update(dt);
+      effects.update(dt, options.reducedEffects, state);
       balls.update(state, options.reducedEffects);
       guide.hide();
       const defender = state.players[options.humanSeat];
