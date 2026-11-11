@@ -1,0 +1,76 @@
+import { expect, test } from "@playwright/test";
+import { choosePlayers, openGame, openSettings, play, pause } from "./helpers";
+
+test("the procedural title uses bounded 3D count controls and keyboard Start, with settings confined to pause", async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(120000);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await openGame(page, false);
+  await expect(page.locator(".menu-panel")).toHaveCount(0);
+  await page.screenshot({ path: testInfo.outputPath("title-4.png") });
+  await choosePlayers(page, 2);
+  await expect(page.getByRole("button", { name: "Decrease players", exact: true })).toBeDisabled();
+  await page.screenshot({ path: testInfo.outputPath("title-2.png") });
+  await choosePlayers(page, 6);
+  await expect(page.getByRole("button", { name: "Increase players", exact: true })).toBeDisabled();
+  await page.screenshot({ path: testInfo.outputPath("title-6.png") });
+  await page.getByRole("button", { name: "Start", exact: true }).focus();
+  await page.keyboard.press("Enter");
+  await expect.poll(() => page.evaluate(() => Boolean(document.pointerLockElement))).toBe(true);
+  await expect(page.locator(".scene-controls")).toBeHidden();
+  await page.clock.runFor(200);
+  await pause(page);
+  await openSettings(page);
+  await expect(page.getByLabel("Effects quality", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Resume", exact: true }).click();
+  await expect(page.locator(".menu-panel")).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test("a real human win keeps the arena alive for neon fireworks and scene rematch without a popup", async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(240000);
+  await page.setViewportSize({ width: 800, height: 600 });
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await openGame(page, false);
+  await choosePlayers(page, 2);
+  await openSettings(page);
+  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+  // Keep full motion/fireworks, but bound the controlled-clock render cost.
+  await page.getByLabel("Effects quality", { exact: true }).selectOption("low");
+  await play(page);
+  const owners = new Set<string>();
+  for (
+    let seconds = 0;
+    seconds < 120 &&
+    (await page.getByLabel("Round phase", { exact: true }).textContent()) !== "finished";
+    seconds += 1
+  ) {
+    await page.clock.runFor(1000);
+    const owner = (await page.getByLabel("Ball 0 owner", { exact: true }).allTextContents())[0];
+    if (owner) owners.add(owner);
+  }
+  await expect(page.getByLabel("Round winner", { exact: true })).toHaveText("You win");
+  await expect(page.locator(".menu-panel,.game-overlay")).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => document.pointerLockElement === null)).toBe(true);
+  expect(owners.has("Coral")).toBe(true);
+  expect(owners.has("Amber")).toBe(true);
+  const stats = await page.locator(".diagnostics").textContent();
+  const before = await page.screenshot({ path: testInfo.outputPath("victory-early.png") });
+  await page.clock.runFor(1100);
+  const after = await page.screenshot({ path: testInfo.outputPath("victory-fireworks.png") });
+  expect(before.equals(after)).toBe(false);
+  expect(await page.locator(".diagnostics").textContent()).toBe(stats);
+  await page.clock.runFor(3500);
+  const rematch = page.getByRole("button", { name: "Rematch", exact: true });
+  await expect(rematch).toBeVisible();
+  await rematch.click();
+  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Player count", { exact: true })).toHaveText("2");
+  expect(errors).toEqual([]);
+});

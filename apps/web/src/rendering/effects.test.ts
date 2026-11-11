@@ -5,6 +5,7 @@ import type { GameEvent } from "../simulation/types";
 import { createEffects } from "./effects";
 import { disposeScene } from "./dispose-scene";
 import { createBallView } from "./ball-view";
+import { SEATS } from "./palette";
 
 const hit: GameEvent = {
   id: 1,
@@ -17,6 +18,25 @@ const hit: GameEvent = {
   radius: 0.32,
   returnTo: { x: 1, y: 1 },
 };
+it("tints each active ball and trail with its last striker, while ready balls use the revenge recipient", () => {
+  const root = new Group(),
+    balls = createBallView(root),
+    state = createMatch();
+  const ball = state.balls[0]!;
+  ball.phase = "active";
+  balls.update(state, false, 20, new Map([[ball.id, 2]]));
+  const mesh = root.children.find((p) => p.name === "game-ball") as Mesh;
+  expect((mesh.material as import("three").MeshStandardMaterial).color.getHex()).toBe(
+    SEATS[2]!.colour,
+  );
+  ball.phase = "ready";
+  ball.seat = 1;
+  balls.update(state, false, 20, new Map([[ball.id, 2]]));
+  expect((mesh.material as import("three").MeshStandardMaterial).color.getHex()).toBe(
+    SEATS[1]!.colour,
+  );
+  disposeScene(root);
+});
 it("keeps ball/trail transforms finite with the zero-trail quality budget", () => {
   const root = new Group(),
     balls = createBallView(root),

@@ -2,9 +2,8 @@ import { createRoundObserver } from "../session/round-observer";
 import type { PlayerCount } from "../simulation/arena";
 import { useEffect, useRef, useState } from "react";
 import { createSession, type GameSession, type SessionSnapshot } from "../session/session";
-import { SEATS } from "../rendering/palette";
 import { createMatch } from "../simulation/match";
-import { GameMenu } from "./GameMenu";
+import { PauseMenu } from "./PauseMenu";
 import { AccessibleStatus } from "./AccessibleStatus";
 import type { GameSettings } from "../session/settings";
 
@@ -32,6 +31,9 @@ export function GamePanel({
   const container = useRef<HTMLDivElement>(null);
   const session = useRef<GameSession | null>(null);
   const [unavailable, setUnavailable] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const callbacks = useRef({ onCount, onRematch });
+  callbacks.current = { onCount, onRematch };
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => ({
     state: createMatch(seed, count),
     paused: true,
@@ -39,6 +41,8 @@ export function GamePanel({
     notice: "",
     totals: createRoundObserver(count).snapshot(),
     initialSettings: null,
+    endingTime: 0,
+    ballOwners: new Map(),
     music: {
       status: "idle",
       section: "intro",
@@ -53,7 +57,21 @@ export function GamePanel({
   useEffect(() => {
     if (!container.current) return;
     try {
-      const game = createSession(container.current, seed, humanSeat, setSnapshot, count);
+      const game = createSession(
+        container.current,
+        seed,
+        humanSeat,
+        setSnapshot,
+        count,
+        (action) => {
+          if (action === "options") setSettingsOpen(true);
+          if (action === "decrease")
+            callbacks.current.onCount(Math.max(2, count - 1) as PlayerCount);
+          if (action === "increase")
+            callbacks.current.onCount(Math.min(6, count + 1) as PlayerCount);
+          if (action === "rematch") callbacks.current.onRematch();
+        },
+      );
       session.current = game;
       return () => {
         game.dispose();
@@ -66,17 +84,10 @@ export function GamePanel({
   useEffect(() => {
     session.current?.configure(settings);
   }, [settings]);
-  const mode = !snapshot.started
-    ? "start"
-    : snapshot.state.phase === "finished"
-      ? "result"
-      : snapshot.paused
-        ? "paused"
-        : null;
-  const winner =
-    snapshot.state.winner === humanSeat
-      ? "You survived."
-      : `${snapshot.state.winner === null ? "Nobody" : SEATS[snapshot.state.winner]!.name} wins.`;
+  const mode =
+    settingsOpen || (snapshot.started && snapshot.paused && snapshot.state.phase !== "finished")
+      ? "paused"
+      : null;
   return (
     <>
       <div className="viewport" ref={container} />
@@ -87,22 +98,23 @@ export function GamePanel({
         </div>
       ) : (
         mode && (
-          <GameMenu
-            mode={mode}
+          <PauseMenu
             count={count}
             onCount={onCount}
             state={snapshot.state}
             totals={snapshot.totals}
             seed={seed}
             initialSettings={snapshot.initialSettings ?? settings}
-            winner={winner}
             humanSeat={humanSeat}
             settings={settings}
             musicStatus={snapshot.music.status}
             onSettings={onSettings}
             onSeat={onSeat}
-            onRestart={mode === "result" ? onRematch : onRestart}
-            onPlay={() => (mode === "start" ? session.current?.start() : session.current?.resume())}
+            onRestart={onRestart}
+            onResume={() => {
+              setSettingsOpen(false);
+              session.current?.resume();
+            }}
           />
         )
       )}

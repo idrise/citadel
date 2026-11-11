@@ -17,6 +17,30 @@ export function AccessibleStatus({
         mouse and pauses.
       </p>
       <output aria-label="Round phase">{state.phase}</output>
+      <output aria-label="Round winner" aria-live="polite">
+        {state.phase === "finished"
+          ? state.winner === humanSeat
+            ? "You win"
+            : `${state.winner === null ? "Nobody" : SEATS[state.winner]!.name} wins`
+          : ""}
+      </output>
+      <output aria-label="Round presentation">
+        {!snapshot.started
+          ? "title"
+          : state.phase === "finished"
+            ? snapshot.endingTime < 3.5
+              ? "celebrating"
+              : "result"
+            : snapshot.paused
+              ? "paused"
+              : "playing"}
+      </output>
+      {state.balls.map((ball) => (
+        <output key={ball.id} aria-label={`Ball ${ball.id} owner`}>
+          {SEATS[ball.phase === "ready" ? ball.seat : (snapshot.ballOwners.get(ball.id) ?? -1)]
+            ?.name ?? "Unclaimed"}
+        </output>
+      ))}
       <output aria-label="Arena players">{state.arena.count}</output>
       <output aria-label="Arena transition">{state.morph ? "moving" : "settled"}</output>
       <output aria-label="Survivors">

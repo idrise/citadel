@@ -36,6 +36,10 @@ it("credits the last real return across walls, with independent multiball owners
     ],
   });
   expect(events).toEqual(before);
+  expect(observer.owners().get(0)).toBe(0);
+  expect(observer.owners().get(1)).toBe(4);
+  (observer.owners() as Map<number, number>).set(0, 5);
+  expect(observer.owners().get(0)).toBe(0);
   expect(observer.observe(events)).toEqual([]);
 });
 it("resets credit on revenge launch and distinguishes self hits, unknown credit and eliminating hits", () => {

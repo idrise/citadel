@@ -1,3 +1,4 @@
+import { openSettings, play } from "./helpers";
 import { expect, test, type Page } from "@playwright/test";
 
 test.use({ viewport: { width: 480, height: 360 } });
@@ -62,7 +63,7 @@ test("synthesised music unlocks on Play, becomes audible, pauses, mutes, and clo
       () => (window as unknown as { audioReview: AudioReview }).audioReview.contexts.length,
     ),
   ).toBe(0);
-  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await play(page);
   await expect(page.getByLabel("Music status", { exact: true })).toHaveText("playing");
   await expect.poll(() => outputLevel(page), { timeout: 10000 }).toBeGreaterThan(0.002);
   await page.keyboard.press("Escape");
@@ -72,12 +73,12 @@ test("synthesised music unlocks on Play, becomes audible, pauses, mutes, and clo
   await expect(page.getByLabel("Music status", { exact: true })).toHaveText("playing");
   await expect.poll(() => outputLevel(page)).toBeGreaterThan(0.002);
   await page.keyboard.press("Escape");
-  await page.getByText("Settings", { exact: true }).click();
+  await openSettings(page);
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
   await page.getByRole("checkbox", { name: "Beat lighting", exact: true }).uncheck();
   await page.getByLabel("Music volume", { exact: true }).fill("0.25");
   await page.getByRole("button", { name: "Restart", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
   await expect
     .poll(() =>
       page.evaluate(() =>
@@ -87,14 +88,14 @@ test("synthesised music unlocks on Play, becomes audible, pauses, mutes, and clo
       ),
     )
     .toBe(true);
-  await page.getByText("Settings", { exact: true }).click();
+  await openSettings(page);
   await expect(page.getByRole("checkbox", { name: "Music", exact: true })).not.toBeChecked();
   await expect(
     page.getByRole("checkbox", { name: "Beat lighting", exact: true }),
   ).not.toBeChecked();
   await expect(page.getByLabel("Music volume", { exact: true })).toHaveValue("0.25");
-  await page.getByText("Settings", { exact: true }).click();
-  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await openSettings(page);
+  await play(page);
   await expect(page.getByLabel("Music status", { exact: true })).toHaveText("off");
   await expect.poll(() => outputLevel(page)).toBeLessThan(0.0001);
   expect(errors).toEqual([]);
@@ -109,7 +110,7 @@ test("unavailable audio leaves captured gameplay playable", async ({ page }) => 
     } as unknown as typeof AudioContext;
   });
   await page.goto("./");
-  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await play(page);
   await expect(page.getByLabel("Music status", { exact: true })).toHaveText("unavailable");
   await expect.poll(() => page.evaluate(() => Boolean(document.pointerLockElement))).toBe(true);
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
@@ -122,10 +123,10 @@ test("an arriving second ball introduces the second musical layer in the real au
 }) => {
   test.setTimeout(30000);
   await page.goto("./");
-  await page.getByText("Settings", { exact: true }).click();
+  await openSettings(page);
   await page.getByLabel("Ball addition interval", { exact: true }).fill("5");
-  await page.getByText("Settings", { exact: true }).click();
-  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await openSettings(page);
+  await play(page);
   await expect(page.getByLabel("Music layers", { exact: true })).toHaveText("1");
   await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("2", {
     timeout: 12000,

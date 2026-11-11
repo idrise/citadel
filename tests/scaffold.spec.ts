@@ -19,7 +19,7 @@ test("production game fills the viewport and refreshes under the Pages path", as
   expect(bounds.width).toBe(page.viewportSize()!.width);
   expect(bounds.height).toBe(page.viewportSize()!.height);
   await page.reload();
-  await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
   await expect(page.locator("canvas")).toHaveCount(1);
   expect(errors).toEqual([]);
   await page.screenshot({ path: testInfo.outputPath("fullscreen-start.png") });
@@ -38,7 +38,7 @@ test("active play is pure canvas without the surrounding HUD or text", async ({ 
 test("narrow windows fit without cropping the canvas or scrolling", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 740 });
   await page.goto("./");
-  await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
   const bounds = (await page.locator("canvas").boundingBox())!;
   expect(bounds.width).toBe(360);
   expect(bounds.height).toBe(740);

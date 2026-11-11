@@ -9,7 +9,8 @@ import {
 } from "three";
 import { ARENA } from "../simulation/arena";
 import type { MatchState } from "../simulation/types";
-import { createSpinView, spinColour, spinStrength } from "./spin-view";
+import { createSpinView, spinStrength } from "./spin-view";
+import { SEATS } from "./palette";
 
 export function createBallView(root: Group) {
   const sphere = new SphereGeometry(ARENA.ballRadius, 16, 12);
@@ -41,7 +42,7 @@ export function createBallView(root: Group) {
     mesh.name = "game-ball";
     mesh.castShadow = true;
     root.add(mesh);
-    const occluded = new Mesh(sphere, occludedMaterial);
+    const occluded = new Mesh(sphere, occludedMaterial.clone());
     occluded.name = "occluded-ball";
     occluded.renderOrder = 10;
     root.add(occluded);
@@ -64,17 +65,27 @@ export function createBallView(root: Group) {
     };
   });
   ballMaterial.dispose();
+  occludedMaterial.dispose();
   trailMaterial.dispose();
   let lastTick = -1;
   return {
-    update(state: MatchState, reduced: boolean, trailLimit = 20) {
+    update(
+      state: MatchState,
+      reduced: boolean,
+      trailLimit = 20,
+      owners?: ReadonlyMap<number, number>,
+    ) {
       balls.forEach((view, index) => {
         const active = state.balls[index];
         const strength = spinStrength(active?.spin ?? 0);
-        const colour = spinColour(active?.spin ?? 0);
+        const owner =
+          active?.phase === "ready" ? active.seat : active ? owners?.get(active.id) : undefined;
+        const colour = owner === undefined ? 0xe4f7ff : SEATS[owner]!.colour;
         view.tailMaterial.color.setHex(colour);
-        view.material.color.setHex(0xffffff).lerp(view.tailMaterial.color, strength * 0.3);
-        view.material.emissive.setHex(0xcfeaff).lerp(view.tailMaterial.color, strength * 0.6);
+        view.material.color.setHex(colour);
+        view.material.emissive.setHex(colour);
+        view.material.emissiveIntensity = 0.85;
+        view.occluded.material.color.setHex(colour);
         view.tailMaterial.opacity = 0.22 + strength * 0.25;
         view.spin.update(active, state.tick, reduced);
         view.mesh.visible = Boolean(active);

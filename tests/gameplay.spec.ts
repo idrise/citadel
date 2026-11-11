@@ -26,9 +26,9 @@ test("captured controls, focus pause, timed balls and restart work", async ({ pa
   await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("2");
   await pause(page);
   await page.getByRole("button", { name: "Restart", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
   await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("1");
-  for (const seat of ["Cyan", "Amber", "Violet", "Rose"])
+  for (const seat of ["Coral", "Amber", "Violet", "Rose"])
     await expect(page.getByLabel(`${seat} health`, { exact: true })).toHaveText("8");
 });
 
@@ -49,10 +49,11 @@ test("a complete seeded round reaches results and rematches without state edits"
   for (let elapsed = 33; elapsed < 240 && !(await rematch.isVisible()); elapsed += 15)
     await page.clock.runFor(15000);
   await expect(rematch).toBeVisible();
-  await expect(page.getByRole("heading", { name: /wins\.|You survived\./ })).toBeVisible();
+  await expect(page.locator(".menu-panel")).toHaveCount(0);
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("finished");
   await expect.poll(() => page.evaluate(() => document.pointerLockElement === null)).toBe(true);
   await rematch.click();
-  await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 });
 

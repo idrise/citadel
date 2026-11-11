@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { openGame, play, pause } from "./helpers";
+import { openGame, play, pause, openSettings } from "./helpers";
 
 test("perspective walls and reflected bloom render, with a reduced-effects path", async ({
   page,
@@ -15,7 +15,7 @@ test("perspective walls and reflected bloom render, with a reduced-effects path"
   await page.clock.runFor(1800);
   await page.screenshot({ path: testInfo.outputPath("perspective-neon.png") });
   await pause(page);
-  await page.getByText("Settings", { exact: true }).click();
+  await openSettings(page);
   const stats = await page.locator(".diagnostics").textContent();
   await page.getByRole("checkbox", { name: "Reduced effects" }).check();
   await page.clock.runFor(150);

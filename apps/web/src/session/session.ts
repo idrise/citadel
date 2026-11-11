@@ -9,6 +9,7 @@ import { alive, type GameEvent, type MatchState } from "../simulation/types";
 import { createFixedClock } from "./fixed-clock";
 import { createSettings, matchOptions, type GameSettings } from "./settings";
 import { createGameMusic, type MusicSnapshot } from "../audio/music-session";
+import type { SceneAction } from "../rendering/scene-menu";
 
 export interface SessionSnapshot {
   state: MatchState;
@@ -18,6 +19,8 @@ export interface SessionSnapshot {
   music: MusicSnapshot;
   totals: RoundTotals;
   initialSettings: GameSettings | null;
+  endingTime: number;
+  ballOwners: ReadonlyMap<number, number>;
 }
 export function createSession(
   container: HTMLElement,
@@ -25,13 +28,25 @@ export function createSession(
   humanSeat: number,
   onSnapshot: (snapshot: SessionSnapshot) => void,
   count: PlayerCount = 4,
+  onSceneAction: (action: SceneAction) => void = () => {},
 ) {
   let state = createMatch(seed, count);
-  const viewport = createViewport(container, humanSeat, state.arena);
+  const viewport = createViewport(container, humanSeat, state.arena, (action) => {
+    if (action === "start") start();
+    else {
+      if (action === "options") {
+        menuSuppressed = true;
+        setPaused(true);
+      }
+      onSceneAction(action);
+    }
+  });
   const clock = createFixedClock();
   const observer = createRoundObserver(count);
   let paused = true;
   let started = false;
+  let endingTime = 0;
+  let menuSuppressed = false;
   let notice = "Defend your eight pieces. Last fortress standing wins.";
   let settings = createSettings(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   let initialSettings: GameSettings | null = null;
@@ -47,15 +62,19 @@ export function createSession(
       notice,
       totals: observer.snapshot(),
       initialSettings,
+      endingTime,
+      ballOwners: observer.owners(),
       music: music.snapshot(),
     });
   const setPaused = (value: boolean) => {
     paused = value;
+    if (started && state.phase !== "finished") menuSuppressed = value;
     if (value) music.silence();
     else music.setPlaying(started && state.phase !== "finished");
     input.clear();
     if (value) input.release();
     clock.reset();
+    present([], 0);
     report();
   };
   const input = createDesktopInput(
@@ -99,17 +118,8 @@ export function createSession(
       observed,
     );
     music.setPlaying(started && !paused && state.phase !== "finished");
-    const musicVisuals = music.visuals();
-    const view: ViewOptions = {
-      humanSeat,
-      quality: settings.effectsQuality,
-      preview: settings.preview,
-      slowdown: settings.slowdown,
-      reducedEffects: settings.reducedEffects,
-      musicPulse: settings.musicLights ? musicVisuals.pulse : 0,
-      musicWave: settings.musicLights ? musicVisuals.phase : -1,
-    };
-    viewport.render({ ...state, events: observed }, paused && started ? 0 : delta, view);
+    if (started && state.phase === "finished" && !paused) endingTime += delta;
+    present(observed, paused && started ? 0 : delta);
     if (state.phase === "finished") input.release();
     if (timestamp - lastReport > 80 || events.some((event) => event.type === "victory")) {
       lastReport = timestamp;
@@ -117,25 +127,63 @@ export function createSession(
     }
     frame = requestAnimationFrame(animate);
   };
+  function present(events: GameEvent[], dt: number) {
+    const musicVisuals = music.visuals();
+    const view: ViewOptions = {
+      humanSeat,
+      ballOwners: observer.owners(),
+      menu: {
+        mode: menuSuppressed
+          ? "hidden"
+          : !started
+            ? "title"
+            : state.phase === "finished"
+              ? state.winner === humanSeat
+                ? "victory"
+                : "defeat"
+              : "hidden",
+        count,
+        elapsed: endingTime,
+        reduced: settings.reducedEffects,
+      },
+      quality: settings.effectsQuality,
+      preview: settings.preview,
+      slowdown: settings.slowdown,
+      reducedEffects: settings.reducedEffects,
+      musicPulse: settings.musicLights ? musicVisuals.pulse : 0,
+      musicWave: settings.musicLights ? musicVisuals.phase : -1,
+    };
+    viewport.render({ ...state, events }, dt, view);
+  }
+  present([], 0);
   frame = requestAnimationFrame(animate);
   report();
+  const start = () => {
+    initialSettings ??= { ...settings };
+    started = true;
+    menuSuppressed = false;
+    music.unlock();
+    setPaused(false);
+    input.capture();
+  };
   return {
-    start() {
-      initialSettings ??= { ...settings };
-      started = true;
-      music.unlock();
-      setPaused(false);
-      input.capture();
-    },
+    start,
     pause: () => setPaused(true),
     resume() {
+      menuSuppressed = false;
+      if (!started) {
+        present([], 0);
+        report();
+        return;
+      }
       music.unlock();
       setPaused(false);
-      input.capture();
+      if (state.phase !== "finished") input.capture();
     },
     configure(next: GameSettings) {
       settings = next;
       music.configure(next);
+      present([], 0);
     },
     dispose() {
       cancelAnimationFrame(frame);

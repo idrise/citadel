@@ -1,0 +1,55 @@
+import type { SceneAction, SceneControl } from "../rendering/scene-menu";
+
+/** Invisible semantic hit targets follow the actual 3D buttons under the live camera. */
+export function createSceneControls(
+  container: HTMLElement,
+  onAction: (action: SceneAction) => void,
+  onHover: (action: SceneAction | null) => void,
+) {
+  const root = document.createElement("nav");
+  root.className = "scene-controls";
+  root.setAttribute("aria-label", "Arena menu");
+  container.append(root);
+  const buttons = new Map<SceneAction, HTMLButtonElement>();
+  for (const [action, label] of [
+    ["start", "Start"],
+    ["decrease", "Decrease players"],
+    ["increase", "Increase players"],
+    ["options", "Settings"],
+    ["rematch", "Rematch"],
+  ] as const) {
+    const button = document.createElement("button");
+    button.setAttribute("aria-label", label);
+    button.hidden = true;
+    button.onclick = () => onAction(action);
+    button.onmouseenter = button.onfocus = () => onHover(action);
+    button.onmouseleave = button.onblur = () => onHover(null);
+    root.append(button);
+    buttons.set(action, button);
+  }
+  const count = document.createElement("output");
+  count.className = "sr-only";
+  count.setAttribute("aria-label", "Player count");
+  root.append(count);
+  return {
+    update(controls: readonly SceneControl[], players: number) {
+      count.textContent = String(players);
+      root.hidden = controls.length === 0;
+      for (const [action, button] of buttons) {
+        const item = controls.find((control) => control.action === action);
+        button.hidden = !item;
+        if (!item) continue;
+        button.disabled = item.disabled;
+        Object.assign(button.style, {
+          left: `${item.left}px`,
+          top: `${item.top}px`,
+          width: `${item.width}px`,
+          height: `${item.height}px`,
+        });
+      }
+    },
+    dispose() {
+      root.remove();
+    },
+  };
+}

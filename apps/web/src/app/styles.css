@@ -31,6 +31,25 @@ body,
   height: 100%;
   outline: none;
 }
+.scene-controls {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.scene-controls button {
+  position: absolute;
+  pointer-events: auto;
+  opacity: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}
+.scene-controls button:disabled {
+  cursor: default;
+}
+[hidden] {
+  display: none !important;
+}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -176,13 +195,6 @@ input[type="range"] {
   margin: 10px 0 0;
 }
 
-.players-choice {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
 .menu-hint {
   font-size: 0.8rem;
   opacity: 0.7;
@@ -206,47 +218,6 @@ input[type="range"] {
   cursor: pointer;
 }
 
-.game-overlay[data-mode="start"] .menu-panel,
-.game-overlay[data-mode="result"] .menu-panel {
-  width: min(360px, 100%);
-}
-.menu-brand {
-  margin-bottom: 1.5rem;
-}
-.menu-brand h2 {
-  margin: 0.4rem 0 0.75rem;
-  font-size: 1.65rem;
-  letter-spacing: 0.18em;
-  font-weight: 350;
-}
-.menu-brand h2 strong {
-  display: block;
-  font-weight: 650;
-  color: #9af1f7;
-}
-.menu-brand p {
-  margin: 0;
-  font-size: 0.8rem;
-  color: #a5c6d9;
-  line-height: 1.5;
-}
-.menu-brand .menu-kicker {
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: #66ccd8;
-  font-size: 0.65rem;
-  text-align: center;
-}
-.menu-brand > p:last-child {
-  text-align: center;
-}
-.players-choice select {
-  max-width: 70%;
-  padding: 0.4rem;
-  border: 1px solid #355566;
-  border-radius: 4px;
-  background: #101e2d;
-}
 .game-help {
   font-size: 0.75rem;
   color: #a5c6d9;

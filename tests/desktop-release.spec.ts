@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
-import { openGame, play, pause } from "./helpers";
+import { openGame, play, pause, openSettings, choosePlayers } from "./helpers";
 
 test("fresh six-seat desktop round exports an honest local result and resets on rematch", async ({
   page,
@@ -10,13 +10,14 @@ test("fresh six-seat desktop round exports an honest local result and resets on 
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await openGame(page);
-  await page.getByLabel("Players", { exact: true }).selectOption("6");
+  await choosePlayers(page, 6);
+  await openSettings(page);
   await page.getByText("How to play", { exact: true }).click();
   await expect(page.getByText(/Desktop preview · v0.1.0/)).toBeVisible();
-  await page.getByText("Settings", { exact: true }).click();
+  await openSettings(page);
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
   await page.getByLabel("Your fortress", { exact: true }).selectOption("5");
-  const playButton = page.getByRole("button", { name: "Play", exact: true });
+  const playButton = page.getByRole("button", { name: "Start", exact: true });
   await playButton.focus();
   await page.keyboard.press("Enter");
   await expect.poll(() => page.evaluate(() => Boolean(document.pointerLockElement))).toBe(true);
@@ -28,7 +29,9 @@ test("fresh six-seat desktop round exports an honest local result and resets on 
   for (let seconds = 0; seconds < 240 && !(await rematch.isVisible()); seconds += 2)
     await page.clock.runFor(2000);
   await expect(rematch).toBeVisible();
+  await expect(page.locator(".menu-panel")).toHaveCount(0);
   await expect(page.locator("canvas")).toHaveCount(1);
+  await openSettings(page);
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Export round", exact: true }).click();
   const download = await downloadPromise;
@@ -64,13 +67,11 @@ test("fresh six-seat desktop round exports an honest local result and resets on 
   // The download click may scroll a short viewport; capture the full result at desktop size.
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.clock.runFor(100);
-  await page.locator(".menu-panel").evaluate((panel) => {
-    panel.scrollTop = 0;
-  });
+  await page.getByRole("button", { name: "Resume", exact: true }).click();
   await expect(rematch).toBeInViewport();
   await page.screenshot({ path: testInfo.outputPath("desktop-results.png") });
   await rematch.click();
-  await expect(page.getByLabel("Players", { exact: true })).toHaveValue("6");
+  await expect(page.getByLabel("Player count", { exact: true })).toHaveText("6");
   await expect(page.getByLabel("Your pieces broken", { exact: true })).toHaveText("0");
   await play(page);
   await page.clock.runFor(300);
@@ -86,25 +87,25 @@ test("solo preferences survive refresh, and every quality preset remains playabl
   await openGame(page, false);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.getByLabel("Players", { exact: true }).selectOption("6");
-  await page.getByText("Settings", { exact: true }).click();
+  await choosePlayers(page, 6);
+  await openSettings(page);
   await page.getByLabel("Effects quality", { exact: true }).selectOption("medium");
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
   await page.getByLabel("Your fortress", { exact: true }).selectOption("5");
   await page.reload();
-  await expect(page.getByLabel("Players", { exact: true })).toHaveValue("6");
-  await page.getByText("Settings", { exact: true }).click();
+  await expect(page.getByLabel("Player count", { exact: true })).toHaveText("6");
+  await openSettings(page);
   await expect(page.getByLabel("Your fortress", { exact: true })).toHaveValue("5");
   await expect(page.getByLabel("Effects quality", { exact: true })).toHaveValue("medium");
   await expect(page.getByRole("checkbox", { name: "Music", exact: true })).not.toBeChecked();
   // Run the countdown cheaply; exercise the actual full presets in bounded frame samples below.
   await page.getByLabel("Effects quality", { exact: true }).selectOption("low");
-  await page.getByText("Settings", { exact: true }).click();
+  await openSettings(page);
   await play(page);
   await page.clock.runFor(1800);
   for (const quality of ["low", "medium", "high"]) {
     await pause(page);
-    await page.getByText("Settings", { exact: true }).click();
+    await openSettings(page);
     await page.getByLabel("Effects quality", { exact: true }).selectOption(quality);
     await page.getByRole("button", { name: "Resume", exact: true }).click();
     await page.clock.runFor(100);

@@ -55,5 +55,8 @@ export function createRoundObserver(count: number) {
     snapshot(): RoundTotals {
       return { players: players.map((p) => ({ ...p })), peakBalls };
     },
+    owners(): ReadonlyMap<number, number> {
+      return new Map(strikers);
+    },
   };
 }

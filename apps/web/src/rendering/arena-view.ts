@@ -10,12 +10,15 @@ import { arcMesh } from "./arc";
 import { SEATS } from "./palette";
 import { effectsProfile, type EffectsQuality } from "./quality";
 import { createAimGuide } from "./aim-guide";
+import type { SceneMenuState } from "./scene-menu";
 
 export interface ViewOptions {
   preview: boolean;
   slowdown: boolean;
   reducedEffects: boolean;
   humanSeat: number;
+  ballOwners?: ReadonlyMap<number, number>;
+  menu?: SceneMenuState;
   quality?: EffectsQuality;
   musicPulse?: number;
   musicWave?: number;
@@ -89,7 +92,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         lastEvent = event.id;
       }
       effects.update(dt, options.reducedEffects, state, profile.shards, profile.sparks);
-      balls.update(state, options.reducedEffects, profile.trails);
+      balls.update(state, options.reducedEffects, profile.trails, options.ballOwners);
       guide.hide();
       const defender = state.players[options.humanSeat];
       if (!defender || !alive(defender)) return;

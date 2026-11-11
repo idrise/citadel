@@ -1,10 +1,8 @@
 import { expect, test } from "@playwright/test";
-import { openGame, play, pause } from "./helpers";
+import { openGame, play, pause, openSettings } from "./helpers";
 
 async function settings(page: import("@playwright/test").Page) {
-  const details = page.locator(".settings-menu");
-  if (!(await details.evaluate((element) => element.hasAttribute("open"))))
-    await page.getByText("Settings", { exact: true }).click();
+  await openSettings(page);
 }
 
 test("aid modes and sensitivity survive restart and every human fortress", async ({ page }) => {
@@ -24,7 +22,7 @@ test("aid modes and sensitivity survive restart and every human fortress", async
     await expect(page.getByLabel("Aiming assistance", { exact: true })).toHaveValue("both");
     await expect(page.getByLabel("Mouse sensitivity", { exact: true })).toHaveValue("1.6");
     await expect(page.getByRole("checkbox", { name: "Reduced effects" })).toBeChecked();
-    await page.getByText("Settings", { exact: true }).click();
+    await openSettings(page);
     await play(page);
     await page.mouse.move(790, 300);
     await page.clock.runFor(300);
@@ -59,5 +57,5 @@ test("restart repeats the same opening and resize does not steer captured input"
   await pause(page);
   await page.getByRole("button", { name: "Restart", exact: true }).click();
   expect(await page.locator(".diagnostics").textContent()).toBe(opening);
-  await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
 });

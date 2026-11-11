@@ -21,12 +21,17 @@ import { lightArena } from "./lighting";
 import { createWorldGrid } from "./world-grid";
 import { effectsProfile } from "./quality";
 import { musicLight } from "./music-light";
+import { createSceneMenu, type SceneAction } from "./scene-menu";
+import { createSceneControls } from "../input/scene-controls";
+import { createVictoryFireworks } from "./victory-fireworks";
+import { SEATS } from "./palette";
 
 /** Owns camera, projection and graphics resources. Gameplay stays in the simulation. */
 export function createViewport(
   container: HTMLElement,
   humanSeat = 0,
   initial: ArenaGeometry = SQUARE_ARENA,
+  onSceneAction: (action: SceneAction) => void = () => {},
 ) {
   const renderer = new WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -44,11 +49,15 @@ export function createViewport(
   const arena = createArenaView(humanSeat, initial);
   const worldGrid = createWorldGrid();
   scene.add(arena.root, worldGrid);
+  const menu = createSceneMenu(scene);
+  const fireworks = createVictoryFireworks(scene);
+  const controls = createSceneControls(container, onSceneAction, (action) => menu.hover(action));
   const disposeLighting = lightArena(scene, initial);
   const disposeEnvironment = createNeonEnvironment(renderer, scene, initial);
   const camera = createArenaCamera(humanSeat, initial);
   const motion = createCameraMotion(camera);
   let aspect = 1;
+  let menuBlend = 1;
   const bounds = new Box3().setFromObject(arena.root);
   // Frame the playing surface and wall tops; the structural plinth may extend below the view.
   bounds.min.y = 0;
@@ -107,6 +116,22 @@ export function createViewport(
         new Vector3(p.x * 1.09, 0, p.y * 1.09),
         new Vector3(p.x * 1.09, 2.34, p.y * 1.09),
       ]);
+      const menuState = options.menu ?? {
+        mode: "hidden" as const,
+        count: state.players.length,
+        elapsed: 0,
+        reduced: options.reducedEffects,
+      };
+      const targetBlend = menuState.mode === "hidden" ? 0 : 1;
+      menuBlend = options.reducedEffects
+        ? targetBlend
+        : menuBlend + (targetBlend - menuBlend) * (1 - Math.exp(-Math.max(dt, 0) * 5));
+      if (menuBlend > 0.001)
+        framingPoints.push(
+          ...menu.framing(camera).map((p) => new Vector3(0, 2.34, 0).lerp(p, menuBlend)),
+        );
+      if (menuState.mode === "victory")
+        framingPoints.push(new Vector3(-8, 10, 0), new Vector3(8, 10, 0));
       bounds.makeEmpty();
       for (const p of state.arena.vertices) {
         bounds.expandByPoint(new Vector3(p.x * 1.09, 0, p.y * 1.09));
@@ -114,6 +139,17 @@ export function createViewport(
       }
       fitArenaCamera(camera, bounds, aspect, framingPoints);
       arena.update(state, dt, options);
+      fireworks.update(
+        dt,
+        state.phase === "finished" && state.winner === humanSeat,
+        options.reducedEffects,
+        SEATS[humanSeat]!.colour,
+        options.quality,
+      );
+      controls.update(
+        menu.update(menuState, camera, container.clientWidth, container.clientHeight),
+        state.players.length,
+      );
       const pulse = options.musicPulse ?? 0;
       worldGrid.material.uniforms.musicGain!.value = musicLight(
         pulse,
@@ -126,6 +162,7 @@ export function createViewport(
     },
     dispose() {
       observer.disconnect();
+      controls.dispose();
       bloom.dispose();
       arena.dispose();
       disposeLighting();

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { openGame, play, pause } from "./helpers";
+import { openGame, play, pause, openSettings, choosePlayers } from "./helpers";
 
 for (const [count, rounds] of [
   [2, 3],
@@ -16,17 +16,17 @@ for (const [count, rounds] of [
     page.on("pageerror", (error) => errors.push(error.stack ?? error.message));
     await page.setViewportSize({ width: 480, height: 360 });
     await openGame(page);
-    await page.getByLabel("Players", { exact: true }).selectOption(String(count));
-    await page.getByText("Settings", { exact: true }).click();
+    await choosePlayers(page, count);
+    await openSettings(page);
     await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
     await page.getByLabel("Bot difficulty", { exact: true }).selectOption("standard");
-    await page.getByText("Settings", { exact: true }).click();
+    await openSettings(page);
     let sawTransition = false;
     for (let round = 0; round < rounds; round++) {
       const seat = round === 0 ? count - 1 : round % count;
-      await page.getByText("Settings", { exact: true }).click();
+      await openSettings(page);
       await page.getByLabel("Your fortress", { exact: true }).selectOption(String(seat));
-      await page.getByText("Settings", { exact: true }).click();
+      await openSettings(page);
       await expect(page.getByLabel("Survivors", { exact: true })).toHaveText(String(count));
       await play(page);
       await page.clock.runFor(1800);
@@ -49,11 +49,15 @@ for (const [count, rounds] of [
           sawTransition = true;
       }
       await expect(rematch).toBeVisible();
+      await expect(page.locator(".menu-panel")).toHaveCount(0);
+      await openSettings(page);
+      await page.getByText("Round statistics", { exact: true }).click();
       await expect(page.getByRole("table", { name: "Round standings" })).toBeVisible();
       await expect(page.getByLabel("Survivors", { exact: true })).toHaveText("1");
+      await page.getByRole("button", { name: "Resume", exact: true }).click();
       await rematch.click();
-      await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
-      await expect(page.getByLabel("Players", { exact: true })).toHaveValue(String(count));
+      await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
+      await expect(page.getByLabel("Player count", { exact: true })).toHaveText(String(count));
       await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("1");
     }
     if (count > 2) expect(sawTransition).toBe(true);
@@ -69,22 +73,20 @@ test("all six human fortresses support captured input, difficulty selection and 
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.stack ?? error.message));
   await openGame(page);
-  await page.getByLabel("Players", { exact: true }).selectOption("6");
+  await choosePlayers(page, 6);
   for (let seat = 0; seat < 6; seat++) {
-    await page.getByText("Settings", { exact: true }).click();
+    await openSettings(page);
     await page
       .getByLabel("Bot difficulty", { exact: true })
       .selectOption(["beginner", "standard", "expert"][seat % 3]!);
     await page.getByLabel("Your fortress", { exact: true }).selectOption(String(seat));
-    if ((await page.locator("details.settings-menu").getAttribute("open")) !== null)
-      await page.getByText("Settings", { exact: true }).click();
     await play(page);
     await page.clock.runFor(1800);
     await pause(page);
     await page.getByRole("button", { name: "Restart", exact: true }).click();
   }
-  await page.getByLabel("Players", { exact: true }).selectOption("2");
-  await page.getByText("Settings", { exact: true }).click();
+  await choosePlayers(page, 2);
+  await openSettings(page);
   await expect(page.getByLabel("Your fortress", { exact: true })).toHaveValue("1");
   await expect(page.getByLabel("Your fortress", { exact: true }).locator("option")).toHaveCount(2);
   await expect(page.getByLabel("Bot difficulty", { exact: true })).toHaveValue("expert");
@@ -99,10 +101,10 @@ test("two-player captured mouse reaches both end walls without the old travel ga
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await openGame(page, false);
-  await page.getByLabel("Players", { exact: true }).selectOption("2");
-  await page.getByText("Settings", { exact: true }).click();
+  await choosePlayers(page, 2);
+  await openSettings(page);
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
-  await page.getByText("Settings", { exact: true }).click();
+  await openSettings(page);
   await play(page);
   await page.clock.runFor(1800);
   await page.mouse.move(1500, 300);
