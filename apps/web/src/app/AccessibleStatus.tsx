@@ -22,6 +22,8 @@ export function AccessibleStatus({
       <output aria-label="Survivors">
         {state.players.filter((player) => player.health.some(Boolean)).length}
       </output>
+      <output aria-label="Your pieces broken">{snapshot.totals.players[humanSeat]!.scored}</output>
+      <output aria-label="Your returns">{snapshot.totals.players[humanSeat]!.returns}</output>
       <output aria-label="Balls in play">{state.balls.length}</output>
       <output aria-label="Music status">{snapshot.music.status}</output>
       <output aria-label="Music section">{snapshot.music.section}</output>

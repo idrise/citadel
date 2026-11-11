@@ -205,3 +205,67 @@ input[type="range"] {
 .round-report summary {
   cursor: pointer;
 }
+
+.game-overlay[data-mode="start"] .menu-panel,
+.game-overlay[data-mode="result"] .menu-panel {
+  width: min(360px, 100%);
+}
+.menu-brand {
+  margin-bottom: 1.5rem;
+}
+.menu-brand h2 {
+  margin: 0.4rem 0 0.75rem;
+  font-size: 1.65rem;
+  letter-spacing: 0.18em;
+  font-weight: 350;
+}
+.menu-brand h2 strong {
+  display: block;
+  font-weight: 650;
+  color: #9af1f7;
+}
+.menu-brand p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #a5c6d9;
+  line-height: 1.5;
+}
+.menu-brand .menu-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #66ccd8;
+  font-size: 0.65rem;
+  text-align: center;
+}
+.menu-brand > p:last-child {
+  text-align: center;
+}
+.players-choice select {
+  max-width: 70%;
+  padding: 0.4rem;
+  border: 1px solid #355566;
+  border-radius: 4px;
+  background: #101e2d;
+}
+.game-help {
+  font-size: 0.75rem;
+  color: #a5c6d9;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+.game-help summary {
+  cursor: pointer;
+  text-align: center;
+}
+.game-help small {
+  display: block;
+  border-top: 1px solid #254758;
+  padding-top: 0.7rem;
+  color: #86a5b8;
+}
+.export-round {
+  margin-top: 0.75rem;
+  width: 100%;
+  background: transparent;
+  font-size: 0.8rem;
+}

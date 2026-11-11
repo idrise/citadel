@@ -1,16 +1,20 @@
 import type { PlayerCount } from "../simulation/arena";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GamePanel } from "./GamePanel";
-import { createSettings } from "../session/settings";
+import { loadPreferences, savePreferences } from "../session/preferences";
 
 export function App() {
-  const [seed, setSeed] = useState(2026);
-  const [count, setCount] = useState<PlayerCount>(4);
-  const [humanSeat, setHumanSeat] = useState(0);
-  const [round, setRound] = useState(0);
-  const [settings, setSettings] = useState(() =>
-    createSettings(window.matchMedia("(prefers-reduced-motion: reduce)").matches),
+  const [initial] = useState(() =>
+    loadPreferences(window.matchMedia("(prefers-reduced-motion: reduce)").matches),
   );
+  const [seed, setSeed] = useState(2026);
+  const [count, setCount] = useState<PlayerCount>(initial.count);
+  const [humanSeat, setHumanSeat] = useState(initial.humanSeat);
+  const [round, setRound] = useState(0);
+  const [settings, setSettings] = useState(initial.settings);
+  useEffect(() => {
+    savePreferences({ count, humanSeat, settings });
+  }, [count, humanSeat, settings]);
   return (
     <main className="game-root">
       <h1 className="sr-only">Neon Citadel</h1>

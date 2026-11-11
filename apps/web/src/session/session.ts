@@ -1,3 +1,4 @@
+import { createRoundObserver, type RoundTotals } from "./round-observer";
 import { createDesktopInput } from "../input/desktop";
 import { createViewport } from "../rendering/viewport";
 import type { ViewOptions } from "../rendering/arena-view";
@@ -15,6 +16,8 @@ export interface SessionSnapshot {
   started: boolean;
   notice: string;
   music: MusicSnapshot;
+  totals: RoundTotals;
+  initialSettings: GameSettings | null;
 }
 export function createSession(
   container: HTMLElement,
@@ -26,18 +29,30 @@ export function createSession(
   let state = createMatch(seed, count);
   const viewport = createViewport(container, humanSeat, state.arena);
   const clock = createFixedClock();
+  const observer = createRoundObserver(count);
   let paused = true;
   let started = false;
   let notice = "Defend your eight pieces. Last fortress standing wins.";
   let settings = createSettings(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  let initialSettings: GameSettings | null = null;
   let lastTimestamp = 0;
   let lastReport = 0;
   let frame = 0;
   const music = createGameMusic(seed, humanSeat);
-  const report = () => onSnapshot({ state, paused, started, notice, music: music.snapshot() });
+  const report = () =>
+    onSnapshot({
+      state,
+      paused,
+      started,
+      notice,
+      totals: observer.snapshot(),
+      initialSettings,
+      music: music.snapshot(),
+    });
   const setPaused = (value: boolean) => {
     paused = value;
-    music.setPlaying(started && !paused && state.phase !== "finished");
+    if (value) music.silence();
+    else music.setPlaying(started && state.phase !== "finished");
     input.clear();
     if (value) input.release();
     clock.reset();
@@ -78,21 +93,23 @@ export function createSession(
             notice = `${SEATS[event.seat]!.name} lost a piece. ${alive(state.players[event.seat]!) ? "Revenge serve." : "Fortress eliminated."}`;
         }
       });
+    const observed = observer.observe(events, state.balls.length);
     music.observe(
       { elapsed: state.elapsed, balls: state.balls.length, alive: state.players.map(alive) },
-      events,
+      observed,
     );
     music.setPlaying(started && !paused && state.phase !== "finished");
     const musicVisuals = music.visuals();
     const view: ViewOptions = {
       humanSeat,
+      quality: settings.effectsQuality,
       preview: settings.preview,
       slowdown: settings.slowdown,
       reducedEffects: settings.reducedEffects,
       musicPulse: settings.musicLights ? musicVisuals.pulse : 0,
       musicWave: settings.musicLights ? musicVisuals.phase : -1,
     };
-    viewport.render({ ...state, events }, paused && started ? 0 : delta, view);
+    viewport.render({ ...state, events: observed }, paused && started ? 0 : delta, view);
     if (state.phase === "finished") input.release();
     if (timestamp - lastReport > 80 || events.some((event) => event.type === "victory")) {
       lastReport = timestamp;
@@ -104,6 +121,7 @@ export function createSession(
   report();
   return {
     start() {
+      initialSettings ??= { ...settings };
       started = true;
       music.unlock();
       setPaused(false);

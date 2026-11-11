@@ -1,3 +1,4 @@
+import { createRoundObserver } from "../session/round-observer";
 import type { PlayerCount } from "../simulation/arena";
 import { useEffect, useRef, useState } from "react";
 import { createSession, type GameSession, type SessionSnapshot } from "../session/session";
@@ -36,6 +37,8 @@ export function GamePanel({
     paused: true,
     started: false,
     notice: "",
+    totals: createRoundObserver(count).snapshot(),
+    initialSettings: null,
     music: {
       status: "idle",
       section: "intro",
@@ -89,6 +92,9 @@ export function GamePanel({
             count={count}
             onCount={onCount}
             state={snapshot.state}
+            totals={snapshot.totals}
+            seed={seed}
+            initialSettings={snapshot.initialSettings ?? settings}
             winner={winner}
             humanSeat={humanSeat}
             settings={settings}

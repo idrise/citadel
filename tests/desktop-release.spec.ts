@@ -1,0 +1,133 @@
+import { readFile, writeFile } from "node:fs/promises";
+import { expect, test } from "@playwright/test";
+import { openGame, play, pause } from "./helpers";
+
+test("fresh six-seat desktop round exports an honest local result and resets on rematch", async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(240000);
+  await page.setViewportSize({ width: 640, height: 480 });
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await openGame(page);
+  await page.getByLabel("Players", { exact: true }).selectOption("6");
+  await page.getByText("How to play", { exact: true }).click();
+  await expect(page.getByText(/Desktop preview · v0.1.0/)).toBeVisible();
+  await page.getByText("Settings", { exact: true }).click();
+  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+  await page.getByLabel("Your fortress", { exact: true }).selectOption("5");
+  const playButton = page.getByRole("button", { name: "Play", exact: true });
+  await playButton.focus();
+  await page.keyboard.press("Enter");
+  await expect.poll(() => page.evaluate(() => Boolean(document.pointerLockElement))).toBe(true);
+  await page.clock.runFor(1800);
+  await page.keyboard.down("KeyA");
+  await page.clock.runFor(100);
+  await page.keyboard.up("KeyA");
+  const rematch = page.getByRole("button", { name: "Rematch", exact: true });
+  for (let seconds = 0; seconds < 240 && !(await rematch.isVisible()); seconds += 2)
+    await page.clock.runFor(2000);
+  await expect(rematch).toBeVisible();
+  await expect(page.locator("canvas")).toHaveCount(1);
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export round", exact: true }).click();
+  const download = await downloadPromise;
+  const report = JSON.parse(await readFile((await download.path())!, "utf8")) as {
+    schema: string;
+    version: number;
+    seed: number;
+    initialPlayers: number;
+    humanSeat: number;
+    phase: string;
+    winner: number;
+    elapsedSeconds: number;
+    stats: { damage: number; collisionCaps: number };
+    players: { seat: number; place: number; health: number; scored: number; lost: number }[];
+  };
+  expect(report).toMatchObject({
+    schema: "citadel.round",
+    version: 1,
+    seed: 2026,
+    initialPlayers: 6,
+    humanSeat: 5,
+    phase: "finished",
+    stats: { collisionCaps: 0 },
+  });
+  expect(report.players).toHaveLength(6);
+  expect(report.players.filter((row) => row.health > 0)).toHaveLength(1);
+  expect(report.players.find((row) => row.seat === report.winner)!.place).toBe(1);
+  expect(report.players.reduce((sum, row) => sum + row.lost, 0)).toBe(report.stats.damage);
+  await writeFile(
+    testInfo.outputPath("six-seat-round.json"),
+    JSON.stringify(report, null, 2) + "\n",
+  );
+  // The download click may scroll a short viewport; capture the full result at desktop size.
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.clock.runFor(100);
+  await page.locator(".menu-panel").evaluate((panel) => {
+    panel.scrollTop = 0;
+  });
+  await expect(rematch).toBeInViewport();
+  await page.screenshot({ path: testInfo.outputPath("desktop-results.png") });
+  await rematch.click();
+  await expect(page.getByLabel("Players", { exact: true })).toHaveValue("6");
+  await expect(page.getByLabel("Your pieces broken", { exact: true })).toHaveText("0");
+  await play(page);
+  await page.clock.runFor(300);
+  await pause(page);
+  expect(errors).toEqual([]);
+});
+
+test("solo preferences survive refresh, and every quality preset remains playable without a HUD", async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 640, height: 480 });
+  await openGame(page, false);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.getByLabel("Players", { exact: true }).selectOption("6");
+  await page.getByText("Settings", { exact: true }).click();
+  await page.getByLabel("Effects quality", { exact: true }).selectOption("medium");
+  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+  await page.getByLabel("Your fortress", { exact: true }).selectOption("5");
+  await page.reload();
+  await expect(page.getByLabel("Players", { exact: true })).toHaveValue("6");
+  await page.getByText("Settings", { exact: true }).click();
+  await expect(page.getByLabel("Your fortress", { exact: true })).toHaveValue("5");
+  await expect(page.getByLabel("Effects quality", { exact: true })).toHaveValue("medium");
+  await expect(page.getByRole("checkbox", { name: "Music", exact: true })).not.toBeChecked();
+  await page.getByText("Settings", { exact: true }).click();
+  await play(page);
+  await page.clock.runFor(1800);
+  for (const quality of ["low", "medium", "high"]) {
+    await pause(page);
+    await page.getByText("Settings", { exact: true }).click();
+    await page.getByLabel("Effects quality", { exact: true }).selectOption(quality);
+    await page.getByRole("button", { name: "Resume", exact: true }).click();
+    await page.clock.runFor(300);
+    await expect(page.locator(".menu-panel")).toHaveCount(0);
+    await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
+  }
+  await page.context().setOffline(true);
+  await page.clock.runFor(1200);
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
+  expect(errors).toEqual([]);
+});
+
+test("unavailable preference storage never prevents starting a local game", async ({ page }) => {
+  await page.addInitScript(() =>
+    Object.defineProperty(window, "localStorage", {
+      get() {
+        throw Error("Storage blocked");
+      },
+    }),
+  );
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await openGame(page);
+  await play(page);
+  await page.clock.runFor(1800);
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
+  expect(errors).toEqual([]);
+});

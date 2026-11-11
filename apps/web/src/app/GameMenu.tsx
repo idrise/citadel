@@ -1,3 +1,6 @@
+import { GameHelp } from "./GameHelp";
+import { ExportRound } from "./ExportRound";
+import type { RoundTotals } from "../session/round-observer";
 import type { MatchState } from "../simulation/types";
 import type { PlayerCount } from "../simulation/arena";
 import { RoundReport } from "./RoundReport";
@@ -13,6 +16,9 @@ export function GameMenu({
   count,
   onCount,
   state,
+  totals,
+  seed,
+  initialSettings,
   winner,
   humanSeat,
   settings,
@@ -25,6 +31,9 @@ export function GameMenu({
   count: PlayerCount;
   onCount: (count: PlayerCount) => void;
   state: MatchState;
+  totals: RoundTotals;
+  seed: number;
+  initialSettings: Settings;
   mode: "start" | "paused" | "result";
   winner: string;
   humanSeat: number;
@@ -51,6 +60,15 @@ export function GameMenu({
   return (
     <div className="game-overlay" data-mode={mode}>
       <div className="menu-panel">
+        {mode === "start" && (
+          <div className="menu-brand">
+            <p className="menu-kicker">Solo arena</p>
+            <h2>
+              NEON <strong>CITADEL</strong>
+            </h2>
+            <p>Defend eight pieces. Last fortress standing wins.</p>
+          </div>
+        )}
         {mode === "paused" && <h2>Paused</h2>}
         {mode === "result" && <h2>{winner}</h2>}
         {mode === "start" && (
@@ -77,7 +95,7 @@ export function GameMenu({
             Restart
           </button>
         )}
-        {mode === "result" && <RoundReport state={state} humanSeat={humanSeat} />}
+        {mode === "result" && <RoundReport state={state} humanSeat={humanSeat} totals={totals} />}
         <details className="settings-menu">
           <summary>Settings</summary>
           <p className="menu-hint">Changing players or fortress starts a new round.</p>
@@ -136,9 +154,20 @@ export function GameMenu({
         {mode === "paused" && (
           <details className="round-report">
             <summary>Round statistics</summary>
-            <RoundReport state={state} humanSeat={humanSeat} />
+            <RoundReport state={state} humanSeat={humanSeat} totals={totals} />
           </details>
         )}
+        {mode !== "start" && (
+          <ExportRound
+            state={state}
+            totals={totals}
+            seed={seed}
+            humanSeat={humanSeat}
+            settings={settings}
+            initialSettings={initialSettings}
+          />
+        )}
+        <GameHelp />
         {mode === "paused" && (
           <button className="hide-controls" aria-keyshortcuts="H" onClick={() => setHidden(true)}>
             Hide controls (H)
