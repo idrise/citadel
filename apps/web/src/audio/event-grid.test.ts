@@ -76,3 +76,24 @@ it("keeps simultaneous personal losses audible as one bounded gesture without su
   conductor.reset();
   expect(conductor.plan([loss], 0.01, anchor)).toHaveLength(1);
 });
+
+it("never lets a wall ricochet suppress a capsule breach, and protects outcomes in dense batches", () => {
+  const conductor = createEventConductor(),
+    anchor = { time: 0, step: 0 };
+  conductor.plan([{ voice: "ricochet", note: 74, velocity: 0.1, duration: 0.04 }], 0.01, anchor);
+  const breach: MusicCue = { voice: "breach", note: 79, velocity: 0.6, duration: 0.12 };
+  expect(conductor.plan([breach], 0.011, anchor).map((p) => p.cue.voice)).toEqual(["breach"]);
+  conductor.reset();
+  const dense = conductor.plan(
+    [
+      ...Array<MusicCue>(100).fill(hit),
+      breach,
+      { voice: "cheer", note: 62, velocity: 0.9, duration: 1.15 },
+    ],
+    0.01,
+    anchor,
+  );
+  expect(dense).toHaveLength(32);
+  expect(dense.some((p) => p.cue.voice === "breach")).toBe(true);
+  expect(dense.some((p) => p.cue.voice === "cheer")).toBe(true);
+});

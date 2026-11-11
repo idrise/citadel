@@ -17,6 +17,7 @@ export type Voice =
   | "riser"
   | "crash"
   | "damage"
+  | "breach"
   | "breath"
   | "open"
   | "mutedHat"

@@ -77,10 +77,15 @@ export function createMusicDirector(humanSeat: number, seed: number) {
           part.streak = 0;
           part.phrase = [];
           if (event.seat === humanSeat) cues.push(cue("damage", 50, 0.95, 0.65));
-          else if (event.attackerSeat === humanSeat) {
-            cues.push(cue("success", 81, 0.8, 0.55));
-            cues.push(cue("cheer", 62, 0.9, 1.15));
-          } else cues.push(cue("ricochet", 69, 0.2, 0.08));
+          else {
+            // Every rival capsule needs its own reliable break cue. Wall ticks
+            // share a throttle and could previously swallow an unrelated breach.
+            cues.push(cue("breach", 79, event.attackerSeat === humanSeat ? 0.85 : 0.6, 0.12));
+            if (event.attackerSeat === humanSeat) {
+              cues.push(cue("success", 81, 0.8, 0.55));
+              cues.push(cue("cheer", 62, 0.9, 1.15));
+            }
+          }
         }
       }
       return cues;

@@ -125,10 +125,10 @@ it("celebrates only the human's credited attack, keeping own losses and bot-only
   const own = director.observe(frame, [{ ...event(0, "damage", 0), attackerSeat: 1 }]);
   expect(own.map((c) => c.voice)).toEqual(["damage"]);
   const success = director.observe(frame, [{ ...event(1, "damage", 1), attackerSeat: 0 }]);
-  expect(success.map((c) => c.voice)).toEqual(["success", "cheer"]);
+  expect(success.map((c) => c.voice)).toEqual(["breach", "success", "cheer"]);
   expect(success.some((c) => c.voice === "damage")).toBe(false);
   const neutral = director.observe(frame, [{ ...event(2, "damage", 2), attackerSeat: 1 }]);
-  expect(neutral.map((c) => c.voice)).toEqual(["ricochet"]);
+  expect(neutral.map((c) => c.voice)).toEqual(["breach"]);
   expect(director.observe(frame, [event(3, "victory", 0)])[0]!.voice).toBe("victory");
 });
 

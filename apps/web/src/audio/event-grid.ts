@@ -38,7 +38,7 @@ export function createEventConductor() {
           ["cheer", "unlock", "success", "victory"].includes(source.voice) ? 2 : 0.5,
         );
         const spacing =
-          source.voice === "damage"
+          source.voice === "damage" || source.voice === "breach"
             ? 0.5
             : source.voice === "ricochet"
               ? 2
@@ -116,7 +116,10 @@ export function createEventConductor() {
         }
       }
       // Dense collisions become a bounded musical gesture, never an unbounded future queue.
-      return result.sort((a, b) => a.time - b.time).slice(0, 32);
+      const outcomes = new Set(["damage", "breach", "success", "cheer", "eliminate", "victory"]);
+      const important = result.filter((p) => outcomes.has(p.cue.voice));
+      const incidental = result.filter((p) => !outcomes.has(p.cue.voice));
+      return [...important, ...incidental].slice(0, 32).sort((a, b) => a.time - b.time);
     },
     reset() {
       lastGesture.clear();
