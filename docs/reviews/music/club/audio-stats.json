@@ -1,0 +1,172 @@
+{
+  "stems": {
+    "drums": {
+      "peak": 0.146843820810318,
+      "rms": 0.018743597818619482,
+      "channels": 2,
+      "duration": 12,
+      "bpm": 136,
+      "sections": [
+        {
+          "section": "intro",
+          "rms": 0.018264960353341006
+        },
+        {
+          "section": "groove",
+          "rms": 0.01940654727703215
+        },
+        {
+          "section": "breakdown",
+          "rms": 0
+        },
+        {
+          "section": "build",
+          "rms": 0
+        },
+        {
+          "section": "drop",
+          "rms": 0
+        },
+        {
+          "section": "melodic",
+          "rms": 0
+        }
+      ]
+    },
+    "bass": {
+      "peak": 0.15140651166439056,
+      "rms": 0.01452000780223395,
+      "channels": 2,
+      "duration": 12,
+      "bpm": 136,
+      "sections": [
+        {
+          "section": "intro",
+          "rms": 0.014377394477181107
+        },
+        {
+          "section": "groove",
+          "rms": 0.014721344535149717
+        },
+        {
+          "section": "breakdown",
+          "rms": 0
+        },
+        {
+          "section": "build",
+          "rms": 0
+        },
+        {
+          "section": "drop",
+          "rms": 0
+        },
+        {
+          "section": "melodic",
+          "rms": 0
+        }
+      ]
+    },
+    "melody": {
+      "peak": 0.1306920051574707,
+      "rms": 0.013700295148735971,
+      "channels": 2,
+      "duration": 12,
+      "bpm": 136,
+      "sections": [
+        {
+          "section": "intro",
+          "rms": 0.01305504000547127
+        },
+        {
+          "section": "groove",
+          "rms": 0.014395823540204147
+        },
+        {
+          "section": "breakdown",
+          "rms": 0
+        },
+        {
+          "section": "build",
+          "rms": 0
+        },
+        {
+          "section": "drop",
+          "rms": 0
+        },
+        {
+          "section": "melodic",
+          "rms": 0
+        }
+      ]
+    },
+    "club-preview": {
+      "peak": 0.4420374631881714,
+      "rms": 0.02597708823977825,
+      "channels": 2,
+      "duration": 74,
+      "bpm": 136,
+      "sections": [
+        {
+          "section": "intro",
+          "rms": 0.025463241236483334
+        },
+        {
+          "section": "groove",
+          "rms": 0.026462970335969862
+        },
+        {
+          "section": "breakdown",
+          "rms": 0.017345769205264434
+        },
+        {
+          "section": "build",
+          "rms": 0.021773840340152943
+        },
+        {
+          "section": "drop",
+          "rms": 0.036731687085448515
+        },
+        {
+          "section": "melodic",
+          "rms": 0.017333991337949
+        }
+      ]
+    },
+    "no-hit-preview": {
+      "peak": 0.42956793308258057,
+      "rms": 0.025885319314860485,
+      "channels": 2,
+      "duration": 34,
+      "bpm": 136,
+      "sections": [
+        {
+          "section": "intro",
+          "rms": 0.025431741257133936
+        },
+        {
+          "section": "groove",
+          "rms": 0.02643081201180259
+        },
+        {
+          "section": "breakdown",
+          "rms": 0.01720643641104101
+        },
+        {
+          "section": "build",
+          "rms": 0.021705056675108664
+        },
+        {
+          "section": "drop",
+          "rms": 0.036639974006967835
+        },
+        {
+          "section": "melodic",
+          "rms": 0
+        }
+      ]
+    }
+  },
+  "melodyToDrumsDb": -2.7224606733004455,
+  "bassToDrumsDb": -2.2177221460522842,
+  "errors": []
+}

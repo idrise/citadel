@@ -66,16 +66,18 @@ and holds the current camera pose without a snap.
 
 ## Music
 
-Press Play for dark, driving synthesised techno at 138 BPM. Paddle returns play
-notes and grow your looping phrase; losing a piece resets your phrase while the
-kick continues. Bass, hats and sparse harmonies join as streaks/global pressure
-increase. Musical builds lead to a drop every sixteen bars. Drops never change
-balls, controls, bots or any other gameplay rule.
+Press Play for an original 136 BPM club arrangement: plucked melody and rolling
+bass from the opening, a melodic breakdown, rising snare/noise build, then a full
+drop around 28 seconds. A later melodic section and longer build keep it evolving.
+Returns add live accents and grow your counter-melody; damage resets your part.
+The authored song stays melodic even with no hits.
 
-Kick beats give bloom and the exterior grid a small pulse. Reduced effects
-removes that pulse. Settings offers **Music** and **Music volume** (default 45%).
-Pause/focus loss silences music; Resume continues it. No recorded audio assets
-are loaded. See the [music review and 34-second audition](docs/MUSIC_REVIEW.md).
+Kick beats swell the bloom and send travelling light waves over the exterior
+grid. **Beat lighting** has its own setting; **Reduced effects & motion** disables
+it. Music, volume (default 45%) and beat-lighting choices survive round changes.
+Pause/focus loss silences the music; Resume continues it. Audio and visual beats
+never change gameplay. No recorded audio assets are loaded by the game.
+See the [music review, stereo audition and build/drop video](docs/MUSIC_REVIEW.md).
 
 ## Check and build
 

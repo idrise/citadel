@@ -1,111 +1,121 @@
-# Music detour — dark, driving synth techno
+# Music detour — club arrangement and visible beat response
 
-Status: **Awaiting review**, 11 November 2026. This is a user-authorised detour
-from the M03/M04 review, drawing a first music pass forward from M07. It does
-not approve those milestones or complete the full M07 sound/presentation gate.
+Status: **Awaiting review**, 11 November 2026. The user rejected the sparse first
+pass as effectively drums only, asked for a deeper 90s DJ-style build/melodic/drop
+structure, and wanted the beat response to be visible. This revision replaces
+that first arrangement. M03/M04 and the full M07 gate remain unapproved.
 
-## Listen and play
+## Listen, watch, play
 
-Reload the game, then **Play**. Music starts with that click. **Settings → Music**
-mutes it, and **Music volume** sets its level (default 45%). Settings survive
-Restart, Rematch and fortress changes in the current page. Pause, focus loss and
-capture loss silence the soundtrack; Resume continues its musical position.
-Restart/Rematch create a fresh composition and close the old audio context.
+- [74-second stereo audition](reviews/music/club/club-preview.mp3): the actual
+  score/synth graph, with scripted hits and damage as musical input.
+- [18-second build-to-drop clip](reviews/music/club/club-build-drop.mp4): captured
+  from real-time gameplay, including audio from the game's actual output bus.
+- Reload the local game and press **Play**. **Settings → Music**, **Music volume**
+  and **Beat lighting** control the experience. Beat lighting is disabled by
+  **Reduced effects & motion**; the menu now makes that explicit.
 
-[Listen to the 34-second preview](reviews/music/preview.wav). This review fixture
-uses the same synth voices and director as the game: scripted hits grow a melody,
-a loss at about 15.65s strips it back, and the first global drop arrives around
-27.83s. It is an audition, not a recorded human playtest. The game never loads
-this WAV or any other recorded music/sample asset.
+The previous `preview.wav` link remains usable and now contains the first 34
+seconds of the revised score. These files are review exports only; the game
+never loads recorded audio assets.
 
-## Musical behaviour
+## The arrangement
 
-- Tone.js **15.1.22**, lazy-loaded after Play, with a separate TypeScript director.
-  The sound is synthesised kick, filtered saw bass, metallic FM lead/accents,
-  sparse high harmony and noise hats, with light delay, compression and limiting.
-- **138 BPM**, four-on-the-floor kick, D-minor-pentatonic pitch palette. Each
-  paddle hit plays a short live accent without waiting for the next grid point.
-  Successful returns extend that defender's phrase up to sixteen notes; later
-  hits revise the existing phrase. A seven-note phrase repeats independently
-  over the four-beat rhythm. Shot direction helps select the pitch.
-- Your phrase leads the arrangement; bots contribute quieter live accents and
-  keep their own bounded phrases. After human elimination, the strongest living
-  phrase becomes the focus. Damage resets only the damaged defender's phrase
-  and plays a falling synthesized impact; the underlying beat continues.
-- Four-hit streaks bring bass/hats, eight-hit streaks add sparse high responses.
-  Separately, elapsed match time and ball count increase global musical energy.
-  A four-bar percussion build and one-beat breath precede each **16-bar drop**,
-  so hearing a drop does not require a sixteen-hit streak. Tempo remains fixed.
-- Live hits use a separate bounded voice pool from sequenced lead/harmony, so
-  look-ahead scheduling does not hold a collision accent behind future notes.
-  Live accents are scheduled 5ms ahead of the audio context, plus normal device
-  output latency. Desktop synthesis is bounded to six live-hit voices, four
-  damage voices and one voice for each sequenced instrument.
+The structural reference is the tension, melodic space and release of a 90s club
+set. The themes and voicings are authored for Citadel. Sister Bliss's
+[discussion of Faithless's synth/pad/bass production](https://articles.roland.com/faithless-breaking-down-classic-tracks-with-sister-bliss/)
+was useful context for that palette.
 
-## Beat-driven rendering
+| Music time | Section      | What changes                                                                                   |
+| ---------- | ------------ | ---------------------------------------------------------------------------------------------- |
+| 0–7s       | Intro        | A clear plucked theme, rolling resonant bass/sub and kick from the opening; percussion joins   |
+| 7–14s      | Groove       | Backbeat claps, offbeat open hats, chord voicings and a wider mix                              |
+| 14–21s     | Breakdown    | Kick and bass leave room for sustained harmony, the theme and high arpeggios                   |
+| 21–28s     | Build        | Filter opens, rising noise and snare rolls become denser; arranged music breathes for one beat |
+| 28–42s     | Drop         | Full kick/bass, octave-doubled theme, crash, pumping low end and open hats                     |
+| 42–56s     | Melodic      | The harmonic/melodic section returns with rhythmic space                                       |
+| 56–70s     | Longer build | Another rising passage leads into the next drop around 70.6s                                   |
 
-Kick scheduling records audio-clock timestamps. The renderer reads a bounded
-attack/decay envelope on that timeline, so scheduling a future kick does not
-flash the scene early. This is not an animation-frame beat timer.
+Tempo is **136 BPM**. Dm9 / Bbmaj7 / Fadd9 / Csus2 voicings support two original
+syncopated melodic calls. Detuned plucks, resonant saw bass, sine sub, soft pads,
+FM arpeggios and stereo ping-pong delay give the melodic parts distinct roles.
+Closed/open hats, claps, snare/body, rising noise and crash are synthesised too.
+The first drop arrives on bar 16, independently of any player's streak.
 
-- Bloom strength breathes from **0.25 up to 0.31**, without changing bloom radius
-  or exposure. Exterior grid lines brighten by at most **12%**.
-- The envelope rises over 12ms and decays over about 140ms. There are no camera
-  kicks, shakes, geometry scaling or ball/paddle colour changes from the music.
-- Mute, zero volume and audio failure suppress the pulse. Reduced effects
-  suppress it completely and retain the existing direct rendering path.
-- Reviewed [rest](reviews/music/beat-rest.png) and
-  [kick pulse](reviews/music/beat-peak.png) at the same fixed arena/camera pose.
-  The captured pulse was 0.684; mean pixel change was about 0.86/255. Reduced
-  beat-on/off PNGs were byte-identical. [Measured data](reviews/music/visual-stats.json).
+Melody is now guaranteed from bar one, even with **zero hits**. Player phrases
+remain an additional part: a return plays a live FM accent and extends a bounded
+sixteen-note counter-melody. Damage resets that defender's phrase, not the authored
+song. Your live accents are stronger than bot accents. After human elimination,
+the leading survivor's player phrase becomes the focus. Game pressure adds small
+ornaments; it never decides whether the core melody exists.
 
-**Music never controls gameplay.** It only receives match events and a small
-read-only summary; no music setting, cue, beat, build or drop enters match
-options, simulation, bot choices, input or spawning. In particular, the proposal's
-ball convergence and faster gameplay at a drop were deliberately omitted in
-accordance with the user's explicit constraint.
+The mix was reviewed as separate drum, bass and melody stems, not just by asking
+whether the output was nonzero. In the no-hit opening, melody RMS is **2.72 dB
+below drums**, bass is **2.22 dB below drums**. The drop's RMS is about twice the
+breakdown's. The full audition peaks at **0.442**, with no PCM clipping at the
+default 45% master level. These are output checks, not subjective listening approval.
 
-## Validation
+## Beat rendering
 
-- Vite+ formatting, lint and strict TypeScript checks pass without warnings.
-- **176 unit tests in 28 files pass**, including phrase growth/reset/cap, per-seat
-  focus, deterministic musical cues, independent global drops, lifecycle races,
-  unavailable audio, pause/mute and beat bounds. A 2,400-tick comparison produces
-  an identical authoritative match while the music director and beat lights react.
-  Audio settings are also explicitly excluded from simulation options.
-- **14 production Chromium browser checks pass** on the host GPU. The audio
-  checks tap the actual output through an analyser: no context before Play,
-  nonzero audio while playing, silence after pause/mute, resume, closed contexts
-  after Restart, persisted settings, and captured gameplay with unsupported audio.
-  The existing full-round/rematch, controls and Pages-path checks still pass.
-- Pages build passes: initial game chunk **879.74 kB / 240.00 kB gzip**, music
-  chunk **256.45 kB / 63.16 kB gzip**, loaded on demand. The existing large-game-
+Kick times travel from the audio scheduler through a timestamped envelope into
+the viewport. Bloom grows from **0.25 up to 0.51**, keeping radius and exposure
+fixed. Exterior grid lines can brighten by **90%**, and an expanding light wave
+travels outward across the grid for each kick. Chord entries in kick-free
+sections get a quieter light accent.
+
+The pulse has an 18ms attack and roughly 190ms decay, rather than an exposure
+flash. There is no camera shake, geometry scaling or music-driven steering.
+Mute, zero volume, disabled beat lighting and reduced effects suppress it.
+
+Reviewed [rest](reviews/music/club/rest.png),
+[kick](reviews/music/club/kick.png) and
+[travelling wave](reviews/music/club/wave.png) at identical arena/camera poses.
+Rest-to-kick mean pixel change is **10.42/255**, compared with about 0.86/255 in
+the first pass. Reduced beat-on/off captures are byte-identical.
+[Measurements](reviews/music/club/visual-stats.json). The live gameplay recording
+also reached breakdown, build and drop while playing actual audio, without page errors.
+
+**Music never changes gameplay.** Nothing from music settings, notes, beats,
+sections or visual waves enters simulation options, RNG, bot choices, spawning,
+ball/paddle motion or input. The authoritative match still reproduces identically
+when the music director and lighting react.
+
+## Validation and reproduction
+
+- `pnpm check`: formatting, lint and strict types pass without warnings.
+- `pnpm test`: **182 tests in 29 files pass**, covering baseline melody with no
+  hits, contrasting sections, accelerating build, breath/drop, bounded scoring,
+  per-player phrases, audio lifecycle races, beat timing and simulation identity.
+- Pages build passes. Initial game chunk: **882.57 kB / 241.06 kB gzip**;
+  lazy Tone/music chunk: **261.44 kB / 64.18 kB gzip**. The existing large-game-
   chunk warning remains.
-- Offline 34s mono preview at 44.1kHz has peak **0.222** and RMS **0.0264** at the
-  default mix level, with no clipping or browser page errors.
-  [Audio measurements](reviews/music/audio-stats.json). This verifies generated
-  output, not a claim of subjective listening approval.
+- **14 production Chromium browser checks pass** on the host GPU. They include
+  analyser-confirmed output/silence, pause/mute/resume, cleanup, audio failure,
+  preserved beat-lighting settings, full round/rematch and Pages-path loading.
+- Full stereo audition plus isolated stems and a **no-hit** audition rendered
+  through the real synth graph with no browser errors.
+  [Audio report](reviews/music/club/audio-stats.json).
+- A 44-second live canvas/audio recording verified the actual game, not only
+  an offline composition fixture; the linked clip is a reduced-size excerpt.
 
-To regenerate an audition while `pnpm dev` is running:
+With `pnpm dev` running:
 
 ```sh
-node tooling/render-music-preview.mjs /tmp/citadel-music-preview.wav
+node tooling/render-music-preview.mjs /tmp/citadel-club.wav
+node tooling/review-music-audio.mjs /tmp/citadel-audio-review
 ```
 
-Tone's [official scheduling guide](https://github.com/Tonejs/Tone.js/wiki/Transport)
-explains the audio-time callbacks used by this prototype. Tone code is isolated
-inside `audio/tone-*`; composition and lifecycle tests do not require an audio device.
+The second command renders stems/full/no-hit versions and fails on missing or
+buried melody/bass, clipping or page errors. White-noise synthesis varies between
+renders; note selection, section boundaries and game replays remain deterministic.
 
-## Review and remaining work
+Desktop Chromium is the reviewed target. Mobile/Safari, Bluetooth output-latency
+calibration and subjective mastering remain unverified. Tone emits a scheduling
+warning when its lazy detuned-voice construction disposes an internal oscillator;
+our note/filter/gain automation supplies explicit audio times. The existing Three
+shadow-mode deprecation warning also remains. Neither produced a page error.
 
-Judge whether a catch feels like playing a note, whether your phrase is audible
-among bot accents, and whether the kick/brightness pulse stays pleasant through
-repeated rounds. Melody selection, mix, thresholds and drop length are provisional.
-The first pass has no advanced stereo arrangement, device-specific mastering,
-mobile/Safari validation, multiplayer audio or gameplay changes on musical drops.
-The full software-WebGL suite was not rerun; desktop native Chromium was used.
+No `gh`, push or deployment was performed. Separate user edits in AGENTS and the
+M05 layout-morphing note remain unstaged.
 
-No `gh`, push or deployment was performed. Existing unrelated AGENTS and M05
-layout-morphing edits remain unstaged.
-
-**REVIEW REQUIRED — music detour (M03/M04 remain awaiting review).**
+**REVIEW REQUIRED — music detour.**
