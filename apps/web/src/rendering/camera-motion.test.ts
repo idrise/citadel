@@ -15,22 +15,22 @@ it("moves gently within a bounded orbit and keeps the full arena framed", () => 
   const home = camera.position.clone();
   const target = new Vector3(CAMERA_TARGET.x, CAMERA_TARGET.y, CAMERA_TARGET.z);
   const radius = home.distanceTo(target);
-  const bounds = new Box3(new Vector3(-10, -3, -10), new Vector3(10, 1.3, 10));
+  const bounds = new Box3(new Vector3(-10, 0, -10), new Vector3(10, 2.25, 10));
   const motion = createCameraMotion(camera);
   let largestDrift = 0;
   for (let step = 0; step < 800; step++) {
     motion.update(0.1, false);
-    fitArenaCamera(camera, bounds, 1.8);
+    fitArenaCamera(camera, bounds, [0.65, 1.8, 2.4][step % 3]!);
     largestDrift = Math.max(largestDrift, camera.position.distanceTo(home));
     expect(camera.position.distanceTo(target)).toBeCloseTo(radius);
     expect(camera.position.distanceTo(home)).toBeLessThan(1.6);
     expect(Math.abs(camera.zoom - 1)).toBeLessThanOrEqual(0.00601);
     for (const x of [-10, 10])
-      for (const y of [-3, 1.3])
+      for (const y of [0, 2.25])
         for (const z of [-10, 10]) {
           const point = new Vector3(x, y, z).project(camera);
-          expect(Math.abs(point.x)).toBeLessThan(0.95);
-          expect(Math.abs(point.y)).toBeLessThan(0.95);
+          expect(Math.abs(point.x)).toBeLessThan(0.97);
+          expect(Math.abs(point.y)).toBeLessThan(0.97);
         }
   }
   expect(largestDrift).toBeGreaterThan(0.5);

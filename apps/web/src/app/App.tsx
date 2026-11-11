@@ -5,18 +5,8 @@ export function App() {
   const [seed, setSeed] = useState(2026);
   const [humanSeat, setHumanSeat] = useState(0);
   return (
-    <main className="shell">
-      <header className="masthead">
-        <div>
-          <p className="eyebrow">An arena worth defending</p>
-          <h1>
-            NEON <span>CITADEL</span>
-          </h1>
-        </div>
-        <p className="build-label">
-          LOCAL PROTOTYPE <span>01 / FOUR FORTRESSES</span>
-        </p>
-      </header>
+    <main className="game-root">
+      <h1 className="sr-only">Neon Citadel</h1>
       <GamePanel
         key={`${seed}-${humanSeat}`}
         seed={seed}

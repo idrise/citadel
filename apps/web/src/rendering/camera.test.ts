@@ -1,6 +1,6 @@
 import { Box3, DirectionalLight, Scene, Vector2, Vector3 } from "three";
 import { expect, it } from "vite-plus/test";
-import { ARENA, FORTRESSES, clampPaddleAngle, railPosition } from "../simulation/arena";
+import { FORTRESSES, clampPaddleAngle, railPosition } from "../simulation/arena";
 import { disposeScene } from "./dispose-scene";
 import { lightArena } from "./lighting";
 import { createArenaBase } from "./base";
@@ -20,8 +20,8 @@ it.each([2.6, 1.6, 0.6])(
       for (const y of [bounds.min.y, bounds.max.y])
         for (const z of [bounds.min.z, bounds.max.z]) {
           const projected = new Vector3(x, y, z).project(camera);
-          expect(Math.abs(projected.x)).toBeLessThan(0.93);
-          expect(Math.abs(projected.y)).toBeLessThan(0.93);
+          expect(Math.abs(projected.x)).toBeLessThan(0.97);
+          expect(Math.abs(projected.y)).toBeLessThan(0.97);
           expect(projected.z).toBeGreaterThan(-1);
           expect(projected.z).toBeLessThan(1);
         }
@@ -65,12 +65,26 @@ it("health pieces retain their physical circular footprint while gaining readabl
   disposeScene(stage.root);
 });
 
-it("cuts the camera-facing walls and rims below the lowest part of the ball", () => {
+it("builds four full-height solid wall panels with translucent near faces", () => {
   const base = createArenaBase();
-  const cutaways = base.children.filter((part) => part.name.startsWith("cutaway-wall"));
-  expect(cutaways).toHaveLength(4);
-  for (const part of cutaways)
-    expect(new Box3().setFromObject(part).max.y).toBeLessThan(0.58 - ARENA.ballRadius);
+  const walls = base.getObjectByName("arena-walls")!;
+  const panels = walls.children.filter(
+    (part) => part.name === "near-wall" || part.name === "rear-wall",
+  );
+  expect(panels).toHaveLength(4);
+  expect(panels.filter((panel) => panel.name === "near-wall")).toHaveLength(2);
+  for (const panel of panels) {
+    const size = new Box3().setFromObject(panel).getSize(new Vector3());
+    expect(size.y).toBeGreaterThan(1.9);
+    expect(Math.min(size.x, size.z)).toBeGreaterThan(0.45);
+    if (panel.name === "near-wall") {
+      const material = (panel as import("three").Mesh)
+        .material as import("three").MeshPhysicalMaterial;
+      expect(material.transparent).toBe(true);
+      expect(material.opacity).toBeLessThan(0.5);
+      expect(material.depthWrite).toBe(false);
+    }
+  }
   disposeScene(base);
 });
 
@@ -89,4 +103,18 @@ it("fits the directional shadow projection across all four arena corners", () =>
     expect(Math.abs(projected.z)).toBeLessThan(1);
   }
   dispose();
+});
+
+it("uses true perspective: equal-sized camera-facing objects project larger nearby", () => {
+  const camera = createArenaCamera();
+  fitArenaCamera(camera, new Box3(new Vector3(-10, -3, -10), new Vector3(10, 2.5, 10)), 1.6);
+  const near = FORTRESSES[0]!.anchor,
+    far = FORTRESSES[2]!.anchor;
+  const right = new Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+  const height = (point: { x: number; y: number }) => {
+    const start = new Vector3(point.x, 0, point.y);
+    return start.clone().add(right).project(camera).distanceTo(start.project(camera));
+  };
+  expect(camera.isPerspectiveCamera).toBe(true);
+  expect(height(near)).toBeGreaterThan(height(far) * 1.25);
 });

@@ -6,7 +6,7 @@ import { paddleReturn, sweepPaddle, sweepWalls } from "../simulation/collision";
 import { add, dot, normalise, scale, sub, type Vec2 } from "../simulation/vector";
 import { createEffects } from "./effects";
 import { createBallView } from "./ball-view";
-import { createFloorReflection } from "./floor-reflection";
+import { createArenaReflections } from "./arena-reflections";
 import { createStage } from "./stage";
 
 export interface ViewOptions {
@@ -16,8 +16,8 @@ export interface ViewOptions {
 }
 export function createArenaView(humanSeat = 0) {
   const stage = createStage(humanSeat);
-  const reflection = createFloorReflection();
-  stage.root.add(reflection.mesh);
+  const reflection = createArenaReflections(humanSeat);
+  stage.root.add(...reflection.meshes);
   const balls = createBallView(stage.root);
   const geometry = new BufferGeometry();
   geometry.setAttribute("position", new Float32BufferAttribute(new Float32Array(9), 3));
@@ -47,7 +47,7 @@ export function createArenaView(humanSeat = 0) {
     root: stage.root,
     dispose: () => reflection.dispose(),
     update(state: MatchState, dt: number, options: ViewOptions) {
-      reflection.mesh.visible = !options.reducedEffects;
+      reflection.setReduced(options.reducedEffects);
       state.players.forEach((player) => {
         const paddle = stage.paddles[player.id]!;
         paddle.rotation.y = -player.angle;

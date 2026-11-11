@@ -1,39 +1,51 @@
 import { fortress } from "../simulation/arena";
-import { Box3, OrthographicCamera, Plane, Raycaster, Vector2, Vector3 } from "three";
+import { Box3, MathUtils, PerspectiveCamera, Plane, Raycaster, Vector2, Vector3 } from "three";
 
 export const INPUT_PLANE_HEIGHT = 0.52;
 export const CAMERA_TARGET = { x: 0, y: -0.6, z: 0 } as const;
-export function createArenaCamera(humanSeat = 0): OrthographicCamera {
-  const camera = new OrthographicCamera(-12, 12, 12, -12, 0.1, 150);
+export function createArenaCamera(humanSeat = 0): PerspectiveCamera {
+  const camera = new PerspectiveCamera(44, 1, 0.1, 180);
   const anchor = fortress(humanSeat).anchor;
   const distance = Math.hypot(anchor.x, anchor.y);
-  camera.position.set((anchor.x / distance) * 25, 24, (anchor.y / distance) * 25);
+  camera.position.set((anchor.x / distance) * 25, 18.9, (anchor.y / distance) * 25);
   camera.lookAt(CAMERA_TARGET.x, CAMERA_TARGET.y, CAMERA_TARGET.z);
   camera.updateMatrixWorld();
   return camera;
 }
 
-/** Fit all extruded geometry, including the plinth, with identical framing after resize. */
-export function fitArenaCamera(camera: OrthographicCamera, bounds: Box3, aspect: number): void {
+/** Fit perspective slopes, not parallel rays. Lens shift centres the complete solid arena. */
+export function fitArenaCamera(camera: PerspectiveCamera, bounds: Box3, aspect: number): void {
   camera.updateMatrixWorld();
-  const view = new Box3();
+  let minX = Infinity,
+    maxX = -Infinity,
+    minY = Infinity,
+    maxY = -Infinity;
   for (const x of [bounds.min.x, bounds.max.x])
     for (const y of [bounds.min.y, bounds.max.y])
       for (const z of [bounds.min.z, bounds.max.z]) {
-        view.expandByPoint(new Vector3(x, y, z).applyMatrix4(camera.matrixWorldInverse));
+        const point = new Vector3(x, y, z).applyMatrix4(camera.matrixWorldInverse);
+        const depth = Math.max(camera.near, -point.z);
+        minX = Math.min(minX, point.x / depth);
+        maxX = Math.max(maxX, point.x / depth);
+        minY = Math.min(minY, point.y / depth);
+        maxY = Math.max(maxY, point.y / depth);
       }
-  const centre = view.getCenter(new Vector3());
-  const size = view.getSize(new Vector3());
-  const halfHeight = Math.max(size.y / 2, size.x / (2 * aspect)) * 1.09;
-  camera.left = centre.x - halfHeight * aspect;
-  camera.right = centre.x + halfHeight * aspect;
-  camera.top = centre.y + halfHeight;
-  camera.bottom = centre.y - halfHeight;
+  const halfTan = Math.max((maxY - minY) / 2, (maxX - minX) / (2 * aspect)) * 1.04;
+  camera.fov = MathUtils.radToDeg(2 * Math.atan(halfTan));
+  // Normalised viewport units preserve aspect and an exact inverse pointer projection.
+  camera.setViewOffset(
+    2 * aspect,
+    2,
+    (((minX + maxX) / 2) * camera.zoom) / halfTan,
+    ((-(minY + maxY) / 2) * camera.zoom) / halfTan,
+    2 * aspect,
+    2,
+  );
   camera.updateProjectionMatrix();
 }
 
 export function screenToArena(
-  camera: OrthographicCamera,
+  camera: PerspectiveCamera,
   ndc: Vector2,
 ): { x: number; y: number } | null {
   const ray = new Raycaster();

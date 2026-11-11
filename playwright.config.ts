@@ -18,6 +18,8 @@ export default defineConfig({
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
+        // Real pointer lock is unsupported by the lightweight headless shell.
+        channel: "chromium",
         launchOptions: { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] },
       },
     },

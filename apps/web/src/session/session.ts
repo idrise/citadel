@@ -47,14 +47,18 @@ export function createSession(
   const setPaused = (value: boolean) => {
     paused = value;
     input.clear();
+    if (value) input.release();
     clock.reset();
     report();
   };
   const input = createDesktopInput(
     viewport.canvas,
     humanSeat,
-    (x, y) => viewport.pointFromClient(x, y),
-    () => setPaused(!paused),
+    () => state.players[humanSeat]!.angle,
+    () => setPaused(true),
+    () => {
+      if (started && state.phase !== "finished") setPaused(true);
+    },
   );
   const abort = new AbortController();
   window.addEventListener("blur", () => setPaused(true), { signal: abort.signal });
@@ -93,6 +97,7 @@ export function createSession(
       reducedEffects: experiments.reducedEffects,
     };
     viewport.render({ ...state, events }, paused && started ? 0 : delta, view);
+    if (state.phase === "finished") input.release();
     if (timestamp - lastReport > 80 || events.some((event) => event.type === "victory")) {
       lastReport = timestamp;
       report();
@@ -105,12 +110,12 @@ export function createSession(
     start() {
       started = true;
       setPaused(false);
-      viewport.canvas.focus({ preventScroll: true });
+      input.capture();
     },
     pause: () => setPaused(true),
     resume() {
       setPaused(false);
-      viewport.canvas.focus({ preventScroll: true });
+      input.capture();
     },
     configure(next: Experiments) {
       experiments = next;

@@ -1,8 +1,8 @@
-import { OrthographicCamera, Vector3 } from "three";
+import { PerspectiveCamera, Vector3 } from "three";
 import { CAMERA_TARGET } from "./camera";
 
 /** Slow bounded orbit and breathing zoom. Pauses/reduced effects hold the current pose. */
-export function createCameraMotion(camera: OrthographicCamera) {
+export function createCameraMotion(camera: PerspectiveCamera) {
   const target = new Vector3(CAMERA_TARGET.x, CAMERA_TARGET.y, CAMERA_TARGET.z);
   const offset = camera.position.clone().sub(target);
   const radius = offset.length();

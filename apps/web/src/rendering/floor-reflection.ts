@@ -3,10 +3,15 @@ import { Reflector } from "three/addons/objects/Reflector.js";
 import { ARENA } from "../simulation/arena";
 
 /** One softened planar reflection; its render target is a technical buffer, not artwork. */
-export function createFloorReflection() {
-  const mirror = new Reflector(new PlaneGeometry(ARENA.halfSize * 2, ARENA.halfSize * 2), {
-    textureWidth: 512,
-    textureHeight: 512,
+export function createFrostedReflection(
+  width: number,
+  height: number,
+  resolution = 512,
+  opacity = 0.24,
+) {
+  const mirror = new Reflector(new PlaneGeometry(width, height), {
+    textureWidth: resolution,
+    textureHeight: resolution,
     multisample: 0,
     clipBias: 0.003,
     color: 0xb3c5d7,
@@ -16,7 +21,8 @@ export function createFloorReflection() {
         color: { value: new Color() },
         tDiffuse: { value: null },
         textureMatrix: { value: new Matrix4() },
-        frostStep: { value: new Vector2(2.5 / 512, 2.5 / 512) },
+        reflectionOpacity: { value: opacity },
+        frostStep: { value: new Vector2(2.5 / resolution, 2.5 / resolution) },
       },
       vertexShader: `uniform mat4 textureMatrix;
         varying vec4 reflectedUv;
@@ -27,6 +33,7 @@ export function createFloorReflection() {
       fragmentShader: `uniform vec3 color;
         uniform sampler2D tDiffuse;
         uniform vec2 frostStep;
+        uniform float reflectionOpacity;
         varying vec4 reflectedUv;
         void main() {
           vec2 uv = reflectedUv.xy / reflectedUv.w;
@@ -39,16 +46,21 @@ export function createFloorReflection() {
           reflected += texture2D(tDiffuse, uv - frostStep).rgb * 0.05;
           reflected += texture2D(tDiffuse, uv + vec2(frostStep.x, -frostStep.y)).rgb * 0.05;
           reflected += texture2D(tDiffuse, uv + vec2(-frostStep.x, frostStep.y)).rgb * 0.05;
-          gl_FragColor = vec4(reflected * color, 0.2);
+          gl_FragColor = vec4(reflected * color, reflectionOpacity);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
         }`,
     },
   });
-  mirror.rotation.x = -Math.PI / 2;
-  mirror.position.y = 0.025;
   const material = mirror.material as ShaderMaterial;
   material.transparent = true;
   material.depthWrite = false;
   return { mesh: mirror, dispose: () => mirror.getRenderTarget().dispose() };
+}
+
+export function createFloorReflection() {
+  const reflection = createFrostedReflection(ARENA.halfSize * 2, ARENA.halfSize * 2);
+  reflection.mesh.rotation.x = -Math.PI / 2;
+  reflection.mesh.position.y = 0.025;
+  return reflection;
 }

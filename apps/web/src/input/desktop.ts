@@ -1,16 +1,22 @@
-import { fortress } from "../simulation/arena";
-import { angleOf, sub, type Vec2 } from "../simulation/vector";
+import { clampPaddleAngle, fortress } from "../simulation/arena";
 import { IDLE_INTENT, type PlayerIntent } from "../simulation/types";
 
+export const MOUSE_RADIANS_PER_PIXEL = 0.004;
+
+/** Relative deltas are independent of the camera and never depend on pointer screen edges. */
 export function createDesktopInput(
   canvas: HTMLCanvasElement,
   seat: number,
-  project: (x: number, y: number) => Vec2 | null,
+  currentAngle: () => number,
   togglePause: () => void,
+  lostCapture: () => void,
 ) {
   const keys = new Set<string>();
   let angle: number | null = null;
   let launch = false;
+  let disposed = false;
+  const lower = clampPaddleAngle(seat, fortress(seat).direction - Math.PI / 2);
+  const upper = clampPaddleAngle(seat, fortress(seat).direction + Math.PI / 2);
   const abort = new AbortController();
   const options = { signal: abort.signal };
   function clear() {
@@ -19,27 +25,37 @@ export function createDesktopInput(
     launch = false;
   }
   canvas.addEventListener(
-    "pointermove",
+    "mousemove",
     (event) => {
-      const point = project(event.clientX, event.clientY);
-      if (point) angle = angleOf(sub(point, fortress(seat).anchor));
+      if (document.pointerLockElement !== canvas || !Number.isFinite(event.movementX)) return;
+      angle = Math.max(
+        lower,
+        Math.min(upper, (angle ?? currentAngle()) + event.movementX * MOUSE_RADIANS_PER_PIXEL),
+      );
     },
     options,
   );
   canvas.addEventListener(
-    "pointerdown",
+    "mousedown",
     (event) => {
-      if (event.button !== 0) return;
-      canvas.focus({ preventScroll: true });
-      launch = true;
+      if (event.button === 0 && document.pointerLockElement === canvas) launch = true;
     },
     options,
   );
-  canvas.addEventListener("pointerleave", clear, options);
+  document.addEventListener(
+    "pointerlockchange",
+    () => {
+      if (document.pointerLockElement !== canvas) {
+        clear();
+        lostCapture();
+      }
+    },
+    options,
+  );
   window.addEventListener(
     "keydown",
     (event) => {
-      if (document.activeElement !== canvas) return;
+      if (document.activeElement !== canvas && document.pointerLockElement !== canvas) return;
       if (event.code === "Escape" || event.code === "KeyP") {
         event.preventDefault();
         if (!event.repeat) togglePause();
@@ -61,6 +77,23 @@ export function createDesktopInput(
     options,
   );
   return {
+    capture() {
+      canvas.focus({ preventScroll: true });
+      if (canvas.requestPointerLock) {
+        const request = canvas.requestPointerLock();
+        if (request)
+          void request
+            .then(() => {
+              if (disposed && document.pointerLockElement === canvas) document.exitPointerLock();
+            })
+            .catch(() => {
+              if (!disposed) lostCapture();
+            });
+      }
+    },
+    release() {
+      if (document.pointerLockElement === canvas) document.exitPointerLock();
+    },
     read(): PlayerIntent {
       const steer =
         Number(keys.has("ArrowRight") || keys.has("KeyD")) -
@@ -77,8 +110,10 @@ export function createDesktopInput(
     },
     clear,
     dispose() {
+      disposed = true;
       abort.abort();
       clear();
+      if (document.pointerLockElement === canvas) document.exitPointerLock();
     },
   };
 }

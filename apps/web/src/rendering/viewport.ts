@@ -39,6 +39,8 @@ export function createViewport(container: HTMLElement, humanSeat = 0) {
   const motion = createCameraMotion(camera);
   let aspect = 1;
   const bounds = new Box3().setFromObject(arena.root);
+  // Frame the playing surface and wall tops; the structural plinth may extend below the view.
+  bounds.min.y = 0;
   bounds.max.y = Math.max(bounds.max.y, 1.6);
   const bloom = createBloom(renderer, scene, camera);
   container.append(canvas);
