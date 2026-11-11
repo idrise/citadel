@@ -1,0 +1,75 @@
+{
+  "schema": "citadel.round",
+  "version": 1,
+  "createdAt": "2026-11-11T16:18:14.098Z",
+  "build": {
+    "version": "0.1.0",
+    "revision": "local"
+  },
+  "seed": 2026,
+  "initialPlayers": 2,
+  "humanSeat": 0,
+  "phase": "finished",
+  "winner": 0,
+  "tick": 4496,
+  "elapsedSeconds": 35.958333333331936,
+  "settingsAtStart": {
+    "effectsQuality": "high",
+    "botDifficulty": "standard",
+    "preview": true,
+    "slowdown": false,
+    "reducedEffects": false,
+    "mouseSensitivity": 1,
+    "serveTimeout": 1.8,
+    "ballInterval": 15,
+    "maxBalls": 4,
+    "music": true,
+    "musicVolume": 0.45,
+    "musicLights": true
+  },
+  "settingsAtExport": {
+    "effectsQuality": "high",
+    "botDifficulty": "standard",
+    "preview": true,
+    "slowdown": false,
+    "reducedEffects": false,
+    "mouseSensitivity": 1,
+    "serveTimeout": 1.8,
+    "ballInterval": 15,
+    "maxBalls": 4,
+    "music": true,
+    "musicVolume": 0.45,
+    "musicLights": true
+  },
+  "stats": {
+    "paddleHits": 34,
+    "damage": 11,
+    "collisionCaps": 0,
+    "peakBalls": 3
+  },
+  "players": [
+    {
+      "seat": 0,
+      "health": 5,
+      "place": 1,
+      "alive": true,
+      "returns": 12,
+      "scored": 4,
+      "lost": 3,
+      "eliminations": 0,
+      "eliminatedAt": null
+    },
+    {
+      "seat": 1,
+      "health": 0,
+      "place": 2,
+      "alive": false,
+      "returns": 22,
+      "scored": 2,
+      "lost": 8,
+      "eliminations": 0,
+      "eliminatedAt": 35.958333333331936
+    }
+  ],
+  "note": "Local round summary, not an input replay. Nothing is uploaded."
+}

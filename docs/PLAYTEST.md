@@ -18,6 +18,14 @@ tester sessions and a public Pages URL are **not yet collected**.
 
 ## Recorded scripted observations
 
+Latest owner steering replaces abrupt landing/result popups with a procedural
+scene title, +/− controls and victory fireworks; advanced settings explicitly stay
+in Pause. It also requests last-striker ball colours, a non-cyan human and reliable
+enemy capsule sounds. [Current scene review](SCENE_PRESENTATION_REVIEW.md) records
+the response: a native 35.96s human win, zero caps, continuing celebration, real
+neutral-break auditions and 27 production browser checks. This remains automation,
+not a human retention or two-minute pacing result.
+
 Subsequent owner review found unrotated cuboid caps, inaudible own losses and
 negative-sounding enemy breaches with no obvious cheer. [M07 corrections](M07_CORRECTIONS.md)
 provide rotated corner posts, a stronger falling own-loss cue and separate rising

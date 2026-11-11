@@ -7,6 +7,8 @@ shape as players fall, normally over 2.8 seconds. M01–M05 are approved.
 The [M07 effects/edge review](docs/M07_REVIEW.md) and
 [M08 desktop preview 0.1.0](docs/M08_REVIEW.md) await review. External playtests and
 public deployment remain pending; M06's pacing comparison is still unstarted.
+The latest [scene title, victory fireworks and shot feedback](docs/SCENE_PRESENTATION_REVIEW.md)
+replace the former landing/result popups.
 
 ## Develop
 
@@ -20,15 +22,18 @@ pnpm dev
 
 ## Play locally
 
-Choose **Players** on the start menu; **Settings** offers Beginner/Standard/Expert
+Use the floating title's **− / +** buttons to choose 2–6 players, then **START**.
+The lettering and buttons are procedural 3D meshes. **Settings** opens the compact
+Pause panel, offering Beginner/Standard/Expert
 bots and any human fortress. Two seats use a rectangle, then triangle, square,
 pentagon and hexagon. Eliminations gradually move walls and surviving fortresses
-to the new layout, preserving health and relative steering. Results show standings
-and duration; pause has optional Round statistics. **Export round** in pause or
-results downloads a local JSON summary; nothing is uploaded. How to play and
-version/build details are in the menus.
+to the new layout, preserving health and relative steering. Wins celebrate in the
+arena with neon fireworks, a musical closing phrase and a floating **AGAIN** button.
+Other results show **ROUND OVER** in the scene. Pause has optional Round statistics
+and **Export round** for a local JSON summary; nothing is uploaded. How to play and
+version/build details stay in Pause.
 
-Click **Play** to capture the mouse. Move left/right to steer your curved bat;
+Click **START** to capture the mouse. Move left/right to steer your curved bat;
 click or press Space to serve. A/D or Left/Right also steer. **Escape/P** pauses
 and releases the cursor. Focus loss or capture loss pauses and clears held input;
 click **Resume** to recapture and continue. While paused, **H** hides/restores the
@@ -37,6 +42,8 @@ and Neither / Preview only / Pressure slowdown / Both assistance modes. Settings
 are saved locally across refresh, Restart, Rematch and seat changes. Restart repeats
 the same opening; Rematch starts a new seeded round.
 The scene fills the viewport, with no visible HUD or surrounding text during play.
+Your default fortress is coral. Active balls and trails carry the last striker's
+colour; ready revenge balls show their next server. Banks keep shot credit.
 
 Each hit destroys the actual piece struck. The damaged survivor gets the revenge
 serve, with a quick raised return arc. Lost pieces burst into small neon fragments
@@ -86,7 +93,9 @@ Two balls add harmony, three add FM arpeggios/acid counter-line, four add FM bra
 New parts enter on bar boundaries. Returns grow your own phrase and performance
 layers; losing a piece resets your part. Your successful attacks get rising FM
 notes and a cheering audience; losing your own piece gets a distinct lower cue.
-Bot-only breaches stay quieter.
+Every rival capsule has its own sharp break cue, including bot-only strikes.
+Wall-sound throttling cannot swallow it. Winning gets a short resolving musical
+phrase while the arena and fireworks continue, with immediate mute/pause handling.
 Bat notes align to 32nds with a short bounded delay; replies/cheers use eighths.
 Collisions, movement and results always happen immediately and never wait for music.
 

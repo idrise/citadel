@@ -38,7 +38,7 @@ The desired game loop is simple: **move → aim a deflection → launch/return �
 | Next serve after damage | Damaged defender receives the ball for a revenge serve if still alive; elimination fallback remains open |
 | Elimination/winner | No health left = eliminated; last survivor wins |
 | Aiming | Captured relative mouse movement; keyboard alternative; touch later |
-| Presentation | Full viewport Three.js scene, no visible HUD or surrounding copy during play; minimal start/pause/result menus |
+| Presentation | Full viewport Three.js scene, no visible HUD or surrounding copy during play; scene title/count/Start and victory/rematch; compact Pause settings |
 | Serving | Mouse click / Space / Enter initially; mobile tap later |
 | Pacing | Adrenaline first: start with one ball and add balls over time; roughly two minutes remains a tuning target |
 | Current ball tuning | Radius 0.187 (10% larger), speed 24 units/s (double the first prototype); provisional extra-ball interval 15s and cap four |
@@ -125,7 +125,7 @@ The previously discussed sketch is a **layout reference**, not a requirement to 
 
 ### Input progression
 
-**Desktop now:** Play/Resume captures the mouse using Pointer Lock. Horizontal relative movement changes a bounded target angle on the curved track, independent of screen edges and camera motion; primary click launches an attached ball. A/D or Left/Right steer; Space/Enter launch. Escape/P pauses and releases capture; focus loss or browser capture loss also pauses and clears input. Resume requires an explicit click. The Three.js canvas fills the viewport with no visible HUD or surrounding text during play. Keep settings behind minimal start/pause/result menus; retain nonvisual accessible status. Pause controls sit in a small corner panel; H hides/restores them for unobstructed screenshots while simulation remains paused. The human can choose a fortress in Settings while testing geometry.
+**Desktop now:** Start/Resume captures the mouse using Pointer Lock. Horizontal relative movement changes a bounded target angle on the curved track, independent of screen edges and camera motion; primary click launches an attached ball. A/D or Left/Right steer; Space/Enter launch. Escape/P pauses and releases capture; focus loss or browser capture loss also pauses and clears input. Resume requires an explicit click. The Three.js canvas fills the viewport with no visible HUD or surrounding text during play. Render the CITADEL title, 2–6-player −/+ controls, Start and win/loss/rematch in the Three.js scene. Retain nonvisual accessible status and the compact Pause settings panel by explicit user choice. A human victory keeps presentation alive with neon-shader fireworks and a finite musical resolution; it never opens an automatic DOM result popup. Pause controls sit in a small corner panel; H hides/restores them for unobstructed screenshots while simulation remains paused. The human can choose a fortress in Settings while testing geometry.
 
 **Mobile later:** Use Pointer Events and pointer capture; relative drag is the first touch experiment, and **tap** launches. Distinguish tap and drag to avoid accidental serves. Test an optional dedicated large launch target if tapping while steering proves awkward. Disable scrolling/zoom gestures only over the active game surface; respect safe areas, rotation and reduced-quality mode.
 
@@ -156,7 +156,7 @@ Build a small four-player game immediately: one human, three basic bots, one ini
 
 ### First release candidate for outside feedback: **M08**
 
-A static URL with a **Play** button, selectable total players (2–6), and instant rematch. Initially share with a few friends *only when wanted*, for feel feedback—not for organising multiplayer sessions.
+A static URL with a procedural 3D **CITADEL** title, **START**, −/+ total-player controls (2–6), and a scene rematch after a brief celebration. Initially share with a few friends *only when wanted*, for feel feedback—not for organising multiplayer sessions.
 
 **Instrument locally without a backend:** round duration, chosen arena, ball count, human-versus-bot wins, number of replays, deaths by breach location, paddle-hit rate and pause/focus interruptions. Display diagnostics in a developer panel; avoid invasive telemetry or requiring accounts. For external tests, opt-in anonymous metrics or a short voluntary feedback form can be considered separately.
 
@@ -181,7 +181,7 @@ A static URL with a **Play** button, selectable total players (2–6), and insta
 ```text
 GitHub Pages / static dev server
   └─ Browser
-      ├─ React menus + nonvisual status (normal DOM/CSS)
+      ├─ React Pause settings + nonvisual status; title/results are scene geometry
       ├─ Three.js/WebGL2 (procedural 2.5D rendering)
       ├─ Desktop mouse + keyboard / later mobile touch adapter
       ├─ Pure fixed-step simulation
@@ -191,7 +191,7 @@ GitHub Pages / static dev server
       └─ Local session statistics / replay diagnostics
 ```
 
-Preferred stack: **strict TypeScript + Vite+**, pnpm as the package manager, React for menus, Three.js/WebGLRenderer and composer/bloom, Vite+'s Vitest integration with co-located tests, Playwright for browser flows, and GitHub Actions for CI/Pages deployment. Prefer Vite+'s integrated format/lint/typecheck tooling rather than maintaining a parallel ESLint/formatter setup. Use `vp dev`, `vp check`, `vp test` and `vp build`; project-local invocation through `pnpm exec vp` is acceptable. Pin the toolchain/runtime and commit the lockfile. If an actual compatibility blocker requires standalone tools, document it and review the exception rather than silently abandoning Vite+. Use small composable pure functions, immutable state transitions where practical, straightforward functional modules and no large framework of abstract classes. WebGL2 is the primary compatibility target; WebGPU is not required.
+Preferred stack: **strict TypeScript + Vite+**, pnpm as the package manager, React for Pause settings/nonvisual status, Three.js/WebGLRenderer and composer/bloom, Vite+'s Vitest integration with co-located tests, Playwright for browser flows, and GitHub Actions for CI/Pages deployment. Prefer Vite+'s integrated format/lint/typecheck tooling rather than maintaining a parallel ESLint/formatter setup. Use `vp dev`, `vp check`, `vp test` and `vp build`; project-local invocation through `pnpm exec vp` is acceptable. Pin the toolchain/runtime and commit the lockfile. If an actual compatibility blocker requires standalone tools, document it and review the exception rather than silently abandoning Vite+. Use small composable pure functions, immutable state transitions where practical, straightforward functional modules and no large framework of abstract classes. WebGL2 is the primary compatibility target; WebGPU is not required.
 
 **GitHub Pages notes:** Vite must use the correct asset base for a project subpath, or deploy to a custom root domain. For private room URLs later, choose a static-host-friendly router (hash routes, query links, or a verified fallback), not an assumed SPA server rewrite. Browser-side environment variables are public; never ship broker/TURN secrets in client assets.
 
@@ -283,7 +283,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** User approved M05 with “brilliant” on 11 November 2026 and explicitly requested **M08**, then asked to verify M07 completeness and correct outer-wall edge stepping. **M07 implementation and the local M08 desktop candidate are Awaiting review**, with celebratory player-success audio. M08 external tester feedback and public-site verification remain pending. M06 pacing comparisons remain unstarted; retain the approved current pacing rather than silently completing that gate.
+**Current position:** M07/M08 scene presentation amendments are delivered and Awaiting review. The procedural CITADEL title, −/+ controls, Start, floating result/rematch and neon victory fireworks replace landing/result popups; advanced settings remain in Pause by explicit user choice. Ball colours show last-striker credit and the default human is coral. Independent enemy capsule audio and a finite victory coda are verified. M06 pacing comparisons, external tester feedback and public-site verification remain pending.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
@@ -343,7 +343,26 @@ When asked to **"do the next milestone"**:
 - **Transition intuition:** Normally 2.8 seconds, smooth easing, maximum fortress translation 6 units/s. Retargets keep the remaining time, adding only what is needed for the speed bound. A convex moving boundary carries live ball floor coordinates without changing flight velocity/spin; targets and physical pieces follow the fortress. Retarget from the current shape after another elimination. Identity/health/serves persist; the final survivor ends the match immediately. Review fairness, intermediate supports, dimensions and difficulty before considering these permanent.
 - **Checkpoints:** `67ddd15` simulation/input; `b63db58` rendering, setup/results, audio compatibility and validation tools; `7618c47` stable bot serve targets during morphs; `80e95b8` minimal/faster wall transitions and full bat reach. No push, deployment or `gh`; the separate AGENTS edit remains unstaged. M06/M07 were unstarted at the M05 handoff.
 
-### Current milestone work record — M07 / M08 Awaiting review
+### Current milestone work record — M07 / M08 scene presentation Awaiting review
+
+The user rejected the abrupt DOM landing/result panels and requested a procedural
+neon CITADEL title over the arena, +/− selection for 2–6 players, Start, and neon
+fireworks for a human victory. Their explicit follow-up retains advanced settings
+in Pause. Replace visible title/results with scene geometry; keep React only for
+the requested pause settings and invisible accessibility/status composition.
+Every rival capsule needs a reliable break cue, balls must show their last
+striker's colour, and the default human colour changes from arena cyan to coral.
+
+- [x] Identify and separate rival capsule breaks from the shared wall-ricochet throttle; protect outcomes in dense sound batches.
+- [x] Deliver procedural 3D title, bounded count controls, Start and smooth scene-based win/loss/rematch flow.
+- [x] Add pooled neon-shader victory fireworks while keeping the arena/camera alive after simulation ends; respect pause/reduced effects.
+- [x] Colour balls/trails by the same read-only last-striker observer as scoring; distinguish the human from arena cyan.
+- [x] Validate real wins, all-layout start/rematch/controls, exported results and native sound; provide current screenshots and gameplay evidence.
+
+**Current evidence:** `docs/SCENE_PRESENTATION_REVIEW.md`; 278 unit tests in 48 files, 27 native production browser checks and the Pages build pass, with a focused rerun for the final victory pause/framing amendment. A native, unedited 35.96s two-player Standard human win exports zero collision caps; 2/4/6 titles, owned balls, fireworks and a movie are recorded. Eight live feedback auditions include neutral enemy breaks; native six-seat High sampling measures 16.7ms median/p95 on M2 Pro. Checkpoints: `551f559` reliable breach cues, `643f704` scene UI/ownership, `6727aac` victory coda/native controls. Pause settings, reduced mode, scoring and physics goldens remain intact. No push, deployment or `gh`; preserve the separate AGENTS edit. Stop for review.
+
+The preceding M07/M08 checklist and evidence below remain the baseline. These
+amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`.
 
 - [x] Audit M07 against delivered effects/audio; complete effects quality presets and useful event sounds without changing pacing.
 - [x] Correct wall-edge aliasing through the actual post-processing path; inspect matched 2/4/6 renders and reduced effects.
@@ -445,7 +464,7 @@ When a player dies, then the board slowly morphs to the new layout, not so quick
 
 #### M08 — **Desktop browser MVP release and idea-validation gate**
 
-**Implement:** Make a polished **Play** landing experience, quick total-player selector, restart/rematch and solo-only settings inside minimal menus. Keep gameplay pure fullscreen canvas; any controls help or build/version information belongs in menus. Revalidate the M01 GitHub Pages workflow and asset base against the actual repository URL; verify the deployed build when repository publishing is enabled. Follow the established publishing trigger policy rather than introducing a new per-release approval prompt. Write `docs/PLAYTEST.md` with repeatable scripted checks, observations and optional external feedback prompts. Add Playwright desktop smoke tests and a simple local stats export.
+**Implement:** Make a procedural 3D **CITADEL** title above the arena using the neon edge shader, −/+ total-player controls bounded to 2–6, and **START**. Keep winning in the scene with neon-shader fireworks, a resolving musical phrase and scene rematch controls; keep loss/results in the scene too. Retain compact solo settings, help, statistics and local export in Pause by explicit user choice. Colour balls/trails from the read-only last-striker observer and distinguish the default human from arena cyan. Every rival capsule needs a reliable break sound independent of wall throttling. Keep gameplay pure fullscreen canvas; any controls help or build/version information belongs in menus. Revalidate the M01 GitHub Pages workflow and asset base against the actual repository URL; verify the deployed build when repository publishing is enabled. Follow the established publishing trigger policy rather than introducing a new per-release approval prompt. Write `docs/PLAYTEST.md` with repeatable scripted checks, observations and optional external feedback prompts. Add Playwright desktop smoke tests and a simple local stats export.
 
 **Acceptance:** Complete one-human-versus-five-bots match from a freshly opened desktop URL; clean startup, no console-breaking errors, no account, clear replay. Document what a few testers find confusing, actual match times and the next design changes. **Decision:** Go to mobile only if the core interaction has earned it. **STOP: REVIEW REQUIRED — M08.**
 
@@ -560,4 +579,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**M07 / M08 Awaiting review.** Local implementation and evidence are ready. Collect review of edge fidelity, scoring audio and the desktop loop; external tester feedback and actual public-site verification remain pending. Preserve current pacing; M06 remains unstarted. No push, deployment or `gh` without explicit instruction. Stop for M07/M08 review; do not start M09.
+**M07 / M08 scene presentation Awaiting review.** See `docs/SCENE_PRESENTATION_REVIEW.md` for the procedural title, count/Start controls, last-striker colours, reliable capsule audio, and native victory fireworks/music evidence. Review title legibility, the end-of-round celebration and sound/credit clarity. Advanced settings remain in Pause. External tester feedback and public-site verification remain pending; preserve current pacing and leave M06/M09 unstarted. No push, deployment or `gh` without explicit instruction. Stop for M07/M08 review.

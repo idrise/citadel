@@ -1,5 +1,9 @@
 # M08 — desktop MVP candidate
 
+**Current presentation:** [procedural scene title, victory fireworks and ownership feedback](SCENE_PRESENTATION_REVIEW.md)
+replaces the landing/result panels described in this original handoff. Advanced
+settings remain in Pause by the user's choice. Current checks and media are in that review.
+
 Status: **Awaiting review**, 11 November 2026. The local desktop implementation
 and scripted gate are ready. External tester feedback, a public deployment and
 the decision to proceed to mobile remain pending; this is not an approved release.

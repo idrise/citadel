@@ -1,0 +1,297 @@
+{
+  "kind": "Native real-time two-player standard match, seed 2026, human seat 0, no state edits, High effects/music on",
+  "winner": "You win",
+  "owners": [
+    {
+      "second": 1,
+      "owner": "Coral"
+    },
+    {
+      "second": 2,
+      "owner": "Coral"
+    },
+    {
+      "second": 3,
+      "owner": "Coral"
+    },
+    {
+      "second": 4,
+      "owner": "Amber"
+    },
+    {
+      "second": 5,
+      "owner": "Coral"
+    },
+    {
+      "second": 6,
+      "owner": "Amber"
+    },
+    {
+      "second": 7,
+      "owner": "Amber"
+    },
+    {
+      "second": 8,
+      "owner": "Amber"
+    },
+    {
+      "second": 9,
+      "owner": "Coral"
+    },
+    {
+      "second": 10,
+      "owner": "Amber"
+    },
+    {
+      "second": 11,
+      "owner": "Coral"
+    },
+    {
+      "second": 12,
+      "owner": "Coral"
+    },
+    {
+      "second": 13,
+      "owner": "Coral"
+    },
+    {
+      "second": 14,
+      "owner": "Coral"
+    },
+    {
+      "second": 15,
+      "owner": "Amber"
+    },
+    {
+      "second": 16,
+      "owner": "Amber"
+    },
+    {
+      "second": 17,
+      "owner": "Amber"
+    },
+    {
+      "second": 18,
+      "owner": "Amber"
+    },
+    {
+      "second": 19,
+      "owner": "Amber"
+    },
+    {
+      "second": 20,
+      "owner": "Amber"
+    },
+    {
+      "second": 21,
+      "owner": "Amber"
+    },
+    {
+      "second": 22,
+      "owner": "Amber"
+    },
+    {
+      "second": 23,
+      "owner": "Coral"
+    },
+    {
+      "second": 24,
+      "owner": "Amber"
+    },
+    {
+      "second": 25,
+      "owner": "Amber"
+    },
+    {
+      "second": 26,
+      "owner": "Amber"
+    },
+    {
+      "second": 27,
+      "owner": "Amber"
+    },
+    {
+      "second": 28,
+      "owner": "Amber"
+    },
+    {
+      "second": 29,
+      "owner": "Amber"
+    },
+    {
+      "second": 30,
+      "owner": "Coral"
+    },
+    {
+      "second": 31,
+      "owner": "Amber"
+    },
+    {
+      "second": 32,
+      "owner": "Amber"
+    },
+    {
+      "second": 33,
+      "owner": "Coral"
+    },
+    {
+      "second": 34,
+      "owner": "Coral"
+    },
+    {
+      "second": 35,
+      "owner": "Amber"
+    },
+    {
+      "second": 36,
+      "owner": "Amber"
+    },
+    {
+      "second": 37,
+      "owner": "finished"
+    }
+  ],
+  "ending": [
+    {
+      "seconds": 0.25,
+      "rms": 0.03737169847791632,
+      "status": "ending"
+    },
+    {
+      "seconds": 0.5,
+      "rms": 0.017663467228754892,
+      "status": "ending"
+    },
+    {
+      "seconds": 0.75,
+      "rms": 0.016165609483799866,
+      "status": "ending"
+    },
+    {
+      "seconds": 1,
+      "rms": 0.01733106553569804,
+      "status": "ending"
+    },
+    {
+      "seconds": 1.25,
+      "rms": 0.002495665549815164,
+      "status": "ending"
+    },
+    {
+      "seconds": 1.5,
+      "rms": 0.003308345136870682,
+      "status": "ending"
+    },
+    {
+      "seconds": 1.75,
+      "rms": 0.002652485932417711,
+      "status": "ending"
+    },
+    {
+      "seconds": 2,
+      "rms": 0.003153052487531642,
+      "status": "ending"
+    },
+    {
+      "seconds": 2.25,
+      "rms": 0.0031964275081502575,
+      "status": "ending"
+    },
+    {
+      "seconds": 2.5,
+      "rms": 0.002719055989371135,
+      "status": "ending"
+    },
+    {
+      "seconds": 2.75,
+      "rms": 0.0023469698233159644,
+      "status": "ending"
+    },
+    {
+      "seconds": 3,
+      "rms": 0.002808382760855,
+      "status": "ending"
+    },
+    {
+      "seconds": 3.25,
+      "rms": 0.003846849194883047,
+      "status": "ending"
+    },
+    {
+      "seconds": 3.5,
+      "rms": 0.003257114942223011,
+      "status": "ending"
+    },
+    {
+      "seconds": 3.75,
+      "rms": 0.002108179942222911,
+      "status": "ending"
+    },
+    {
+      "seconds": 4,
+      "rms": 0.0008901937698437491,
+      "status": "ending"
+    },
+    {
+      "seconds": 4.25,
+      "rms": 0.00012342731727652472,
+      "status": "ending"
+    },
+    {
+      "seconds": 4.5,
+      "rms": 0.000029465540064113113,
+      "status": "ending"
+    },
+    {
+      "seconds": 4.75,
+      "rms": 0.000012715650191986203,
+      "status": "ending"
+    },
+    {
+      "seconds": 5,
+      "rms": 0.00000510497905349603,
+      "status": "ending"
+    },
+    {
+      "seconds": 5.25,
+      "rms": 0.0000014651565378294625,
+      "status": "ending"
+    },
+    {
+      "seconds": 5.5,
+      "rms": 2.2843611331436334e-8,
+      "status": "paused"
+    },
+    {
+      "seconds": 5.75,
+      "rms": 0,
+      "status": "paused"
+    },
+    {
+      "seconds": 6,
+      "rms": 0,
+      "status": "paused"
+    },
+    {
+      "seconds": 6.25,
+      "rms": 0,
+      "status": "paused"
+    },
+    {
+      "seconds": 6.5,
+      "rms": 0,
+      "status": "paused"
+    },
+    {
+      "seconds": 6.75,
+      "rms": 0,
+      "status": "paused"
+    },
+    {
+      "seconds": 7,
+      "rms": 0,
+      "status": "paused"
+    }
+  ],
+  "errors": []
+}

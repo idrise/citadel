@@ -1,5 +1,9 @@
 # M07 — legibility, impact and sound
 
+**Current scene/feedback revision:** [title, fireworks, ball ownership and independent capsule audio](SCENE_PRESENTATION_REVIEW.md).
+Its native media and current checks supersede the earlier result presentation and
+neutral-enemy sound examples; the wall-fidelity evidence below remains relevant.
+
 **Latest amendment:** [corner-cap rotation and revised loss/cheer sounds](M07_CORRECTIONS.md)
 addresses the owner's subsequent review. Its live and mixed auditions supersede
 the original audio examples below; it includes current cap screenshots and checks.
