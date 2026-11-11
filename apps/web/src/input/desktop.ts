@@ -10,11 +10,14 @@ export function createDesktopInput(
   currentAngle: () => number,
   togglePause: () => void,
   lostCapture: () => void,
+  sensitivity: () => number = () => 1,
 ) {
   const keys = new Set<string>();
   let angle: number | null = null;
   let launch = false;
   let disposed = false;
+  let captureWanted = false;
+  let captureEpoch = 0;
   const lower = clampPaddleAngle(seat, fortress(seat).direction - Math.PI / 2);
   const upper = clampPaddleAngle(seat, fortress(seat).direction + Math.PI / 2);
   const abort = new AbortController();
@@ -28,9 +31,14 @@ export function createDesktopInput(
     "mousemove",
     (event) => {
       if (document.pointerLockElement !== canvas || !Number.isFinite(event.movementX)) return;
+      const configured = sensitivity();
+      const multiplier = Number.isFinite(configured) ? Math.max(0.5, Math.min(2, configured)) : 1;
       angle = Math.max(
         lower,
-        Math.min(upper, (angle ?? currentAngle()) + event.movementX * MOUSE_RADIANS_PER_PIXEL),
+        Math.min(
+          upper,
+          (angle ?? currentAngle()) + event.movementX * MOUSE_RADIANS_PER_PIXEL * multiplier,
+        ),
       );
     },
     options,
@@ -45,13 +53,24 @@ export function createDesktopInput(
   document.addEventListener(
     "pointerlockchange",
     () => {
-      if (document.pointerLockElement !== canvas) {
+      if (document.pointerLockElement === canvas) {
+        if (!captureWanted || disposed) document.exitPointerLock();
+      } else {
+        captureWanted = false;
+        captureEpoch++;
         clear();
-        lostCapture();
+        if (!disposed) lostCapture();
       }
     },
     options,
   );
+  const captureFailed = () => {
+    if (disposed || !captureWanted || document.pointerLockElement === canvas) return;
+    captureWanted = false;
+    clear();
+    lostCapture();
+  };
+  document.addEventListener("pointerlockerror", captureFailed, options);
   window.addEventListener(
     "keydown",
     (event) => {
@@ -64,8 +83,11 @@ export function createDesktopInput(
       if (!["ArrowLeft", "ArrowRight", "KeyA", "KeyD", "Space", "Enter"].includes(event.code))
         return;
       event.preventDefault();
+      const held = keys.has(event.code);
       keys.add(event.code);
-      if (event.code === "Space" || event.code === "Enter") launch = !event.repeat;
+      if (event.code === "Space" || event.code === "Enter") {
+        if (!event.repeat && !held) launch = true;
+      } else angle = null;
     },
     options,
   );
@@ -78,20 +100,33 @@ export function createDesktopInput(
   );
   return {
     capture() {
+      if (disposed) return;
+      captureWanted = true;
+      const epoch = ++captureEpoch;
       canvas.focus({ preventScroll: true });
-      if (canvas.requestPointerLock) {
+      try {
+        if (!canvas.requestPointerLock) {
+          captureFailed();
+          return;
+        }
         const request = canvas.requestPointerLock();
         if (request)
           void request
             .then(() => {
-              if (disposed && document.pointerLockElement === canvas) document.exitPointerLock();
+              if ((disposed || !captureWanted) && document.pointerLockElement === canvas)
+                document.exitPointerLock();
             })
             .catch(() => {
-              if (!disposed) lostCapture();
+              if (epoch === captureEpoch) captureFailed();
             });
+      } catch {
+        captureFailed();
       }
     },
     release() {
+      captureWanted = false;
+      captureEpoch++;
+      clear();
       if (document.pointerLockElement === canvas) document.exitPointerLock();
     },
     read(): PlayerIntent {
@@ -111,6 +146,8 @@ export function createDesktopInput(
     clear,
     dispose() {
       disposed = true;
+      captureWanted = false;
+      captureEpoch++;
       abort.abort();
       clear();
       if (document.pointerLockElement === canvas) document.exitPointerLock();

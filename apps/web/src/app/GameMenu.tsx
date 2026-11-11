@@ -1,4 +1,4 @@
-import type { Experiments as Settings } from "../session/session";
+import type { GameSettings as Settings } from "../session/settings";
 import { SEATS } from "../rendering/palette";
 import { Experiments } from "./Experiments";
 import { useEffect, useState } from "react";

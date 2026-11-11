@@ -1,9 +1,9 @@
-import { BufferGeometry, Float32BufferAttribute, Line, LineBasicMaterial } from "three";
+import { BufferGeometry, Float32BufferAttribute, Line, LineDashedMaterial } from "three";
 import { ARENA } from "../simulation/arena";
 import { serveDirection } from "../simulation/aim";
 import { alive, type MatchState } from "../simulation/types";
-import { paddleReturn, sweepPaddle, sweepWalls } from "../simulation/collision";
-import { add, dot, normalise, scale, sub, type Vec2 } from "../simulation/vector";
+import { predictReturn, traceAimGuide } from "../simulation/return-preview";
+import { type Vec2 } from "../simulation/vector";
 import { createEffects } from "./effects";
 import { createBallView } from "./ball-view";
 import { createArenaReflections } from "./arena-reflections";
@@ -11,6 +11,7 @@ import { createStage } from "./stage";
 
 export interface ViewOptions {
   preview: boolean;
+  slowdown: boolean;
   reducedEffects: boolean;
   humanSeat: number;
 }
@@ -23,23 +24,29 @@ export function createArenaView(humanSeat = 0) {
   geometry.setAttribute("position", new Float32BufferAttribute(new Float32Array(9), 3));
   const preview = new Line(
     geometry,
-    new LineBasicMaterial({ color: 0xb6eafa, transparent: true, opacity: 0.65 }),
+    new LineDashedMaterial({
+      color: 0xb6eafa,
+      transparent: true,
+      opacity: 0.65,
+      dashSize: 0.18,
+      gapSize: 0.12,
+    }),
   );
   preview.frustumCulled = false;
   stage.root.add(preview);
   const effects = createEffects(stage.root);
-  const showGuide = (start: Vec2, direction: Vec2, distance: number) => {
-    const wall = sweepWalls(start, direction, distance).sort((a, b) => a.time - b.time)[0];
-    const bend = add(start, scale(direction, wall?.time ?? distance));
-    const reflected = wall
-      ? sub(direction, scale(wall.normal, 2 * dot(direction, wall.normal)))
-      : direction;
-    const end = wall ? add(bend, scale(reflected, Math.min(3, distance - wall.time))) : bend;
+  const showGuide = (
+    state: MatchState,
+    seat: number,
+    start: Vec2,
+    direction: Vec2,
+    distance: number,
+  ) => {
+    const points = traceAimGuide(state, start, direction, distance, seat);
     const attribute = geometry.getAttribute("position");
-    attribute.setXYZ(0, start.x, 0.65, start.y);
-    attribute.setXYZ(1, bend.x, 0.65, bend.y);
-    attribute.setXYZ(2, end.x, 0.65, end.y);
+    points.forEach((point, index) => attribute.setXYZ(index, point.x, 0.65, point.y));
     attribute.needsUpdate = true;
+    preview.computeLineDistances();
     preview.visible = true;
   };
   let lastEvent = -1;
@@ -73,30 +80,19 @@ export function createArenaView(humanSeat = 0) {
         (ball) => ball.phase === "ready" && ball.seat === defender.id,
       );
       if (ownServe) {
-        showGuide(ownServe.position, serveDirection(defender.id, defender.angle), 12);
+        showGuide(
+          state,
+          defender.id,
+          ownServe.position,
+          serveDirection(defender.id, defender.angle),
+          12,
+        );
         return;
       }
       if (!options.preview) return;
-      const imminent = state.balls
-        .flatMap((ball) => {
-          if (ball.phase !== "active") return [];
-          const hit = sweepPaddle(
-            ball.position,
-            ball.velocity,
-            defender.id,
-            defender.angle,
-            0,
-            0.45,
-          );
-          if (!hit || sweepWalls(ball.position, ball.velocity, hit.time).length) return [];
-          return [{ ball, hit }];
-        })
-        .sort((a, b) => a.hit.time - b.hit.time)[0];
+      const imminent = predictReturn(state, defender.id, options.slowdown);
       if (!imminent) return;
-      const { ball, hit } = imminent;
-      const point = add(ball.position, scale(ball.velocity, hit.time));
-      const outgoing = normalise(paddleReturn(ball.velocity, hit.offset, hit.normal));
-      showGuide(point, outgoing, 3);
+      showGuide(state, defender.id, imminent.contact, imminent.outgoing, 3);
     },
   };
 }

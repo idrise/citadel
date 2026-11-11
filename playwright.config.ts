@@ -2,6 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 import { pagesBase } from "./tooling/pages-base.ts";
 
 const basePath = pagesBase(process.env.PAGES_BASE_PATH ?? "/citadel/");
+// Native rendering is optional for local GPU checks; CI stays on portable software WebGL.
+const hardware = process.env.PLAYWRIGHT_RENDERER === "hardware";
 const previewUrl = `http://127.0.0.1:4173${basePath}`;
 
 export default defineConfig({
@@ -20,7 +22,9 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         // Real pointer lock is unsupported by the lightweight headless shell.
         channel: "chromium",
-        launchOptions: { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] },
+        launchOptions: {
+          args: hardware ? [] : ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
+        },
       },
     },
   ],

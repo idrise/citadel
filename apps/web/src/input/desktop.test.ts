@@ -3,7 +3,7 @@ import { clampPaddleAngle, fortress } from "../simulation/arena";
 import { createDesktopInput, MOUSE_RADIANS_PER_PIXEL } from "./desktop";
 
 afterEach(() => vi.unstubAllGlobals());
-function inputFixture() {
+function inputFixture(seat = 0) {
   const canvas = new EventTarget() as HTMLCanvasElement;
   const windowEvents = new EventTarget();
   const documentEvents = Object.assign(new EventTarget(), {
@@ -21,13 +21,24 @@ function inputFixture() {
   });
   vi.stubGlobal("window", windowEvents);
   vi.stubGlobal("document", documentEvents);
-  let currentAngle = fortress(0).direction;
+  let currentAngle = fortress(seat).direction;
+  let sensitivity = 1;
   const lost = vi.fn();
-  const controls = createDesktopInput(canvas, 0, () => currentAngle, vi.fn(), lost);
+  const controls = createDesktopInput(
+    canvas,
+    seat,
+    () => currentAngle,
+    vi.fn(),
+    lost,
+    () => sensitivity,
+  );
   const move = (amount: number) =>
     canvas.dispatchEvent(Object.assign(new Event("mousemove"), { movementX: amount }));
   return {
     canvas,
+    setSensitivity: (value: number) => {
+      sensitivity = value;
+    },
     windowEvents,
     documentEvents,
     controls,
@@ -117,4 +128,129 @@ it("releases a capture that completes after the input adapter was disposed", asy
   await Promise.resolve();
   expect(input.documentEvents.pointerLockElement).toBeNull();
   expect(input.lost).not.toHaveBeenCalled();
+});
+
+it.each([0, 1, 2, 3])(
+  "honours sensitivity and clamps/reverses cleanly at both limits for seat %s",
+  async (seat) => {
+    const input = inputFixture(seat);
+    input.controls.capture();
+    await Promise.resolve();
+    input.setSensitivity(0.5);
+    input.move(10);
+    expect(input.controls.read().targetAngle).toBeCloseTo(fortress(seat).direction + 0.02);
+    input.setSensitivity(2);
+    input.move(10);
+    expect(input.controls.read().targetAngle).toBeCloseTo(fortress(seat).direction + 0.1);
+    input.move(1e6);
+    const upper = input.controls.read().targetAngle!;
+    input.move(-1);
+    expect(input.controls.read().targetAngle).toBeCloseTo(upper - 0.008);
+    input.move(-1e6);
+    const lower = input.controls.read().targetAngle!;
+    input.move(1);
+    expect(input.controls.read().targetAngle).toBeCloseTo(lower + 0.008);
+    input.setSensitivity(NaN);
+    input.setAngle(fortress(seat).direction);
+    input.controls.clear();
+    input.move(1);
+    expect(input.controls.read().targetAngle).toBeCloseTo(fortress(seat).direction + 0.004);
+    input.move(NaN);
+    expect(Number.isFinite(input.controls.read().targetAngle)).toBe(true);
+    input.controls.dispose();
+  },
+);
+
+it.each(["Space", "Enter"])(
+  "latches one %s launch without a held repeat cancelling or repeating it",
+  async (code) => {
+    const input = inputFixture();
+    input.controls.capture();
+    await Promise.resolve();
+    const down = (repeat = false) =>
+      input.windowEvents.dispatchEvent(Object.assign(new Event("keydown"), { code, repeat }));
+    down();
+    down(true);
+    expect(input.controls.read().launch).toBe(true);
+    down(true);
+    down();
+    expect(input.controls.read().launch).toBe(false);
+    input.windowEvents.dispatchEvent(Object.assign(new Event("keyup"), { code }));
+    down();
+    expect(input.controls.read().launch).toBe(true);
+    input.controls.dispose();
+  },
+);
+
+it("accepts only captured primary clicks and cancels opposing keyboard keys", async () => {
+  const input = inputFixture();
+  const click = (button: number) =>
+    input.canvas.dispatchEvent(Object.assign(new Event("mousedown"), { button }));
+  click(0);
+  expect(input.controls.read().launch).toBe(false);
+  input.controls.capture();
+  await Promise.resolve();
+  click(2);
+  expect(input.controls.read().launch).toBe(false);
+  click(0);
+  expect(input.controls.read().launch).toBe(true);
+  expect(input.controls.read().launch).toBe(false);
+  input.move(20);
+  for (const code of ["KeyA", "ArrowRight"])
+    input.windowEvents.dispatchEvent(Object.assign(new Event("keydown"), { code }));
+  const intent = input.controls.read();
+  expect(intent.steer).toBe(0);
+  expect(intent.targetAngle).toBeNull();
+  input.controls.dispose();
+});
+
+it("releases a delayed capture after pause and ignores an obsolete request rejection", async () => {
+  const input = inputFixture();
+  let complete!: () => void;
+  input.canvas.requestPointerLock = vi.fn(
+    () => new Promise<void>((resolve) => (complete = resolve)),
+  );
+  input.controls.capture();
+  input.controls.release();
+  input.documentEvents.pointerLockElement = input.canvas;
+  complete();
+  await Promise.resolve();
+  expect(input.documentEvents.pointerLockElement).toBeNull();
+  let rejectOld!: (reason: Error) => void;
+  let completeNew!: () => void;
+  let request = 0;
+  input.canvas.requestPointerLock = vi.fn(
+    () =>
+      new Promise<void>((resolve, reject) => {
+        if (request++ === 0) rejectOld = reject;
+        else completeNew = resolve;
+      }),
+  );
+  input.controls.capture();
+  input.controls.release();
+  input.controls.capture();
+  const before = input.lost.mock.calls.length;
+  rejectOld(new Error("obsolete"));
+  await Promise.resolve();
+  await Promise.resolve();
+  expect(input.lost.mock.calls.length).toBe(before);
+  input.documentEvents.pointerLockElement = input.canvas;
+  completeNew();
+  await Promise.resolve();
+  expect(input.documentEvents.pointerLockElement).toBe(input.canvas);
+  input.controls.dispose();
+});
+
+it("handles legacy pointer-lock errors and synchronous capture failures", () => {
+  const input = inputFixture();
+  input.canvas.requestPointerLock = vi.fn(() => {
+    throw new Error("denied");
+  });
+  input.controls.capture();
+  expect(input.lost).toHaveBeenCalledOnce();
+  input.canvas.requestPointerLock = vi.fn(() => undefined as never);
+  input.controls.capture();
+  input.documentEvents.dispatchEvent(new Event("pointerlockerror"));
+  expect(input.lost).toHaveBeenCalledTimes(2);
+  input.controls.dispose();
 });

@@ -1,4 +1,5 @@
-import type { Experiments as Settings } from "../session/session";
+import type { GameSettings as Settings } from "../session/settings";
+import { ControlSettings } from "./ControlSettings";
 
 export function Experiments({
   value,
@@ -9,6 +10,7 @@ export function Experiments({
 }) {
   return (
     <div className="experiment-options">
+      <ControlSettings value={value} onChange={onChange} />
       <label>
         Add a ball every{" "}
         <input
@@ -35,22 +37,6 @@ export function Experiments({
             </option>
           ))}
         </select>
-      </label>
-      <label>
-        <input
-          type="checkbox"
-          checked={value.preview}
-          onChange={(event) => onChange({ ...value, preview: event.target.checked })}
-        />{" "}
-        Short return preview
-      </label>
-      <label>
-        <input
-          type="checkbox"
-          checked={value.slowdown}
-          onChange={(event) => onChange({ ...value, slowdown: event.target.checked })}
-        />{" "}
-        Approach slowdown (all defenders)
       </label>
       <label>
         <input

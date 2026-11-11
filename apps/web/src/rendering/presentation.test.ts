@@ -55,7 +55,7 @@ it("renders a growing physical piece at its current collider position and radius
   const body = state.players[0]!.pieces[0]!;
   body.radius *= 1.2;
   body.position = { x: -7.2, y: 7.3 };
-  view.update(state, 0, { humanSeat: 0, preview: false, reducedEffects: true });
+  view.update(state, 0, { humanSeat: 0, preview: false, slowdown: false, reducedEffects: true });
   const piece = view.root.getObjectByName("health-0-0")!;
   expect(piece.position.x).toBe(body.position.x);
   expect(piece.position.z).toBe(body.position.y);

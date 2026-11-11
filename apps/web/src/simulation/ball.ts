@@ -1,8 +1,9 @@
-import { ARENA, FORTRESSES } from "./arena";
+import { ARENA } from "./arena";
 import { paddleReturn, sweepCircle, sweepPaddle, sweepWalls, type Contact } from "./collision";
 import { damagePiece, emit } from "./serving";
 import { alive, type BallState, type MatchOptions, type MatchState } from "./types";
-import { add, angleDifference, angleOf, dot, length, scale, sub, type Vec2 } from "./vector";
+import { add, dot, scale, sub, type Vec2 } from "./vector";
+import { approachSlowdown } from "./slowdown";
 
 interface Impact extends Contact {
   type: "paddle" | "piece" | "wall";
@@ -12,35 +13,7 @@ interface Impact extends Contact {
 }
 const rank = { paddle: 0, piece: 1, wall: 2 };
 
-function speedFactor(state: MatchState, ball: BallState, enabled: boolean): number {
-  if (!enabled) {
-    ball.slowSeat = null;
-    return 1;
-  }
-  const current = ball.slowSeat;
-  ball.slowSeat = null;
-  for (const player of state.players) {
-    if (!alive(player)) continue;
-    const anchor = FORTRESSES[player.id]!.anchor;
-    const delta = sub(ball.position, anchor);
-    const distance = length(delta);
-    const nearAngle =
-      Math.abs(angleDifference(angleOf(delta), player.angle)) < ARENA.paddleHalfAngle + 0.18;
-    const outerLimit = ARENA.railRadius + (current === player.id ? 2.6 : 2.1);
-    if (
-      nearAngle &&
-      distance > ARENA.railRadius + 0.3 &&
-      distance < outerLimit &&
-      dot(delta, ball.velocity) < 0
-    ) {
-      ball.slowSeat = player.id;
-      return 0.55;
-    }
-  }
-  return 1;
-}
-
-/** One ball, earliest impact first; stable type/seat/piece tie order. */
+/** Earliest impact first, with stable ties. Preview queries may stop after the first impact; gameplay resolves the full tick. */
 export function advanceBall(
   state: MatchState,
   ball: BallState,
@@ -48,13 +21,15 @@ export function advanceBall(
   dt: number,
   options: MatchOptions,
   previousPieces: Vec2[][],
+  stopAtFirstImpact = false,
 ): void {
   let remaining = dt;
   let elapsed = 0;
   let impacts = 0;
   const struckPaddles = new Set<number>();
   while (remaining > 1e-7 && impacts < 8 && ball.phase === "active" && state.phase === "playing") {
-    const factor = speedFactor(state, ball, options.slowdown);
+    const { seat, factor } = approachSlowdown(state, ball, options.slowdown);
+    ball.slowSeat = seat;
     const velocity = scale(ball.velocity, factor);
     const contacts: Impact[] = sweepWalls(ball.position, velocity, remaining).map((contact) => ({
       ...contact,
@@ -120,6 +95,7 @@ export function advanceBall(
       emit(state, "wall", ball.position, -1);
     }
     ball.position = add(ball.position, scale(hit.normal, (hit.separation ?? 0) + 0.0001));
+    if (stopAtFirstImpact) return;
   }
   if (remaining > 1e-7 && ball.phase === "active" && state.phase === "playing")
     state.stats.collisionCaps++;

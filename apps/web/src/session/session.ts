@@ -3,17 +3,10 @@ import { createViewport } from "../rendering/viewport";
 import type { ViewOptions } from "../rendering/arena-view";
 import { SEATS } from "../rendering/palette";
 import { createMatch, stepMatch } from "../simulation/match";
-import { alive, DEFAULT_OPTIONS, type GameEvent, type MatchState } from "../simulation/types";
+import { alive, type GameEvent, type MatchState } from "../simulation/types";
 import { createFixedClock } from "./fixed-clock";
+import { createSettings, matchOptions, type GameSettings } from "./settings";
 
-export interface Experiments {
-  preview: boolean;
-  slowdown: boolean;
-  reducedEffects: boolean;
-  serveTimeout: number;
-  ballInterval: number;
-  maxBalls: number;
-}
 export interface SessionSnapshot {
   state: MatchState;
   paused: boolean;
@@ -32,14 +25,7 @@ export function createSession(
   let paused = true;
   let started = false;
   let notice = "Defend your eight pieces. Last fortress standing wins.";
-  let experiments: Experiments = {
-    preview: false,
-    slowdown: false,
-    reducedEffects: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    serveTimeout: 1.8,
-    ballInterval: 15,
-    maxBalls: 4,
-  };
+  let settings = createSettings(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   let lastTimestamp = 0;
   let lastReport = 0;
   let frame = 0;
@@ -59,6 +45,7 @@ export function createSession(
     () => {
       if (started && state.phase !== "finished") setPaused(true);
     },
+    () => settings.mouseSensitivity,
   );
   const abort = new AbortController();
   window.addEventListener("blur", () => setPaused(true), { signal: abort.signal });
@@ -75,14 +62,7 @@ export function createSession(
     const events: GameEvent[] = [];
     if (!paused && state.phase !== "finished")
       clock.advance(delta, () => {
-        state = stepMatch(state, input.read(), {
-          ...DEFAULT_OPTIONS,
-          humanSeat,
-          slowdown: experiments.slowdown,
-          serveTimeout: experiments.serveTimeout,
-          ballInterval: experiments.ballInterval,
-          maxBalls: experiments.maxBalls,
-        });
+        state = stepMatch(state, input.read(), matchOptions(settings, humanSeat));
         events.push(...state.events);
         for (const event of state.events) {
           if (event.type === "arrival")
@@ -93,8 +73,9 @@ export function createSession(
       });
     const view: ViewOptions = {
       humanSeat,
-      preview: experiments.preview,
-      reducedEffects: experiments.reducedEffects,
+      preview: settings.preview,
+      slowdown: settings.slowdown,
+      reducedEffects: settings.reducedEffects,
     };
     viewport.render({ ...state, events }, paused && started ? 0 : delta, view);
     if (state.phase === "finished") input.release();
@@ -117,8 +98,8 @@ export function createSession(
       setPaused(false);
       input.capture();
     },
-    configure(next: Experiments) {
-      experiments = next;
+    configure(next: GameSettings) {
+      settings = next;
     },
     dispose() {
       cancelAnimationFrame(frame);

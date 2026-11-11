@@ -1,24 +1,26 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  createSession,
-  type Experiments as Settings,
-  type GameSession,
-  type SessionSnapshot,
-} from "../session/session";
+import { createSession, type GameSession, type SessionSnapshot } from "../session/session";
 import { SEATS } from "../rendering/palette";
 import { createMatch } from "../simulation/match";
 import { GameMenu } from "./GameMenu";
 import { AccessibleStatus } from "./AccessibleStatus";
+import type { GameSettings } from "../session/settings";
 
 export function GamePanel({
   humanSeat,
   seed,
   onRematch,
+  onRestart,
   onSeat,
+  settings,
+  onSettings,
 }: {
   humanSeat: number;
   seed: number;
   onRematch: () => void;
+  onRestart: () => void;
+  settings: GameSettings;
+  onSettings: (value: GameSettings) => void;
   onSeat: (seat: number) => void;
 }) {
   const container = useRef<HTMLDivElement>(null);
@@ -29,14 +31,6 @@ export function GamePanel({
     paused: true,
     started: false,
     notice: "",
-  }));
-  const [settings, setSettings] = useState<Settings>(() => ({
-    preview: false,
-    slowdown: false,
-    reducedEffects: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    serveTimeout: 1.8,
-    ballInterval: 15,
-    maxBalls: 4,
   }));
   useEffect(() => {
     if (!container.current) return;
@@ -80,9 +74,9 @@ export function GamePanel({
             winner={winner}
             humanSeat={humanSeat}
             settings={settings}
-            onSettings={setSettings}
+            onSettings={onSettings}
             onSeat={onSeat}
-            onRestart={onRematch}
+            onRestart={mode === "result" ? onRematch : onRestart}
             onPlay={() => (mode === "start" ? session.current?.start() : session.current?.resume())}
           />
         )
