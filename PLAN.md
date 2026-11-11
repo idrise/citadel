@@ -61,7 +61,7 @@ Do not quietly make these permanent rules without a review:
 4. **Escalation tuning:** User feedback during M01 explicitly calls for a 10% larger ball, double its initial speed and timed additions of extra balls for adrenaline. Prototype default: radius 0.187, speed 24, one initial ball and another every 15 playing seconds, capped at four. The 15-second interval and cap are provisional tuning choices. M06 revisits pacing evidence; it must preserve this agreed direction unless reviewed with the user.
 5. **Two-player layout proportions:** Rectangle defenders are at the centres of opposite short ends, not two corners of a four-player arena. Tune length/width experimentally.
 6. **Ties and the final simultaneous hit:** Define a deterministic policy, then validate its feel.
-7. **End-of-life fortress:** After elimination the paddle becomes non-defending and no health remains. Prototype default: balls continue through the empty sector and rebound from the outer wall. Validate escape/stall cases and serve allocation after eliminating hits.
+7. **End-of-life fortress:** After elimination the paddle stops defending and no health remains. M05 now gradually changes the arena to the surviving player count, over at least eight seconds, preserving identities and moving the floor coordinates of live balls. During that change, empty sectors remain traversable and current outer walls rebound balls. A further elimination retargets from the current shape; final victory is immediate. Transition dimensions/speed and floor carrying are provisional until M05 review; seeded eliminating-hit serve allocation remains unchanged.
 
 ### Prototype intuitions — provisional, to be judged by playing
 
@@ -92,7 +92,7 @@ The first useful review is hands-on: does moving feel right, can the player plac
 | **5** | Regular pentagon | Five vertices |
 | **6** | Regular hexagon | Six vertices |
 
-For 3–6 seats, derive fortress anchors, arc centre, rail radius, allowed paddle angles, wall endpoints and ball spawn locations from a single polygon specification. A fortress sits *behind* its curved defence rail, towards its vertex/anchor. Balance the angle/radius and shielding opportunity by geometry, not by eyeballing each arena separately. Begin with the four-player square in M01. Add and test the other four layouts in M05; all five must be covered before the desktop release.
+For 3–6 seats, derive fortress anchors, arc centre, rail radius, allowed paddle angles, wall endpoints and ball spawn locations from a single polygon specification. M05 uses this per-match specification for every consumer and transitions it gradually as seats are eliminated; stable seat IDs retain their colours/health rather than being renumbered. A fortress sits *behind* its curved defence rail, towards its vertex/anchor. Balance the angle/radius and shielding opportunity by geometry, not by eyeballing each arena separately. M01 established the four-player square. M05 delivers all five layouts for review before desktop release.
 
 ### Rendering contract
 
@@ -283,14 +283,14 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** M02 approved by the user's 11 November 2026 feedback that the feel is good and request to work on relevant M03/M04 parts. **M03/M04 are Awaiting review together by explicit user instruction**, including a readable movement-driven curve and destruction flourish pulled forward from later polish. A user-authorised **music detour is also Awaiting review**; see `docs/MUSIC_REVIEW.md`. Preserve the approved feel; do not start M05 or the full M06/M07 gates.
+**Current position:** M03/M04 and the music detour accepted for now by the user on 11 November 2026, with an explicit request to begin M05. **M05 is Awaiting review**, including gradual arena morphing after elimination. Full M06/M07 remain unstarted.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
 - [x] **M01** — First playable four-player prototype, Vite+ scaffold, CI and Pages workflow.
 - [x] **M02** — Responsive controls, contact aiming and preview/slowdown comparison.
-- [ ] **M03** — Collision stress cases, deterministic physics and replay fixtures.
-- [ ] **M04** — Physical destruction, revenge serves, elimination and result rules.
+- [x] **M03** — Collision stress cases, deterministic physics and replay fixtures.
+- [x] **M04** — Physical destruction, revenge serves, elimination and result rules.
 - [ ] **M05** — All 2–6-seat layouts and tuned bot difficulties.
 - [ ] **M06** — Spin, multiple balls and pacing decision.
 - [ ] **M07** — Visual legibility, effects, sound and in-arena cues.
@@ -314,11 +314,11 @@ When asked to **"do the next milestone"**:
 
 **Allowed ledger statuses:** `Not started`, `In progress`, `Awaiting review`, `Changes requested`, `Blocked`, `Approved`. A blocker must state the concrete dependency and the next useful action.
 
-### Current milestone work record
+### M03/M04 archived work record — Approved
 
-- **Milestones:** Relevant M03/M04 work **Awaiting review**, combined at the user's explicit request. M02 approved at `854276b`; its evidence remains in `docs/M02_REVIEW.md`.
+- **Milestones:** Relevant M03/M04 work **Approved to advance** on 11 November 2026 by the user's explicit request for M05; previously combined at their request. M02 approved at `854276b`; its evidence remains in `docs/M02_REVIEW.md`.
 - **User scope:** “The feel is good so far … flourish and a little curve by moving the bat into the ball. Interpret as you wish.” This authorises combining these milestones and pulling a small swipe curve/destruction polish forward; it does not authorise a new pacing system or other layouts.
-- **Latest feedback:** The original spin was difficult to trigger or see. Strengthen the path, permit a brief real-swipe timing window, and show spin on the ball. This revision remains within M03/M04 review.
+- **Latest feedback:** The original spin was difficult to trigger or see. Strengthen the path, permit a brief real-swipe timing window, and show spin on the ball. The user accepted this work to advance to M05; detailed tuning choices remain provisional.
 - **Task checklist:**
   - [x] Audit existing CCD/rule coverage; add focused stress, impact-order, replay and render-rate fixtures for remaining M03 gaps.
   - [x] Add a bounded, decaying movement-driven curve, preserve speed and stationary returns, and keep the forecast on the same integrator.
@@ -327,10 +327,22 @@ When asked to **"do the next milestone"**:
   - [x] Run checks, inspect rendered effects/curve examples and document the combined handoff; leave later milestones unstarted.
   - [x] Address spin visibility: stronger curve, 100ms recent-motion tolerance, rotating directional bands and a longer trail; verify actual captured mouse brushes.
 - **Evidence:** `docs/M03_M04_REVIEW.md`; 165 unit tests in 25 files, 12 native Chromium browser checks, Pages build and Vite+ checks pass. Seven replay fixtures match across 30/60/144 FPS; five all-bot rounds finish with zero collision caps. Native screenshots and local videos reviewed.
-- **Review choices:** Swipe strength/timing tolerance, spin-band readability, breakup/return clarity, seeded elimination fallback and lower-ball-ID final-hit policy remain provisional. M05 includes the user's new layout-morphing note; no M05 code was started.
-- **Constraints:** No added input lag, routine slowdown, hit-stop, artwork textures, remote deployment, push or `gh` usage. Local commits remain frequent. M05 and the full M06/M07 work remain out of scope.
+- **Review choices:** Swipe strength/timing tolerance, spin-band readability, breakup/return clarity, seeded elimination fallback and lower-ball-ID final-hit policy remain provisional. M05 now implements the user's layout-morphing note; see its current record below.
+- **Constraints:** No added input lag, routine slowdown, hit-stop, artwork textures, remote deployment, push or `gh` usage. Local commits remain frequent. Full M06/M07 remain out of scope; M05 has its own authorised work record.
 
-### Music detour — Awaiting review
+### Current milestone work record — M05 Awaiting review
+
+- [x] Generate 2–6-seat layouts from one geometry model and thread it through physics, aiming, input and rendering.
+- [x] Morph live walls/fortresses gradually after elimination, retaining identities, health, relative control and active balls.
+- [x] Add seeded Beginner/Standard/Expert bots with bounded perception/reaction errors and normal intents.
+- [x] Add player-count/seat/difficulty selection, results and menu-only developer statistics.
+- [x] Validate geometry, CCD, transitions, replay and full rounds/rematches; capture 2/4/6 layouts and gameplay; report ten-round evidence honestly.
+
+- **Evidence:** `docs/M05_REVIEW.md`; 235 unit tests in 37 files, 21 production native Chromium tests, Vite+ checks and Pages build pass. Twelve scripted desktop rounds (ten across 2/4/6), twelve seeded bot-only runs with zero collision caps, all-layout screenshots and a real-time six-to-five clip. Human fun approval remains pending.
+- **Transition intuition:** At least eight seconds, smooth easing, maximum fortress translation 1.5 units/s. A convex moving boundary carries live ball floor coordinates without changing flight velocity/spin; targets and physical pieces follow the fortress. Retarget from the current shape after another elimination. Identity/health/serves persist; the final survivor ends the match immediately. Review fairness, intermediate supports, dimensions and difficulty before considering these permanent.
+- **Checkpoints:** `67ddd15` simulation/input; `b63db58` rendering, setup/results, audio compatibility and validation tools; `7618c47` stable bot serve targets during morphs. No push, deployment or `gh`; the separate AGENTS edit remains unstaged. M06/M07 remain unstarted.
+
+### Music detour — Accepted for now
 
 - **Authorisation/latest direction:** User requested stronger experience-to-music coupling, researched layering methods, beat/sub-beat-aligned bat sounds and an FM audience when a ball physically damages a piece. Further steering requests harmonies/instruments as balls increase and a **muted hats → snare → driving kick** opening. This replaces the previous immediate-kick/melody opening. The 90s DJ-style journey to a drop remains the structural direction.
 - **Delivered checklist:**
@@ -341,7 +353,7 @@ When asked to **"do the next milestone"**:
   - [x] Preserve audio-clock bloom/grid waves, mute/volume, reduced mode, pause/focus/teardown and graceful failure handling.
   - [x] Research notes, isolated crowd, one-to-four-ball comparison, real-game audio/video, 193 unit tests, 15 native Chromium checks and Pages build evidence.
 - **Defaults/evidence:** `docs/MUSIC_REVIEW.md`; `fbc2499` contains this revision. Music on at 45%, Beat lighting on unless reduced mode suppresses it. Current auditions live under `docs/reviews/music/interactive/`; these are review exports, never game assets. Default ball interval remains 15s.
-- **Permanent boundary:** Music observes events only. Musical quantisation delays sounds, never collisions, rules, inputs, health, spawning or RNG. No music-driven camera motion. Full M05/M06/M07 gates remain unstarted; music and M03/M04 still await user review.
+- **Permanent boundary:** Music observes events only. Musical quantisation delays sounds, never collisions, rules, inputs, health, spawning or RNG. No music-driven camera motion. User accepted the detour for now and requested M05; full M06/M07 remain unstarted.
 
 ### Progress / approval ledger
 
@@ -349,9 +361,9 @@ When asked to **"do the next milestone"**:
 |---|---|---|---|---|---|
 | M01 | **First playable** | Four-seat prototype: human + bots, physical damage, revenge serve, rematch | Approved | 11 Nov 2026: user requested continuation | 415b2df; earlier checkpoints in Git |
 | M02 | Desktop core | Refine responsive controls, contact aiming, preview/slowdown experiments | Approved | 11 Nov 2026: feel good; user requested M03/M04 | 854276b |
-| M03 | Desktop core | Real ball physics, swept collisions and deflections | Awaiting review | — | fe06ce3; earlier checkpoints and review docs |
-| M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Awaiting review | — | 8fe9f47, 711d15d; review docs |
-| M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Not started | — | — |
+| M03 | Desktop core | Real ball physics, swept collisions and deflections | Approved | 11 Nov 2026: user requested M05 | fe06ce3; earlier checkpoints and review docs |
+| M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Approved | 11 Nov 2026: user requested M05 | 8fe9f47, 711d15d; review docs |
+| M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Awaiting review | — | 67ddd15, b63db58, 7618c47; docs/M05_REVIEW.md |
 | M06 | Solo proof | Spin/ball tuning and evidence-based 2-minute escalation | Not started | — | — |
 | M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Not started | — | — |
 | M08 | **Desktop validation gate** | Public-ready static solo build, playtests and decision | Not started | — | — |
@@ -394,6 +406,7 @@ When asked to **"do the next milestone"**:
 #### M05 — Expand the proven solo game to 2–6 seats
 
 **Implement:** Extend arena generation to rectangle, triangle, pentagon and hexagon alongside the square. Support one human in any seat and bots in the others. Refine seeded intercept/deflect bots with reaction delay, imperfect prediction and Beginner/Standard/Expert parameters. Add player-count selection, basic results and developer statistics. Provide eight readable pieces and consistent rules in every layout. Keep only essential visual polish; follow the established GitHub Pages publishing policy.
+When a player dies, then the board slowly morphs to the new layout, not so quickly that it makes it impossible to defend. This way the player count is dynamic.
 
 **Acceptance:** Play and rematch full 2/3/4/5/6-seat games locally; symmetry/rail geometry tests cover all layouts; provide 2/4/6 screenshots and gameplay capture. Bots use normal input intents and exhibit meaningful skill differences. **Major review gate:** Play ten rounds across 2/4/6. If the idea is not fun, iterate rather than continue. **STOP: REVIEW REQUIRED — M05.**
 
@@ -528,4 +541,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Music detour and M03/M04 delivered — stop for review.** See `docs/MUSIC_REVIEW.md` for hit-driven techno and presentation-only beat lighting. The approved feel is retained with a more readable swipe curve and spin cue, destruction flourish and physics/rule evidence in `docs/M03_M04_REVIEW.md`. M05 and the full later pacing/polish milestones remain unstarted. User approval is still required before pushing or using `gh`.
+**M05 delivered — Awaiting review.** See `docs/M05_REVIEW.md` for all layouts, difficulties, results/statistics, transition behavior, screenshots, gameplay and test evidence. Try 2/4/6 layouts and judge morph fairness and difficulty; the human ten-round fun gate remains pending. Do not begin M06 until the user approves or requests it. No push or `gh` use without explicit permission.

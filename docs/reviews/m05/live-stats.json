@@ -1,0 +1,34 @@
+{
+  "kind": "Real-time native Chromium capture, 960x675, music muted, no state edits; fast-forwarded to first elimination before recording",
+  "frames": 1510,
+  "errors": [],
+  "samples": [
+    {
+      "second": 6,
+      "arena": "5",
+      "survivors": "5",
+      "transition": "moving"
+    },
+    {
+      "second": 12,
+      "arena": "5",
+      "survivors": "5",
+      "transition": "settled"
+    },
+    {
+      "second": 18,
+      "arena": "5",
+      "survivors": "5",
+      "transition": "settled"
+    },
+    {
+      "second": 24,
+      "arena": "5",
+      "survivors": "5",
+      "transition": "settled"
+    }
+  ],
+  "timingNote": "Playwright clock emulation resumed for the capture, including RAF. Capture intervals are not a native GPU benchmark; see native-stats.json.",
+  "captureRafMedianMs": 16,
+  "captureRafP95Ms": 22
+}

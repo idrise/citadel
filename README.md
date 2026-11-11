@@ -1,9 +1,10 @@
 # Neon Citadel
 
 A local-first paddle arena, built with strict TypeScript, React, Three.js and Vite+.
-The four-fortress game plays one human versus three bots, with physical health
-pieces, revenge serves, timed ball additions and rematch. M01/M02 are approved;
-M03/M04 swipe returns, destruction and rule hardening are awaiting review.
+Choose 2–6 fortresses: one human versus 1–5 bots, with physical health pieces,
+revenge serves, timed ball additions and rematch. The arena gradually changes
+shape as players fall. M01–M04 are approved; M05 layouts/difficulties/morphs are
+[awaiting review](docs/M05_REVIEW.md).
 
 ## Develop
 
@@ -16,6 +17,12 @@ pnpm dev
 ```
 
 ## Play locally
+
+Choose **Players** on the start menu; **Settings** offers Beginner/Standard/Expert
+bots and any human fortress. Two seats use a rectangle, then triangle, square,
+pentagon and hexagon. Eliminations gradually move walls and surviving fortresses
+to the new layout, preserving health and relative steering. Results show standings
+and duration; pause has optional Round statistics.
 
 Click **Play** to capture the mouse. Move left/right to steer your curved bat;
 click or press Space to serve. A/D or Left/Right also steer. **Escape/P** pauses
@@ -132,12 +139,12 @@ is a real consumer or boundary that benefits from them, not empty placeholder pa
 To reproduce the seeded all-bot timing run:
 
 ```sh
-pnpm exec vpx tooling/benchmark.ts
+pnpm exec vpx tooling/review-layouts.ts
 ```
 
 This reports bot-only simulation results, not human playtest evidence. See
-[the M03/M04 review](docs/M03_M04_REVIEW.md) for current validation, limitations and
-review prompts; [the M02 comparison](docs/M02_REVIEW.md) records the approved control baseline.
+[the M05 review](docs/M05_REVIEW.md) for current validation, limitations and
+review prompts; [M03/M04](docs/M03_M04_REVIEW.md) records physics/destruction; [the M02 comparison](docs/M02_REVIEW.md) records the approved control baseline.
 Physics regression logs can be regenerated with `pnpm exec vpx tooling/replay-physics.ts`;
 review their impacts before deliberately updating the checked-in golden file.
 

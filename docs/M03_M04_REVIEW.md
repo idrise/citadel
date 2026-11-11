@@ -1,9 +1,11 @@
 # M03 / M04 — swipe returns, destruction and rule hardening
 
-Status: **Awaiting review**, 11 November 2026. The user explicitly requested the
+Status: **Approved to advance**, 11 November 2026: the user requested M05.
+The evidence below records the M03/M04 delivery. The user explicitly requested the
 relevant parts of both milestones together, with the existing feel preserved.
 A small swipe curve and destruction effects were pulled forward from M06/M07;
-M05 and the full pacing/audio/polish gates remain unstarted. The user could not
+at that delivery M05 and full later gates were unstarted; [M05](M05_REVIEW.md) now
+provides the other layouts, morphing and bot difficulties. The user could not
 reliably notice or trigger the initial curve, so this revision strengthens it,
 adds a short swipe tolerance and makes actual spin visible on the ball.
 
@@ -120,9 +122,10 @@ The full software-WebGL browser suite was not rerun here; the complete suite ran
 on the host GPU. Native captures are visual evidence, not measured performance
 budgets or human playtest results.
 
-Spectating controls, attribution marks, other layouts, layout morphing after
-elimination, bot difficulties, full curve/pacing comparisons and audio remain
-later work. Your M05 dynamic-layout note and AGENTS instruction were preserved
-as separate, unstaged edits. No `gh`, push or remote deployment was performed.
+At this delivery, other layouts, elimination morphing, bot difficulties and audio
+were later work; M05 and the music detour now cover those additions. Spectating
+controls, attribution marks and full curve/pacing comparisons remain later work.
+The separate AGENTS instruction is still unstaged. No `gh`, push or remote
+deployment was performed.
 
-**REVIEW REQUIRED — M03 / M04.**
+**Approved to advance to M05.**

@@ -1,10 +1,10 @@
 # Music detour — play builds the arrangement
 
-Status: **Awaiting review**, 11 November 2026. This revision follows the request
+Status: **Accepted for now**, 11 November 2026: the user requested M05. This revision follows the request
 for a stronger connection between play, layered instruments and musical effects.
 The latest opening direction supersedes the earlier immediate kick/melody:
 **muted hats → snare and hints → driving kick → build and drop**.
-M03/M04 and the full M07 gate remain unapproved.
+M03/M04 are approved to advance; full M07 remains unstarted.
 
 ## Hear the changes
 
@@ -131,7 +131,8 @@ software-WebGL suite remain unverified. The known Tone lazy-voice scheduling
 warning and Three shadow-mode deprecation remain; neither caused page errors.
 
 Implementation checkpoint: `fbc2499`. No `gh`, push or deployment was performed.
-The separate AGENTS and M05 layout-morphing edits remain unstaged. Older club-only
+At that checkpoint AGENTS and the M05 note remained unstaged; M05 now incorporates
+the layout note. Older club-only
 exports are archived under `reviews/music/club`; use the interactive auditions above.
 
-**REVIEW REQUIRED — music detour.**
+**Accepted for now; further music refinement remains open.**

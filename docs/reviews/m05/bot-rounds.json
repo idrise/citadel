@@ -1,0 +1,325 @@
+{
+  "kind": "seeded bot-only engineering runs; no human fun approval",
+  "options": {
+    "humanSeat": -1,
+    "slowdown": false,
+    "serveTimeout": 1.8,
+    "ballSpeed": 24,
+    "ballInterval": 15,
+    "maxBalls": 4
+  },
+  "results": [
+    {
+      "count": 2,
+      "seed": 1,
+      "difficulty": "beginner",
+      "duration": 33.11,
+      "winner": 1,
+      "paddleHits": 21,
+      "damage": 14,
+      "collisionCaps": 0,
+      "minimumClearance": 0.18762687971154968,
+      "morphSeconds": 0,
+      "eliminations": [
+        {
+          "seat": 0,
+          "elapsed": 33.1083333333321
+        }
+      ]
+    },
+    {
+      "count": 2,
+      "seed": 21,
+      "difficulty": "standard",
+      "duration": 40.11,
+      "winner": 1,
+      "paddleHits": 32,
+      "damage": 13,
+      "collisionCaps": 0,
+      "minimumClearance": 0.18872197576418248,
+      "morphSeconds": 0,
+      "eliminations": [
+        {
+          "seat": 0,
+          "elapsed": 40.1083333333317
+        }
+      ]
+    },
+    {
+      "count": 2,
+      "seed": 2026,
+      "difficulty": "expert",
+      "duration": 53.32,
+      "winner": 0,
+      "paddleHits": 77,
+      "damage": 15,
+      "collisionCaps": 0,
+      "minimumClearance": 0.18762075784113286,
+      "morphSeconds": 0,
+      "eliminations": [
+        {
+          "seat": 1,
+          "elapsed": 53.31666666666428
+        }
+      ]
+    },
+    {
+      "count": 4,
+      "seed": 1,
+      "difficulty": "beginner",
+      "duration": 55.44,
+      "winner": 0,
+      "paddleHits": 59,
+      "damage": 29,
+      "collisionCaps": 0,
+      "minimumClearance": 0.1872893377339242,
+      "morphSeconds": 9.041666666666666,
+      "eliminations": [
+        {
+          "seat": 1,
+          "elapsed": 46.39999999999801
+        },
+        {
+          "seat": 2,
+          "elapsed": 53.791666666664256
+        },
+        {
+          "seat": 3,
+          "elapsed": 55.44166666666416
+        }
+      ]
+    },
+    {
+      "count": 4,
+      "seed": 21,
+      "difficulty": "standard",
+      "duration": 56.45,
+      "winner": 0,
+      "paddleHits": 77,
+      "damage": 31,
+      "collisionCaps": 0,
+      "minimumClearance": 0.18785010433031424,
+      "morphSeconds": 10.341666666666667,
+      "eliminations": [
+        {
+          "seat": 3,
+          "elapsed": 46.10833333333136
+        },
+        {
+          "seat": 1,
+          "elapsed": 53.874999999997584
+        },
+        {
+          "seat": 2,
+          "elapsed": 56.44999999999744
+        }
+      ]
+    },
+    {
+      "count": 4,
+      "seed": 2026,
+      "difficulty": "expert",
+      "duration": 94.78,
+      "winner": 1,
+      "paddleHits": 192,
+      "damage": 30,
+      "collisionCaps": 0,
+      "minimumClearance": 0.18703646439680766,
+      "morphSeconds": 19.383333333333333,
+      "eliminations": [
+        {
+          "seat": 0,
+          "elapsed": 58.683333333330644
+        },
+        {
+          "seat": 3,
+          "elapsed": 88.25833333334964
+        },
+        {
+          "seat": 2,
+          "elapsed": 94.78333333335483
+        }
+      ]
+    },
+    {
+      "count": 4,
+      "seed": 300,
+      "difficulty": "standard",
+      "duration": 65.08,
+      "winner": 1,
+      "paddleHits": 88,
+      "damage": 30,
+      "collisionCaps": 0,
+      "minimumClearance": 0.1874083618578566,
+      "morphSeconds": 10.658333333333333,
+      "eliminations": [
+        {
+          "seat": 2,
+          "elapsed": 43.533333333331505
+        },
+        {
+          "seat": 0,
+          "elapsed": 62.416666666663765
+        },
+        {
+          "seat": 3,
+          "elapsed": 65.0833333333312
+        }
+      ]
+    },
+    {
+      "count": 6,
+      "seed": 1,
+      "difficulty": "beginner",
+      "duration": 68.83,
+      "winner": 4,
+      "paddleHits": 54,
+      "damage": 47,
+      "collisionCaps": 0,
+      "minimumClearance": 0.18854146442474073,
+      "morphSeconds": 8.075,
+      "eliminations": [
+        {
+          "seat": 5,
+          "elapsed": 60.758333333330526
+        },
+        {
+          "seat": 2,
+          "elapsed": 62.07499999999712
+        },
+        {
+          "seat": 0,
+          "elapsed": 63.68333333333036
+        },
+        {
+          "seat": 1,
+          "elapsed": 63.91666666666368
+        },
+        {
+          "seat": 3,
+          "elapsed": 68.83333333333418
+        }
+      ]
+    },
+    {
+      "count": 6,
+      "seed": 21,
+      "difficulty": "standard",
+      "duration": 63.07,
+      "winner": 5,
+      "paddleHits": 64,
+      "damage": 47,
+      "collisionCaps": 0,
+      "minimumClearance": 0.18735202191673306,
+      "morphSeconds": 11.725,
+      "eliminations": [
+        {
+          "seat": 0,
+          "elapsed": 51.34999999999773
+        },
+        {
+          "seat": 1,
+          "elapsed": 54.44166666666422
+        },
+        {
+          "seat": 2,
+          "elapsed": 58.18333333333067
+        },
+        {
+          "seat": 4,
+          "elapsed": 59.17499999999728
+        },
+        {
+          "seat": 3,
+          "elapsed": 63.07499999999706
+        }
+      ]
+    },
+    {
+      "count": 6,
+      "seed": 2026,
+      "difficulty": "expert",
+      "duration": 112.16,
+      "winner": 1,
+      "paddleHits": 204,
+      "damage": 47,
+      "collisionCaps": 0,
+      "minimumClearance": 0.18730079445078895,
+      "morphSeconds": 19.683333333333334,
+      "eliminations": [
+        {
+          "seat": 2,
+          "elapsed": 92.47500000001966
+        },
+        {
+          "seat": 0,
+          "elapsed": 96.76666666668974
+        },
+        {
+          "seat": 5,
+          "elapsed": 104.38333333336247
+        },
+        {
+          "seat": 3,
+          "elapsed": 108.2666666666989
+        },
+        {
+          "seat": 4,
+          "elapsed": 112.15833333336866
+        }
+      ]
+    },
+    {
+      "count": 3,
+      "seed": 2026,
+      "difficulty": "standard",
+      "duration": 65.58,
+      "winner": 1,
+      "paddleHits": 100,
+      "damage": 22,
+      "collisionCaps": 0,
+      "minimumClearance": 0.18735173124293159,
+      "morphSeconds": 5.225,
+      "eliminations": [
+        {
+          "seat": 2,
+          "elapsed": 60.35833333333055
+        },
+        {
+          "seat": 0,
+          "elapsed": 65.5833333333316
+        }
+      ]
+    },
+    {
+      "count": 5,
+      "seed": 2026,
+      "difficulty": "standard",
+      "duration": 65.06,
+      "winner": 3,
+      "paddleHits": 72,
+      "damage": 39,
+      "collisionCaps": 0,
+      "minimumClearance": 0.18829164368558432,
+      "morphSeconds": 11.283333333333333,
+      "eliminations": [
+        {
+          "seat": 4,
+          "elapsed": 53.77499999999759
+        },
+        {
+          "seat": 2,
+          "elapsed": 56.50833333333077
+        },
+        {
+          "seat": 1,
+          "elapsed": 59.849999999997245
+        },
+        {
+          "seat": 0,
+          "elapsed": 65.05833333333118
+        }
+      ]
+    }
+  ]
+}
