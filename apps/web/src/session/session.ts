@@ -80,12 +80,14 @@ export function createSession(
       events,
     );
     music.setPlaying(started && !paused && state.phase !== "finished");
+    const musicVisuals = music.visuals();
     const view: ViewOptions = {
       humanSeat,
       preview: settings.preview,
       slowdown: settings.slowdown,
       reducedEffects: settings.reducedEffects,
-      musicPulse: music.pulse(),
+      musicPulse: settings.musicLights ? musicVisuals.pulse : 0,
+      musicWave: settings.musicLights ? musicVisuals.phase : -1,
     };
     viewport.render({ ...state, events }, paused && started ? 0 : delta, view);
     if (state.phase === "finished") input.release();

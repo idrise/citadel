@@ -33,6 +33,18 @@ export function MusicSettings({
         />{" "}
         {Math.round(value.musicVolume * 100)}%
       </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={value.musicLights}
+          disabled={value.reducedEffects}
+          onChange={(event) => onChange({ ...value, musicLights: event.target.checked })}
+        />{" "}
+        Beat lighting
+      </label>
+      {value.reducedEffects && (
+        <p className="settings-hint">Reduced effects &amp; motion turns beat lighting off.</p>
+      )}
       {status === "unavailable" && <p role="status">Audio is unavailable. You can keep playing.</p>}
     </>
   );

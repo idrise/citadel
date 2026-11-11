@@ -1,9 +1,10 @@
-import type { MusicCue } from "./director";
+import type { MusicCue, MusicVisuals } from "./music-types";
 
 export interface MusicEngine {
   play: (cues: readonly MusicCue[]) => void;
   setPlaying: (value: boolean, volume: number) => void;
   pulse: () => number;
+  visuals: () => MusicVisuals;
   dispose: () => void;
 }
 export type EngineLoader = (

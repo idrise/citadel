@@ -24,6 +24,7 @@ function fixture() {
     play: vi.fn(),
     setPlaying: vi.fn(),
     pulse: vi.fn(() => 0.8),
+    visuals: vi.fn(() => ({ pulse: 0.8, phase: 0.2, energy: 0.5 })),
     dispose: vi.fn(),
   };
   const deps = {
@@ -42,12 +43,14 @@ it("creates/resumes audio only on a gesture, and pauses/mutes live notes and vis
   expect(engine.setPlaying).toHaveBeenLastCalledWith(true, 0.45);
   expect(music.snapshot().status).toBe("playing");
   expect(music.pulse()).toBe(0.8);
+  expect(music.visuals()).toEqual({ pulse: 0.8, phase: 0.2, energy: 0.5 });
   music.observe(frame, [hit]);
   expect(engine.play).toHaveBeenCalledOnce();
   music.setPlaying(false);
   expect(engine.setPlaying).toHaveBeenLastCalledWith(false, 0.45);
   expect(music.pulse()).toBe(0);
   expect(music.snapshot().status).toBe("paused");
+  expect(music.visuals()).toEqual({ pulse: 0, phase: -1, energy: 0 });
   music.observe(frame, [{ ...hit, id: 1 }]);
   expect(engine.play).toHaveBeenCalledOnce();
   music.configure({ music: false, musicVolume: 0.2 });

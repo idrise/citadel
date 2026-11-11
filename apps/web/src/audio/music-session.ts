@@ -127,6 +127,11 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
         ? (engine?.pulse() ?? 0)
         : 0;
     },
+    visuals() {
+      return enabled && wanted && volume > 0 && unlocked && !failed && !disposed
+        ? (engine?.visuals() ?? { pulse: 0, phase: -1, energy: 0 })
+        : { pulse: 0, phase: -1, energy: 0 };
+    },
     dispose() {
       if (disposed) return;
       disposed = true;

@@ -31,7 +31,15 @@ export function GamePanel({
     paused: true,
     started: false,
     notice: "",
-    music: { status: "idle", section: "pulse", intensity: 0, streak: 0, notes: 0, seat: humanSeat },
+    music: {
+      status: "idle",
+      section: "intro",
+      energy: 0.45,
+      intensity: 0,
+      streak: 0,
+      notes: 0,
+      seat: humanSeat,
+    },
   }));
   useEffect(() => {
     if (!container.current) return;

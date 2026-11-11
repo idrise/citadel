@@ -1,16 +1,27 @@
 import * as Tone from "tone";
 import { createMusicDirector, MUSIC_BPM } from "../apps/web/src/audio/director";
 import { createInstruments } from "../apps/web/src/audio/tone-instruments";
+import type { MusicCue, Voice } from "../apps/web/src/audio/music-types";
 import type { GameEvent } from "../apps/web/src/simulation/types";
+import { encodeWave } from "./pcm-wave";
 
-/** Review fixture: repeated human hits grow a phrase, damage strips it, global clock still reaches a drop. */
-export async function renderMusicPreview() {
-  let instruments: ReturnType<typeof createInstruments> | undefined;
-  let limiter: Tone.Limiter | undefined;
-  const duration = 34;
+/** Render the actual score and synth graph, including a no-hit audition or isolated stems. */
+export async function renderMusicPreview(
+  options: { duration?: number; voices?: readonly Voice[]; hits?: boolean } = {},
+) {
+  const duration = options.duration ?? 74;
+  let instruments: ReturnType<typeof createInstruments> | undefined,
+    limiter: Tone.Limiter | undefined;
+  const only = (cues: readonly MusicCue[]) =>
+    options.voices
+      ? cues.filter(
+          (cue) =>
+            options.voices!.includes(cue.voice) || cue.voice === "open" || cue.voice === "breath",
+        )
+      : cues;
   const audio = await Tone.Offline(
     (context) => {
-      destinationVolume(context);
+      context.destination.volume.value = 20 * Math.log10(0.45);
       limiter = new Tone.Limiter({ context, threshold: -3 }).toDestination();
       instruments = createInstruments(context, limiter);
       const director = createMusicDirector(0, 2026);
@@ -19,7 +30,7 @@ export async function renderMusicPreview() {
       context.transport.bpm.value = MUSIC_BPM;
       context.transport.scheduleRepeat((time) => {
         const events: GameEvent[] = [];
-        if (step % 10 === 4)
+        if (options.hits !== false && step % 14 === 4)
           events.push({
             id: eventId++,
             tick: step,
@@ -28,7 +39,7 @@ export async function renderMusicPreview() {
             piece: null,
             position: { x: 0, y: 0 },
           });
-        if (step === 144)
+        if (options.hits !== false && step === 144)
           events.push({
             id: eventId++,
             tick: step,
@@ -38,58 +49,40 @@ export async function renderMusicPreview() {
             position: { x: 0, y: 0 },
           });
         const cues = director.observe(
-          { elapsed: time, balls: time > 15 ? 2 : 1, alive: [true, true, true, true] },
+          {
+            elapsed: time,
+            balls: 1 + Math.min(3, Math.floor(time / 15)),
+            alive: [true, true, true, true],
+          },
           events,
         );
-        instruments!.play(cues, time + 0.003);
-        instruments!.play(director.step(step++), time);
+        instruments!.play(only(cues), time + 0.003);
+        instruments!.play(only(director.step(step++)), time);
       }, "16n");
       context.transport.start(0);
     },
     duration,
-    1,
+    2,
     44100,
   );
-  const samples = audio.getChannelData(0);
-  const pcm = new Uint8Array(44 + samples.length * 2),
-    view = new DataView(pcm.buffer);
-  const label = (offset: number, value: string) => {
-    for (let i = 0; i < value.length; i++) pcm[offset + i] = value.charCodeAt(i);
-  };
-  label(0, "RIFF");
-  view.setUint32(4, pcm.length - 8, true);
-  label(8, "WAVEfmt ");
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
-  view.setUint16(22, 1, true);
-  view.setUint32(24, 44100, true);
-  view.setUint32(28, 88200, true);
-  view.setUint16(32, 2, true);
-  view.setUint16(34, 16, true);
-  label(36, "data");
-  view.setUint32(40, samples.length * 2, true);
-  let peak = 0,
-    energy = 0;
-  for (let i = 0; i < samples.length; i++) {
-    const sample = samples[i]!;
-    peak = Math.max(peak, Math.abs(sample));
-    energy += sample * sample;
-    view.setInt16(44 + i * 2, Math.round(Math.max(-1, Math.min(1, sample)) * 32767), true);
-  }
-  let encoded = "";
-  for (let i = 0; i < pcm.length; i += 16384)
-    encoded += String.fromCharCode(...pcm.subarray(i, i + 16384));
+  const channels = [audio.getChannelData(0), audio.getChannelData(1)];
+  const sections = [
+    { section: "intro", from: 0, to: 64 },
+    { section: "groove", from: 64, to: 128 },
+    { section: "breakdown", from: 128, to: 192 },
+    { section: "build", from: 192, to: 256 },
+    { section: "drop", from: 256, to: 384 },
+    { section: "melodic", from: 384, to: 512 },
+  ].map(({ section, from, to }) => {
+    const start = Math.floor(((from * 60) / MUSIC_BPM / 4) * 44100),
+      end = Math.min(channels[0]!.length, Math.floor(((to * 60) / MUSIC_BPM / 4) * 44100));
+    let sum = 0;
+    for (let i = start; i < end; i++) sum += channels[0]![i]! ** 2;
+    return { section, rms: end > start ? Math.sqrt(sum / (end - start)) : 0 };
+  });
+  const encoded = encodeWave(channels, 44100);
   instruments?.dispose();
   limiter?.dispose();
   audio.dispose();
-  return {
-    wav: btoa(encoded),
-    duration,
-    peak,
-    rms: Math.sqrt(energy / samples.length),
-    bpm: MUSIC_BPM,
-  };
-}
-function destinationVolume(context: Tone.OfflineContext) {
-  context.destination.volume.value = 20 * Math.log10(0.45);
+  return { ...encoded, duration, bpm: MUSIC_BPM, sections };
 }

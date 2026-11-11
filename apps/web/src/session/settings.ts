@@ -10,6 +10,7 @@ export interface GameSettings {
   maxBalls: number;
   music: boolean;
   musicVolume: number;
+  musicLights: boolean;
 }
 export const ASSISTANCE = [
   { id: "none", label: "Neither", preview: false, slowdown: false },
@@ -38,6 +39,7 @@ export function createSettings(reducedEffects = false): GameSettings {
     maxBalls: 4,
     music: true,
     musicVolume: 0.45,
+    musicLights: true,
   };
 }
 export function matchOptions(settings: GameSettings, humanSeat: number): MatchOptions {

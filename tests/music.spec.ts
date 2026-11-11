@@ -74,6 +74,7 @@ test("synthesised music unlocks on Play, becomes audible, pauses, mutes, and clo
   await page.keyboard.press("Escape");
   await page.getByText("Settings", { exact: true }).click();
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+  await page.getByRole("checkbox", { name: "Beat lighting", exact: true }).uncheck();
   await page.getByLabel("Music volume", { exact: true }).fill("0.25");
   await page.getByRole("button", { name: "Restart", exact: true }).click();
   await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
@@ -88,6 +89,9 @@ test("synthesised music unlocks on Play, becomes audible, pauses, mutes, and clo
     .toBe(true);
   await page.getByText("Settings", { exact: true }).click();
   await expect(page.getByRole("checkbox", { name: "Music", exact: true })).not.toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { name: "Beat lighting", exact: true }),
+  ).not.toBeChecked();
   await expect(page.getByLabel("Music volume", { exact: true })).toHaveValue("0.25");
   await page.getByText("Settings", { exact: true }).click();
   await page.getByRole("button", { name: "Play", exact: true }).click();

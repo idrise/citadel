@@ -39,7 +39,7 @@ it("keeps informational preview and mouse sensitivity outside authoritative simu
   expect(matchOptions({ ...createSettings(), mouseSensitivity: 2 }, 0)).toEqual(
     matchOptions(createSettings(), 0),
   );
-  expect(matchOptions({ ...createSettings(), music: false, musicVolume: 1 }, 0)).toEqual(
-    matchOptions(createSettings(), 0),
-  );
+  expect(
+    matchOptions({ ...createSettings(), music: false, musicVolume: 1, musicLights: false }, 0),
+  ).toEqual(matchOptions(createSettings(), 0));
 });

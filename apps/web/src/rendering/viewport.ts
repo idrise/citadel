@@ -76,6 +76,9 @@ export function createViewport(container: HTMLElement, humanSeat = 0) {
         pulse,
         options.reducedEffects,
       ).gridGain;
+      worldGrid.material.uniforms.musicWave!.value = options.reducedEffects
+        ? -1
+        : (options.musicWave ?? -1);
       bloom.render(dt, options.reducedEffects, pulse);
     },
     dispose() {

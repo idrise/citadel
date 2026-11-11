@@ -3,6 +3,7 @@ import { MUSIC_BPM, type MusicCue } from "./director";
 import { createInstruments } from "./tone-instruments";
 import type { MusicEngine } from "./ports";
 import { createBeatEnvelope } from "./beat-envelope";
+import { arrangementAt } from "./arrangement";
 
 let replacedDefaultContext = false;
 
@@ -29,8 +30,14 @@ export function createToneEngine(
   let running = false;
   const beats = createBeatEnvelope();
   const event = transport.scheduleRepeat((time) => {
+    const energy = arrangementAt(step).energy;
     const cues = onStep(step++);
-    for (const cue of cues) if (cue.voice === "kick") beats.schedule(time, cue.velocity);
+    beats.scheduleEnergy(time, energy);
+    for (const cue of cues) {
+      if (cue.voice === "kick") beats.schedule(time, cue.velocity);
+      else if (cue.voice === "pad" && !cues.some((item) => item.voice === "kick"))
+        beats.schedule(time, 0.4);
+    }
     instruments.play(cues, time);
   }, "16n");
   return {
@@ -38,6 +45,7 @@ export function createToneEngine(
       instruments.play(cues, native.currentTime + 0.005, true);
     },
     pulse: () => (running ? beats.read(native.currentTime) : 0),
+    visuals: () => (running ? beats.frame(native.currentTime) : { pulse: 0, phase: -1, energy: 0 }),
     setPlaying(value, volume) {
       const now = native.currentTime;
       gate.gain.cancelScheduledValues(now);

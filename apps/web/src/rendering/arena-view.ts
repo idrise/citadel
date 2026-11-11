@@ -14,6 +14,7 @@ export interface ViewOptions {
   reducedEffects: boolean;
   humanSeat: number;
   musicPulse?: number;
+  musicWave?: number;
 }
 export function createArenaView(humanSeat = 0) {
   const stage = createStage(humanSeat);
