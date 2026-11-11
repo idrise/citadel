@@ -16,9 +16,12 @@ pnpm dev
 
 ## Play locally
 
-Click **Play vs Bots**. Move the mouse over the arena to position your curved bat;
-click or press Space to serve. A/D or Left/Right also steer. Escape/P pauses.
-Leaving the browser pauses the entire match and clears held input; resume explicitly.
+Click **Play** to capture the mouse. Move left/right to steer your curved bat;
+click or press Space to serve. A/D or Left/Right also steer. **Escape/P** pauses
+and releases the cursor. Focus loss or capture loss pauses and clears held input;
+click **Resume** to recapture and continue. While paused, **H** hides/restores the
+small corner controls for screenshots. Settings are available in the menus.
+The scene fills the viewport, with no visible HUD or surrounding text during play.
 
 Each hit destroys the actual piece struck. The damaged survivor gets the revenge
 serve. Surviving pieces grow slightly and gather into a compact formation using damped springs.
@@ -27,15 +30,18 @@ either end of your arc to bank off the walls beside your bat. The serve guide
 shows the first wall bounce; opponents can intercept it.
 
 Rounds start with one ball and add another every 15 playing seconds, up to four.
-The experiment panel exposes the interval/cap, a conditional return preview,
+The Settings menu exposes the interval/cap, a conditional return preview,
 approach slowdown (off by default), reduced effects and the auto-serve deadline.
 The new ball size/speed and bank-shot reach reflect the initial hands-on feedback.
-The live 2.5D camera sits behind your selected fortress and gently orbits a raised
-3D arena. Dark frosted faces reflect the neon edges; bloom keeps its spread with
-lower intensity. Pieces occupy compact staggered rows and grow by 3.5% per loss
-(up to 24.5%), with visible geometry matching the moving collision bodies. Pointer projection follows the
-rendered view; camera motion never changes a stationary mouse target. Reduced
-effects & motion disables bloom/floor reflection and holds the current camera pose without a snap.
+The live perspective camera sits behind your selected fortress at about 38° over
+solid raised walls and a deep 3D arena. Foreground panels are translucent to keep
+balls visible; rear faces and the floor reflect actual moving geometry with a
+soft frosted finish. Saturated neon traces the full height of bats, health pieces
+and walls; a darker lighting setup keeps the glow concentrated on those edges.
+Pieces occupy compact staggered rows and grow by 3.5% per loss (up to 24.5%), with
+visible geometry matching the moving collision bodies. Relative mouse input is
+independent of camera motion. Reduced effects/motion disables bloom/reflections
+and holds the current camera pose without a snap.
 
 ## Check and build
 
@@ -57,7 +63,8 @@ pnpm exec playwright install chromium
 pnpm test:browser
 ```
 
-The browser tests start and stop a production preview automatically. For manual inspection:
+The browser tests use full Chromium (its headless shell does not support Pointer Lock)
+and start and stop a production preview automatically. For manual inspection:
 
 ```sh
 PAGES_BASE_PATH=/citadel/ pnpm preview --host 127.0.0.1

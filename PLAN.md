@@ -1,7 +1,7 @@
 # NEON CITADEL — PLAN.md
 
 **Status:** Shared design in progress; confirmed rules and provisional prototype experiments distinguished below.  
-**Updated:** 10 November 2026  
+**Updated:** 11 November 2026\
 **Genre:** Fast, competitive, polygon-arena paddle/ball survival  
 **Target:** Understandable, tense matches that usually resolve in approximately **two minutes**. Difficulty is ramped as the game goes on.
 **Players:** 2–6 seats, initially **one human and the remaining seats filled by bots**  
@@ -14,7 +14,7 @@
 
 ## 1. Product vision and decisions
 
-This takes inspiration from the immediacy of *Warlords*, the luminous geometry and motion of *Geometry Wars*, and the depth, edge treatment and controlled bloom associated with *Tron*. This is a 3D presentation over 2D gameplay. The camera must feel alive through a restrained orbit/tilt/breathing motion, while preserving accurate pointer projection. Camera movement is presentation-only and must never steer a stationary pointer or alter simulation. It must be an **original-looking game**, not a remake using existing franchise assets.
+This takes inspiration from the immediacy of *Warlords*, the luminous geometry and motion of *Geometry Wars*, and the depth, edge treatment and controlled bloom associated with *Tron*. This is a 3D presentation over 2D gameplay. The camera must feel alive through a restrained orbit/tilt/breathing motion, while preserving camera-independent relative input. Camera movement is presentation-only and must never steer a stationary mouse or alter simulation. It must be an **original-looking game**, not a remake using existing franchise assets.
 
 One player occupies each defensive sector of a shared arena. Each player has a **thick, curved paddle** moving along a fixed arc in front of **eight visible, destructible health pieces**. Balls travel across the arena. Paddles return them to play and can impart spin. A ball must **physically collide with a remaining health piece** to destroy it. That piece disappears with a clear graphical flourish; the ball bursts and returns to the **damaged defender's paddle** for a revenge serve, provided they survive. Passing the paddle or crossing its rail alone causes no damage. Losing all eight pieces eliminates a player. **Last survivor wins.**
 
@@ -30,14 +30,15 @@ The desired game loop is simple: **move → aim a deflection → launch/return �
 | Final platform phase | Online multiplayer, followed by random matchmaking |
 | Player counts | Exactly 2, 3, 4, 5, or 6 total participants |
 | Arena topology | 2: rectangle; 3: triangle; 4: square; 5: pentagon; 6: hexagon |
-| Camera | **2.5D**, behind the selected human fortress, looking down into the arena with a gentle live orbit |
+| Camera | **Perspective RTS view**, behind the selected human fortress, about 38° down with a gentle live orbit |
 | Artwork | Procedural geometry only; **no surface textures** |
-| Visual style | Dark frosted reflective faces, crisp neon edges and lower-opacity bloom; softened procedural reflections |
+| Visual style | Dark frosted reflective volumes with saturated neon tracing their edges, localised bloom and softened procedural reflections |
 | Health | Eight physical pieces in a compact staggered cluster behind each defence arc; survivors grow slightly and spring together after damage |
 | Damage | Physical collision destroys exactly the struck health piece with a graphical flourish; no nearest-piece substitution |
 | Next serve after damage | Damaged defender receives the ball for a revenge serve if still alive; elimination fallback remains open |
 | Elimination/winner | No health left = eliminated; last survivor wins |
-| Aiming | Mouse movement first; keyboard alternative; touch later |
+| Aiming | Captured relative mouse movement; keyboard alternative; touch later |
+| Presentation | Full viewport Three.js scene, no visible HUD or surrounding copy during play; minimal start/pause/result menus |
 | Serving | Mouse click / Space / Enter initially; mobile tap later |
 | Pacing | Adrenaline first: start with one ball and add balls over time; roughly two minutes remains a tuning target |
 | Current ball tuning | Radius 0.187 (10% larger), speed 24 units/s (double the first prototype); provisional extra-ball interval 15s and cap four |
@@ -67,7 +68,7 @@ Do not quietly make these permanent rules without a review:
 These are starting experiments authorised for the prototype, not permanent design decisions:
 
 - **Feel:** Start with precise, responsive defence and deliberate contact-position aiming, then explore escalating arcade pressure. The balance between precision, survival and targeting rivals is still open.
-- **Movement:** Track the pointer closely with a maximum paddle speed; start without pronounced acceleration lag. A late save should initially feel like moving too late rather than fighting momentum. Keyboard uses the same speed limits.
+- **Movement:** Accumulate captured horizontal mouse deltas into a bounded bat-angle target, with a maximum paddle speed; start without pronounced acceleration lag. A late save should initially feel like moving too late rather than fighting momentum. Keyboard uses the same speed limits.
 - **Aiming and bat curvature:** The bat's curved face is independent of its travel rail: rail radius 4.4, bat-face radius 2.2 and half-angle 0.48 radians. Rendering and swept collision use the same shape. Contact normals plus a bounded contact-offset adjustment govern returns. Serve aiming spans twice the paddle-centre angle relative to the sector bisector, giving deliberate attacks on adjacent rivals and banks off either neighbouring wall. A short serve guide shows one wall rebound; defenders may intercept it. Actual serve direction has no random spread. Add movement-driven spin later.
 - **Piece placement and gaps:** User feedback replaces the long fixed health arc with a compact two-row formation inside the fortress. A destroyed piece leaves a real gap, but remaining pieces can subsequently move into that space under damped spring attraction and soft separation. Only an actual collision with a surviving piece causes damage; never substitute nearest-piece damage. Survivors gradually grow by 3.5% of their original size per loss, capped at 24.5%. Visible position and scale must match authoritative moving colliders. Initially paddles can intercept from either side so returning balls do not require an invisible exception. Review whether deeper rebounds are interesting or confusing.
 - **Aim help:** Try a short, conditional outgoing-direction preview for an imminent paddle contact. It describes a hit at the current paddle position, not a guaranteed future trajectory. Keep an off switch and compare assisted/unassisted play.
@@ -96,8 +97,8 @@ For 3–6 seats, derive fortress anchors, arc centre, rail radius, allowed paddl
 ### Rendering contract
 
 - **No image textures, decals, sprites, photographed materials, raster skyboxes or HDRIs in the game world.** Use procedural meshes, extrusion, curves, emissive geometry, material properties, optional analytic shaders and instancing. An image atlas is permitted **only** if measured to improve particle performance. Bloom, antialiasing and reflection render targets are technical buffers, not artwork. Procedurally captured neon light cards may provide rough-metal reflections; do not add image/HDRI assets.
-- Use a gently animated **tilted orthographic 2.5D camera** over genuinely extruded 3D geometry. The camera sits behind the selected human fortress, looking toward the arena centre at about 45° above the playing plane. Changing human seat rotates the view and selects the correct low foreground walls. Gameplay physics stays 2D in a separate coordinate plane; inverse camera projection maps pointer input to the bat's visible plane. Motion is bounded to roughly ±1.7° yaw, ±0.9° tilt and ±0.45% zoom, with long smooth cycles. Freeze the current pose on pause or reduced effects/motion without snapping or accumulating a hidden jump. A stationary pointer retains its world-space target; real pointer events use the most recently rendered camera.
-- Paddles, arena borders, health pieces and balls have visible **thickness, bevels and height separation**. The M01 baseline includes a deep raised plinth, taller health pieces/bats, directional/contact shadows and **restrained bloom**, not just emissive colours. Use low camera-facing cutaway walls so incoming balls stay visible. Genuine 3D height is an M01 requirement, not deferred aesthetic polish for M07. Reduced effects disables bloom.
+- Use a gently animated **perspective RTS camera** over genuinely extruded 3D geometry. The camera sits behind the selected human fortress, looking toward the arena centre at about 38° above the playing plane. Changing human seat rotates the view and selects the correct translucent foreground walls. Gameplay physics stays 2D in a separate coordinate plane. Captured relative mouse input is independent of camera projection. Motion is bounded to roughly ±1.7° yaw, ±0.9° tilt and ±0.45% zoom, with long smooth cycles. Freeze the current pose on pause or reduced effects/motion without snapping or accumulating a hidden jump. Camera motion cannot change the bat target. This supersedes the earlier orthographic view.
+- Paddles, arena borders, health pieces and balls have visible **thickness, bevels and height separation**. The M01 baseline includes a deep raised plinth, taller health pieces/bats, directional/contact shadows and **restrained bloom**, not just emissive colours. Use solid, bevelled, full-height outer walls with translucent camera-facing panels so incoming balls stay visible. Rear interior faces and the floor capture softened actual scene reflections. Thin neon edges carry broad, lower-contribution bloom without hiding the ball. Genuine 3D height is an M01 requirement, not deferred aesthetic polish for M07. Reduced effects disables bloom.
 - Thick edges and high-contrast silhouettes remain crisp under bloom. Strongest visual emphasis: ball → defended opening → paddle → remaining health.
 - Make each player distinct by **colour plus a geometric mark/shape**, not by colour alone. Include reduced-bloom/reduced-flash options.
 - Effects are geometry-first: line arcs, sparks, shards, rings, ball trails and impacts. Particle instancing is encouraged. Don't polish every effect before the basic game is fun.
@@ -113,7 +114,7 @@ The previously discussed sketch is a **layout reference**, not a requirement to 
 
 - Pure TypeScript, fixed timestep; prefer a **120 Hz physics step as a starting experiment**, and measure it. `nextState = step(state, inputs, dt)` contains gameplay decisions; rendering and sound consume events/state but do not determine collisions.
 - 2D ball movement, swept/continuous collision detection against polygon walls, moving curved paddles and the actual remaining health-piece collision shapes. The defence rail is not a damage trigger. Fast balls must not tunnel. Define deterministic ordering for multiple impacts in one step and cap collision iterations to prevent loops.
-- Paddles move along a bounded arc with limited angular speed and optional tunable acceleration; start with responsive tracking as described above. Pointer position is a **target**, not an instantaneous teleport. An off-centre contact can aim a shot even when the paddle is stationary.
+- Paddles move along a bounded arc with limited angular speed and optional tunable acceleration; start with responsive tracking as described above. The requested bat angle is a **target**, not an instantaneous teleport. An off-centre contact can aim a shot even when the paddle is stationary.
 - Paddle movement can impart **spin/curvature** based on tangential paddle velocity, contact offset and incoming direction. Curvature has bounded magnitude and decay; zero-spin must behave predictably. Make dangerous trajectories legible; show shot attribution only if it adds useful information without clutter.
 - Damage requires a swept collision with an intact health piece at its current simulated position and radius; sweep relative to piece movement, not just its end position. Destroy exactly that piece, emit its destruction effect, consume the active ball and put it into a short attached/ready-to-serve state at the damaged defender if they survive. Crossing the defence arc or a missing piece causes no damage. Resolve simultaneous piece contacts deterministically; one ball can destroy at most one piece before returning. If the defender is eliminated, apply the explicitly labelled prototype serve fallback above; never attach a ball to an eliminated seat or serve after match end.
 - Elimination at zero health; removed players can spectate. Edge cases include last piece lost simultaneously, serve recipient eliminated while another ball is active/returning, balls trapped near geometry and no survivors.
@@ -123,7 +124,7 @@ The previously discussed sketch is a **layout reference**, not a requirement to 
 
 ### Input progression
 
-**Desktop now:** Pointer movement selects a position on the player's curved track; primary click launches an attached ball. A/D or Left/Right steer; Space/Enter launch. Handle lost focus and pointer leaving the canvas. The human can choose which fortress/seat to control while testing geometry.
+**Desktop now:** Play/Resume captures the mouse using Pointer Lock. Horizontal relative movement changes a bounded target angle on the curved track, independent of screen edges and camera motion; primary click launches an attached ball. A/D or Left/Right steer; Space/Enter launch. Escape/P pauses and releases capture; focus loss or browser capture loss also pauses and clears input. Resume requires an explicit click. The Three.js canvas fills the viewport with no visible HUD or surrounding text during play. Keep settings behind minimal start/pause/result menus; retain nonvisual accessible status. Pause controls sit in a small corner panel; H hides/restores them for unobstructed screenshots while simulation remains paused. The human can choose a fortress in Settings while testing geometry.
 
 **Mobile later:** Use Pointer Events and pointer capture; relative drag is the first touch experiment, and **tap** launches. Distinguish tap and drag to avoid accidental serves. Test an optional dedicated large launch target if tapping while steering proves awkward. Disable scrolling/zoom gestures only over the active game surface; respect safe areas, rotation and reduced-quality mode.
 
@@ -154,7 +155,7 @@ Build a small four-player game immediately: one human, three basic bots, one ini
 
 ### First release candidate for outside feedback: **M08**
 
-A static URL with a **Play vs Bots** button, selectable total players (2–6), and instant rematch. Initially share with a few friends *only when wanted*, for feel feedback—not for organising multiplayer sessions.
+A static URL with a **Play** button, selectable total players (2–6), and instant rematch. Initially share with a few friends *only when wanted*, for feel feedback—not for organising multiplayer sessions.
 
 **Instrument locally without a backend:** round duration, chosen arena, ball count, human-versus-bot wins, number of replays, deaths by breach location, paddle-hit rate and pause/focus interruptions. Display diagnostics in a developer panel; avoid invasive telemetry or requiring accounts. For external tests, opt-in anonymous metrics or a short voluntary feedback form can be considered separately.
 
@@ -179,7 +180,7 @@ A static URL with a **Play vs Bots** button, selectable total players (2–6), a
 ```text
 GitHub Pages / static dev server
   └─ Browser
-      ├─ React menus + HUD (normal DOM/CSS)
+      ├─ React menus + nonvisual status (normal DOM/CSS)
       ├─ Three.js/WebGL2 (procedural 2.5D rendering)
       ├─ Desktop mouse + keyboard / later mobile touch adapter
       ├─ Pure fixed-step simulation
@@ -291,7 +292,7 @@ Check a milestone only when implemented, validated and approved. A delivered mil
 - [ ] **M04** — Physical destruction, revenge serves, elimination and result rules.
 - [ ] **M05** — All 2–6-seat layouts and tuned bot difficulties.
 - [ ] **M06** — Spin, multiple balls and pacing decision.
-- [ ] **M07** — Visual legibility, effects, sound and HUD.
+- [ ] **M07** — Visual legibility, effects, sound and in-arena cues.
 - [ ] **M08** — Desktop MVP release readiness and playtest validation.
 - [ ] **M09** — Responsive touch interaction.
 - [ ] **M10** — Mobile performance and usability validation.
@@ -316,9 +317,9 @@ When asked to **"do the next milestone"**:
 
 - **Milestone:** M01 — implemented, **Awaiting review**; checkbox remains unchecked until approved.
 - **Implemented / remaining:** Four-seat playable game, pure 120 Hz simulation, physical health collisions/gaps, revenge serves and eliminated-recipient fallback, basic seeded bots, responsive desktop controls, focus pause, results/rematch, procedural depth/destruction effects, conditional return preview and symmetric approach slowdown. Incorporated user feedback: ball 10% larger, double speed, timed additions, independently curved bat face, attacks on adjacent rivals and deliberate banks off both neighbouring walls. M02 and later work remain unstarted.
-- **Checks and evidence:** `pnpm check` passed; `pnpm test` passed (80 tests across 12 files); `PAGES_BASE_PATH=/citadel/ pnpm build` passed; the complete eight-test Chromium suite passed, including live-camera pointer safety, bloom/reduced rendering and full round/result/rematch. `pnpm exec vpx tooling/benchmark.ts` completed five seeded all-bot matches with zero collision caps; `git diff --check` passed. This revision intentionally changes physical target positions/radii and thus match trajectories; the prior presentation-only trace hash is not its acceptance baseline. See `docs/M01_REVIEW.md` and `docs/reviews/m01/`; updated local capture: `/tmp/citadel-frost-review/gameplay.webm`. Local demo: http://127.0.0.1:5173/.
-- **Review decisions / blockers:** User reported the gameplay plays well, then requested clearer 3D height, a 2.5D camera, the originally planned bloom and careful live camera movement. These are M01 amendments, not approval to proceed to M02. The presentation correction, live behind-player camera, lower-opacity bloom, frosted reflections and spring-clustered health are implemented and awaiting visual/gameplay review. No blocking implementation failures. Initial reference sketch remains unavailable. The 15-second arrival interval and four-ball cap are provisional; both are tunable. Same-tick balls resolve in ID order; first declared winner ends remaining tick processing. No mobile/audio/spin/multiplayer or measured real-hardware performance claim. Production bundle still has a >500 kB chunk warning. No GitHub workflow run, push, deployment, Pages-setting change or `gh` command was performed.
-- **Next action:** User reviews the behind-player angle, frosted neon reflections and clustered/growing pieces. The spring/growth tuning is provisional, while speed, ball arrivals, bat controls and revenge-serve rules remain as previously agreed. Request amendments or approve before M02. Local implementation commits: `8fd4bed` (simulation), `41a2100` (playable view and bank-shot geometry); presentation correction commit `593e19e`, clustered/frosted revision `b9f56bf`; follow-up evidence/input checks recorded in Git history.
+- **Checks and evidence:** `pnpm check` passed; `pnpm test` passed (86 tests across 12 files); `PAGES_BASE_PATH=/citadel/ pnpm build` passed. All ten browser cases passed across full and focused Chromium runs, including complete round/results/rematch; the final neon/pause-focused run passed 3/3. Long software-WebGL cases use 180/300-second allowances. `git diff --check` passed. Rendered screenshots of the lower, tighter perspective view were inspected and a desktop gameplay clip recorded with captured relative input. Simulation files are unchanged in this presentation/input revision; the preceding health-cluster revision recorded five seeded all-bot matches with zero collision caps. See `docs/M01_REVIEW.md` and `docs/reviews/m01/perspective-fullscreen.png`; current local capture: `/tmp/citadel-perspective-review/gameplay.webm`. Local demo: http://127.0.0.1:5173/.
+- **Review decisions / blockers:** User reported the gameplay plays well, then requested real perspective, solid raised walls, frosted reflections, restored broad bloom with lower contribution, captured relative mouse controls and pure fullscreen presentation. The latest amendment lowers the camera to about 38° and zooms the arena to fill the viewport; the structural plinth can extend below the view. These are M01 amendments, not approval for M02. The user then identified broad glowing wall seams and an overly pastel look; those seams now sit on the surface, and darker lighting plus saturated geometric edge traces define the volume. Pause controls are compact and can be hidden with H. All are implemented and awaiting review. Initial reference sketch remains unavailable. The 15-second arrival interval and four-ball cap are provisional; both are tunable. Same-tick balls resolve in ID order; first declared winner ends remaining tick processing. No mobile/audio/spin/multiplayer or measured real-hardware performance claim. Production bundle still has a >500 kB chunk warning. No GitHub workflow run, push, deployment, Pages-setting change or `gh` command was performed.
+- **Next action:** User reviews the lower, closer perspective view, full-height frosted walls, ball readability and Play → relative mouse → Escape → Resume flow. The spring/growth tuning is provisional; ball speed, arrivals, banks and revenge-serve rules remain as previously agreed. Request amendments or approve before M02. Current local implementation commits: `38d2d2b` (fullscreen/relative input/perspective) and `2640190` (neon edges, corrected wall seams and hidden pause controls); earlier work remains in Git history.
 
 ### Progress / approval ledger
 
@@ -330,7 +331,7 @@ When asked to **"do the next milestone"**:
 | M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Not started | — | — |
 | M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Not started | — | — |
 | M06 | Solo proof | Spin/ball tuning and evidence-based 2-minute escalation | Not started | — | — |
-| M07 | Solo proof | Geometry-first effects, audio, readable HUD and feel | Not started | — | — |
+| M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Not started | — | — |
 | M08 | **Desktop validation gate** | Public-ready static solo build, playtests and decision | Not started | — | — |
 | M09 | Mobile | Touch steering, tap launch and responsive layouts | Not started | — | — |
 | M10 | **Mobile validation gate** | Mobile GPU/performance/accessibility and real-device tests | Not started | — | — |
@@ -344,7 +345,7 @@ When asked to **"do the next milestone"**:
 
 #### M01 — First playable four-player prototype
 
-**Implement:** Scaffold strict TypeScript with Vite+ and a procedural Three.js view, keeping simulation independent. Add the required GitHub Actions CI and Pages publishing workflows described above. Build only the four-corner square: one human, three basic bots using normal intents, one initial ball with timed additions, curved responsive paddles, contact-position aiming, walls and eight physically collidable health pieces per fortress. Include swept collision for supported prototype speeds, visible piece destruction, return to the surviving damaged defender, tunable serve deadline, elimination, a basic winner/result and immediate rematch. Use the labelled seeded elimination-serve fallback and empty-sector wall rebounds. Add mouse/keyboard input, gently animated tilted camera with correct inverse input projection, readable 3D extrusion, a raised base, directional shadows, restrained bloom and minimal diagnostics. Include a short conditional aim-preview toggle and an approach-slowdown toggle, initially off; keep these simple experiments. No advanced spin, other layouts, networking or elaborate polish.
+**Implement:** Scaffold strict TypeScript with Vite+ and a procedural Three.js view, keeping simulation independent. Add the required GitHub Actions CI and Pages publishing workflows described above. Build only the four-corner square: one human, three basic bots using normal intents, one initial ball with timed additions, curved responsive paddles, contact-position aiming, walls and eight physically collidable health pieces per fortress. Include swept collision for supported prototype speeds, visible piece destruction, return to the surviving damaged defender, tunable serve deadline, elimination, a basic winner/result and immediate rematch. Use the labelled seeded elimination-serve fallback and empty-sector wall rebounds. Add captured relative mouse/keyboard input, a gently animated 38° perspective camera, readable 3D extrusion and full-height walls, a raised base, softened floor/wall reflections, directional shadows and restrained bloom. Fill the viewport; keep diagnostics nonvisual and settings in minimal menus. Include a short conditional aim-preview toggle and an approach-slowdown toggle, initially off; keep these simple experiments. No advanced spin, other layouts, networking or elaborate polish.
 
 **Acceptance:** One person can play and rematch complete four-player rounds without editing state. Physical hits destroy only the contacted piece; gaps cause no automatic damage; a surviving damaged defender receives the next serve; eliminated seats never receive serves; a winner ends serving. Focus loss pauses solo play and clears held inputs. Run focused geometry, collision, damage, serve and elimination tests plus typecheck/lint/build. Provide a four-seat screenshot, a short gameplay capture and a local demo. The tilted view must visibly show arena height, side faces and bloom while keeping threats readable; a technically 3D but visually flat board does not satisfy this gate. Identify the missing sketch rather than claiming reference fidelity. Validate the production asset base and inspect the CI/Pages workflow configuration; report actual remote-run/deployment evidence only when available.
 
@@ -352,7 +353,7 @@ When asked to **"do the next milestone"**:
 
 #### M02 — Refine controls and deliberate aiming
 
-**Implement:** Iterate on the M01 interaction from hands-on feedback. Refine pointer-to-arc mapping, speed caps, optional acceleration, contact-angle range, keyboard steering, click/Space/Enter launch, focus, resize and selection of any of the four seats. Compare preview only, slowdown only, both and neither; report preferences and tradeoffs, then propose defaults for review. Slowdown changes simulation identically for bots and humans; the preview is informational. Touch remains excluded.
+**Implement:** Iterate on the M01 interaction from hands-on feedback. Refine captured-relative-mouse-to-arc mapping, speed caps, optional acceleration, contact-angle range, keyboard steering, click/Space/Enter launch, focus, resize and selection of any of the four seats. Compare preview only, slowdown only, both and neither; report preferences and tradeoffs, then propose defaults for review. Slowdown changes simulation identically for bots and humans; the preview is informational. Touch remains excluded.
 
 **Acceptance:** Boundary clamps, movement limits, launch semantics and any slowdown restoration/non-stacking rules are tested. No free teleporting saves or misleading guaranteed-path preview. Demonstrate deliberate centre/edge returns. **Review:** Choose responsive feel and whether either assistance experiment earns a place. **STOP: REVIEW REQUIRED — M02.**
 
@@ -382,13 +383,13 @@ When asked to **"do the next milestone"**:
 
 #### M07 — Legibility, impact and arcade character
 
-**Implement:** Implement only the approved escalation. Polish luminous thick-edged geometric materials, useful shot-attribution marks if approved, spin trails, paddle sparks, struck-piece fracture/burst, elim/victory states and restraint under high ball density. Add *original generated/synthesised* sound cues (serve, ricochet, breach, elimination, rising tension), volume/mute and a readable HUD. Provide Low/Medium/High effects options. No textures outside the permitted particle optimisation exception.
+**Implement:** Implement only the approved escalation. Polish luminous thick-edged geometric materials, useful shot-attribution marks if approved, spin trails, paddle sparks, struck-piece fracture/burst, elim/victory states and restraint under high ball density. Add *original generated/synthesised* sound cues (serve, ricochet, breach, elimination, rising tension), volume/mute and readable in-arena cues, preserving pure gameplay without an overlaid HUD. Provide Low/Medium/High effects options. No textures outside the permitted particle optimisation exception.
 
 **Acceptance:** Ball and health remain trackable at 2/4/6 players; screenshots show genuine 2.5D depth; desktop feel and sound enhance rather than hide gameplay; tests still pass. **Review:** Is this visually recognisable and pleasant at speed? **STOP: REVIEW REQUIRED — M07.**
 
 #### M08 — **Desktop browser MVP release and idea-validation gate**
 
-**Implement:** Make a polished **Play vs Bots** landing experience, quick total-player selector, controls hint, restart/rematch, build/version indicator and solo-only settings. Revalidate the M01 GitHub Pages workflow and asset base against the actual repository URL; verify the deployed build when repository publishing is enabled. Follow the established publishing trigger policy rather than introducing a new per-release approval prompt. Write `docs/PLAYTEST.md` with repeatable scripted checks, observations and optional external feedback prompts. Add Playwright desktop smoke tests and a simple local stats export.
+**Implement:** Make a polished **Play** landing experience, quick total-player selector, restart/rematch and solo-only settings inside minimal menus. Keep gameplay pure fullscreen canvas; any controls help or build/version information belongs in menus. Revalidate the M01 GitHub Pages workflow and asset base against the actual repository URL; verify the deployed build when repository publishing is enabled. Follow the established publishing trigger policy rather than introducing a new per-release approval prompt. Write `docs/PLAYTEST.md` with repeatable scripted checks, observations and optional external feedback prompts. Add Playwright desktop smoke tests and a simple local stats export.
 
 **Acceptance:** Complete one-human-versus-five-bots match from a freshly opened desktop URL; clean startup, no console-breaking errors, no account, clear replay. Document what a few testers find confusing, actual match times and the next design changes. **Decision:** Go to mobile only if the core interaction has earned it. **STOP: REVIEW REQUIRED — M08.**
 
@@ -396,7 +397,7 @@ When asked to **"do the next milestone"**:
 
 #### M09 — Responsive touch interaction
 
-**Implement:** Add a touch input adapter over the identical `PlayerIntent` interface. Implement relative-drag steering, tap-to-launch (separate gesture thresholds and cancellation), optional large launch button, pointer capture and touch-specific hints. Fit the geometry/HUD to portrait and landscape orientations, safe areas and small screens; handle orientation changes and background/foreground transitions.
+**Implement:** Add a touch input adapter over the identical `PlayerIntent` interface. Implement relative-drag steering, tap-to-launch (separate gesture thresholds and cancellation), optional large launch button, pointer capture and touch-specific hints. Fit the arena and menus to portrait and landscape orientations, safe areas and small screens; handle orientation changes and background/foreground transitions.
 
 **Acceptance:** Touch gameplay does not scroll the page or confuse drags with launches; all arenas can be played with bots; layout does not crop threat areas. **Review:** Is it genuinely playable one-handed or two-handed on a phone? **STOP: REVIEW REQUIRED — M09.**
 
