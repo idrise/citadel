@@ -1,7 +1,7 @@
 import { ARENA, clampPaddleAngle, fortress } from "./arena";
-import { sweepCircle, sweepPaddle, sweepWalls } from "./collision";
+import { pressureArrival } from "./pressure-arrival";
 import { alive, type MatchState } from "./types";
-import { angleDifference, angleOf, add, scale, sub } from "./vector";
+import { angleDifference, angleOf, sub } from "./vector";
 
 export const PRESSURE_HORIZON = 0.45;
 // Nearby arrivals can share one bat pose; only disjoint catching intervals demand a fast move.
@@ -18,40 +18,12 @@ export function pressureReliefBalls(state: MatchState, seat: number): Set<number
   const threats = state.balls
     .flatMap((ball) => {
       if (ball.phase !== "active") return [];
-      const hit = sweepCircle(
-        ball.position,
-        ball.velocity,
-        home.anchor,
-        ARENA.railRadius + 0.4,
-        PRESSURE_HORIZON,
-      );
-      if (!hit || sweepWalls(ball.position, ball.velocity, hit.time).length) return [];
-      const point = add(ball.position, scale(ball.velocity, hit.time));
+      const hit = pressureArrival(state, ball, seat, PRESSURE_HORIZON);
+      if (!hit) return [];
+      const point = hit.point;
       const angle =
         home.direction + angleDifference(angleOf(sub(point, home.anchor)), home.direction);
       if (angle < low - COVERAGE_HALF_ANGLE || angle > high + COVERAGE_HALF_ANGLE) return [];
-      for (const defender of state.players) {
-        if (!alive(defender)) continue;
-        if (
-          defender.id !== seat &&
-          sweepPaddle(ball.position, ball.velocity, defender.id, defender.angle, 0, hit.time)
-        )
-          return [];
-        for (let piece = 0; piece < defender.pieces.length; piece++) {
-          if (!defender.health[piece]) continue;
-          const body = defender.pieces[piece]!;
-          if (
-            sweepCircle(
-              ball.position,
-              ball.velocity,
-              body.position,
-              body.radius + ARENA.ballRadius,
-              hit.time,
-            )
-          )
-            return [];
-        }
-      }
       return [
         {
           id: ball.id,

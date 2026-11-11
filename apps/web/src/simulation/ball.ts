@@ -4,6 +4,7 @@ import { damagePiece, emit } from "./serving";
 import { alive, type BallState, type MatchOptions, type MatchState } from "./types";
 import { add, dot, scale, sub, type Vec2 } from "./vector";
 import { approachSlowdown } from "./slowdown";
+import { curveFlight, swipeCurve } from "./flight";
 
 interface Impact extends Contact {
   type: "paddle" | "piece" | "wall";
@@ -27,6 +28,9 @@ export function advanceBall(
   previousPieces: Vec2[][],
   stopAtFirstImpact = false,
 ): BallImpact | undefined {
+  const flight = curveFlight(ball.velocity, ball.spin, dt);
+  ball.velocity = flight.velocity;
+  ball.spin = flight.spin;
   let remaining = dt;
   let elapsed = 0;
   let impacts = 0;
@@ -85,20 +89,50 @@ export function advanceBall(
     if (!hit) return;
     impacts++;
     const report = stopAtFirstImpact ? { ...hit, position: { ...ball.position } } : undefined;
+    const incoming = { ...ball.velocity };
     if (hit.type === "piece") {
       if (stopAtFirstImpact) return report;
-      damagePiece(state, ball, hit.seat, hit.piece);
+      damagePiece(state, ball, hit.seat, hit.piece, {
+        time: elapsed,
+        normal: { ...hit.normal },
+        incoming,
+        outgoing: { x: 0, y: 0 },
+        spin: ball.spin ?? 0,
+      });
       return;
     }
     if (hit.type === "paddle") {
+      const angularVelocity =
+        (state.players[hit.seat]!.angle -
+          (previousAngles[hit.seat] ?? state.players[hit.seat]!.angle)) /
+        dt;
       ball.velocity = paddleReturn(ball.velocity, hit.offset, hit.normal);
+      ball.spin = swipeCurve(angularVelocity, incoming, hit.normal);
       ball.slowSeat = null;
       struckPaddles.add(hit.seat);
       state.stats.paddleHits++;
-      emit(state, "paddle", ball.position, hit.seat);
+      emit(state, "paddle", ball.position, hit.seat, null, {
+        ballId: ball.id,
+        impact: {
+          time: elapsed,
+          normal: { ...hit.normal },
+          incoming,
+          outgoing: { ...ball.velocity },
+          spin: ball.spin ?? 0,
+        },
+      });
     } else {
       ball.velocity = sub(ball.velocity, scale(hit.normal, 2 * dot(ball.velocity, hit.normal)));
-      emit(state, "wall", ball.position, -1);
+      emit(state, "wall", ball.position, -1, null, {
+        ballId: ball.id,
+        impact: {
+          time: elapsed,
+          normal: { ...hit.normal },
+          incoming,
+          outgoing: { ...ball.velocity },
+          spin: ball.spin ?? 0,
+        },
+      });
     }
     ball.position = add(ball.position, scale(hit.normal, (hit.separation ?? 0) + 0.0001));
     if (stopAtFirstImpact) return report;

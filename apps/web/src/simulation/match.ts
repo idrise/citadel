@@ -69,11 +69,13 @@ export function stepMatch(
       })),
     })),
     bots: previous.bots.map((bot) => ({ ...bot })),
-    balls: previous.balls.map((ball) => ({
-      ...ball,
-      position: { ...ball.position },
-      velocity: { ...ball.velocity },
-    })),
+    balls: previous.balls
+      .map((ball) => ({
+        ...ball,
+        position: { ...ball.position },
+        velocity: { ...ball.velocity },
+      }))
+      .sort((a, b) => a.id - b.id),
     stats: { ...previous.stats },
   };
   const inputs = state.players.map((player) =>

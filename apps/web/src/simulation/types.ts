@@ -32,6 +32,14 @@ export interface BallState {
   position: Vec2;
   velocity: Vec2;
   slowSeat: number | null;
+  spin?: number;
+}
+export interface ImpactDetails {
+  time: number;
+  normal: Vec2;
+  incoming: Vec2;
+  outgoing: Vec2;
+  spin: number;
 }
 export interface GameEvent {
   id: number;
@@ -40,6 +48,10 @@ export interface GameEvent {
   position: Vec2;
   seat: number;
   piece: number | null;
+  ballId?: number;
+  radius?: number;
+  returnTo?: Vec2;
+  impact?: ImpactDetails;
 }
 export interface MatchOptions {
   humanSeat: number;
