@@ -4,7 +4,7 @@ import { ARENA, FIXED_DT, fortress, type PlayerCount } from "./arena";
 import { beginArenaMorph, stepArenaMorph } from "./arena-morph";
 import { createMatch, stepMatch } from "./match";
 import { damagePiece } from "./serving";
-import { polygonEdges } from "./polygon";
+import { carryPoint, polygonEdges } from "./polygon";
 import { DEFAULT_OPTIONS, IDLE_INTENT } from "./types";
 import { angleDifference, dot, length, scale, sub, unit } from "./vector";
 
@@ -158,4 +158,20 @@ it("replays the changing boundary, pieces, bots and held target identically at 3
   const baseline = replay(30);
   expect(replay(60)).toEqual(baseline);
   expect(replay(144)).toEqual(baseline);
+});
+
+it("carries a bot's selected serve target with the floor instead of choosing a different rival every morph tick", () => {
+  const state = createMatch(4, 6);
+  state.phase = "playing";
+  eliminate(state, 2);
+  beginArenaMorph(state);
+  const before = state.arena,
+    target = { ...state.players[3]!.pieces[1]!.position },
+    rng = state.rng;
+  state.bots[0]!.serveTarget = target;
+  stepArenaMorph(state, 0.2);
+  expect(state.bots[0]!.serveTarget).toEqual(
+    carryPoint(target, before.vertices, state.arena.vertices),
+  );
+  expect(state.rng).toBe(rng);
 });

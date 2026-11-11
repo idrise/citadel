@@ -66,7 +66,8 @@ export function stepArenaMorph(state: MatchState, dt: number): void {
     }
     const bot = state.bots[player.id]!;
     bot.targetAngle += turn;
-    bot.serveTarget = null;
+    if (bot.serveTarget)
+      bot.serveTarget = carryPoint(bot.serveTarget, before.vertices, after.vertices);
   }
   for (const ball of state.balls) {
     if (ball.phase !== "active") continue;
