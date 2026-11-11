@@ -1,3 +1,4 @@
+import type { OutlineTransition } from "./outline-transition";
 import type { ArenaGeometry } from "./arena";
 import type { Vec2 } from "./vector";
 import type { BatSwipe } from "./flight";
@@ -67,6 +68,7 @@ export interface MatchOptions {
   maxBalls: number;
 }
 export interface ArenaMorph {
+  outline: OutlineTransition;
   from: ArenaGeometry;
   to: ArenaGeometry;
   elapsed: number;

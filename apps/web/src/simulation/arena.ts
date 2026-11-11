@@ -1,20 +1,9 @@
 import { healthFormation } from "./health-layout";
 import { add, angleDifference, clamp, scale, unit, type Vec2 } from "./vector";
 
-export const ARENA = {
-  halfSize: 9,
-  railRadius: 4.4,
-  sectorHalfAngle: Math.PI / 4,
-  paddleHalfAngle: 0.24,
-  batRadius: 2.2,
-  batHalfAngle: 0.48,
-  paddleThickness: 0.28,
-  paddleSpeed: 3.2,
-  pieceRadius: 0.26,
-  pieces: 8,
-  ballRadius: 0.187,
-} as const;
-export const FIXED_DT = 1 / 120;
+import { ARENA } from "./arena-tuning";
+import { fitDefenceLimits } from "./defence-limits";
+export { ARENA, FIXED_DT } from "./arena-tuning";
 export type PlayerCount = 2 | 3 | 4 | 5 | 6;
 export interface ArenaGeometry {
   count: PlayerCount;
@@ -26,6 +15,7 @@ export interface Fortress {
   anchor: Vec2;
   direction: number;
   halfAngle: number;
+  angleLimits?: readonly [number, number];
   pieces: Vec2[];
 }
 
@@ -82,7 +72,7 @@ export function createArena(
       pieces: healthFormation(pieceAnchor, direction, ARENA.pieces, ARENA.pieceRadius),
     };
   });
-  return { count, vertices, fortresses };
+  return fitDefenceLimits({ count, vertices, fortresses });
 }
 export const SQUARE_ARENA = createArena();
 export const FORTRESSES: readonly Fortress[] = SQUARE_ARENA.fortresses;
@@ -99,11 +89,15 @@ export function clampPaddleAngle(
 ): number {
   const home = fortress(seat, arena);
   const base = home.direction;
-  const endClearance = Math.asin(
-    (ARENA.ballRadius + ARENA.paddleThickness / 2 + 0.01) / (ARENA.railRadius - 0.2),
+  const limit = home.halfAngle - ARENA.paddleHalfAngle;
+  return (
+    base +
+    clamp(
+      angleDifference(angle, base),
+      home.angleLimits?.[0] ?? -limit,
+      home.angleLimits?.[1] ?? limit,
+    )
   );
-  const limit = Math.min(home.halfAngle, 1.0) - ARENA.paddleHalfAngle - endClearance;
-  return base + clamp(angleDifference(angle, base), -limit, limit);
 }
 export function railPosition(
   seat: number,

@@ -34,13 +34,9 @@ export function carryPoint(point: Vec2, before: readonly Vec2[], after: readonly
 function cross(a: Vec2, b: Vec2, c: Vec2) {
   return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
 }
-/** Minkowski interpolation preserves convexity throughout a topology change. */
-export function blendPolygon(from: readonly Vec2[], to: readonly Vec2[], amount: number): Vec2[] {
-  if (amount <= 0) return from.map((p) => ({ ...p }));
-  if (amount >= 1) return to.map((p) => ({ ...p }));
-  const points = from
-    .flatMap((a) => to.map((b) => add(scale(a, 1 - amount), scale(b, amount))))
-    .sort((a, b) => a.x - b.x || a.y - b.y);
+/** Clockwise convex boundary; collinear points do not create visible corners. */
+export function convexHull(input: readonly Vec2[]): Vec2[] {
+  const points = [...input].sort((a, b) => a.x - b.x || a.y - b.y);
   const lower: Vec2[] = [],
     upper: Vec2[] = [];
   for (const point of points) {

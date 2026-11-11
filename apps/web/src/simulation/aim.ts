@@ -6,7 +6,7 @@ import {
   SQUARE_ARENA,
   type ArenaGeometry,
 } from "./arena";
-import { angleDifference, angleOf, sub, unit, type Vec2 } from "./vector";
+import { angleDifference, angleOf, clamp, sub, unit, type Vec2 } from "./vector";
 
 /** Spread the full mouse travel over the arena, including both adjacent fortresses. */
 export function serveDirection(
@@ -16,7 +16,9 @@ export function serveDirection(
 ): Vec2 {
   const home = fortress(seat, arena);
   const fan = home.halfAngle < 0.7 ? 3.5 : 2;
-  return unit(home.direction + angleDifference(paddleAngle, home.direction) * fan);
+  return unit(
+    home.direction + clamp(angleDifference(paddleAngle, home.direction) * fan, -1.45, 1.45),
+  );
 }
 
 /** Invert the serve fan from its actual moving launch point, using visible targets only. */

@@ -90,3 +90,32 @@ test("all six human fortresses support captured input, difficulty selection and 
   await expect(page.getByLabel("Bot difficulty", { exact: true })).toHaveValue("expert");
   expect(errors).toEqual([]);
 });
+
+test("two-player captured mouse reaches both end walls without the old travel gaps", async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 960, height: 675 });
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await openGame(page, false);
+  await page.getByLabel("Players", { exact: true }).selectOption("2");
+  await page.getByText("Settings", { exact: true }).click();
+  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+  await page.getByText("Settings", { exact: true }).click();
+  await play(page);
+  await page.clock.runFor(1800);
+  await page.mouse.move(1500, 300);
+  await page.clock.runFor(600);
+  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeGreaterThan(
+    -20,
+  );
+  await page.screenshot({ path: testInfo.outputPath("reach-right.png") });
+  await page.mouse.move(-500, 300);
+  await page.clock.runFor(1000);
+  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeLessThan(
+    -160,
+  );
+  await page.screenshot({ path: testInfo.outputPath("reach-left.png") });
+  expect(errors).toEqual([]);
+});

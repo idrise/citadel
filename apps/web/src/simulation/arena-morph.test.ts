@@ -1,6 +1,6 @@
 import { createFixedClock } from "../session/fixed-clock";
 import { expect, it } from "vite-plus/test";
-import { ARENA, FIXED_DT, fortress, type PlayerCount } from "./arena";
+import { ARENA, FIXED_DT, createArena, fortress, type PlayerCount } from "./arena";
 import { beginArenaMorph, stepArenaMorph } from "./arena-morph";
 import { createMatch, stepMatch } from "./match";
 import { damagePiece } from "./serving";
@@ -25,7 +25,8 @@ it.each([3, 4, 5, 6] as const)(
     const health = state.players.map((p) => [...p.health]),
       before = structuredClone(state);
     beginArenaMorph(state);
-    expect(state.morph!.duration).toBeGreaterThanOrEqual(8);
+    expect(state.morph!.duration).toBeGreaterThanOrEqual(2.8);
+    expect(state.morph!.duration).toBeLessThan(4);
     expect(state.arena).toEqual(before.arena);
     let maxTravel = 0;
     for (let i = 0; i < 2400 && state.morph; i++) {
@@ -49,7 +50,7 @@ it.each([3, 4, 5, 6] as const)(
     expect(state.arena.vertices).toHaveLength(count === 3 ? 4 : count - 1);
     expect(state.players.map((p) => p.health)).toEqual(health);
     expect(state.players.map((p) => p.id)).toEqual(before.players.map((p) => p.id));
-    expect(maxTravel).toBeLessThanOrEqual(1.51);
+    expect(maxTravel).toBeLessThanOrEqual(6.01);
   },
 );
 it("retargets a second elimination during a morph without snapping, losing a ready ball, or changing live ball velocity/spin", () => {
@@ -174,4 +175,40 @@ it("carries a bot's selected serve target with the floor instead of choosing a d
     carryPoint(target, before.vertices, state.arena.vertices),
   );
   expect(state.rng).toBe(rng);
+});
+
+it("shares a regular target's rotation to cut needless travel instead of pinning the first corner", () => {
+  const state = createMatch(4, 6);
+  state.phase = "playing";
+  eliminate(state, 5);
+  beginArenaMorph(state);
+  const cost = (arena: typeof state.arena) =>
+    state.players
+      .filter((p) => p.id !== 5)
+      .reduce((sum, p) => {
+        const delta = sub(fortress(p.id, arena).anchor, fortress(p.id, state.arena).anchor);
+        return sum + delta.x * delta.x + delta.y * delta.y;
+      }, 0);
+  const oldTarget = createArena(5);
+  expect(cost(state.morph!.to)).toBeLessThan(cost(oldTarget) * 0.6);
+  const radial = state
+    .morph!.to.fortresses.filter((s) => s.id !== 5)
+    .map((s) => Math.hypot(s.anchor.x, s.anchor.y));
+  radial.forEach((radius) => expect(radius).toBeCloseTo(14));
+});
+it("catches up with rapid deaths on the existing transition window instead of restarting eight seconds", () => {
+  const state = createMatch(8, 6);
+  state.phase = "playing";
+  eliminate(state, 5);
+  beginArenaMorph(state);
+  const first = state.morph!;
+  expect(first.duration).toBeCloseTo(2.8);
+  stepArenaMorph(state, 1);
+  eliminate(state, 3);
+  beginArenaMorph(state);
+  expect(state.morph!.to.count).toBe(4);
+  expect(state.morph!.duration).toBeLessThanOrEqual(2.0);
+  stepArenaMorph(state, state.morph!.duration);
+  expect(state.morph).toBeNull();
+  expect(state.arena.count).toBe(4);
 });

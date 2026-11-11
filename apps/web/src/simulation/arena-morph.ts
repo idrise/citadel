@@ -1,7 +1,9 @@
 import { ARENA, createArena, fortress, type ArenaGeometry, type PlayerCount } from "./arena";
-import { blendPolygon, carryPoint, containCircle } from "./polygon";
-import { alive, type MatchState } from "./types";
-import { add, angleDifference, scale, sub } from "./vector";
+import { fitDefenceLimits } from "./defence-limits";
+import { carryPoint, containCircle } from "./polygon";
+import { matchOutlines, blendOutline } from "./outline-transition";
+import { alive, type MatchState, type ArenaMorph } from "./types";
+import { add, angleDifference, length, scale, sub } from "./vector";
 
 /** Survivors keep their IDs, relative rail position and orientation; no roster renumbering. */
 export function beginArenaMorph(state: MatchState): void {
@@ -9,26 +11,46 @@ export function beginArenaMorph(state: MatchState): void {
   const survivors = state.players.filter(alive).map((player) => player.id);
   if (survivors.length < 2 || (state.morph?.to.count ?? state.arena.count) === survivors.length)
     return;
-  const first = fortress(survivors[0]!, state.arena);
   const count = survivors.length as PlayerCount;
-  const rotation =
-    Math.atan2(first.anchor.y, first.anchor.x) - (count === 2 ? Math.PI / 2 : (Math.PI * 3) / 4);
-  const target = createArena(count, survivors, rotation);
+  const template = createArena(count, survivors);
+  let alignment = 0,
+    turn = 0;
+  for (const id of survivors) {
+    const source = fortress(id, state.arena).anchor,
+      target = fortress(id, template).anchor;
+    alignment += target.x * source.x + target.y * source.y;
+    turn += target.x * source.y - target.y * source.x;
+  }
+  // Least-squares rotation shares the adjustment across survivors, rather than pinning
+  // the first survivor and making the opposite walls sweep the remaining full angle.
+  const target = createArena(count, survivors, Math.atan2(turn, alignment));
   // Retain eliminated seat metadata for event consumers/camera; those seats never defend again.
   target.fortresses.push(...state.arena.fortresses.filter((seat) => !survivors.includes(seat.id)));
   const travel = Math.max(
-    ...survivors.map((id) => {
-      const a = fortress(id, state.arena).anchor,
-        b = fortress(id, target).anchor;
-      return Math.hypot(a.x - b.x, a.y - b.y);
-    }),
+    ...survivors.map((id) =>
+      length(sub(fortress(id, target).anchor, fortress(id, state.arena).anchor)),
+    ),
   );
-  state.morph = { from: state.arena, to: target, elapsed: 0, duration: Math.max(8, travel / 1.0) };
+  // Reuse the remaining time. Only a large retarget may extend it enough to keep
+  // eased fortress translation at or below six units/s (ball speed remains 24).
+  const duration = Math.max(
+    travel / 4,
+    state.morph ? Math.max(0.8, state.morph.duration - state.morph.elapsed) : 2.8,
+  );
+  state.morph = {
+    from: state.arena,
+    to: target,
+    outline: matchOutlines(state.arena.vertices, target.vertices),
+    elapsed: 0,
+    duration,
+  };
 }
-function interpolate(from: ArenaGeometry, to: ArenaGeometry, amount: number): ArenaGeometry {
-  return {
+
+function interpolate(morph: ArenaMorph, amount: number): ArenaGeometry {
+  const { from, to } = morph;
+  return fitDefenceLimits({
     count: to.count,
-    vertices: blendPolygon(from.vertices, to.vertices, amount),
+    vertices: blendOutline(morph.outline, amount),
     fortresses: from.fortresses.map((before) => {
       const after = fortress(before.id, to);
       const turn = angleDifference(after.direction, before.direction);
@@ -39,7 +61,7 @@ function interpolate(from: ArenaGeometry, to: ArenaGeometry, amount: number): Ar
         halfAngle: before.halfAngle + (after.halfAngle - before.halfAngle) * amount,
       };
     }),
-  };
+  });
 }
 export function stepArenaMorph(state: MatchState, dt: number): void {
   const morph = state.morph;
@@ -48,7 +70,7 @@ export function stepArenaMorph(state: MatchState, dt: number): void {
   const t = elapsed / morph.duration,
     eased = t * t * (3 - 2 * t);
   const before = state.arena;
-  const after = elapsed >= morph.duration ? morph.to : interpolate(morph.from, morph.to, eased);
+  const after = elapsed >= morph.duration ? morph.to : interpolate(morph, eased);
   for (const player of state.players) {
     if (!alive(player)) continue;
     const oldSeat = fortress(player.id, before),

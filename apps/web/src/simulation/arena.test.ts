@@ -33,10 +33,9 @@ describe("four-corner arena", () => {
 
   it("clamps wrapped pointer angles and leaves room for the whole paddle at each end", () => {
     for (const seat of FORTRESSES) {
-      const limit =
-        ARENA.sectorHalfAngle -
-        ARENA.paddleHalfAngle -
-        Math.asin((ARENA.ballRadius + ARENA.paddleThickness / 2 + 0.01) / ARENA.railRadius);
+      const limit = seat.angleLimits![1];
+      expect(limit).toBeGreaterThan(0.5);
+      expect(seat.angleLimits![0]).toBeCloseTo(-limit);
       expect(clampPaddleAngle(seat.id, seat.direction + 2 * Math.PI)).toBeCloseTo(seat.direction);
       expect(clampPaddleAngle(seat.id, seat.direction + 2)).toBeCloseTo(seat.direction + limit);
       expect(clampPaddleAngle(seat.id, seat.direction - 2)).toBeCloseTo(seat.direction - limit);
