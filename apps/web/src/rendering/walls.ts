@@ -135,7 +135,16 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
       if (p) {
         const previous = edges[(index + edges.length - 1) % edges.length]!.normal,
           next = edges[index]!.normal;
-        const inset = 0.48 / (1 + dot(previous, next));
+        // The square post's diagonal follows the corner bisector. Its faces then
+        // align exactly at right angles and symmetrically at other polygon turns.
+        post.rotation.y = Math.PI / 4 - Math.atan2(previous.y + next.y, previous.x + next.x);
+        const c = Math.cos(post.rotation.y),
+          s = Math.sin(post.rotation.y);
+        const reach =
+          0.49 *
+          strength *
+          (Math.abs(previous.x * c - previous.y * s) + Math.abs(previous.x * s + previous.y * c));
+        const inset = reach / (1 + dot(previous, next));
         post.position.set(
           p.x - (previous.x + next.x) * inset,
           ((WALL_HEIGHT + 0.12) * strength) / 2,
