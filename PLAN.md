@@ -283,12 +283,12 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** M01 approved on 11 November 2026. M02 controls and deliberate aiming are implemented and **Awaiting review**. Review `docs/M02_REVIEW.md`, try the dotted forecast and assistance modes, then approve or request changes. M03 remains unstarted.
+**Current position:** M02 approved by the user's 11 November 2026 feedback that the feel is good and request to work on relevant M03/M04 parts. **M03/M04 are In progress together by explicit user instruction**, including a small movement-driven curve and destruction flourish pulled forward from later polish. Preserve the approved feel; do not start M05 or the full M06 pacing gate.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
 - [x] **M01** — First playable four-player prototype, Vite+ scaffold, CI and Pages workflow.
-- [ ] **M02** — Responsive controls, contact aiming and preview/slowdown comparison.
+- [x] **M02** — Responsive controls, contact aiming and preview/slowdown comparison.
 - [ ] **M03** — Collision stress cases, deterministic physics and replay fixtures.
 - [ ] **M04** — Physical destruction, revenge serves, elimination and result rules.
 - [ ] **M05** — All 2–6-seat layouts and tuned bot difficulties.
@@ -316,26 +316,24 @@ When asked to **"do the next milestone"**:
 
 ### Current milestone work record
 
-- **Milestone:** M02 — implemented, **Awaiting review**; checkbox remains unchecked. M01 approved by the user's 11 November 2026 request to continue, at `415b2df`; recorded in `a5d5652`.
+- **Milestones:** Relevant M03/M04 work **In progress**, combined at the user's explicit request. M02 approved at `854276b`; its evidence remains in `docs/M02_REVIEW.md`.
+- **User scope:** “The feel is good so far … flourish and a little curve by moving the bat into the ball. Interpret as you wish.” This authorises combining these milestones and pulling a small swipe curve/destruction polish forward; it does not authorise a new pacing system or other layouts.
 - **Task checklist:**
-  - [x] Refine captured mouse sensitivity, keyboard handover, capture lifecycle and one-press launch semantics.
-  - [x] Keep settings across rematches/seat changes; exercise all four human seats and resize/focus transitions.
-  - [x] Compare neither/preview/slowdown/both; predict from the nearby ball through the frozen bat and onward, using actual simulation samples.
-  - [x] Test clamps, common movement caps, centre/edge returns and slowdown restoration/non-stacking.
-  - [x] Provide local play, rendered centre/edge examples, reproducible comparison data and recommendations in `docs/M02_REVIEW.md`.
-- **Implemented:** 0.5–2× sensitivity without teleporting or added inertia; robust capture/pause races and one-press serve input; persistent in-page settings; same-opening Restart/new-seed Rematch; four assistance presets. Dots follow the earliest nearby incoming ball through a stationary-bat bounce, one bank and the next impact or projection limit. The display consumes sampled trajectories so future curvature can use it. The existing convex bat gives measured centre/edge aim differences; no spin or new curvature was added.
-- **User clarification / proposed defaults:** The user requested a dotted path from the ball through the predicted bounce and destination while the bat remains still, with slowdown kept optional and enough bat bulge for contact aiming. Applied **Preview only**, slowdown off, sensitivity 1× and the existing 2.2-radius convex bat. Moving actors can invalidate the forecast. The existing serve guide remains in every mode. Subsequent feedback rejects routine delay: optional slowdown now targets later arrivals only when two separated shots demand rapid movement. The counter fixture catches 1 ball without relief and 2 with it, with the same 75 ms first catch and 3.2 rad/s cap.
-- **Checks / evidence:** `pnpm check`; 136 unit tests across 19 files; Pages-path production build; all 12 Chromium browser tests on host GPU; final 2/2 rendering rerun; native gameplay capture and visually inspected centre/edge fixtures. Twelve mode/seed all-bot runs finished with zero collision caps; informational-preview pairs have identical outcomes. See `docs/M02_REVIEW.md`, `docs/reviews/m02/comparison.json` and images; local clip `/tmp/citadel-m02-review/gameplay.webm`. Full software-WebGL suite was not rerun. The large bundle warning remains. No push, deployment or `gh` use.
-- **Commits / next action:** `0d5f7c0` (controls and assistance), `ecf2090` (user-requested dotted forecast), `1642607` (pressure-only later-arrival relief and counter fixture). User reviews forecast activation/legibility, aiming feel and assistance defaults. Stop at `REVIEW REQUIRED — M02`; M03 remains unstarted.
+  - [ ] Audit existing CCD/rule coverage; add focused stress, impact-order, replay and render-rate fixtures for remaining M03 gaps.
+  - [ ] Add a bounded, decaying movement-driven curve, preserve speed and stationary returns, and keep the forecast on the same integrator.
+  - [ ] Cover final-piece/same-tick/serve-recipient/result edge cases and retain the documented revenge-serve behavior.
+  - [ ] Replace the small generic damage puff with a readable, procedural, pause-safe/reduced-effects flourish.
+  - [ ] Run checks, inspect rendered effects/curve examples and document the combined handoff; leave later milestones unstarted.
+- **Constraints:** No added input lag, routine slowdown, hit-stop, artwork textures, remote deployment, push or `gh` usage. Local commits remain frequent. M05 and the full M06/M07 work remain out of scope.
 
 ### Progress / approval ledger
 
 | ID | Stage | Reviewable deliverable | Status | Approval | Commit |
 |---|---|---|---|---|---|
 | M01 | **First playable** | Four-seat prototype: human + bots, physical damage, revenge serve, rematch | Approved | 11 Nov 2026: user requested continuation | 415b2df; earlier checkpoints in Git |
-| M02 | Desktop core | Refine responsive controls, contact aiming, preview/slowdown experiments | Awaiting review | — | 0d5f7c0, ecf2090, 1642607; see work record |
-| M03 | Desktop core | Real ball physics, swept collisions and deflections | Not started | — | — |
-| M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Not started | — | — |
+| M02 | Desktop core | Refine responsive controls, contact aiming, preview/slowdown experiments | Approved | 11 Nov 2026: feel good; user requested M03/M04 | 854276b |
+| M03 | Desktop core | Real ball physics, swept collisions and deflections | In progress | — | — |
+| M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | In progress | — | — |
 | M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Not started | — | — |
 | M06 | Solo proof | Spin/ball tuning and evidence-based 2-minute escalation | Not started | — | — |
 | M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Not started | — | — |
@@ -511,4 +509,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M02 before proceeding.** Run `pnpm dev`, reload the page and consult `docs/M02_REVIEW.md`. Try Preview only and Both with the same-opening Restart, check the dotted bounce/end forecast and small bat adjustments, and tune mouse sensitivity if needed. M01 is approved; M02 is awaiting review. Request amendments or approve before M03. Preserve the approved visual direction, GitHub Pages workflow, frequent local commits and user control over pushes and `gh` usage.
+**Complete the user-authorised relevant M03/M04 work together, then stop for review.** Preserve the approved feel while adding a small swipe curve, readable destruction flourish and remaining physics/rule evidence. M05 and the full later pacing/polish milestones remain unstarted. User approval is still required before pushing or using `gh`.

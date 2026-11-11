@@ -1,7 +1,7 @@
 # M02 — controls and deliberate aiming
 
-Status: **Awaiting review**. M01 was approved on 11 November 2026. M03 remains
-unstarted. This milestone preserves the approved arena, exterior grid, ball speed
+Status: **Approved on 11 November 2026**, at `854276b`. The user said the feel
+is good and requested relevant M03/M04 work, a flourish and a little swipe curve. This milestone preserves the approved arena, exterior grid, ball speed
 and timed arrivals.
 
 ## Play and compare
@@ -162,4 +162,4 @@ useful shot control. No further milestone has started. The existing large-bundle
 warning remains (about 867 kB minified / 235 kB gzip). No push, deployment, remote
 workflow or `gh` command was performed.
 
-REVIEW REQUIRED — M02
+M02 approved; see PLAN.md for the current combined M03/M04 work.
