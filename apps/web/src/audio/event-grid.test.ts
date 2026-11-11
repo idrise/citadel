@@ -63,3 +63,16 @@ it("keeps success gestures strictly rising in each harmony and bounds dense rico
   expect(conductor.plan(cues, 0.01, { time: 0, step: 0 })).toHaveLength(1);
   expect(conductor.plan(cues, 0.02, { time: 0, step: 0 })).toHaveLength(0);
 });
+
+it("keeps simultaneous personal losses audible as one bounded gesture without suppressing a cheer", () => {
+  const loss: MusicCue = { voice: "damage", note: 50, velocity: 0.95, duration: 0.65 },
+    cheer: MusicCue = { voice: "cheer", note: 62, velocity: 0.9, duration: 1.15 },
+    conductor = createEventConductor(),
+    anchor = { time: 0, step: 0 };
+  const planned = conductor.plan([...Array<MusicCue>(8).fill(loss), cheer], 0.01, anchor);
+  expect(planned.map((p) => p.cue.voice)).toEqual(["damage", "cheer"]);
+  expect(planned[0]!.cue.note).toBeGreaterThanOrEqual(46);
+  expect(conductor.plan([loss], 0.2, anchor)).toHaveLength(1);
+  conductor.reset();
+  expect(conductor.plan([loss], 0.01, anchor)).toHaveLength(1);
+});

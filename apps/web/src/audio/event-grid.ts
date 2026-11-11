@@ -38,13 +38,15 @@ export function createEventConductor() {
           ["cheer", "unlock", "success", "victory"].includes(source.voice) ? 2 : 0.5,
         );
         const spacing =
-          source.voice === "ricochet"
-            ? 2
-            : source.voice === "serve"
-              ? 1
-              : source.voice === "success"
-                ? 2
-                : 0;
+          source.voice === "damage"
+            ? 0.5
+            : source.voice === "ricochet"
+              ? 2
+              : source.voice === "serve"
+                ? 1
+                : source.voice === "success"
+                  ? 2
+                  : 0;
         if (
           spacing &&
           grid.time - (lastGesture.get(source.voice) ?? -Infinity) < SIXTEENTH * spacing - 1e-7
@@ -56,7 +58,11 @@ export function createEventConductor() {
           if (grid.time - lastCrowd < SIXTEENTH * 8) continue;
           lastCrowd = grid.time;
           result.push({
-            cue: { ...source, note: chord.bass + 36, notes: chord.pad.map((note) => note + 12) },
+            cue: {
+              ...source,
+              note: chord.bass + 12,
+              notes: [chord.bass + 12, chord.bass + 19, chord.bass + 24],
+            },
             ...grid,
           });
         } else if (source.voice === "success" || source.voice === "victory") {
@@ -91,7 +97,7 @@ export function createEventConductor() {
           result.push({
             cue: {
               ...source,
-              note: source.voice === "damage" ? chord.bass : inHarmony(source.note, grid.step),
+              note: source.voice === "damage" ? chord.bass + 12 : inHarmony(source.note, grid.step),
             },
             ...grid,
           });

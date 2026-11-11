@@ -76,10 +76,10 @@ export function createMusicDirector(humanSeat: number, seed: number) {
         } else if (event.type === "damage") {
           part.streak = 0;
           part.phrase = [];
-          if (event.seat === humanSeat) cues.push(cue("damage", 38, 0.75, 0.3));
+          if (event.seat === humanSeat) cues.push(cue("damage", 50, 0.95, 0.65));
           else if (event.attackerSeat === humanSeat) {
             cues.push(cue("success", 81, 0.8, 0.55));
-            cues.push(cue("cheer", 74, 0.78, 0.9));
+            cues.push(cue("cheer", 62, 0.9, 1.15));
           } else cues.push(cue("ricochet", 69, 0.2, 0.08));
         }
       }

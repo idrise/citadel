@@ -52,6 +52,14 @@ try {
       options: { duration: 4.5, demo: "success", voices: ["success", "cheer"], hits: false },
     },
     { name: "loss", options: { duration: 3, demo: "loss", voices: ["damage"], hits: false } },
+    {
+      name: "success-mix",
+      options: { duration: 5, demo: "success", startStep: 256, balls: 4, hits: false },
+    },
+    {
+      name: "loss-mix",
+      options: { duration: 5, demo: "loss", startStep: 256, balls: 4, hits: false },
+    },
     { name: "layers", options: { duration: (256 * 60) / 136 / 4, demo: "layers", hits: false } },
   ];
   for (const { name, options } of cases) {
@@ -78,7 +86,8 @@ try {
     stems.cheer.peak >= 0.98 ||
     stems.success.rms < 0.004 ||
     stems.success.peak >= 0.98 ||
-    stems.loss.rms < 0.0001 ||
+    stems.loss.rms < 0.004 ||
+    stems.loss.peak >= 0.98 ||
     stems["no-hit-preview"].rms < 0.01
   )
     throw Error(

@@ -1,5 +1,6 @@
 import * as Tone from "tone";
 import type { MusicCue } from "./music-types";
+import { crowdShape } from "./crowd-shape";
 const hz = (note: number) => 440 * 2 ** ((note - 69) / 12);
 const FORMANTS = [
   [450, 800, 540],
@@ -15,7 +16,8 @@ export function createCrowd(context: Tone.BaseContext, output: Tone.InputNode) {
     feedback: 0.22,
     wet: 0.17,
   }).connect(output);
-  const banks = Array.from({ length: 2 }, () => {
+  // Separate loss/cheer banks prevent a falling voice's future ramps colouring a new cheer.
+  const banks = Array.from({ length: 4 }, () => {
     const voices = Array.from({ length: 6 }, (_, i) => {
       const pan = new Tone.Panner({ context, pan: (i / 5 - 0.5) * 1.6 }).connect(room);
       const synth = new Tone.FMSynth({
@@ -51,46 +53,72 @@ export function createCrowd(context: Tone.BaseContext, output: Tone.InputNode) {
     }).connect(room);
     const air = new Tone.NoiseSynth({
       context,
-      volume: -26,
+      volume: -17,
       noise: { type: "pink" },
-      envelope: { attack: 0.08, decay: 0.3, sustain: 0.3, release: 0.2 },
+      envelope: { attack: 0.035, decay: 0.3, sustain: 0.3, release: 0.2 },
     }).connect(airFilter);
     const whistle = new Tone.FMSynth({
       context,
-      volume: -27,
+      volume: -20,
       harmonicity: 1,
       modulationIndex: 0.2,
       envelope: { attack: 0.04, decay: 0.2, sustain: 0, release: 0.15 },
     }).connect(room);
-    return { voices, airFilter, air, whistle };
+    const clap = new Tone.NoiseSynth({
+      context,
+      volume: -24,
+      noise: { type: "white" },
+      envelope: { attack: 0.002, decay: 0.045, sustain: 0, release: 0.035 },
+    }).connect(airFilter);
+    return { voices, airFilter, air, whistle, clap };
   });
-  let next = 0;
+  const next = [0, 0];
   return {
     play(cue: MusicCue, time: number) {
-      const bank = banks[next++ % 2]!,
-        notes = cue.notes ?? [50, 57, 60, 65];
+      const loss = cue.voice === "damage",
+        mode = loss ? 1 : 0,
+        bank = banks[mode * 2 + (next[mode]!++ % 2)]!,
+        notes = cue.notes ?? [cue.note, cue.note + 7, cue.note + 12],
+        shape = crowdShape(loss);
       bank.voices.forEach(({ synth, vowel }, i) => {
         const at = time + [0, 0.035, 0.075, 0.02, 0.11, 0.055][i]!,
           note = notes[i % notes.length]! + (i >= 4 ? 12 : 0),
           pitch = hz(note);
+        synth.frequency.cancelScheduledValues(at);
         synth.triggerAttackRelease(
-          pitch * 0.98,
+          pitch * shape.pitch[0],
           cue.duration,
           at,
           cue.velocity * (0.75 + (i % 3) * 0.08),
         );
-        synth.frequency.exponentialRampToValueAtTime(pitch * 1.12, at + 0.22);
-        synth.frequency.exponentialRampToValueAtTime(pitch * 1.2, at + cue.duration);
+        synth.frequency.exponentialRampToValueAtTime(
+          pitch * shape.pitch[1],
+          at + cue.duration * 0.35,
+        );
+        synth.frequency.exponentialRampToValueAtTime(pitch * shape.pitch[2], at + cue.duration);
         vowel.forEach(({ filter }, index) => {
-          const formant = FORMANTS[index]!,
+          const formant = shape.formants[index]!,
             variation = 1 + (i - 2.5) * 0.025;
+          filter.frequency.cancelScheduledValues(at);
           filter.frequency.setValueAtTime(formant[0] * variation, at);
-          filter.frequency.exponentialRampToValueAtTime(formant[1] * variation, at + 0.28);
-          filter.frequency.exponentialRampToValueAtTime(formant[2] * variation, at + 0.8);
+          filter.frequency.exponentialRampToValueAtTime(
+            formant[1] * variation,
+            at + cue.duration * 0.35,
+          );
+          filter.frequency.exponentialRampToValueAtTime(formant[2] * variation, at + cue.duration);
         });
       });
-      bank.air.triggerAttackRelease(cue.duration, time, cue.velocity);
-      bank.whistle.triggerAttackRelease(hz(notes[0]! + 24), 0.23, time + 0.12, cue.velocity * 0.6);
+      bank.air.triggerAttackRelease(cue.duration, time, cue.velocity * shape.air);
+      if (!loss) {
+        bank.whistle.triggerAttackRelease(
+          hz(notes[0]! + 36),
+          0.23,
+          time + 0.12,
+          cue.velocity * 0.6,
+        );
+        for (const offset of [0.12, 0.32])
+          bank.clap.triggerAttackRelease(0.06, time + offset, cue.velocity * 0.65);
+      }
     },
     dispose() {
       for (const bank of banks) {
@@ -106,6 +134,7 @@ export function createCrowd(context: Tone.BaseContext, output: Tone.InputNode) {
         bank.air.dispose();
         bank.airFilter.dispose();
         bank.whistle.dispose();
+        bank.clap.dispose();
       }
       room.dispose();
     },

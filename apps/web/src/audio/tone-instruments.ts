@@ -32,11 +32,12 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
           arranged.gain.setTargetAtTime(1, at, 0.01);
         } else {
           if (cue.voice === "kick") melodic.duck(at);
-          if (cue.voice === "cheer") {
+          if (cue.voice === "cheer" || cue.voice === "damage") {
             duck.gain.cancelScheduledValues(at);
-            duck.gain.setValueAtTime(0.65, at);
-            duck.gain.linearRampToValueAtTime(1, at + 1.1);
+            duck.gain.setValueAtTime(0.4, at);
+            duck.gain.linearRampToValueAtTime(1, at + cue.duration + 0.25);
             crowd.play(cue, at);
+            if (cue.voice === "damage") drums.play(cue, at);
           } else if (!feedback.play(cue, at) && !reactive.play(cue, at) && !drums.play(cue, at))
             melodic.play(cue, at);
         }

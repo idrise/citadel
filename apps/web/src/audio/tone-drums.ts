@@ -62,7 +62,7 @@ export function createDrums(
     voice: Tone.MembraneSynth,
     maxPolyphony: 4,
     options: {
-      volume: -20,
+      volume: -11,
       pitchDecay: 0.18,
       octaves: 3,
       envelope: { attack: 0.002, decay: 0.2, sustain: 0, release: 0.1 },

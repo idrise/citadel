@@ -3,6 +3,9 @@ import { createMusicDirector, type MusicFrame } from "./director";
 import type { GameEvent } from "../simulation/types";
 import { createMatch, stepMatch } from "../simulation/match";
 import { musicLight } from "../rendering/music-light";
+import { createRoundObserver } from "../session/round-observer";
+import { damagePiece, launchBall } from "../simulation/serving";
+import { DEFAULT_OPTIONS } from "../simulation/types";
 const frame: MusicFrame = { elapsed: 0, balls: 1, alive: [true, true, true, true] };
 const event = (id: number, type: GameEvent["type"] = "paddle", seat = 0): GameEvent => ({
   id,
@@ -127,4 +130,23 @@ it("celebrates only the human's credited attack, keeping own losses and bot-only
   const neutral = director.observe(frame, [{ ...event(2, "damage", 2), attackerSeat: 1 }]);
   expect(neutral.map((c) => c.voice)).toEqual(["ricochet"]);
   expect(director.observe(frame, [event(3, "victory", 0)])[0]!.voice).toBe("victory");
+});
+
+it.each([0, 1, 2, 3, 4, 5])("routes real piece damage correctly for human fortress %s", (human) => {
+  const state = createMatch(2026, 6),
+    ball = state.balls[0]!,
+    observer = createRoundObserver(6),
+    director = createMusicDirector(human, 2026),
+    view = { elapsed: 0, balls: 1, alive: Array<boolean>(6).fill(true) };
+  ball.seat = human;
+  launchBall(state, ball, DEFAULT_OPTIONS);
+  damagePiece(state, ball, (human + 1) % 6, 0);
+  const scored = director.observe(view, observer.observe(state.events));
+  expect(scored.map((cue) => cue.voice)).toContain("cheer");
+  expect(scored.map((cue) => cue.voice)).not.toContain("damage");
+  damagePiece(state, ball, human, 0);
+  const lost = director.observe(view, observer.observe(state.events));
+  expect(lost.map((cue) => cue.voice)).toEqual(["damage"]);
+  expect(lost[0]!.velocity).toBeGreaterThanOrEqual(0.9);
+  expect(observer.snapshot().players[human]).toMatchObject({ scored: 1, lost: 1 });
 });
