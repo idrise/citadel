@@ -9,6 +9,7 @@ import {
   type MatchState,
 } from "./types";
 import { ARENA } from "./arena";
+import { rememberSwipe } from "./flight";
 import { add, dot, length, normalise, scale, sub, type Vec2 } from "./vector";
 
 export const PREVIEW_HORIZON = 0.45;
@@ -31,6 +32,7 @@ function forecastStep(
   options: MatchOptions,
   pieces: Vec2[][],
 ) {
+  for (const player of trial.players) player.swipe = rememberSwipe(player.swipe, 0, FIXED_DT);
   if (!options.slowdown)
     return advanceBall(trial, tracked, angles, FIXED_DT, options, pieces, true);
   let impact: ReturnType<typeof advanceBall>;

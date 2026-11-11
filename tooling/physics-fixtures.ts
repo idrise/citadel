@@ -4,6 +4,7 @@ import { createMatch, stepMatch } from "../apps/web/src/simulation/match";
 import { DEFAULT_OPTIONS, IDLE_INTENT, type MatchState } from "../apps/web/src/simulation/types";
 import { add, normalise, scale, sub, unit } from "../apps/web/src/simulation/vector";
 import { createFixedClock } from "../apps/web/src/session/fixed-clock";
+import { MAX_SWIPE_CURVE } from "../apps/web/src/simulation/flight";
 
 export const PHYSICS_CASES = [
   "corner-240",
@@ -34,7 +35,7 @@ export function physicsFixture(name: PhysicsCase) {
         id,
         position: { x: 0, y: -3.5 + id },
         velocity: { x: id % 2 ? 120 : -120, y: 0 },
-        spin: (id % 2 ? 1 : -1) * 0.28,
+        spin: (id % 2 ? 1 : -1) * MAX_SWIPE_CURVE,
       }));
   } else if (name === "empty-sector") {
     state.players[0]!.health.fill(false);
@@ -87,6 +88,7 @@ export function replayPhysics(name: PhysicsCase, fps = 120) {
         health: state.players.map((p) => p.health),
         angles: state.players.map((p) => p.angle),
         pieces: state.players.map((p) => p.pieces),
+        swipes: state.players.map((p) => p.swipe),
         stats: state.stats,
         winner: state.winner,
         balls: state.balls,

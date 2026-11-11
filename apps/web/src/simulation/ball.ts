@@ -4,7 +4,7 @@ import { damagePiece, emit } from "./serving";
 import { alive, type BallState, type MatchOptions, type MatchState } from "./types";
 import { add, dot, scale, sub, type Vec2 } from "./vector";
 import { approachSlowdown } from "./slowdown";
-import { curveFlight, swipeCurve } from "./flight";
+import { contactSwipe, curveFlight, swipeCurve } from "./flight";
 
 interface Impact extends Contact {
   type: "paddle" | "piece" | "wall";
@@ -107,7 +107,11 @@ export function advanceBall(
           (previousAngles[hit.seat] ?? state.players[hit.seat]!.angle)) /
         dt;
       ball.velocity = paddleReturn(ball.velocity, hit.offset, hit.normal);
-      ball.spin = swipeCurve(angularVelocity, incoming, hit.normal);
+      ball.spin = swipeCurve(
+        contactSwipe(state.players[hit.seat]!.swipe, angularVelocity),
+        incoming,
+        hit.normal,
+      );
       ball.slowSeat = null;
       struckPaddles.add(hit.seat);
       state.stats.paddleHits++;

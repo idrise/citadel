@@ -1,5 +1,7 @@
 import { afterEach, expect, it, vi } from "vite-plus/test";
-import { clampPaddleAngle, fortress } from "../simulation/arena";
+import { clampPaddleAngle, fortress, railPosition } from "../simulation/arena";
+import { createMatch, stepMatch } from "../simulation/match";
+import { scale, unit } from "../simulation/vector";
 import { createDesktopInput, MOUSE_RADIANS_PER_PIXEL } from "./desktop";
 
 afterEach(() => vi.unstubAllGlobals());
@@ -49,6 +51,39 @@ function inputFixture(seat = 0) {
     },
   };
 }
+
+it.each([-1, 1])(
+  "a captured 12-pixel mouse brush produces a readable signed return on side %s",
+  async (side) => {
+    const input = inputFixture();
+    let state = createMatch(2026);
+    state.phase = "playing";
+    const base = fortress(0).direction;
+    state.players[0]!.angle = base - side * 12 * MOUSE_RADIANS_PER_PIXEL;
+    state.balls = [
+      {
+        ...state.balls[0]!,
+        phase: "active",
+        position: railPosition(0, base, 6),
+        velocity: scale(unit(base), -24),
+      },
+    ];
+    input.setAngle(state.players[0]!.angle);
+    input.controls.capture();
+    await Promise.resolve();
+    input.move(side * 12);
+    for (let tick = 0; tick < 12; tick++) {
+      state = stepMatch(state, input.controls.read());
+      input.setAngle(state.players[0]!.angle);
+      if (state.events.some((event) => event.type === "paddle")) break;
+    }
+    expect(state.events.find((event) => event.type === "paddle")?.seat).toBe(0);
+    expect(state.players[0]!.angle).toBeCloseTo(base, 10);
+    expect(Math.sign(state.balls[0]!.spin ?? 0)).toBe(side);
+    expect(Math.abs(state.balls[0]!.spin ?? 0)).toBeGreaterThan(0.6);
+    input.controls.dispose();
+  },
+);
 
 it("uses captured relative movement and holds a world target without any screen or camera dependency", async () => {
   const input = inputFixture();

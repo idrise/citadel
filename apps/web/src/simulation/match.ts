@@ -13,6 +13,7 @@ import {
   type PlayerIntent,
 } from "./types";
 import { angleDifference, clamp } from "./vector";
+import { rememberSwipe } from "./flight";
 
 export function createMatch(seed = 1): MatchState {
   const state: MatchState = {
@@ -87,7 +88,11 @@ export function stepMatch(
   state.players.forEach((player) => stepHealth(player, dt));
   const previousAngles = state.players.map((player) => player.angle);
   state.players.forEach((player, seat) => {
-    if (!alive(player)) return;
+    if (!alive(player)) {
+      player.swipe = { velocity: 0, remaining: 0 };
+      return;
+    }
+    const before = player.angle;
     const input = inputs[seat] ?? IDLE_INTENT;
     const requested =
       input.targetAngle !== null && Number.isFinite(input.targetAngle)
@@ -98,6 +103,7 @@ export function stepMatch(
       seat,
       player.angle + clamp(difference, -ARENA.paddleSpeed * dt, ARENA.paddleSpeed * dt),
     );
+    player.swipe = rememberSwipe(player.swipe, (player.angle - before) / dt, dt);
   });
   if (state.phase === "countdown") {
     state.countdown = Math.max(0, state.countdown - dt);

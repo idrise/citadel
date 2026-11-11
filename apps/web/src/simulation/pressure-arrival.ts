@@ -1,8 +1,8 @@
 import { ARENA, FIXED_DT, fortress } from "./arena";
 import { sweepCircle, sweepPaddle, sweepWalls } from "./collision";
-import { curveFlight } from "./flight";
+import { CURVE_DECAY, MAX_SWIPE_CURVE, curveFlight } from "./flight";
 import { alive, type BallState, type MatchState } from "./types";
-import { add, length, scale, sub, type Vec2 } from "./vector";
+import { add, clamp, dot, length, scale, sub, type Vec2 } from "./vector";
 
 function blocked(
   state: MatchState,
@@ -32,8 +32,17 @@ function blocked(
 /** Nominal arrival estimate for pressure relief. Curved shots use the shared fixed-step flight model. */
 export function pressureArrival(state: MatchState, ball: BallState, seat: number, horizon: number) {
   const anchor = fortress(seat).anchor;
-  if (length(sub(ball.position, anchor)) > ARENA.railRadius + 0.4 + length(ball.velocity) * horizon)
-    return null;
+  const offset = sub(ball.position, anchor);
+  const speed = length(ball.velocity);
+  const radius = ARENA.railRadius + 0.4;
+  if (!speed || length(offset) > radius + speed * horizon) return null;
+  // Conservative envelope around the straight path. Includes the fixed-step right-endpoint
+  // integration error, so a curved shot can enter even when its initial ray misses the circle.
+  const rate = Math.min(MAX_SWIPE_CURVE, Math.abs(ball.spin ?? 0));
+  const turn = (rate * (1 - Math.exp(-CURVE_DECAY * horizon))) / CURVE_DECAY;
+  const deviation = speed * ((rate * horizon) / CURVE_DECAY - turn / CURVE_DECAY + FIXED_DT * turn);
+  const closest = clamp(-dot(offset, ball.velocity) / (speed * speed), 0, horizon);
+  if (length(add(offset, scale(ball.velocity, closest))) > radius + deviation) return null;
   let position = ball.position,
     velocity = ball.velocity,
     spin = ball.spin ?? 0;

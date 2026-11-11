@@ -1,10 +1,37 @@
 import { ARENA } from "./arena";
 import { clamp, dot, normalise, type Vec2 } from "./vector";
 
-export const MAX_SWIPE_CURVE = 0.28; // radians / second; under 6.2 degrees total at full swipe
-export const CURVE_DECAY = 2.6;
+export const MAX_SWIPE_CURVE = 1.4; // radians / second; under 45 degrees total at full swipe
+export const CURVE_DECAY = 1.8;
+export const SWIPE_WINDOW = 0.1;
 
-/** Gentle flight-only rotation, with exact exponential decay. Zero curve preserves the old straight path. */
+export interface BatSwipe {
+  velocity: number;
+  remaining: number;
+}
+
+/** Remember real bat motion briefly, so a mouse swipe need not land on the exact physics tick. */
+export function rememberSwipe(
+  previous: BatSwipe | undefined,
+  velocity: number,
+  dt: number,
+): BatSwipe {
+  if (Math.abs(velocity) > 1e-6)
+    return {
+      velocity: clamp(velocity, -ARENA.paddleSpeed, ARENA.paddleSpeed),
+      remaining: SWIPE_WINDOW,
+    };
+  const remaining = Math.max(0, (previous?.remaining ?? 0) - Math.max(0, dt));
+  return { velocity: remaining > 1e-9 ? (previous?.velocity ?? 0) : 0, remaining };
+}
+
+export function contactSwipe(swipe: BatSwipe | undefined, velocity: number): number {
+  return Math.abs(velocity) > 1e-6
+    ? velocity
+    : (swipe?.velocity ?? 0) * clamp((swipe?.remaining ?? 0) / SWIPE_WINDOW, 0, 1);
+}
+
+/** Flight-only rotation, with exact exponential decay. Zero curve preserves the old straight path. */
 export function curveFlight(velocity: Vec2, spin: number | undefined, dt: number) {
   const rate = Number.isFinite(spin) ? clamp(spin ?? 0, -MAX_SWIPE_CURVE, MAX_SWIPE_CURVE) : 0;
   if (rate === 0 || dt <= 0) return { velocity, spin: rate };
@@ -19,8 +46,9 @@ export function curveFlight(velocity: Vec2, spin: number | undefined, dt: number
   };
 }
 
-/** A moving bat brushes the ball into a small bend; a held bat keeps the established return aim. */
+/** A deliberate brush is readable even below maximum bat speed; held bats retain the established aim. */
 export function swipeCurve(angularVelocity: number, incoming: Vec2, normal: Vec2): number {
   const approach = clamp(-dot(normalise(incoming), normal), 0, 1);
-  return clamp(angularVelocity / ARENA.paddleSpeed, -1, 1) * MAX_SWIPE_CURVE * approach;
+  const swipe = clamp(angularVelocity / ARENA.paddleSpeed, -1, 1);
+  return Math.sign(swipe) * Math.sqrt(Math.abs(swipe)) * MAX_SWIPE_CURVE * (0.45 + 0.55 * approach);
 }

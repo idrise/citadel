@@ -1,4 +1,5 @@
 import type { Vec2 } from "./vector";
+import type { BatSwipe } from "./flight";
 
 export interface PlayerIntent {
   version: 1;
@@ -17,6 +18,7 @@ export interface PlayerState {
   angle: number;
   health: boolean[];
   pieces: PieceBody[];
+  swipe?: BatSwipe;
 }
 export interface BotState {
   targetAngle: number;
