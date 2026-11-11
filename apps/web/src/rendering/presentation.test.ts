@@ -1,4 +1,4 @@
-import { Box3, MeshPhysicalMaterial, Vector3 } from "three";
+import { Box3, GreaterDepth, Group, Mesh, MeshPhysicalMaterial, Vector3 } from "three";
 import { expect, it, vi } from "vite-plus/test";
 import { FORTRESSES } from "../simulation/arena";
 import { createMatch } from "../simulation/match";
@@ -7,7 +7,7 @@ import { createFloorReflection } from "./floor-reflection";
 import { frostedMaterial } from "./frosted-material";
 import { createArenaView } from "./arena-view";
 import { disposeScene } from "./dispose-scene";
-import { createPaddleTrace } from "./paddle-trace";
+import { createBallView } from "./ball-view";
 
 it.each([0, 1, 2, 3])(
   "puts the camera behind human seat %s with that fortress at the near edge",
@@ -65,17 +65,22 @@ it("renders a growing physical piece at its current collider position and radius
   disposeScene(view.root);
 });
 
-it("traces the bat's full height with physical HDR neon geometry", () => {
-  const trace = createPaddleTrace(2.2, 0.48, 0.28, 0.85, 0x00d9ff);
-  const bounds = new Box3().setFromObject(trace);
-  expect(bounds.max.y).toBeGreaterThan(0);
-  expect(bounds.min.y).toBeLessThan(-0.85);
-  expect(bounds.max.y - bounds.min.y).toBeLessThan(0.95);
-  trace.traverse((part) => {
-    if (!("material" in part)) return;
-    const material = (part as import("three").Mesh).material as import("three").MeshBasicMaterial;
-    expect(material.toneMapped).toBe(false);
-    expect(material.color.b).toBeGreaterThan(1);
-  });
-  disposeScene(trace);
+it("keeps an occluded ball readable through solid walls without changing its position or radius", () => {
+  const root = new Group();
+  const view = createBallView(root);
+  const state = createMatch();
+  state.balls[0]!.position = { x: -8.75, y: 8.75 };
+  view.update(state, false);
+  const ghosts = root.children.filter((part) => part.name === "occluded-ball") as Mesh[];
+  expect(ghosts.filter((part) => part.visible)).toHaveLength(1);
+  const ghost = ghosts[0]!;
+  expect(ghost.position).toEqual(new Vector3(-8.75, 0.58, 8.75));
+  expect((ghost.geometry as import("three").SphereGeometry).parameters.radius).toBe(0.187);
+  const material = ghost.material as import("three").MeshBasicMaterial;
+  expect(material.depthTest).toBe(true);
+  expect(material.depthFunc).toBe(GreaterDepth);
+  expect(material.depthWrite).toBe(false);
+  view.update({ ...state, balls: [] }, true);
+  expect(ghosts.some((part) => part.visible)).toBe(false);
+  disposeScene(root);
 });

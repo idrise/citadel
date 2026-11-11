@@ -1,6 +1,6 @@
 import { ARENA, fortress } from "../simulation/arena";
 import { createFloorReflection, createFrostedReflection } from "./floor-reflection";
-import { WALL_HEIGHT } from "./walls";
+import { WALL_PANEL_HEIGHT, WALL_PANEL_CENTRE_Y } from "./wall-section";
 
 /** Capture floor and visible inner wall faces without mirrors recursively rendering each other. */
 export function createArenaReflections(humanSeat: number) {
@@ -11,11 +11,11 @@ export function createArenaReflections(humanSeat: number) {
     const x = Math.sin(angle),
       z = Math.cos(angle);
     if (x * anchor.x + z * anchor.y >= -0.01) continue;
-    const reflection = createFrostedReflection(ARENA.halfSize * 2, WALL_HEIGHT, 256, 0.25);
+    const reflection = createFrostedReflection(ARENA.halfSize * 2, WALL_PANEL_HEIGHT, 256, 0.25);
     reflection.mesh.name = "wall-reflection";
     reflection.mesh.position.set(
       x * (ARENA.halfSize - 0.008),
-      WALL_HEIGHT / 2,
+      WALL_PANEL_CENTRE_Y,
       z * (ARENA.halfSize - 0.008),
     );
     reflection.mesh.rotation.y = angle + Math.PI;

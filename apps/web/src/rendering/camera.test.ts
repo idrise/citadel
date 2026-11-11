@@ -73,20 +73,22 @@ it("builds four full-height solid wall panels with translucent near faces", () =
   );
   expect(panels).toHaveLength(4);
   expect(panels.filter((panel) => panel.name === "near-wall")).toHaveLength(2);
-  for (const seam of walls.children.filter((part) => part.name === "wall-seam")) {
-    const size = new Box3().setFromObject(seam).getSize(new Vector3());
-    expect(size.y).toBeGreaterThan(1.9);
-    expect(Math.max(size.x, size.z)).toBeLessThan(0.04);
-  }
-  for (const panel of panels) {
-    const size = new Box3().setFromObject(panel).getSize(new Vector3());
-    expect(size.y).toBeGreaterThan(1.9);
-    expect(Math.min(size.x, size.z)).toBeGreaterThan(0.45);
-    if (panel.name === "near-wall") {
-      const material = (panel as import("three").Mesh)
-        .material as import("three").MeshPhysicalMaterial;
-      expect(material.transparent).toBe(true);
-      expect(material.opacity).toBeLessThan(0.5);
+  for (const wall of panels) {
+    const size = new Box3().setFromObject(wall).getSize(new Vector3());
+    expect(size.y).toBeGreaterThan(2.2);
+    expect(Math.min(size.x, size.z)).toBeGreaterThan(0.95);
+    for (const name of ["wall-cap", "wall-foot"]) {
+      const beam = wall.getObjectByName(name) as import("three").Mesh;
+      const material = beam.material as import("three").MeshPhysicalMaterial;
+      expect(material.transparent).toBe(false);
+      const bounds = new Box3().setFromObject(beam).getSize(new Vector3());
+      expect(Math.min(bounds.x, bounds.z)).toBeGreaterThan(0.95);
+    }
+    const panel = wall.getObjectByName("wall-panel") as import("three").Mesh;
+    const material = panel.material as import("three").MeshPhysicalMaterial;
+    expect(material.transparent).toBe(wall.name === "near-wall");
+    if (wall.name === "near-wall") {
+      expect(material.opacity).toBeLessThan(0.2);
       expect(material.depthWrite).toBe(false);
     }
   }
