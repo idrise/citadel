@@ -1,0 +1,14 @@
+{
+  "pulse": 0.6836655735671271,
+  "music": {
+    "status": "playing",
+    "section": "pulse",
+    "intensity": 0.71,
+    "streak": 0,
+    "notes": 0,
+    "seat": 0
+  },
+  "errors": [],
+  "mean_absolute_pixel_delta": 0.8588606481481481,
+  "reduced_png_identical": true
+}

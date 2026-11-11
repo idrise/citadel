@@ -64,6 +64,19 @@ visible geometry matching the moving collision bodies. Relative mouse input is
 independent of camera motion. Reduced effects/motion disables bloom/reflections
 and holds the current camera pose without a snap.
 
+## Music
+
+Press Play for dark, driving synthesised techno at 138 BPM. Paddle returns play
+notes and grow your looping phrase; losing a piece resets your phrase while the
+kick continues. Bass, hats and sparse harmonies join as streaks/global pressure
+increase. Musical builds lead to a drop every sixteen bars. Drops never change
+balls, controls, bots or any other gameplay rule.
+
+Kick beats give bloom and the exterior grid a small pulse. Reduced effects
+removes that pulse. Settings offers **Music** and **Music volume** (default 45%).
+Pause/focus loss silences music; Resume continues it. No recorded audio assets
+are loaded. See the [music review and 34-second audition](docs/MUSIC_REVIEW.md).
+
 ## Check and build
 
 ```sh
@@ -101,6 +114,7 @@ software WebGL. No history router is installed; later room links must remain sta
 
 - `apps/web/src/app/`: React composition, DOM UI and styles.
 - `apps/web/src/rendering/`: Three.js presentation and GPU resource lifecycle.
+- `apps/web/src/audio/`: pure musical direction, optional audio lifecycle and lazy Tone.js synthesis.
 - `apps/web/src/simulation/`: pure fixed-step geometry, collisions, rules and bots.
 - `apps/web/src/input/`: browser input adapters emitting versioned player intents.
 - `apps/web/src/session/`: local loop, focus/pause and adapter composition.

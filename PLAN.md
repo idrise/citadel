@@ -283,7 +283,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** M02 approved by the user's 11 November 2026 feedback that the feel is good and request to work on relevant M03/M04 parts. **M03/M04 are Awaiting review together by explicit user instruction**, including a readable movement-driven curve and destruction flourish pulled forward from later polish. Preserve the approved feel; do not start M05 or the full M06 pacing gate.
+**Current position:** M02 approved by the user's 11 November 2026 feedback that the feel is good and request to work on relevant M03/M04 parts. **M03/M04 are Awaiting review together by explicit user instruction**, including a readable movement-driven curve and destruction flourish pulled forward from later polish. A user-authorised **music detour is also Awaiting review**; see `docs/MUSIC_REVIEW.md`. Preserve the approved feel; do not start M05 or the full M06/M07 gates.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
@@ -329,6 +329,18 @@ When asked to **"do the next milestone"**:
 - **Evidence:** `docs/M03_M04_REVIEW.md`; 165 unit tests in 25 files, 12 native Chromium browser checks, Pages build and Vite+ checks pass. Seven replay fixtures match across 30/60/144 FPS; five all-bot rounds finish with zero collision caps. Native screenshots and local videos reviewed.
 - **Review choices:** Swipe strength/timing tolerance, spin-band readability, breakup/return clarity, seeded elimination fallback and lower-ball-ID final-hit policy remain provisional. M05 includes the user's new layout-morphing note; no M05 code was started.
 - **Constraints:** No added input lag, routine slowdown, hit-stop, artwork textures, remote deployment, push or `gh` usage. Local commits remain frequent. M05 and the full M06/M07 work remain out of scope.
+
+### Music detour — Awaiting review
+
+- **Authorisation:** User requested a music detour with their Tone.js/music-director notes, selected **dark, driving synth techno**, then requested slight beat-driven rendering with the explicit rule: **“The music shouldn’t change the gameplay at all.”** This pulls a music prototype forward without approving M03/M04 or completing M07.
+- **Delivered checklist:**
+  - [x] Tone.js 15.1.22, lazy gesture-unlocked synthesis; kick, bass, FM lead/accents, bounded harmony and hats at 138 BPM.
+  - [x] Per-defender hit-to-extend/reset phrases (up to 16 notes), responsive live accents, separate global energy/build/drop progression.
+  - [x] Music enable/volume settings, pause/focus/mute and rematch teardown, graceful audio failure.
+  - [x] Audio-clock kick envelope driving restrained bloom/grid pulses; no pulse with reduced effects or muted audio.
+  - [x] Unit/simulation-identity checks, actual browser audio-output checks, offline audition and rendered evidence.
+- **Defaults/evidence:** `docs/MUSIC_REVIEW.md`; music on at 45%; 176 unit tests and 14 native Chromium browser checks pass. `4c61700` contains the implementation. Listen to `docs/reviews/music/preview.wav`; waveform audio is review output only and is never loaded by the game.
+- **Permanent boundary:** Music observes events only. Beats, musical intensity, builds/drops and their visual pulses must never alter simulation timing/rules, balls, paddles, bots, inputs, spawning or RNG. No beat-driven camera motion. Full M05/M06/M07 gates remain unstarted; review musical feel/mix and subtlety next.
 
 ### Progress / approval ledger
 
@@ -393,6 +405,8 @@ When asked to **"do the next milestone"**:
 #### M07 — Legibility, impact and arcade character
 
 **Implement:** Implement only the approved escalation. Polish luminous thick-edged geometric materials, useful shot-attribution marks if approved, spin trails, paddle sparks, struck-piece fracture/burst, elim/victory states and restraint under high ball density. Add *original generated/synthesised* sound cues (serve, ricochet, breach, elimination, rising tension), volume/mute and readable in-arena cues, preserving pure gameplay without an overlaid HUD. Provide Low/Medium/High effects options. No textures outside the permitted particle optimisation exception.
+
+**Existing music work:** Build on `docs/MUSIC_REVIEW.md` rather than replacing the detour prototype. Retain music mute/volume and pause/teardown handling; review its musical mix and pulse subtlety. Audio observes gameplay only; musical drops never trigger gameplay changes.
 
 **Acceptance:** Ball and health remain trackable at 2/4/6 players; screenshots show genuine 2.5D depth; desktop feel and sound enhance rather than hide gameplay; tests still pass. **Review:** Is this visually recognisable and pleasant at speed? **STOP: REVIEW REQUIRED — M07.**
 
@@ -513,4 +527,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**M03/M04 delivered together — stop for review.** The approved feel is retained with a more readable swipe curve and spin cue, destruction flourish and physics/rule evidence in `docs/M03_M04_REVIEW.md`. M05 and the full later pacing/polish milestones remain unstarted. User approval is still required before pushing or using `gh`.
+**Music detour and M03/M04 delivered — stop for review.** See `docs/MUSIC_REVIEW.md` for hit-driven techno and presentation-only beat lighting. The approved feel is retained with a more readable swipe curve and spin cue, destruction flourish and physics/rule evidence in `docs/M03_M04_REVIEW.md`. M05 and the full later pacing/polish milestones remain unstarted. User approval is still required before pushing or using `gh`.
