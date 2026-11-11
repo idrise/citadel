@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { openGame, play } from "./helpers";
+import { openGame, play, pause } from "./helpers";
 
 test("production game fills the viewport and refreshes under the Pages path", async ({
   page,
@@ -54,4 +54,21 @@ test("missing WebGL2 leaves a readable fallback", async ({ page }) => {
   await page.goto("./");
   await expect(page.getByText("WebGL2 is needed to render the arena.")).toBeVisible();
   await expect(page.locator("canvas")).toHaveCount(0);
+});
+
+test("pause controls stay small and can be hidden for an unobstructed screenshot", async ({
+  page,
+}) => {
+  await openGame(page);
+  await play(page);
+  await pause(page);
+  const panel = page.locator(".menu-panel");
+  expect((await panel.boundingBox())!.width).toBeLessThanOrEqual(220);
+  const stats = await page.locator(".diagnostics").textContent();
+  await page.getByRole("button", { name: "Hide controls (H)", exact: true }).click();
+  await expect(page.locator(".game-overlay")).toHaveCount(0);
+  await page.clock.runFor(500);
+  expect(await page.locator(".diagnostics").textContent()).toBe(stats);
+  await page.keyboard.press("KeyH");
+  await expect(page.getByRole("heading", { name: "Paused", exact: true })).toBeVisible();
 });

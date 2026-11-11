@@ -73,6 +73,11 @@ it("builds four full-height solid wall panels with translucent near faces", () =
   );
   expect(panels).toHaveLength(4);
   expect(panels.filter((panel) => panel.name === "near-wall")).toHaveLength(2);
+  for (const seam of walls.children.filter((part) => part.name === "wall-seam")) {
+    const size = new Box3().setFromObject(seam).getSize(new Vector3());
+    expect(size.y).toBeGreaterThan(1.9);
+    expect(Math.max(size.x, size.z)).toBeLessThan(0.04);
+  }
   for (const panel of panels) {
     const size = new Box3().setFromObject(panel).getSize(new Vector3());
     expect(size.y).toBeGreaterThan(1.9);

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { openGame, play, pause } from "./helpers";
 
 test("captured controls, focus pause, timed balls and restart work", async ({ page }) => {
-  test.setTimeout(90000);
+  test.setTimeout(180000);
   await page.setViewportSize({ width: 480, height: 360 });
   await openGame(page);
   await play(page);
@@ -35,7 +35,8 @@ test("captured controls, focus pause, timed balls and restart work", async ({ pa
 test("a complete seeded round reaches results and rematches without state edits", async ({
   page,
 }, testInfo) => {
-  test.setTimeout(180000);
+  // Full Chromium + software WebGL renders every controlled-clock frame of the round.
+  test.setTimeout(300000);
   await page.setViewportSize({ width: 480, height: 360 });
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));

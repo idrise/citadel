@@ -139,3 +139,32 @@ input {
 input[type="range"] {
   width: 85px;
 }
+.game-overlay[data-mode="paused"] {
+  place-items: end start;
+  padding: 12px;
+  pointer-events: none;
+}
+.game-overlay[data-mode="paused"] .menu-panel {
+  width: 220px;
+  padding: 12px;
+  pointer-events: auto;
+}
+.game-overlay[data-mode="paused"] h2 {
+  font-size: 0.8rem;
+  text-align: left;
+  margin-bottom: 8px;
+}
+.game-overlay[data-mode="paused"] button {
+  font-size: 0.8rem;
+  padding: 7px 10px;
+}
+.game-overlay[data-mode="paused"] .settings-menu {
+  margin-top: 8px;
+}
+.hide-controls {
+  margin-top: 4px;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  color: #98bdcd;
+}

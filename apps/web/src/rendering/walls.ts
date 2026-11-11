@@ -1,6 +1,7 @@
-import { BoxGeometry, Color, Group, Mesh, MeshBasicMaterial } from "three";
+import { BoxGeometry, Group, Mesh } from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { ARENA, fortress } from "../simulation/arena";
+import { neonMaterial } from "./neon";
 import { frostedMaterial } from "./frosted-material";
 
 export const WALL_HEIGHT = 2;
@@ -12,10 +13,10 @@ export function createArenaWalls(humanSeat: number): Group {
   const root = new Group();
   root.name = "arena-walls";
   const anchor = fortress(humanSeat).anchor;
-  const neon = new MeshBasicMaterial({ color: new Color(0x42dce9).multiplyScalar(1.5) });
+  const neon = neonMaterial(0x00cfff, 3.4);
   const nearNeon = neon.clone();
   nearNeon.transparent = true;
-  nearNeon.opacity = 0.62;
+  nearNeon.opacity = 0.55;
   nearNeon.depthWrite = false;
   for (let side = 0; side < 4; side++) {
     const angle = (side * Math.PI) / 2;
@@ -25,7 +26,7 @@ export function createArenaWalls(humanSeat: number): Group {
     const material = frostedMaterial(0x3b5368);
     if (near) {
       material.transparent = true;
-      material.opacity = 0.34;
+      material.opacity = 0.2;
       material.depthWrite = false;
     }
     const wall = new Mesh(
@@ -40,7 +41,7 @@ export function createArenaWalls(humanSeat: number): Group {
     root.add(wall);
     for (const height of [0.06, WALL_HEIGHT]) {
       const edge = new Mesh(
-        new BoxGeometry(WALL_CENTRE * 2 + 0.02, 0.055, 0.055),
+        new BoxGeometry(ARENA.halfSize * 2 + 0.05, 0.035, 0.035),
         near ? nearNeon : neon,
       );
       edge.position.set(x * (ARENA.halfSize + 0.025), height, z * (ARENA.halfSize + 0.025));
@@ -48,15 +49,13 @@ export function createArenaWalls(humanSeat: number): Group {
       root.add(edge);
     }
     for (let joint = -2; joint <= 2; joint++) {
-      const upright = new Mesh(
-        new BoxGeometry(0.035, WALL_HEIGHT, WALL_THICKNESS + 0.025),
-        near ? nearNeon : neon,
-      );
+      const upright = new Mesh(new BoxGeometry(0.024, WALL_HEIGHT, 0.024), near ? nearNeon : neon);
+      upright.name = "wall-seam";
       const along = (joint * WALL_CENTRE) / 3;
       upright.position.set(
-        x * WALL_CENTRE + Math.cos(angle) * along,
+        x * (ARENA.halfSize - 0.012) + Math.cos(angle) * along,
         WALL_HEIGHT / 2,
-        z * WALL_CENTRE - Math.sin(angle) * along,
+        z * (ARENA.halfSize - 0.012) - Math.sin(angle) * along,
       );
       upright.rotation.y = angle;
       root.add(upright);
@@ -68,7 +67,7 @@ export function createArenaWalls(humanSeat: number): Group {
       const material = frostedMaterial(0x43576a);
       if (near) {
         material.transparent = true;
-        material.opacity = 0.34;
+        material.opacity = 0.2;
         material.depthWrite = false;
       }
       const post = new Mesh(new RoundedBoxGeometry(0.62, 2.25, 0.62, 2, 0.06), material);

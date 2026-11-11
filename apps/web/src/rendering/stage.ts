@@ -1,14 +1,6 @@
-import {
-  Color,
-  CylinderGeometry,
-  EdgesGeometry,
-  Group,
-  LineBasicMaterial,
-  LineSegments,
-  Mesh,
-  MeshStandardMaterial,
-} from "three";
+import { CylinderGeometry, Group, Mesh, MeshStandardMaterial } from "three";
 import { ARENA, FORTRESSES } from "../simulation/arena";
+import { createPaddleTrace } from "./paddle-trace";
 import { arcMesh } from "./arc";
 import { createArenaBase } from "./base";
 import { createHealthFactory } from "./health-piece";
@@ -42,12 +34,15 @@ export function createStage(humanSeat = 0) {
       1.5,
     );
     paddle.geometry.translate(ARENA.railRadius - ARENA.batRadius, 0, 0);
-    paddle.add(
-      new LineSegments(
-        new EdgesGeometry(paddle.geometry, 25),
-        new LineBasicMaterial({ color: new Color(colour).multiplyScalar(2.2) }),
-      ),
+    const trace = createPaddleTrace(
+      ARENA.batRadius,
+      ARENA.batHalfAngle,
+      ARENA.paddleThickness,
+      0.85,
+      colour,
     );
+    trace.position.x = ARENA.railRadius - ARENA.batRadius;
+    paddle.add(trace);
     paddle.position.set(seat.anchor.x, 0.95, seat.anchor.y);
     paddles.push(paddle);
     root.add(paddle);

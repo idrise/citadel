@@ -7,6 +7,7 @@ import { createFloorReflection } from "./floor-reflection";
 import { frostedMaterial } from "./frosted-material";
 import { createArenaView } from "./arena-view";
 import { disposeScene } from "./dispose-scene";
+import { createPaddleTrace } from "./paddle-trace";
 
 it.each([0, 1, 2, 3])(
   "puts the camera behind human seat %s with that fortress at the near edge",
@@ -62,4 +63,19 @@ it("renders a growing physical piece at its current collider position and radius
   expect(size.x).toBeCloseTo(body.radius * 2);
   view.dispose();
   disposeScene(view.root);
+});
+
+it("traces the bat's full height with physical HDR neon geometry", () => {
+  const trace = createPaddleTrace(2.2, 0.48, 0.28, 0.85, 0x00d9ff);
+  const bounds = new Box3().setFromObject(trace);
+  expect(bounds.max.y).toBeGreaterThan(0);
+  expect(bounds.min.y).toBeLessThan(-0.85);
+  expect(bounds.max.y - bounds.min.y).toBeLessThan(0.95);
+  trace.traverse((part) => {
+    if (!("material" in part)) return;
+    const material = (part as import("three").Mesh).material as import("three").MeshBasicMaterial;
+    expect(material.toneMapped).toBe(false);
+    expect(material.color.b).toBeGreaterThan(1);
+  });
+  disposeScene(trace);
 });
