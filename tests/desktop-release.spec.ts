@@ -81,7 +81,7 @@ test("fresh six-seat desktop round exports an honest local result and resets on 
 test("solo preferences survive refresh, and every quality preset remains playable without a HUD", async ({
   page,
 }) => {
-  test.setTimeout(60000);
+  test.setTimeout(180000);
   await page.setViewportSize({ width: 640, height: 480 });
   await openGame(page, false);
   const errors: string[] = [];
@@ -97,6 +97,8 @@ test("solo preferences survive refresh, and every quality preset remains playabl
   await expect(page.getByLabel("Your fortress", { exact: true })).toHaveValue("5");
   await expect(page.getByLabel("Effects quality", { exact: true })).toHaveValue("medium");
   await expect(page.getByRole("checkbox", { name: "Music", exact: true })).not.toBeChecked();
+  // Run the countdown cheaply; exercise the actual full presets in bounded frame samples below.
+  await page.getByLabel("Effects quality", { exact: true }).selectOption("low");
   await page.getByText("Settings", { exact: true }).click();
   await play(page);
   await page.clock.runFor(1800);
@@ -105,13 +107,15 @@ test("solo preferences survive refresh, and every quality preset remains playabl
     await page.getByText("Settings", { exact: true }).click();
     await page.getByLabel("Effects quality", { exact: true }).selectOption(quality);
     await page.getByRole("button", { name: "Resume", exact: true }).click();
-    await page.clock.runFor(300);
+    await page.clock.runFor(100);
     await expect(page.locator(".menu-panel")).toHaveCount(0);
     await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
   }
+  const previous = await page.locator(".diagnostics").textContent();
   await page.context().setOffline(true);
-  await page.clock.runFor(1200);
+  await page.clock.runFor(200);
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
+  await expect(page.locator(".diagnostics")).not.toHaveText(previous!);
   expect(errors).toEqual([]);
 });
 

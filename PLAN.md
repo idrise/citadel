@@ -283,7 +283,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** M03/M04 and the music detour accepted for now by the user on 11 November 2026, with an explicit request to begin M05. **M05 is Awaiting review**, including gradual arena morphing after elimination. Full M06/M07 remain unstarted.
+**Current position:** User approved M05 with “brilliant” on 11 November 2026 and explicitly requested **M08**, then asked to verify M07 completeness and correct outer-wall edge stepping. **M07 implementation and the local M08 desktop candidate are Awaiting review**, with celebratory player-success audio. M08 external tester feedback and public-site verification remain pending. M06 pacing comparisons remain unstarted; retain the approved current pacing rather than silently completing that gate.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
@@ -291,7 +291,7 @@ Check a milestone only when implemented, validated and approved. A delivered mil
 - [x] **M02** — Responsive controls, contact aiming and preview/slowdown comparison.
 - [x] **M03** — Collision stress cases, deterministic physics and replay fixtures.
 - [x] **M04** — Physical destruction, revenge serves, elimination and result rules.
-- [ ] **M05** — All 2–6-seat layouts and tuned bot difficulties.
+- [x] **M05** — All 2–6-seat layouts and tuned bot difficulties.
 - [ ] **M06** — Spin, multiple balls and pacing decision.
 - [ ] **M07** — Visual legibility, effects, sound and in-arena cues.
 - [ ] **M08** — Desktop MVP release readiness and playtest validation.
@@ -330,7 +330,7 @@ When asked to **"do the next milestone"**:
 - **Review choices:** Swipe strength/timing tolerance, spin-band readability, breakup/return clarity, seeded elimination fallback and lower-ball-ID final-hit policy remain provisional. M05 now implements the user's layout-morphing note; see its current record below.
 - **Constraints:** No added input lag, routine slowdown, hit-stop, artwork textures, remote deployment, push or `gh` usage. Local commits remain frequent. Full M06/M07 remain out of scope; M05 has its own authorised work record.
 
-### Current milestone work record — M05 Awaiting review
+### M05 archived work record — Approved
 
 - [x] Generate 2–6-seat layouts from one geometry model and thread it through physics, aiming, input and rendering.
 - [x] Morph live walls/fortresses gradually after elimination, retaining identities, health, relative control and active balls.
@@ -341,7 +341,24 @@ When asked to **"do the next milestone"**:
 - **Evidence:** `docs/M05_REVIEW.md`; 246 unit tests in 40 files, all 22 distinct production native Chromium checks (full run plus focused rerun), Vite+ checks and Pages build pass. Twelve scripted desktop rounds (ten across 2/4/6), twelve seeded bot-only runs with zero collision caps, all-layout screenshots and a real-time six-to-five clip. Latest wall/reach evidence and replay review are in `docs/M05_WALL_REVIEW.md`; human fun approval remains pending.
 - **Latest amendments:** User chose regular layouts with minimal movement, requested quicker catch-up and reported bat-end gaps. See `docs/M05_WALL_REVIEW.md`: target rotation minimises survivor travel, matched corners avoid extra temporary walls, and mitered joins/posts track the true outline. Geometry-derived travel reaches both end walls in all layouts; serves remain inward.
 - **Transition intuition:** Normally 2.8 seconds, smooth easing, maximum fortress translation 6 units/s. Retargets keep the remaining time, adding only what is needed for the speed bound. A convex moving boundary carries live ball floor coordinates without changing flight velocity/spin; targets and physical pieces follow the fortress. Retarget from the current shape after another elimination. Identity/health/serves persist; the final survivor ends the match immediately. Review fairness, intermediate supports, dimensions and difficulty before considering these permanent.
-- **Checkpoints:** `67ddd15` simulation/input; `b63db58` rendering, setup/results, audio compatibility and validation tools; `7618c47` stable bot serve targets during morphs; `80e95b8` minimal/faster wall transitions and full bat reach. No push, deployment or `gh`; the separate AGENTS edit remains unstaged. M06/M07 remain unstarted.
+- **Checkpoints:** `67ddd15` simulation/input; `b63db58` rendering, setup/results, audio compatibility and validation tools; `7618c47` stable bot serve targets during morphs; `80e95b8` minimal/faster wall transitions and full bat reach. No push, deployment or `gh`; the separate AGENTS edit remains unstaged. M06/M07 were unstarted at the M05 handoff.
+
+### Current milestone work record — M07 / M08 Awaiting review
+
+- [x] Audit M07 against delivered effects/audio; complete effects quality presets and useful event sounds without changing pacing.
+- [x] Correct wall-edge aliasing through the actual post-processing path; inspect matched 2/4/6 renders and reduced effects.
+- [x] Give successful human attacks positive harmonic/cheer feedback distinct from own damage, using read-only event attribution.
+- [x] Polish minimal Play/setup/help/build menus, preserving pure fullscreen gameplay, captured input and restart/rematch.
+- [x] Add local-only statistics export and resilient persisted solo preferences.
+- [x] Revalidate Pages workflow/project path against `idrise/citadel`, without push or `gh`. Pages is currently disabled; no public deployment is available to verify.
+- [x] Complete local tests, fresh six-seat round/rematch, screenshots/audio evidence and `docs/PLAYTEST.md`; distinguish scripted evidence from tester feedback.
+- [ ] Collect optional external desktop playtests and the user's visual/audio/fun approval. Do not infer approval from passing tests.
+- [ ] Verify the actual public build after publishing is enabled and authorised. No deployment performed in this task.
+
+- **Evidence:** `docs/M07_REVIEW.md`, `docs/M08_REVIEW.md`, `docs/PLAYTEST.md`. Vite+ checks, 258 unit tests in 44 files, Pages build and all 25 native Chromium production checks pass. Three focused software-WebGL checks pass across initial/rerun checks after correcting the quality smoke test's render budget. Fresh six-seat scripted round: 67.69s, human survival 57.58s, zero collision caps; exported JSON reconciles totals. No human timing/retention claim.
+- **Presentation:** Screen-linear, derivative-antialiased edges plus multisampled HDR bloom targets; Low/Medium/High budgets, pooled impact/outcome cues and original FM event sounds. Matched 2/4/6 frames and an eight-ball presentation fixture; ten-second native High opening sample on M2 Pro: 16.7ms median / 16.8ms p95. Runtime remains procedural.
+- **Checkpoints:** `f729bd1` score attribution and positive FM gestures/cheers; `0c84d6b` M07 rendering/effects/audio lifecycle; `c916b98` M08 menus/export/preferences. Review evidence is a separate local checkpoint.
+- **Limits:** M06 comparison unstarted; no external testers, Safari/mobile, full software-WebGL suite, public build, push or `gh`. Existing large initial bundle and nonfatal Three.js/Tone advisories documented. Preserve the separate AGENTS edit. Stop at REVIEW REQUIRED — M07 / M08; do not start M09.
 
 ### Music detour — Accepted for now
 
@@ -364,10 +381,10 @@ When asked to **"do the next milestone"**:
 | M02 | Desktop core | Refine responsive controls, contact aiming, preview/slowdown experiments | Approved | 11 Nov 2026: feel good; user requested M03/M04 | 854276b |
 | M03 | Desktop core | Real ball physics, swept collisions and deflections | Approved | 11 Nov 2026: user requested M05 | fe06ce3; earlier checkpoints and review docs |
 | M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Approved | 11 Nov 2026: user requested M05 | 8fe9f47, 711d15d; review docs |
-| M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Awaiting review | — | 67ddd15, b63db58, 7618c47, 80e95b8; docs/M05_REVIEW.md |
+| M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Approved | 11 Nov 2026: brilliant; user requested M08 | 67ddd15, b63db58, 7618c47, 80e95b8; docs/M05_REVIEW.md |
 | M06 | Solo proof | Spin/ball tuning and evidence-based 2-minute escalation | Not started | — | — |
-| M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Not started | — | — |
-| M08 | **Desktop validation gate** | Public-ready static solo build, playtests and decision | Not started | — | — |
+| M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Awaiting review | — | f729bd1, 0c84d6b; docs/M07_REVIEW.md |
+| M08 | **Desktop validation gate** | Public-ready static solo build, playtests and decision | Awaiting review | — | docs/M08_REVIEW.md; local checks complete, external feedback/public verification pending |
 | M09 | Mobile | Touch steering, tap launch and responsive layouts | Not started | — | — |
 | M10 | **Mobile validation gate** | Mobile GPU/performance/accessibility and real-device tests | Not started | — | — |
 | M11 | Multiplayer | WebRTC host/client prototype with local/manual signalling | Not started | — | — |
@@ -542,4 +559,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**M05 delivered — Awaiting review.** See `docs/M05_REVIEW.md` for the milestone and `docs/M05_WALL_REVIEW.md` for the latest minimal/faster wall transitions and bat reach fix, with screenshots, gameplay and test evidence. Try 2/4/6 layouts and judge morph fairness and difficulty; the human ten-round fun gate remains pending. Do not begin M06 until the user approves or requests it. No push or `gh` use without explicit permission.
+**M07 / M08 Awaiting review.** Local implementation and evidence are ready. Collect review of edge fidelity, scoring audio and the desktop loop; external tester feedback and actual public-site verification remain pending. Preserve current pacing; M06 remains unstarted. No push, deployment or `gh` without explicit instruction. Stop for M07/M08 review; do not start M09.

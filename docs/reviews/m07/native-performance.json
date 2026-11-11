@@ -1,0 +1,11 @@
+{
+  "kind": "Native requestAnimationFrame, no emulated clock; 1280x900, six seats, human seat 5, bloom/reflections/music enabled, desktop Chromium",
+  "browser": "158.0.8127.18",
+  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+  "samples": 596,
+  "medianMs": 16.69999999999891,
+  "p95Ms": 16.799999999999272,
+  "maxOutputRms": 0.04607915112752493,
+  "status": "playing",
+  "errors": []
+}

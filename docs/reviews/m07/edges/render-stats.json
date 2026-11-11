@@ -1,0 +1,56 @@
+{
+  "baseline": "b2b2358 edge shader and unsampled bloom composer; identical frozen arena/exposure",
+  "images": [
+    {
+      "count": 2,
+      "mode": "before",
+      "samples": 0
+    },
+    {
+      "count": 2,
+      "mode": "after",
+      "samples": 4
+    },
+    {
+      "count": 2,
+      "mode": "reduced",
+      "samples": 0
+    },
+    {
+      "count": 4,
+      "mode": "before",
+      "samples": 0
+    },
+    {
+      "count": 4,
+      "mode": "after",
+      "samples": 4
+    },
+    {
+      "count": 4,
+      "mode": "reduced",
+      "samples": 0
+    },
+    {
+      "count": 6,
+      "mode": "before",
+      "samples": 0
+    },
+    {
+      "count": 6,
+      "mode": "after",
+      "samples": 4
+    },
+    {
+      "count": 6,
+      "mode": "reduced",
+      "samples": 0
+    },
+    {
+      "count": 6,
+      "mode": "dense",
+      "samples": 4
+    }
+  ],
+  "errors": []
+}

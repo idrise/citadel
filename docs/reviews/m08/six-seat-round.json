@@ -1,0 +1,119 @@
+{
+  "schema": "citadel.round",
+  "version": 1,
+  "createdAt": "2026-11-11T14:02:32.927Z",
+  "build": {
+    "version": "0.1.0",
+    "revision": "local"
+  },
+  "seed": 2026,
+  "initialPlayers": 6,
+  "humanSeat": 5,
+  "phase": "finished",
+  "winner": 0,
+  "tick": 8304,
+  "elapsedSeconds": 67.6916666666666,
+  "settingsAtStart": {
+    "effectsQuality": "high",
+    "botDifficulty": "standard",
+    "preview": true,
+    "slowdown": false,
+    "reducedEffects": true,
+    "mouseSensitivity": 1,
+    "serveTimeout": 1.8,
+    "ballInterval": 15,
+    "maxBalls": 4,
+    "music": false,
+    "musicVolume": 0.45,
+    "musicLights": true
+  },
+  "settingsAtExport": {
+    "effectsQuality": "high",
+    "botDifficulty": "standard",
+    "preview": true,
+    "slowdown": false,
+    "reducedEffects": true,
+    "mouseSensitivity": 1,
+    "serveTimeout": 1.8,
+    "ballInterval": 15,
+    "maxBalls": 4,
+    "music": false,
+    "musicVolume": 0.45,
+    "musicLights": true
+  },
+  "stats": {
+    "paddleHits": 73,
+    "damage": 47,
+    "collisionCaps": 0,
+    "peakBalls": 4
+  },
+  "players": [
+    {
+      "seat": 0,
+      "health": 1,
+      "place": 1,
+      "alive": true,
+      "returns": 19,
+      "scored": 10,
+      "lost": 7,
+      "eliminations": 1,
+      "eliminatedAt": null
+    },
+    {
+      "seat": 3,
+      "health": 0,
+      "place": 2,
+      "alive": false,
+      "returns": 20,
+      "scored": 5,
+      "lost": 8,
+      "eliminations": 0,
+      "eliminatedAt": 67.6916666666666
+    },
+    {
+      "seat": 1,
+      "health": 0,
+      "place": 3,
+      "alive": false,
+      "returns": 5,
+      "scored": 7,
+      "lost": 8,
+      "eliminations": 0,
+      "eliminatedAt": 60.83333333333052
+    },
+    {
+      "seat": 2,
+      "health": 0,
+      "place": 4,
+      "alive": false,
+      "returns": 10,
+      "scored": 3,
+      "lost": 8,
+      "eliminations": 0,
+      "eliminatedAt": 60.61666666666387
+    },
+    {
+      "seat": 5,
+      "health": 0,
+      "place": 5,
+      "alive": false,
+      "returns": 6,
+      "scored": 5,
+      "lost": 8,
+      "eliminations": 0,
+      "eliminatedAt": 57.58333333333071
+    },
+    {
+      "seat": 4,
+      "health": 0,
+      "place": 6,
+      "alive": false,
+      "returns": 13,
+      "scored": 4,
+      "lost": 8,
+      "eliminations": 0,
+      "eliminatedAt": 51.06666666666441
+    }
+  ],
+  "note": "Local round summary, not an input replay. Nothing is uploaded."
+}

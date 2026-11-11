@@ -3,9 +3,10 @@
 A local-first paddle arena, built with strict TypeScript, React, Three.js and Vite+.
 Choose 2–6 fortresses: one human versus 1–5 bots, with physical health pieces,
 revenge serves, timed ball additions and rematch. The arena gradually changes
-shape as players fall, normally over 2.8 seconds. M01–M04 are approved; M05 layouts/difficulties/morphs are
-[awaiting review](docs/M05_REVIEW.md). The latest [wall/reach revision](docs/M05_WALL_REVIEW.md)
-reduces transition travel and lets the bat reach both end walls in every layout.
+shape as players fall, normally over 2.8 seconds. M01–M05 are approved.
+The [M07 effects/edge review](docs/M07_REVIEW.md) and
+[M08 desktop preview 0.1.0](docs/M08_REVIEW.md) await review. External playtests and
+public deployment remain pending; M06's pacing comparison is still unstarted.
 
 ## Develop
 
@@ -23,7 +24,9 @@ Choose **Players** on the start menu; **Settings** offers Beginner/Standard/Expe
 bots and any human fortress. Two seats use a rectangle, then triangle, square,
 pentagon and hexagon. Eliminations gradually move walls and surviving fortresses
 to the new layout, preserving health and relative steering. Results show standings
-and duration; pause has optional Round statistics.
+and duration; pause has optional Round statistics. **Export round** in pause or
+results downloads a local JSON summary; nothing is uploaded. How to play and
+version/build details are in the menus.
 
 Click **Play** to capture the mouse. Move left/right to steer your curved bat;
 click or press Space to serve. A/D or Left/Right also steer. **Escape/P** pauses
@@ -31,7 +34,7 @@ and releases the cursor. Focus loss or capture loss pauses and clears held input
 click **Resume** to recapture and continue. While paused, **H** hides/restores the
 small corner controls for screenshots. Settings offers 0.5–2× mouse sensitivity
 and Neither / Preview only / Pressure slowdown / Both assistance modes. Settings
-survive Restart, Rematch and seat changes in the current page. Restart repeats
+are saved locally across refresh, Restart, Rematch and seat changes. Restart repeats
 the same opening; Rematch starts a new seeded round.
 The scene fills the viewport, with no visible HUD or surrounding text during play.
 
@@ -71,6 +74,9 @@ Pieces occupy compact staggered rows and grow by 3.5% per loss (up to 24.5%), wi
 visible geometry matching the moving collision bodies. Relative mouse input is
 independent of camera motion. Reduced effects/motion disables bloom/reflections
 and holds the current camera pose without a snap.
+Low/Medium/High effects presets control resolution, reflections, bloom and pooled
+particles. High is the default; reduced effects overrides it. The bloom path
+preserves antialiasing on solid wall edges, alongside the screen-space neon shader.
 
 ## Music
 
@@ -78,7 +84,9 @@ Press Play for a 136 BPM adaptive club score. Muted hats open, snare and melodic
 hints join, then the driving kick enters. The build leads to a drop around 28s.
 Two balls add harmony, three add FM arpeggios/acid counter-line, four add FM brass.
 New parts enter on bar boundaries. Returns grow your own phrase and performance
-layers; losing a piece resets your part and triggers a synthesised FM audience.
+layers; losing a piece resets your part. Your successful attacks get rising FM
+notes and a cheering audience; losing your own piece gets a distinct lower cue.
+Bot-only breaches stay quieter.
 Bat notes align to 32nds with a short bounded delay; replies/cheers use eighths.
 Collisions, movement and results always happen immediately and never wait for music.
 
@@ -144,8 +152,9 @@ pnpm exec vpx tooling/review-layouts.ts
 ```
 
 This reports bot-only simulation results, not human playtest evidence. See
-[the M05 review](docs/M05_REVIEW.md) for current validation, limitations and
-review prompts; [M03/M04](docs/M03_M04_REVIEW.md) records physics/destruction; [the M02 comparison](docs/M02_REVIEW.md) records the approved control baseline.
+[the M08 review](docs/M08_REVIEW.md) and [playtest record](docs/PLAYTEST.md) for current
+validation and limits; [M05](docs/M05_REVIEW.md) covers layouts;
+[M03/M04](docs/M03_M04_REVIEW.md) records physics/destruction; [the M02 comparison](docs/M02_REVIEW.md) records the approved control baseline.
 Physics regression logs can be regenerated with `pnpm exec vpx tooling/replay-physics.ts`;
 review their impacts before deliberately updating the checked-in golden file.
 
