@@ -283,11 +283,11 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** M01 implemented with behind-player camera, frosted faces and clustered health amendments; awaiting user review. **Next: review M01 or request changes; an instruction to proceed selects M02 under the resume rules.** Update this line whenever work changes state.
+**Current position:** M01 approved on 11 November 2026 following “Looks good! … shall we carry on with the plan?” M02 is **In progress**. Implement controls/aiming refinement and compare all four assistance modes, then stop for M02 review.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
-- [ ] **M01** — First playable four-player prototype, Vite+ scaffold, CI and Pages workflow.
+- [x] **M01** — First playable four-player prototype, Vite+ scaffold, CI and Pages workflow.
 - [ ] **M02** — Responsive controls, contact aiming and preview/slowdown comparison.
 - [ ] **M03** — Collision stress cases, deterministic physics and replay fixtures.
 - [ ] **M04** — Physical destruction, revenge serves, elimination and result rules.
@@ -316,18 +316,23 @@ When asked to **"do the next milestone"**:
 
 ### Current milestone work record
 
-- **Milestone:** M01 — implemented, **Awaiting review**; checkbox remains unchecked until approved.
-- **Implemented / remaining:** Four-seat playable game, pure 120 Hz simulation, physical health collisions/gaps, revenge serves and eliminated-recipient fallback, basic seeded bots, responsive desktop controls, focus pause, results/rematch, procedural depth/destruction effects, conditional return preview and symmetric approach slowdown. Incorporated user feedback: ball 10% larger, double speed, timed additions, independently curved bat face, attacks on adjacent rivals and deliberate banks off both neighbouring walls. M02 and later work remain unstarted.
-- **Checks and evidence:** `pnpm check` passed; `pnpm test` passed (96 tests across 14 files); `PAGES_BASE_PATH=/citadel/ pnpm build` passed. Previous revisions validated all ten browser cases, including complete round/results/rematch. The preceding shader/wall revision passed four focused browser cases across runs: default/reduced shader/reflection rendering, stationary input through live camera motion, relative-mouse bank limits and hidden pause controls. Long software-WebGL cases use 180/300-second allowances; the live-camera rendering check uses 800×600 and 240 seconds. For the exterior-grid revision, native Apple M2 Pro / ANGLE Metal rendering verified play/capture/serve/release and normal/reduced views without page or console errors; no full automated browser suite was rerun for this background-only change. `git diff --check` passed. Rendered screenshots of the lower, tighter perspective view were inspected and a desktop gameplay clip recorded with captured relative input. Simulation files are unchanged in this presentation/input revision; the preceding health-cluster revision recorded five seeded all-bot matches with zero collision caps. See `docs/M01_REVIEW.md` and `docs/reviews/m01/exterior-grid.png`; current local capture: `/tmp/citadel-grid-review/gameplay.webm`. Local demo: http://127.0.0.1:5173/.
-- **Review decisions / blockers:** User reported the gameplay plays well, then requested real perspective, solid raised walls, frosted reflections, restored broad bloom with lower contribution, captured relative mouse controls and pure fullscreen presentation. The latest amendment lowers the camera to about 38° and zooms the arena to fill the viewport; the structural plinth can extend below the view. These are M01 amendments, not approval for M02. The user then identified broad glowing wall seams and an overly pastel look; those seams now sit on the surface, and darker lighting plus saturated geometric edge traces define the volume. Pause controls are compact and can be hidden with H. The latest feedback requests broader angle-selected shader edges and geometry with a substantial wall cross-section. Those are implemented with opaque extruded caps/feet/supports and recessed faces; occluded balls retain a faint visible ghost. The user reported the shader/wall look is good and requested an exterior Tron-like grid stretching into the distance; a procedural ground grid now supplies that setting without changing gameplay or camera framing. These amendments remain awaiting M01 review. Initial reference sketch remains unavailable. The 15-second arrival interval and four-ball cap are provisional; both are tunable. Same-tick balls resolve in ID order; first declared winner ends remaining tick processing. No mobile/audio/spin/multiplayer or measured real-hardware performance claim. Production bundle still has a >500 kB chunk warning. No GitHub workflow run, push, deployment, Pages-setting change or `gh` command was performed.
-- **Next action:** User reviews the exterior grid's brightness, depth and distance fade alongside the approved shader/wall direction, plus Play → relative mouse → Escape → Resume. The spring/growth tuning is provisional; ball speed, arrivals, banks and revenge-serve rules remain as previously agreed. Request amendments or approve before M02. Current local implementation commits: `38d2d2b` (fullscreen/relative input/perspective), `2640190` (neon edges and hidden pause controls), and `0c5be13` (feature-edge shader and solid wall cross-sections), and `921969c` (exterior grid); earlier work remains in Git history.
+- **Milestone:** M02 — **In progress**. M01 approved by the user's request to continue on 11 November 2026, at `415b2df`; implementation and evidence remain in `docs/M01_REVIEW.md` and Git history.
+- **Task checklist:**
+  - [ ] Refine captured mouse sensitivity, keyboard handover, capture lifecycle and one-press launch semantics.
+  - [ ] Keep settings across rematches/seat changes; exercise all four human seats and resize/focus transitions.
+  - [ ] Make neither/preview/slowdown/both easy to compare; keep previews conditional and use the actual collision/return rules.
+  - [ ] Test clamps, common movement caps, centre/edge returns and slowdown restoration/non-stacking.
+  - [ ] Provide a local comparison, rendered evidence, reproducible measurements and recommended defaults in `docs/M02_REVIEW.md`.
+- **Scope:** Preserve the approved M01 visual direction, ball speed/arrival ramp and fixed-step architecture. Keep responsive movement without adding inertia unless comparison warrants it. No M03 stress/replay expansion, touch, new layouts, audio or networking.
+- **Checks / evidence:** Implementation audit in progress. Existing M01 acceptance evidence is recorded in `docs/M01_REVIEW.md` (96 unit tests, static Pages-path build, previous focused browser runs and native GPU grid capture).
+- **Next action:** Implement and validate M02, then stop at `REVIEW REQUIRED — M02`. No push or `gh` usage is authorised.
 
 ### Progress / approval ledger
 
 | ID | Stage | Reviewable deliverable | Status | Approval | Commit |
 |---|---|---|---|---|---|
-| M01 | **First playable** | Four-seat prototype: human + bots, physical damage, revenge serve, rematch | Awaiting review | — | 8fd4bed, 41a2100; see work record |
-| M02 | Desktop core | Refine responsive controls, contact aiming, preview/slowdown experiments | Not started | — | — |
+| M01 | **First playable** | Four-seat prototype: human + bots, physical damage, revenge serve, rematch | Approved | 11 Nov 2026: user requested continuation | 415b2df; earlier checkpoints in Git |
+| M02 | Desktop core | Refine responsive controls, contact aiming, preview/slowdown experiments | In progress | — | — |
 | M03 | Desktop core | Real ball physics, swept collisions and deflections | Not started | — | — |
 | M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Not started | — | — |
 | M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Not started | — | — |
@@ -505,6 +510,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M01 before proceeding.** Run `pnpm dev`, play the four-player prototype and consult `docs/M01_REVIEW.md`. Check that the faster ball and timed additions create pressure while preserving readable saves, and that both adjacent rivals and both neighbouring wall banks are deliberately reachable.
-
-M01 is implemented and awaiting approval; do not restart the scaffold or silently begin M02. Apply requested feel/rule amendments to M01. An instruction to do the next milestone follows the resume rules above. Preserve the existing GitHub Pages publishing workflow, frequent local commits and explicit user control over pushes and `gh` usage.
+**Complete M02 controls/aiming refinement, then stop for review.** M01 is approved by the user's 11 November 2026 request to continue. Follow the current M02 work record and acceptance criteria. Preserve the approved visual direction, GitHub Pages workflow, frequent local commits and user control over pushes and `gh` usage. M03 remains unstarted.

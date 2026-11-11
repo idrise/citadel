@@ -1,9 +1,9 @@
 # M01 — first playable prototype
 
-Status: awaiting review of the exterior neon grid. The user reported that the
-shader edges and solid wall look is good, then requested more setting beyond the
-arena. The camera remains at about 38° with tight fullscreen framing. M02 has not
-started.
+Status: **Approved on 11 November 2026**. The user said “Looks good!” and asked
+to continue with the plan after the exterior-grid review, approving M01 under
+the plan's resume rules. Approved checkpoint: `415b2df`. M02 controls/aiming work
+follows separately; the evidence below records the M01 build.
 
 ## Current build
 
@@ -163,4 +163,4 @@ greater-than-500 kB warning (about 858 kB minified / 232 kB gzip).
 The original sketch remains unavailable. No remote workflow, push, deployment,
 repository-setting change or `gh` command was performed.
 
-REVIEW REQUIRED — M01
+M01 approved; see PLAN.md for the current milestone.
