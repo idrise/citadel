@@ -3,6 +3,7 @@ import { MUSIC_BPM, type MusicCue } from "./director";
 import { createInstruments } from "./tone-instruments";
 import type { MusicEngine } from "./ports";
 import { createBeatEnvelope } from "./beat-envelope";
+import { createEventConductor, type GridAnchor } from "./event-grid";
 import { arrangementAt } from "./arrangement";
 
 let replacedDefaultContext = false;
@@ -29,7 +30,10 @@ export function createToneEngine(
   let step = 0;
   let running = false;
   const beats = createBeatEnvelope();
+  const conductor = createEventConductor();
+  let anchor: GridAnchor = { time: native.currentTime + 0.05, step: 0 };
   const event = transport.scheduleRepeat((time) => {
+    anchor = { time, step };
     const energy = arrangementAt(step).energy;
     const cues = onStep(step++);
     beats.scheduleEnergy(time, energy);
@@ -42,7 +46,8 @@ export function createToneEngine(
   }, "16n");
   return {
     play(cues) {
-      instruments.play(cues, native.currentTime + 0.005, true);
+      for (const planned of conductor.plan(cues, native.currentTime, anchor))
+        instruments.play([planned.cue], planned.time);
     },
     pulse: () => (running ? beats.read(native.currentTime) : 0),
     visuals: () => (running ? beats.frame(native.currentTime) : { pulse: 0, phase: -1, energy: 0 }),
@@ -52,8 +57,17 @@ export function createToneEngine(
       gate.gain.setTargetAtTime(value ? volume : 0, now, 0.008);
       if (value === running) return;
       running = value;
-      if (value) transport.start(now + 0.05);
-      else transport.pause(now);
+      if (value) {
+        anchor = { time: now + 0.05, step };
+        conductor.reset();
+        transport.start(now + 0.05);
+      } else transport.pause(now);
+    },
+    finish() {
+      running = false;
+      transport.pause(native.currentTime);
+      instruments.fadeScore(native.currentTime);
+      gate.gain.setTargetAtTime(0, native.currentTime + 2, 0.04);
     },
     dispose() {
       gate.gain.cancelScheduledValues(native.currentTime);

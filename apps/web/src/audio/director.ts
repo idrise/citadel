@@ -2,6 +2,7 @@ import type { GameEvent } from "../simulation/types";
 
 import { arrangementAt } from "./arrangement";
 import { composeStep } from "./score";
+import { ballTier } from "./ball-layers";
 import { SIXTEENTH, type MusicFrame, type MusicCue, type Voice } from "./music-types";
 export { MUSIC_BPM, SIXTEENTH } from "./music-types";
 export type { MusicCue, MusicFrame } from "./music-types";
@@ -19,6 +20,7 @@ export function createMusicDirector(humanSeat: number, seed: number) {
   let frame: MusicFrame = { elapsed: 0, balls: 1, alive: [true, true, true, true] };
   let lastEvent = -1;
   let musicalStep = 0;
+  let activeBalls = 1;
   const focus = () => {
     if (frame.alive[humanSeat]) return humanSeat;
     return parts.reduce(
@@ -40,6 +42,7 @@ export function createMusicDirector(humanSeat: number, seed: number) {
       for (const event of events) {
         if (event.id <= lastEvent) continue;
         lastEvent = event.id;
+        if (event.type === "arrival") cues.push(cue("unlock", 74, 0.55, 0.35));
         const part = parts[event.seat];
         if (!part) continue;
         if (event.type === "paddle") {
@@ -57,14 +60,16 @@ export function createMusicDirector(humanSeat: number, seed: number) {
           part.streak = 0;
           part.phrase = [];
           cues.push(cue("damage", 38, event.seat === humanSeat ? 0.75 : 0.35, 0.3));
+          cues.push(cue("cheer", 50, 0.68, 1.15));
         }
       }
       return cues;
     },
     step(step: number): MusicCue[] {
       musicalStep = step;
+      if (step % 16 === 0) activeBalls = ballTier(frame.balls);
       const part = parts[focus()]!;
-      return composeStep(step, part.phrase, part.streak, intensity());
+      return composeStep(step, part.phrase, part.streak, intensity(), activeBalls);
     },
     snapshot() {
       const seat = focus(),
@@ -75,6 +80,7 @@ export function createMusicDirector(humanSeat: number, seed: number) {
         intensity: intensity(),
         streak: part.streak,
         notes: part.phrase.length,
+        layers: activeBalls,
         seat,
       };
     },

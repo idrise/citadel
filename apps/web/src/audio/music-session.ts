@@ -25,8 +25,11 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
   let volume = 0.45;
   let wanted = false;
   let applied = "";
+  let endingUntil = 0;
   const sync = () => {
     if (!engine || disposed) return;
+    if (endingUntil > (context?.currentTime ?? 0) && enabled && volume > 0 && !failed) return;
+    endingUntil = 0;
     const playing = enabled && wanted && unlocked && !failed;
     const key = `${playing}:${volume}`;
     if (applied === key) return;
@@ -104,6 +107,10 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
       if (engine && wanted && enabled && unlocked && !failed && !disposed)
         try {
           engine.play(cues);
+          if (events.some((event) => event.type === "victory")) {
+            endingUntil = (context?.currentTime ?? 0) + 2;
+            engine.finish();
+          }
         } catch {
           fail();
         }
@@ -113,13 +120,15 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
         ? "off"
         : failed
           ? "unavailable"
-          : engine && unlocked
-            ? wanted
-              ? "playing"
-              : "paused"
-            : loading
-              ? "loading"
-              : "idle";
+          : endingUntil > (context?.currentTime ?? 0)
+            ? "ending"
+            : engine && unlocked
+              ? wanted
+                ? "playing"
+                : "paused"
+              : loading
+                ? "loading"
+                : "idle";
       return { status, ...director.snapshot() };
     },
     pulse() {

@@ -5,10 +5,18 @@ export interface MusicEngine {
   setPlaying: (value: boolean, volume: number) => void;
   pulse: () => number;
   visuals: () => MusicVisuals;
+  finish: () => void;
   dispose: () => void;
 }
 export type EngineLoader = (
   context: AudioContext,
   onStep: (step: number) => readonly MusicCue[],
 ) => Promise<MusicEngine>;
-export type MusicStatus = "idle" | "loading" | "playing" | "paused" | "off" | "unavailable";
+export type MusicStatus =
+  | "idle"
+  | "loading"
+  | "playing"
+  | "paused"
+  | "off"
+  | "unavailable"
+  | "ending";

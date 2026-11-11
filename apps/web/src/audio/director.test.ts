@@ -20,7 +20,7 @@ it("turns each hit into an immediate note and a seven-note phrase with its own l
   expect(director.snapshot()).toMatchObject({ streak: 7, notes: 7 });
   const notes = Array.from(
     { length: 9 },
-    (_, index) => director.step(index * 2).find((c) => c.voice === "player")!.note,
+    (_, index) => director.step(64 + index * 2).find((c) => c.voice === "player")!.note,
   );
   expect(notes[7]).toBe(notes[0]);
   expect(notes[8]).toBe(notes[1]);
@@ -32,9 +32,12 @@ it("resets only the damaged seat and leaves the beat running", () => {
   director.observe(frame, [event(0), event(1), event(2, "paddle", 1)]);
   director.observe(frame, [event(3, "damage", 1)]);
   expect(director.snapshot().notes).toBe(2);
-  expect(director.observe(frame, [event(4, "damage")])).toMatchObject([{ voice: "damage" }]);
+  expect(director.observe(frame, [event(4, "damage")])).toMatchObject([
+    { voice: "damage" },
+    { voice: "cheer" },
+  ]);
   expect(director.snapshot()).toMatchObject({ streak: 0, notes: 0 });
-  expect(director.step(4).some((c) => c.voice === "kick")).toBe(true);
+  expect(director.step(64).some((c) => c.voice === "kick")).toBe(true);
 });
 it("bounds phrases, foregrounds human hits, and composes repeatably without touching events", () => {
   const a = createMusicDirector(0, 2026),
@@ -50,7 +53,7 @@ it("bounds phrases, foregrounds human hits, and composes repeatably without touc
 });
 it("builds and drops on the musical clock even without a long player streak", () => {
   const director = createMusicDirector(0, 2026);
-  expect(director.step(0).some((c) => c.voice === "bass")).toBe(true);
+  expect(director.step(0).some((c) => c.voice === "bass")).toBe(false);
   expect(director.step(192).some((c) => c.voice === "hat")).toBe(true);
   expect(director.snapshot().section).toBe("build");
   expect(director.step(252).map((c) => c.voice)).toEqual(["breath"]);
@@ -62,7 +65,7 @@ it("builds and drops on the musical clock even without a long player streak", ()
 it("uses global pressure independently and follows a survivor after human elimination", () => {
   const director = createMusicDirector(0, 1);
   director.observe({ ...frame, elapsed: 60, balls: 4 }, []);
-  expect(director.step(3).some((c) => c.voice === "bass")).toBe(true);
+  expect(director.step(67).some((c) => c.voice === "bass")).toBe(true);
   director.observe({ ...frame, alive: [false, true, true, true] }, [event(0, "paddle", 2)]);
   expect(director.snapshot()).toMatchObject({ seat: 2, notes: 1 });
 });
@@ -85,4 +88,20 @@ it("leaves the authoritative match exactly identical while music and beat lights
     musicLight(Math.sin(tick), false);
   }
   expect(audible).toEqual(silent);
+});
+
+it("introduces ball layers on a bar boundary and emits a musical arrival cue", () => {
+  const director = createMusicDirector(0, 2026);
+  director.step(64);
+  expect(director.snapshot().layers).toBe(1);
+  expect(
+    director
+      .observe({ ...frame, balls: 3 }, [event(0, "arrival")])
+      .some((c) => c.voice === "unlock"),
+  ).toBe(true);
+  expect(director.step(66).some((c) => c.voice === "acid")).toBe(false);
+  expect(director.snapshot().layers).toBe(1);
+  director.step(80);
+  expect(director.snapshot().layers).toBe(3);
+  expect(director.step(81).some((c) => c.voice === "acid")).toBe(true);
 });

@@ -18,7 +18,15 @@ export type Voice =
   | "crash"
   | "damage"
   | "breath"
-  | "open";
+  | "open"
+  | "mutedHat"
+  | "harmony"
+  | "acid"
+  | "brass"
+  | "cheer"
+  | "tic"
+  | "answer"
+  | "unlock";
 export interface MusicCue {
   voice: Voice;
   note: number;

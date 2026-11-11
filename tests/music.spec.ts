@@ -116,3 +116,19 @@ test("unavailable audio leaves captured gameplay playable", async ({ page }) => 
   await page.keyboard.press("Escape");
   await expect(page.getByRole("heading", { name: "Paused", exact: true })).toBeVisible();
 });
+
+test("an arriving second ball introduces the second musical layer in the real audio clock", async ({
+  page,
+}) => {
+  test.setTimeout(30000);
+  await page.goto("./");
+  await page.getByText("Settings", { exact: true }).click();
+  await page.getByLabel("Ball addition interval", { exact: true }).fill("5");
+  await page.getByText("Settings", { exact: true }).click();
+  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await expect(page.getByLabel("Music layers", { exact: true })).toHaveText("1");
+  await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("2", {
+    timeout: 12000,
+  });
+  await expect(page.getByLabel("Music layers", { exact: true })).toHaveText("2", { timeout: 4000 });
+});

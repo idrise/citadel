@@ -3,11 +3,19 @@ import { createMusicDirector, MUSIC_BPM } from "../apps/web/src/audio/director";
 import { createInstruments } from "../apps/web/src/audio/tone-instruments";
 import type { MusicCue, Voice } from "../apps/web/src/audio/music-types";
 import type { GameEvent } from "../apps/web/src/simulation/types";
+import { createEventConductor } from "../apps/web/src/audio/event-grid";
 import { encodeWave } from "./pcm-wave";
 
 /** Render the actual score and synth graph, including a no-hit audition or isolated stems. */
 export async function renderMusicPreview(
-  options: { duration?: number; voices?: readonly Voice[]; hits?: boolean } = {},
+  options: {
+    duration?: number;
+    voices?: readonly Voice[];
+    hits?: boolean;
+    balls?: number;
+    startStep?: number;
+    demo?: "layers" | "cheer";
+  } = {},
 ) {
   const duration = options.duration ?? 74;
   let instruments: ReturnType<typeof createInstruments> | undefined,
@@ -25,10 +33,21 @@ export async function renderMusicPreview(
       limiter = new Tone.Limiter({ context, threshold: -3 }).toDestination();
       instruments = createInstruments(context, limiter);
       const director = createMusicDirector(0, 2026);
+      const conductor = createEventConductor();
       let step = 0,
         eventId = 0;
       context.transport.bpm.value = MUSIC_BPM;
       context.transport.scheduleRepeat((time) => {
+        const musicalStep =
+          options.demo === "layers" ? 64 + (step % 64) : step + (options.startStep ?? 0);
+        const balls =
+          options.balls ??
+          (options.demo === "layers"
+            ? 1 + Math.min(3, Math.floor(step / 64))
+            : 1 + Math.min(3, Math.floor(time / 15)));
+        const frame = { elapsed: time, balls, alive: [true, true, true, true] };
+        director.observe(frame, []);
+        instruments!.play(only(director.step(musicalStep)), time);
         const events: GameEvent[] = [];
         if (options.hits !== false && step % 14 === 4)
           events.push({
@@ -39,7 +58,10 @@ export async function renderMusicPreview(
             piece: null,
             position: { x: 0, y: 0 },
           });
-        if (options.hits !== false && step === 144)
+        if (
+          (options.demo === "cheer" && step === 8) ||
+          (options.hits !== false && [144, 304].includes(step))
+        )
           events.push({
             id: eventId++,
             tick: step,
@@ -48,16 +70,10 @@ export async function renderMusicPreview(
             piece: 0,
             position: { x: 0, y: 0 },
           });
-        const cues = director.observe(
-          {
-            elapsed: time,
-            balls: 1 + Math.min(3, Math.floor(time / 15)),
-            alive: [true, true, true, true],
-          },
-          events,
-        );
-        instruments!.play(only(cues), time + 0.003);
-        instruments!.play(only(director.step(step++)), time);
+        const cues = director.observe(frame, events);
+        for (const planned of conductor.plan(cues, time + 0.027, { time, step: musicalStep }))
+          instruments!.play(only([planned.cue]), planned.time);
+        step++;
       }, "16n");
       context.transport.start(0);
     },

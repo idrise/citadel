@@ -17,6 +17,7 @@ const flush = async () => {
 };
 function fixture() {
   const host = {
+    currentTime: 0,
     resume: vi.fn(async () => {}),
     close: vi.fn(async () => {}),
   };
@@ -25,6 +26,7 @@ function fixture() {
     setPlaying: vi.fn(),
     pulse: vi.fn(() => 0.8),
     visuals: vi.fn(() => ({ pulse: 0.8, phase: 0.2, energy: 0.5 })),
+    finish: vi.fn(),
     dispose: vi.fn(),
   };
   const deps = {
@@ -110,4 +112,39 @@ it("contains unsupported audio, rejected imports and playback errors", async () 
   expect(music.pulse()).toBe(0);
   music.dispose();
   missing.dispose();
+});
+
+it("lets the final breach cheer resolve without delaying results, while mute can still cut it", async () => {
+  const { music, engine, host } = fixture();
+  music.unlock();
+  music.setPlaying(true);
+  await flush();
+  music.observe(frame, [
+    { ...hit, type: "damage" },
+    { ...hit, id: 1, type: "victory" },
+  ]);
+  expect(engine.finish).toHaveBeenCalledOnce();
+  music.setPlaying(false);
+  expect(music.snapshot().status).toBe("ending");
+  expect(engine.setPlaying).toHaveBeenLastCalledWith(true, 0.45);
+  host.currentTime = 2.1;
+  music.setPlaying(false);
+  expect(engine.setPlaying).toHaveBeenLastCalledWith(false, 0.45);
+  music.dispose();
+});
+
+it("can mute the final crowd tail immediately", async () => {
+  const { music, engine } = fixture();
+  music.unlock();
+  music.setPlaying(true);
+  await flush();
+  music.observe(frame, [
+    { ...hit, type: "damage" },
+    { ...hit, id: 1, type: "victory" },
+  ]);
+  music.setPlaying(false);
+  music.configure({ music: false, musicVolume: 0.45 });
+  expect(music.snapshot().status).toBe("off");
+  expect(engine.setPlaying).toHaveBeenLastCalledWith(false, 0.45);
+  music.dispose();
 });

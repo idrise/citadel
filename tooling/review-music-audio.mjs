@@ -20,15 +20,34 @@ try {
     {
       name: "drums",
       options: {
-        duration: 12,
+        duration: (64 * 60) / 136 / 4,
+        startStep: 64,
         hits: false,
         voices: ["kick", "hat", "openHat", "clap", "snare", "crash"],
       },
     },
-    { name: "bass", options: { duration: 12, hits: false, voices: ["bass", "sub"] } },
-    { name: "melody", options: { duration: 12, hits: false, voices: ["lead", "pad", "arp"] } },
+    {
+      name: "bass",
+      options: {
+        duration: (64 * 60) / 136 / 4,
+        startStep: 64,
+        hits: false,
+        voices: ["bass", "sub"],
+      },
+    },
+    {
+      name: "melody",
+      options: {
+        duration: (64 * 60) / 136 / 4,
+        startStep: 64,
+        hits: false,
+        voices: ["lead", "pad", "arp"],
+      },
+    },
     { name: "club-preview", options: { duration: 74, hits: true } },
     { name: "no-hit-preview", options: { duration: 34, hits: false } },
+    { name: "cheer", options: { duration: 4.5, demo: "cheer", voices: ["cheer"], hits: false } },
+    { name: "layers", options: { duration: (256 * 60) / 136 / 4, demo: "layers", hits: false } },
   ];
   for (const { name, options } of cases) {
     const { wav, ...stats } = await page.evaluate(
@@ -50,6 +69,8 @@ try {
     melodyToDrumsDb < -6 ||
     bassToDrumsDb < -9 ||
     stems["club-preview"].peak >= 0.98 ||
+    stems.cheer.rms < 0.004 ||
+    stems.cheer.peak >= 0.98 ||
     stems["no-hit-preview"].rms < 0.01
   )
     throw Error(

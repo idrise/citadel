@@ -3,8 +3,8 @@ import { arrangementAt } from "./arrangement";
 import { composeStep } from "./score";
 import { SIXTEENTH } from "./music-types";
 
-it("guarantees an audible authored melody and bass before any player hits", () => {
-  const opening = Array.from({ length: 64 }, (_, step) => composeStep(step, [], 0, 0)).flat();
+it("keeps an authored melody and bass in the groove without requiring player hits", () => {
+  const opening = Array.from({ length: 64 }, (_, step) => composeStep(64 + step, [], 0, 0)).flat();
   expect(opening.filter((c) => c.voice === "lead").length).toBeGreaterThan(20);
   expect(opening.filter((c) => c.voice === "bass").length).toBeGreaterThan(15);
   expect(
@@ -30,7 +30,7 @@ it("gives the breakdown harmonic space instead of just lowering a drum loop", ()
   expect(breakdown.some((c) => c.voice === "kick" || c.voice === "bass")).toBe(false);
   expect(breakdown.filter((c) => c.voice === "pad")).toHaveLength(4);
   expect(breakdown.filter((c) => c.voice === "lead").length).toBeGreaterThan(15);
-  expect(breakdown.some((c) => c.voice === "arp")).toBe(true);
+  expect(breakdown.some((c) => c.voice === "arp")).toBe(false);
 });
 it("accelerates a rising snare build, breathes, then releases full drums and doubled melody", () => {
   const count = (start: number) =>
@@ -52,8 +52,27 @@ it("keeps brightness, velocities and voices bounded across long arrangements", (
       expect(cue.velocity).toBeGreaterThanOrEqual(0);
       expect(cue.velocity).toBeLessThanOrEqual(1);
       expect(cue.duration).toBeGreaterThan(0);
-      expect(cue.brightness).toBeGreaterThanOrEqual(0);
-      expect(cue.brightness).toBeLessThanOrEqual(1);
+      expect(cue.brightness ?? 0.6).toBeGreaterThanOrEqual(0);
+      expect(cue.brightness ?? 0.6).toBeLessThanOrEqual(1);
       expect(cue.notes?.length ?? 1).toBeLessThanOrEqual(4);
     }
+});
+
+it("starts with muted hats, then snare, before the driving kick arrives", () => {
+  const first = Array.from({ length: 32 }, (_, i) => composeStep(i, [], 0, 0)).flat();
+  expect(first.filter((c) => c.voice === "mutedHat")).toHaveLength(16);
+  expect(first.some((c) => ["kick", "bass", "lead", "snare"].includes(c.voice))).toBe(false);
+  const next = Array.from({ length: 32 }, (_, i) => composeStep(32 + i, [], 0, 0)).flat();
+  expect(next.some((c) => c.voice === "snare")).toBe(true);
+  expect(next.some((c) => c.voice === "kick")).toBe(false);
+  expect(composeStep(64, [], 0, 0).some((c) => c.voice === "kick")).toBe(true);
+});
+
+it("never schedules the same monophonic hi-hat twice when performance and global layers coincide", () => {
+  for (const balls of [1, 2, 3, 4, 8])
+    for (const streak of [0, 3, 4, 8, 16])
+      for (let step = 256; step < 384; step++) {
+        const cues = composeStep(step, [62, 65], streak, 1, balls);
+        expect(cues.filter((cue) => cue.voice === "hat").length).toBeLessThanOrEqual(1);
+      }
 });

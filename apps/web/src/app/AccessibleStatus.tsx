@@ -20,6 +20,7 @@ export function AccessibleStatus({
       <output aria-label="Balls in play">{state.balls.length}</output>
       <output aria-label="Music status">{snapshot.music.status}</output>
       <output aria-label="Music section">{snapshot.music.section}</output>
+      <output aria-label="Music layers">{snapshot.music.layers}</output>
       <output aria-label="Melody notes">{snapshot.music.notes}</output>
       <output aria-label="Bat angle">
         {((state.players[humanSeat]!.angle * 180) / Math.PI).toFixed(1)}

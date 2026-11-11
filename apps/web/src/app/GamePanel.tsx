@@ -38,6 +38,7 @@ export function GamePanel({
       intensity: 0,
       streak: 0,
       notes: 0,
+      layers: 1,
       seat: humanSeat,
     },
   }));
