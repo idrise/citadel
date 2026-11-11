@@ -55,7 +55,7 @@ The desired game loop is simple: **move → aim a deflection → launch/return �
 
 Do not quietly make these permanent rules without a review:
 
-1. **Shot attribution:** The damaged defender receiving the next serve is confirmed and supersedes return-to-attacker/owner. Whether last-hit attribution needs a visible ball mark remains open; it must not determine the post-damage serve recipient.
+1. **Shot attribution:** The user requested visible last-hit attribution during M07/M08: balls and trails now take the last striker's colour, with coral for the default human. Review readability and success feedback in play. Attribution never determines the post-damage serve recipient: the damaged surviving defender still receives the revenge serve.
 2. **Serve allocation:** Choose fair initial serves and the recipient after an eliminating hit. Prototype default: seeded initial selection; after an elimination, choose a surviving seat by seeded selection, unless the match has ended. These defaults need review. Ordinary non-eliminating damage always gives the damaged defender the serve.
 3. **Damage geometry:** Choose whether health pieces are crystals, blocks, spheres or another distinctive extruded form at the M01 review. Every one must be individually readable.
 4. **Escalation tuning:** User feedback during M01 explicitly calls for a 10% larger ball, double its initial speed and timed additions of extra balls for adrenaline. Prototype default: radius 0.187, speed 24, one initial ball and another every 15 playing seconds, capped at four. The 15-second interval and cap are provisional tuning choices. M06 revisits pacing evidence; it must preserve this agreed direction unless reviewed with the user.
@@ -283,7 +283,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** M07/M08 scene presentation amendments are delivered and Awaiting review. The procedural CITADEL title, −/+ controls, Start, floating result/rematch and neon victory fireworks replace landing/result popups; advanced settings remain in Pause by explicit user choice. Ball colours show last-striker credit and the default human is coral. Independent enemy capsule audio and a finite victory coda are verified. M06 pacing comparisons, external tester feedback and public-site verification remain pending.
+**Current position:** Desktop implementation and the latest M07/M08 presentation corrections are locally validated and Awaiting review. The procedural CITADEL title, −/+ controls, Start, floating result/rematch and neon victory fireworks replace landing/result popups; advanced settings remain in Pause by explicit user choice. Menus are camera-relative, remain fixed when player count changes, and darken the arena behind title, win and loss text. Ball colours show last-striker credit and the default human is coral. Independent enemy capsule audio and a finite victory coda are verified. The user requested a plan checkpoint and GitHub Pages setup instructions before the first push; no push is authorised. M06 pacing comparisons, external tester feedback and public-site verification remain pending.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
@@ -357,6 +357,25 @@ this correction, following the previous full 27-check run. Native clicks confirm
 identical control bounds across every count. Updated screenshots and layout data:
 `docs/SCENE_PRESENTATION_REVIEW.md`. Awaiting review; no push, deployment or `gh`.
 
+**11 November checkpoint — delivered locally:**
+
+- [x] Complete 2–6-player solo matches, responsive captured controls, physical eight-piece health, revenge serves, visible swipe spin and minimal-movement arena transitions.
+- [x] Deliver thick neon geometry, corrected wall caps/edge fidelity, reflections, exterior grid and effects presets.
+- [x] Build layered original techno with event-aligned effects and presentation-only beat lighting; distinguish own loss, rival capsule breaks, credited success and victory.
+- [x] Replace landing/result popups with procedural scene menus and victory fireworks; keep advanced settings in Pause.
+- [x] Anchor scene controls to their own camera, dim all visible menu backgrounds and restore normal gameplay brightness.
+- [x] Provide local preferences, round-statistics export, review captures and repeatable desktop checks.
+- [x] Record latest validation: Vite+ check, 282 unit tests / 48 files, `/citadel/` production build and four focused native Chromium browser checks pass. The preceding revision passed the full 27-check browser suite; that full suite was not rerun after the final dimming correction. Existing large-bundle warning remains.
+
+**First-publish checklist — not yet performed:**
+
+- [ ] Owner enables Pages for `idrise/citadel`: Settings → Pages → Build and deployment → Source: **GitHub Actions**. The existing workflow supplies the build; no generated starter workflow is needed.
+- [ ] Confirm repository Actions policy permits the workflow's `actions/*` and `voidzero-dev/setup-vp` actions, and `main` remains the default branch. If configured, the `github-pages` environment must permit `main` deployments.
+- [ ] User explicitly authorises the first push. Local commits and this setup checklist do not authorise pushing or manually running a deployment.
+- [ ] After that push, confirm **CI** and **Publish GitHub Pages** succeed, then record the deployment's actual URL and commit.
+- [ ] Verify a freshly opened public URL: assets/audio load, 2/4/6-player selection, Start, captured controls, complete win/loss flow, readable results, Pause settings and rematch. Expected default URL: `https://idrise.github.io/citadel/`; not yet verified live.
+- [ ] Record desktop playtest feedback and the user's M07/M08 approval separately from deployment success. M06 pacing study and M09 touch remain unstarted.
+
 The user rejected the abrupt DOM landing/result panels and requested a procedural
 neon CITADEL title over the arena, +/− selection for 2–6 players, Start, and neon
 fireworks for a human victory. Their explicit follow-up retains advanced settings
@@ -371,7 +390,7 @@ striker's colour, and the default human colour changes from arena cyan to coral.
 - [x] Colour balls/trails by the same read-only last-striker observer as scoring; distinguish the human from arena cyan.
 - [x] Validate real wins, all-layout start/rematch/controls, exported results and native sound; provide current screenshots and gameplay evidence.
 
-**Current evidence:** `docs/SCENE_PRESENTATION_REVIEW.md`; 278 unit tests in 48 files, 27 native production browser checks and the Pages build pass, with a focused rerun for the final victory pause/framing amendment. A native, unedited 35.96s two-player Standard human win exports zero collision caps; 2/4/6 titles, owned balls, fireworks and a movie are recorded. Eight live feedback auditions include neutral enemy breaks; native six-seat High sampling measures 16.7ms median/p95 on M2 Pro. Checkpoints: `551f559` reliable breach cues, `643f704` scene UI/ownership, `6727aac` victory coda/native controls. Pause settings, reduced mode, scoring and physics goldens remain intact. No push, deployment or `gh`; preserve the separate AGENTS edit. Stop for review.
+**Current evidence:** `docs/SCENE_PRESENTATION_REVIEW.md`; latest checks are recorded above, with High/Low victory screenshots in `docs/reviews/m08/anchored-menu/`. A native, unedited 35.96s two-player Standard human win exports zero collision caps; 2/4/6 titles, owned balls, fireworks and a movie are recorded. Eight live feedback auditions include neutral enemy breaks; native six-seat High sampling measures 16.7ms median/p95 on M2 Pro. Checkpoints: `551f559` reliable breach cues, `643f704` scene UI/ownership, `6727aac` victory coda/native controls, `2318be7` fixed camera-relative menus and darker title, `df309ef` readable win/loss backgrounds. Pause settings, reduced mode, scoring and physics goldens remain intact. No push, deployment or `gh`; preserve the separate AGENTS edit. Stop for review.
 
 The preceding M07/M08 checklist and evidence below remain the baseline. These
 amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`.
@@ -381,7 +400,7 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 - [x] Give successful human attacks positive harmonic/cheer feedback distinct from own damage, using read-only event attribution.
 - [x] Polish minimal Play/setup/help/build menus, preserving pure fullscreen gameplay, captured input and restart/rematch.
 - [x] Add local-only statistics export and resilient persisted solo preferences.
-- [x] Revalidate Pages workflow/project path against `idrise/citadel`, without push or `gh`. Pages is currently disabled; no public deployment is available to verify.
+- [x] Revalidate Pages workflow/project path against `idrise/citadel`, without push or `gh`. Pages was disabled at the last repository check; its setting has not been refreshed during this plan checkpoint. No public deployment has been verified.
 - [x] Complete local tests, fresh six-seat round/rematch, screenshots/audio evidence and `docs/PLAYTEST.md`; distinguish scripted evidence from tester feedback.
 - [ ] Collect optional external desktop playtests and the user's visual/audio/fun approval. Do not infer approval from passing tests.
 - [ ] Verify the actual public build after publishing is enabled and authorised. No deployment performed in this task.
@@ -415,8 +434,8 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 | M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Approved | 11 Nov 2026: user requested M05 | 8fe9f47, 711d15d; review docs |
 | M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Approved | 11 Nov 2026: brilliant; user requested M08 | 67ddd15, b63db58, 7618c47, 80e95b8; docs/M05_REVIEW.md |
 | M06 | Solo proof | Spin/ball tuning and evidence-based 2-minute escalation | Not started | — | — |
-| M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Awaiting review | — | f729bd1, 0c84d6b; docs/M07_REVIEW.md |
-| M08 | **Desktop validation gate** | Public-ready static solo build, playtests and decision | Awaiting review | — | docs/M08_REVIEW.md; local checks complete, external feedback/public verification pending |
+| M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Awaiting review | — | f729bd1, 0c84d6b, 551f559; docs/M07_REVIEW.md and docs/SCENE_PRESENTATION_REVIEW.md |
+| M08 | **Desktop validation gate** | Public-ready static solo build, playtests and decision | Awaiting review | — | 643f704, 6727aac, 2318be7, df309ef; docs/SCENE_PRESENTATION_REVIEW.md; local checks complete, Pages setup/first push/public verification and feedback pending |
 | M09 | Mobile | Touch steering, tap launch and responsive layouts | Not started | — | — |
 | M10 | **Mobile validation gate** | Mobile GPU/performance/accessibility and real-device tests | Not started | — | — |
 | M11 | Multiplayer | WebRTC host/client prototype with local/manual signalling | Not started | — | — |
@@ -591,4 +610,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**M07 / M08 scene presentation Awaiting review.** See `docs/SCENE_PRESENTATION_REVIEW.md` for the procedural title, count/Start controls, last-striker colours, reliable capsule audio, and native victory fireworks/music evidence. Review title legibility, the end-of-round celebration and sound/credit clarity. Advanced settings remain in Pause. External tester feedback and public-site verification remain pending; preserve current pacing and leave M06/M09 unstarted. No push, deployment or `gh` without explicit instruction. Stop for M07/M08 review.
+**Prepare the first desktop publication; M07 / M08 remain Awaiting review.** Follow the first-publish checklist above: the owner selects GitHub Actions as the Pages source, then explicitly authorises a push when ready. The existing workflow builds, checks and publishes on `main`. After an authorised publication, verify the actual public build and record its URL/commit and playtest feedback. See `docs/SCENE_PRESENTATION_REVIEW.md` for the delivered scene, audio and legibility evidence. Preserve current pacing; M06/M09 remain unstarted. This plan update does not approve milestones, authorise pushing, manually deploying or using `gh`.
