@@ -21,7 +21,8 @@ import { lightArena } from "./lighting";
 import { createWorldGrid } from "./world-grid";
 import { effectsProfile } from "./quality";
 import { musicLight } from "./music-light";
-import { createSceneMenu, type SceneAction } from "./scene-menu";
+import type { SceneAction } from "./scene-menu";
+import { createMenuOverlay } from "./menu-overlay";
 import { createSceneControls } from "../input/scene-controls";
 import { createVictoryFireworks } from "./victory-fireworks";
 import { SEATS } from "./palette";
@@ -49,7 +50,7 @@ export function createViewport(
   const arena = createArenaView(humanSeat, initial);
   const worldGrid = createWorldGrid();
   scene.add(arena.root, worldGrid);
-  const menu = createSceneMenu(scene);
+  const menu = createMenuOverlay();
   const fireworks = createVictoryFireworks(scene);
   const controls = createSceneControls(container, onSceneAction, (action) => menu.hover(action));
   const disposeLighting = lightArena(scene, initial);
@@ -57,7 +58,6 @@ export function createViewport(
   const camera = createArenaCamera(humanSeat, initial);
   const motion = createCameraMotion(camera);
   let aspect = 1;
-  let menuBlend = 1;
   const bounds = new Box3().setFromObject(arena.root);
   // Frame the playing surface and wall tops; the structural plinth may extend below the view.
   bounds.min.y = 0;
@@ -66,7 +66,7 @@ export function createViewport(
     new Vector3(p.x * 1.09, 0, p.y * 1.09),
     new Vector3(p.x * 1.09, 2.34, p.y * 1.09),
   ]);
-  const bloom = createBloom(renderer, scene, camera);
+  const bloom = createBloom(renderer, scene, camera, menu);
   container.append(canvas);
   const resize = () => {
     const width = Math.max(container.clientWidth, 1);
@@ -122,14 +122,6 @@ export function createViewport(
         elapsed: 0,
         reduced: options.reducedEffects,
       };
-      const targetBlend = menuState.mode === "hidden" ? 0 : 1;
-      menuBlend = options.reducedEffects
-        ? targetBlend
-        : menuBlend + (targetBlend - menuBlend) * (1 - Math.exp(-Math.max(dt, 0) * 5));
-      if (menuBlend > 0.001)
-        framingPoints.push(
-          ...menu.framing(camera).map((p) => new Vector3(0, 2.34, 0).lerp(p, menuBlend)),
-        );
       if (state.phase === "finished" && state.winner === humanSeat) {
         const reveal = options.reducedEffects ? 1 : 1 - Math.exp(-menuState.elapsed * 4);
         const skyHeight = 2.34 + (10 - 2.34) * reveal;
@@ -150,7 +142,7 @@ export function createViewport(
         options.quality,
       );
       controls.update(
-        menu.update(menuState, camera, container.clientWidth, container.clientHeight),
+        menu.update(menuState, dt, container.clientWidth, container.clientHeight),
         state.players.length,
       );
       const pulse = options.musicPulse ?? 0;
@@ -167,6 +159,7 @@ export function createViewport(
       observer.disconnect();
       controls.dispose();
       bloom.dispose();
+      menu.dispose();
       arena.dispose();
       disposeLighting();
       disposeEnvironment();

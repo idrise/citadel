@@ -5,7 +5,6 @@ import {
   MeshStandardMaterial,
   Vector3,
   type PerspectiveCamera,
-  type Object3D,
 } from "three";
 import { createNeonLettering } from "./neon-lettering";
 import { createFeatureEdges } from "./feature-edges";
@@ -29,10 +28,10 @@ export interface SceneControl {
 }
 
 /** Floating solid lettering and solid buttons. HTML provides invisible accessible hit targets only. */
-export function createSceneMenu(root: Object3D) {
+export function createSceneMenu(camera: PerspectiveCamera) {
   const group = new Group();
   group.name = "scene-menu";
-  root.add(group);
+  camera.add(group);
   const heading = new Group();
   group.add(heading);
   const title = createNeonLettering("CITADEL", 2.15, 0x9ceaff);
@@ -85,16 +84,16 @@ export function createSceneMenu(root: Object3D) {
     hover(action: SceneAction | null) {
       hover = action;
     },
-    update(
-      state: SceneMenuState,
-      camera: PerspectiveCamera,
-      width: number,
-      height: number,
-    ): SceneControl[] {
+    update(state: SceneMenuState, width: number, height: number): SceneControl[] {
       group.visible = state.mode !== "hidden";
       if (!group.visible) return [];
-      group.position.set(0, 5.7, 0);
-      group.rotation.y = Math.atan2(camera.position.x, camera.position.z);
+      camera.aspect = width / Math.max(height, 1);
+      camera.updateProjectionMatrix();
+      const depth = 18,
+        halfHeight = Math.tan((camera.fov * Math.PI) / 360) * depth;
+      group.position.set(0, halfHeight * 0.67, -depth);
+      group.rotation.set(-0.35, 0, 0);
+      group.scale.setScalar(Math.min(0.78, (halfHeight * camera.aspect * 1.7) / 16));
       const result = state.mode !== "title",
         reveal = state.reduced ? 1 : Math.max(0, Math.min(1, (state.elapsed - 1.6) / 0.8));
       title.visible = !result;
@@ -128,7 +127,7 @@ export function createSceneMenu(root: Object3D) {
             ? 1
             : 0.7;
       }
-      group.updateMatrixWorld(true);
+      camera.updateMatrixWorld(true);
       return controls
         .filter((b) => b.item.visible)
         .map((button) => {
@@ -151,14 +150,6 @@ export function createSceneMenu(root: Object3D) {
             height: Math.max(...ys) - Math.min(...ys),
           };
         });
-    },
-    framing(camera: PerspectiveCamera) {
-      group.position.set(0, 5.7, 0);
-      group.rotation.y = Math.atan2(camera.position.x, camera.position.z);
-      group.updateMatrixWorld(true);
-      return [-8, 8].flatMap((x) =>
-        [-5.5, 1.5].map((y) => group.localToWorld(new Vector3(x, y, 0))),
-      );
     },
   };
 }

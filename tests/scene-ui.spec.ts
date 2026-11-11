@@ -10,11 +10,27 @@ test("the procedural title uses bounded 3D count controls and keyboard Start, wi
   page.on("pageerror", (e) => errors.push(e.message));
   await openGame(page, false);
   await expect(page.locator(".menu-panel")).toHaveCount(0);
+  const buttons = ["Start", "Decrease players", "Increase players", "Settings"];
+  const original = await Promise.all(
+    buttons.map((name) => page.getByRole("button", { name, exact: true }).boundingBox()),
+  );
+  const expectAnchored = async () => {
+    const current = await Promise.all(
+      buttons.map((name) => page.getByRole("button", { name, exact: true }).boundingBox()),
+    );
+    expect(current).toEqual(original);
+  };
   await page.screenshot({ path: testInfo.outputPath("title-4.png") });
   await choosePlayers(page, 2);
+  await expectAnchored();
   await expect(page.getByRole("button", { name: "Decrease players", exact: true })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("title-2.png") });
-  await choosePlayers(page, 6);
+  for (const count of [3, 4, 5, 6]) {
+    await choosePlayers(page, count);
+    await expectAnchored();
+  }
+  await page.clock.runFor(800);
+  await expectAnchored();
   await expect(page.getByRole("button", { name: "Increase players", exact: true })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("title-6.png") });
   await page.getByRole("button", { name: "Start", exact: true }).focus();

@@ -12,8 +12,14 @@ import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js"
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { effectsProfile, type EffectsQuality } from "./quality";
 import { musicLight } from "./music-light";
+import type { MenuOverlay } from "./menu-overlay";
 
-export function createBloom(renderer: WebGLRenderer, scene: Scene, camera: Camera) {
+export function createBloom(
+  renderer: WebGLRenderer,
+  scene: Scene,
+  camera: Camera,
+  overlay?: MenuOverlay,
+) {
   const target = new WebGLRenderTarget(1, 1, {
     type: HalfFloatType,
     samples: Math.min(4, renderer.capabilities.maxSamples),
@@ -24,6 +30,13 @@ export function createBloom(renderer: WebGLRenderer, scene: Scene, camera: Camer
   const bloom = new UnrealBloomPass(new Vector2(1, 1), 0.25, 0.45, 1.05);
   const output = new OutputPass();
   composer.addPass(renderPass);
+  const foreground = overlay ? new RenderPass(overlay.scene, overlay.camera) : null;
+  if (overlay && foreground) {
+    foreground.clear = false;
+    foreground.clearDepth = true;
+    composer.addPass(overlay.dimmer);
+    composer.addPass(foreground);
+  }
   composer.addPass(bloom);
   composer.addPass(output);
   return {
@@ -46,13 +59,17 @@ export function createBloom(renderer: WebGLRenderer, scene: Scene, camera: Camer
         }
       }
       bloom.strength = musicLight(pulse, reduced).bloomStrength;
-      if (!profile.bloom) renderer.render(scene, camera);
-      else composer.render(dt);
+      if (foreground) foreground.enabled = overlay!.visible;
+      if (!profile.bloom) {
+        renderer.render(scene, camera);
+        overlay?.renderDirect(renderer);
+      } else composer.render(dt);
     },
     dispose() {
       bloom.dispose();
       output.dispose();
       renderPass.dispose();
+      foreground?.dispose();
       composer.dispose();
     },
   };

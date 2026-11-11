@@ -4,6 +4,7 @@ import { createNeonLettering } from "./neon-lettering";
 import { createSceneMenu } from "./scene-menu";
 import { createVictoryFireworks } from "./victory-fireworks";
 import { disposeScene } from "./dispose-scene";
+import { createMenuOverlay, TITLE_BACKGROUND_GAIN } from "./menu-overlay";
 
 it("builds CITADEL as low-polygon solid bevelled geometry with the arena neon shader", () => {
   const text = createNeonLettering("CITADEL", 2.15),
@@ -23,13 +24,14 @@ it("builds CITADEL as low-polygon solid bevelled geometry with the arena neon sh
 
 it("projects accessible scene controls, bounds player count, and waits before offering rematch", () => {
   const root = new Group(),
-    menu = createSceneMenu(root),
-    camera = new PerspectiveCamera(44, 1280 / 900, 0.1, 180);
+    camera = new PerspectiveCamera(44, 1280 / 900, 0.1, 180),
+    menu = createSceneMenu(camera);
+  root.add(camera);
   camera.position.set(0, 14, 25);
   camera.lookAt(0, 3, 0);
   camera.updateMatrixWorld(true);
   const state = { mode: "title" as const, count: 2, elapsed: 0, reduced: false };
-  const controls = menu.update(state, camera, 1280, 900);
+  const controls = menu.update(state, 1280, 900);
   expect(controls.find((c) => c.action === "decrease")!.disabled).toBe(true);
   expect(controls.find((c) => c.action === "increase")!.disabled).toBe(false);
   expect(
@@ -39,14 +41,13 @@ it("projects accessible scene controls, bounds player count, and waits before of
     ),
   ).toBe(true);
   expect(
-    menu.update({ ...state, count: 6 }, camera, 1280, 900).find((c) => c.action === "increase")!
-      .disabled,
+    menu.update({ ...state, count: 6 }, 1280, 900).find((c) => c.action === "increase")!.disabled,
   ).toBe(true);
-  expect(menu.update({ ...state, mode: "victory", elapsed: 1 }, camera, 1280, 900)).toEqual([]);
+  expect(menu.update({ ...state, mode: "victory", elapsed: 1 }, 1280, 900)).toEqual([]);
   expect(
-    menu.update({ ...state, mode: "victory", elapsed: 4 }, camera, 1280, 900).map((c) => c.action),
+    menu.update({ ...state, mode: "victory", elapsed: 4 }, 1280, 900).map((c) => c.action),
   ).toEqual(["rematch", "options"]);
-  expect(menu.update({ ...state, mode: "hidden" }, camera, 1280, 900)).toEqual([]);
+  expect(menu.update({ ...state, mode: "hidden" }, 1280, 900)).toEqual([]);
   disposeScene(root);
 });
 
@@ -70,4 +71,51 @@ it("runs pooled neon fireworks after the rules end, freezes on pause, and suppre
   fireworks.update(0, false, false, 0xff5c46);
   expect(root.children.every((p) => !p.visible)).toBe(true);
   disposeScene(root);
+});
+
+it("keeps the same camera-relative title/control layout through every player count and camera pose", () => {
+  const camera = new PerspectiveCamera(44, 1280 / 900, 0.1, 200),
+    menu = createSceneMenu(camera);
+  const state = { mode: "title" as const, count: 2, elapsed: 0, reduced: false };
+  const original = menu.update(state, 1280, 900);
+  for (const count of [2, 3, 4, 5, 6]) {
+    camera.position.set(count * 3, 12 - count, -count * 2);
+    camera.lookAt(0, 0, 0);
+    const current = menu.update({ ...state, count }, 1280, 900);
+    for (const control of current) {
+      const previous = original.find((c) => c.action === control.action)!;
+      for (const key of ["left", "top", "width", "height"] as const)
+        expect(control[key]).toBeCloseTo(previous[key], 7);
+    }
+  }
+  for (const [width, height] of [
+    [360, 740],
+    [1920, 1080],
+  ]) {
+    for (const control of menu.update(state, width!, height!)) {
+      expect(control.left).toBeGreaterThanOrEqual(0);
+      expect(control.top).toBeGreaterThanOrEqual(0);
+      expect(control.left + control.width).toBeLessThanOrEqual(width!);
+      expect(control.top + control.height).toBeLessThanOrEqual(height!);
+    }
+  }
+  disposeScene(camera);
+});
+
+it("dims only the title's world background and restores normal exposure for play and victory", () => {
+  const overlay = createMenuOverlay(),
+    state = { mode: "title" as const, count: 4, elapsed: 0, reduced: false };
+  overlay.update(state, 0, 1280, 900);
+  expect(overlay.backgroundGain).toBe(TITLE_BACKGROUND_GAIN);
+  expect(TITLE_BACKGROUND_GAIN).toBeLessThan(0.3);
+  expect(overlay.dimmer.enabled).toBe(true);
+  expect(overlay.visible).toBe(true);
+  overlay.update({ ...state, mode: "hidden" }, 2, 1280, 900);
+  expect(overlay.backgroundGain).toBe(1);
+  expect(overlay.dimmer.enabled).toBe(false);
+  expect(overlay.visible).toBe(false);
+  overlay.update({ ...state, mode: "victory", reduced: true }, 0, 1280, 900);
+  expect(overlay.backgroundGain).toBe(1);
+  expect(overlay.visible).toBe(true);
+  overlay.dispose();
 });
