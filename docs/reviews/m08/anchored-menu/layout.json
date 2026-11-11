@@ -1,0 +1,152 @@
+{
+  "kind": "Native camera-relative button bounds; same pointer coordinates for every plus click; idle-camera check; Start capture check; no emulated clock",
+  "labels": ["Start", "Decrease players", "Increase players", "Settings"],
+  "layouts": [
+    {
+      "count": 2,
+      "buttons": [
+        {
+          "x": 505,
+          "y": 298,
+          "width": 271,
+          "height": 49
+        },
+        {
+          "x": 504,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 716,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 558,
+          "y": 357,
+          "width": 164,
+          "height": 29
+        }
+      ]
+    },
+    {
+      "count": 3,
+      "buttons": [
+        {
+          "x": 505,
+          "y": 298,
+          "width": 271,
+          "height": 49
+        },
+        {
+          "x": 504,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 716,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 558,
+          "y": 357,
+          "width": 164,
+          "height": 29
+        }
+      ]
+    },
+    {
+      "count": 4,
+      "buttons": [
+        {
+          "x": 505,
+          "y": 298,
+          "width": 271,
+          "height": 49
+        },
+        {
+          "x": 504,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 716,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 558,
+          "y": 357,
+          "width": 164,
+          "height": 29
+        }
+      ]
+    },
+    {
+      "count": 5,
+      "buttons": [
+        {
+          "x": 505,
+          "y": 298,
+          "width": 271,
+          "height": 49
+        },
+        {
+          "x": 504,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 716,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 558,
+          "y": 357,
+          "width": 164,
+          "height": 29
+        }
+      ]
+    },
+    {
+      "count": 6,
+      "buttons": [
+        {
+          "x": 505,
+          "y": 298,
+          "width": 271,
+          "height": 49
+        },
+        {
+          "x": 504,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 716,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 558,
+          "y": 357,
+          "width": 164,
+          "height": 29
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

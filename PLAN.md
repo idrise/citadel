@@ -345,6 +345,16 @@ When asked to **"do the next milestone"**:
 
 ### Current milestone work record — M07 / M08 scene presentation Awaiting review
 
+**Latest title amendment:** The user accepted the title geometry and requested a
+darker background and placement relative to the camera. `2318be7` separates the
+camera-mounted 3D foreground from arena framing, so changing 2–6-player layouts
+and background camera motion cannot move the controls. Title-only world dimming
+leaves the lettering bright and restores normal gameplay/victory brightness.
+Both composer and direct/reduced paths are covered. 280 unit tests and all 27
+production native browser checks pass; native clicks at the same pixel confirm
+identical control bounds across every count. Updated screenshots and layout data:
+`docs/SCENE_PRESENTATION_REVIEW.md`. Awaiting review; no push, deployment or `gh`.
+
 The user rejected the abrupt DOM landing/result panels and requested a procedural
 neon CITADEL title over the arena, +/− selection for 2–6 players, Start, and neon
 fireworks for a human victory. Their explicit follow-up retains advanced settings

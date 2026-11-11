@@ -23,7 +23,10 @@ pnpm dev
 ## Play locally
 
 Use the floating title's **− / +** buttons to choose 2–6 players, then **START**.
-The lettering and buttons are procedural 3D meshes. **Settings** opens the compact
+The lettering and buttons are procedural 3D meshes.
+The title's darker arena background stays separate from its camera-relative
+lettering/buttons, so changing the board size keeps controls in place. Normal
+brightness returns when play starts. **Settings** opens the compact
 Pause panel, offering Beginner/Standard/Expert
 bots and any human fortress. Two seats use a rectangle, then triangle, square,
 pentagon and hexagon. Eliminations gradually move walls and surviving fortresses

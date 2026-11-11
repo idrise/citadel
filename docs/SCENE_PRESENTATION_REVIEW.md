@@ -1,5 +1,38 @@
 # Scene title, victory and shot feedback
 
+## Camera-relative title amendment
+
+The owner approved the title geometry and requested a darker background and fixed
+placement when changing player count. `2318be7` moves the solid lettering/buttons
+into a separately lit, camera-mounted 3D foreground. Its perspective and responsive
+layout are independent of the arena camera's fit, rotation and polygon size. The
+same foreground camera projects the invisible accessible click targets.
+
+The title's world background uses 0.14 linear gain while the foreground retains
+its neon brightness. Starting play smoothly restores normal world gain; reduced
+effects uses the direct renderer with a black veil and immediate transitions.
+Gameplay and victory retain normal brightness. The foreground is composited after
+the world and does not appear in the arena's floor reflections.
+
+Current screenshots: [2 players](reviews/m08/anchored-menu/title-2.png),
+[4](reviews/m08/anchored-menu/title-4.png), [6](reviews/m08/anchored-menu/title-6.png),
+[reduced effects](reviews/m08/anchored-menu/title-reduced.png),
+[narrow window](reviews/m08/anchored-menu/title-narrow.png),
+[restored gameplay brightness](reviews/m08/anchored-menu/gameplay.png).
+
+[Native layout report](reviews/m08/anchored-menu/layout.json) records identical
+rectangles for every control at all five player counts, repeated plus clicks at
+the same pixel, idle camera movement and successful Start capture. At 1280×900,
+Start remains **x505, y298, 271×49 px**. No page errors. Unit checks also cover
+different camera poses, responsive bounds and brightness restoration.
+
+Current validation: **280 unit tests / 48 files**, **27 production native Chromium
+checks**, Vite+ check and `/citadel/` build pass. Initial JS is 919.17 kB / 253.66 kB
+gzip; the existing large-chunk warning remains. No physics, sound, pacing or input
+rules changed. Local commits only; no push or deployment. Current title screenshots
+supersede the earlier world-anchored title placement below. The earlier winning
+movie remains evidence of the preceding victory/music flow. Review remains pending.
+
 11 November 2026 · **Awaiting review — M07 / M08**. This supersedes the previous
 DOM landing/result presentation. The user explicitly chose to keep advanced
 settings in Pause. M06 pacing and M09/mobile remain unstarted.
