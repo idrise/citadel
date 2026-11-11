@@ -53,6 +53,8 @@ export interface GameEvent {
   seat: number;
   piece: number | null;
   ballId?: number;
+  /** Optional read-only observer credit; never determines damage or revenge serves. */
+  attackerSeat?: number | null;
   radius?: number;
   returnTo?: Vec2;
   impact?: ImpactDetails;

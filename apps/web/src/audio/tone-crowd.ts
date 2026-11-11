@@ -74,13 +74,13 @@ export function createCrowd(context: Tone.BaseContext, output: Tone.InputNode) {
           note = notes[i % notes.length]! + (i >= 4 ? 12 : 0),
           pitch = hz(note);
         synth.triggerAttackRelease(
-          pitch * 0.86,
+          pitch * 0.98,
           cue.duration,
           at,
           cue.velocity * (0.75 + (i % 3) * 0.08),
         );
-        synth.frequency.exponentialRampToValueAtTime(pitch, at + 0.22);
-        synth.frequency.exponentialRampToValueAtTime(pitch * 0.97, at + cue.duration);
+        synth.frequency.exponentialRampToValueAtTime(pitch * 1.12, at + 0.22);
+        synth.frequency.exponentialRampToValueAtTime(pitch * 1.2, at + cue.duration);
         vowel.forEach(({ filter }, index) => {
           const formant = FORMANTS[index]!,
             variation = 1 + (i - 2.5) * 0.025;

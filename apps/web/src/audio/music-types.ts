@@ -26,7 +26,12 @@ export type Voice =
   | "cheer"
   | "tic"
   | "answer"
-  | "unlock";
+  | "unlock"
+  | "success"
+  | "serve"
+  | "ricochet"
+  | "eliminate"
+  | "victory";
 export interface MusicCue {
   voice: Voice;
   note: number;

@@ -42,6 +42,23 @@ export function createMusicDirector(humanSeat: number, seed: number) {
       for (const event of events) {
         if (event.id <= lastEvent) continue;
         lastEvent = event.id;
+        if (event.type === "wall") {
+          cues.push(cue("ricochet", 74, 0.1, 0.045));
+          continue;
+        }
+        if (event.type === "launch")
+          cues.push(cue("serve", 69, event.seat === humanSeat ? 0.38 : 0.12, 0.1));
+        if (event.type === "victory" && event.seat === humanSeat)
+          cues.push(cue("victory", 86, 0.8, 1.2));
+        if (event.type === "elimination")
+          cues.push(
+            cue(
+              "eliminate",
+              event.seat === humanSeat ? 38 : 81,
+              event.seat === humanSeat ? 0.5 : 0.22,
+              0.35,
+            ),
+          );
         if (event.type === "arrival") cues.push(cue("unlock", 74, 0.55, 0.35));
         const part = parts[event.seat];
         if (!part) continue;
@@ -59,8 +76,11 @@ export function createMusicDirector(humanSeat: number, seed: number) {
         } else if (event.type === "damage") {
           part.streak = 0;
           part.phrase = [];
-          cues.push(cue("damage", 38, event.seat === humanSeat ? 0.75 : 0.35, 0.3));
-          cues.push(cue("cheer", 50, 0.68, 1.15));
+          if (event.seat === humanSeat) cues.push(cue("damage", 38, 0.75, 0.3));
+          else if (event.attackerSeat === humanSeat) {
+            cues.push(cue("success", 81, 0.8, 0.55));
+            cues.push(cue("cheer", 74, 0.78, 0.9));
+          } else cues.push(cue("ricochet", 69, 0.2, 0.08));
         }
       }
       return cues;

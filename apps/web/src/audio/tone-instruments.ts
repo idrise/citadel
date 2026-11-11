@@ -3,6 +3,7 @@ import type { MusicCue } from "./music-types";
 import { createMelodic } from "./tone-melodic";
 import { createCrowd } from "./tone-crowd";
 import { createReactiveVoices } from "./tone-reactive";
+import { createFeedback } from "./tone-feedback";
 import { createDrums } from "./tone-drums";
 
 /** Separate live and arranged buses: a build's breath never makes a player hit unresponsive. */
@@ -18,6 +19,7 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
   const arranged = new Tone.Gain({ context, gain: 1 }).connect(duck);
   const melodic = createMelodic(context, arranged, compressor);
   const drums = createDrums(context, arranged, compressor);
+  const feedback = createFeedback(context, compressor);
   const crowd = createCrowd(context, compressor);
   const reactive = createReactiveVoices(context, arranged, compressor);
   return {
@@ -35,7 +37,8 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
             duck.gain.setValueAtTime(0.65, at);
             duck.gain.linearRampToValueAtTime(1, at + 1.1);
             crowd.play(cue, at);
-          } else if (!reactive.play(cue, at) && !drums.play(cue, at)) melodic.play(cue, at);
+          } else if (!feedback.play(cue, at) && !reactive.play(cue, at) && !drums.play(cue, at))
+            melodic.play(cue, at);
         }
       }
     },
@@ -44,6 +47,7 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
       arranged.gain.setTargetAtTime(0, time, 0.025);
     },
     dispose() {
+      feedback.dispose();
       crowd.dispose();
       reactive.dispose();
       melodic.dispose();

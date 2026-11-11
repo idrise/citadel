@@ -27,6 +27,7 @@ function inHarmony(note: number, step: number) {
 export function createEventConductor() {
   let lastCrowd = -Infinity,
     lastTic = -Infinity;
+  const lastGesture = new Map<string, number>();
   return {
     plan(cues: readonly MusicCue[], now: number, anchor: GridAnchor): TimedCue[] {
       const result: TimedCue[] = [];
@@ -34,13 +35,41 @@ export function createEventConductor() {
         const grid = nextGrid(
           now + 0.005,
           anchor,
-          source.voice === "cheer" || source.voice === "unlock" ? 2 : 0.5,
+          ["cheer", "unlock", "success", "victory"].includes(source.voice) ? 2 : 0.5,
         );
+        const spacing =
+          source.voice === "ricochet"
+            ? 2
+            : source.voice === "serve"
+              ? 1
+              : source.voice === "success"
+                ? 2
+                : 0;
+        if (
+          spacing &&
+          grid.time - (lastGesture.get(source.voice) ?? -Infinity) < SIXTEENTH * spacing - 1e-7
+        )
+          continue;
+        if (spacing) lastGesture.set(source.voice, grid.time);
         const chord = HARMONY[((Math.floor(grid.step / 16) % 4) + 4) % 4]!;
         if (source.voice === "cheer") {
           if (grid.time - lastCrowd < SIXTEENTH * 8) continue;
           lastCrowd = grid.time;
-          result.push({ cue: { ...source, note: chord.bass + 12, notes: chord.pad }, ...grid });
+          result.push({
+            cue: { ...source, note: chord.bass + 36, notes: chord.pad.map((note) => note + 12) },
+            ...grid,
+          });
+        } else if (source.voice === "success" || source.voice === "victory") {
+          result.push({
+            cue: {
+              ...source,
+              notes:
+                source.voice === "victory"
+                  ? [chord.scale[0] + 12, chord.scale[3] + 12, chord.scale[5] + 12]
+                  : [chord.scale[3], chord.scale[5], chord.scale[6]],
+            },
+            ...grid,
+          });
         } else if (source.voice === "unlock") {
           result.push({
             cue: {
@@ -84,6 +113,7 @@ export function createEventConductor() {
       return result.sort((a, b) => a.time - b.time).slice(0, 32);
     },
     reset() {
+      lastGesture.clear();
       lastCrowd = -Infinity;
       lastTic = -Infinity;
     },

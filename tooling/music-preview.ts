@@ -14,7 +14,7 @@ export async function renderMusicPreview(
     hits?: boolean;
     balls?: number;
     startStep?: number;
-    demo?: "layers" | "cheer";
+    demo?: "layers" | "cheer" | "success" | "loss";
   } = {},
 ) {
   const duration = options.duration ?? 74;
@@ -59,14 +59,15 @@ export async function renderMusicPreview(
             position: { x: 0, y: 0 },
           });
         if (
-          (options.demo === "cheer" && step === 8) ||
+          (["cheer", "success", "loss"].includes(options.demo ?? "") && step === 8) ||
           (options.hits !== false && [144, 304].includes(step))
         )
           events.push({
             id: eventId++,
             tick: step,
             type: "damage",
-            seat: 0,
+            seat: options.demo === "loss" ? 0 : 1,
+            attackerSeat: options.demo === "loss" ? 1 : 0,
             piece: 0,
             position: { x: 0, y: 0 },
           });

@@ -41,3 +41,25 @@ it("places breach cheers and arrivals on eighths and coalesces rapid crowd burst
   c.reset();
   expect(c.plan([cheer], 0.02, anchor)).toHaveLength(1);
 });
+
+it("keeps success gestures strictly rising in each harmony and bounds dense ricochet feedback", () => {
+  for (let bar = 0; bar < 4; bar++) {
+    const cue: MusicCue = { voice: "success", note: 81, velocity: 0.8, duration: 0.55 };
+    const result = createEventConductor().plan([cue], bar * 16 * SIXTEENTH + 0.01, {
+      time: 0,
+      step: 0,
+    })[0]!;
+    expect(result.step % 2).toBe(0);
+    expect(result.cue.notes![1]).toBeGreaterThan(result.cue.notes![0]!);
+    expect(result.cue.notes![2]).toBeGreaterThan(result.cue.notes![1]!);
+  }
+  const cues: MusicCue[] = Array.from({ length: 100 }, () => ({
+    voice: "ricochet",
+    note: 74,
+    velocity: 0.1,
+    duration: 0.04,
+  }));
+  const conductor = createEventConductor();
+  expect(conductor.plan(cues, 0.01, { time: 0, step: 0 })).toHaveLength(1);
+  expect(conductor.plan(cues, 0.02, { time: 0, step: 0 })).toHaveLength(0);
+});
