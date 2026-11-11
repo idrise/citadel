@@ -15,6 +15,7 @@ import { createCameraMotion } from "./camera-motion";
 import { createBloom } from "./bloom";
 import { createNeonEnvironment } from "./neon-environment";
 import { lightArena } from "./lighting";
+import { createWorldGrid } from "./world-grid";
 
 /** Owns camera, projection and graphics resources. Gameplay stays in the simulation. */
 export function createViewport(container: HTMLElement, humanSeat = 0) {
@@ -32,7 +33,7 @@ export function createViewport(container: HTMLElement, humanSeat = 0) {
   const scene = new Scene();
   scene.background = new Color(0x080f1c);
   const arena = createArenaView(humanSeat);
-  scene.add(arena.root);
+  scene.add(arena.root, createWorldGrid());
   const disposeLighting = lightArena(scene);
   const disposeEnvironment = createNeonEnvironment(renderer, scene);
   const camera = createArenaCamera(humanSeat);
