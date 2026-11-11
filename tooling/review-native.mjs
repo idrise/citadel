@@ -74,7 +74,10 @@ try {
     status,
     errors,
   };
-  await writeFile(process.argv[2] ?? "/tmp/citadel-native.json", JSON.stringify(report, null, 2));
+  await writeFile(
+    process.argv[2] ?? "/tmp/citadel-native.json",
+    JSON.stringify(report, null, 2) + "\n",
+  );
   console.log(JSON.stringify(report));
 } finally {
   await browser.close();

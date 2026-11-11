@@ -67,7 +67,7 @@ export function createBallView(root: Group) {
   trailMaterial.dispose();
   let lastTick = -1;
   return {
-    update(state: MatchState, reduced: boolean) {
+    update(state: MatchState, reduced: boolean, trailLimit = 20) {
       balls.forEach((view, index) => {
         const active = state.balls[index];
         const strength = spinStrength(active?.spin ?? 0);
@@ -99,9 +99,11 @@ export function createBallView(root: Group) {
           }
         }
         view.trail.forEach((particle, part) => {
-          const count = strength > 0.025 ? 20 : 8;
+          const count = Math.min(trailLimit, strength > 0.025 ? 20 : 8);
           particle.visible = !reduced && part < count && Boolean(view.positions[part]);
-          particle.scale.setScalar((1 - part / count) * (0.5 + strength * 0.15));
+          particle.scale.setScalar(
+            Math.max(0, 1 - part / Math.max(1, count)) * (0.5 + strength * 0.15),
+          );
           if (view.positions[part]) particle.position.copy(view.positions[part]);
         });
       });

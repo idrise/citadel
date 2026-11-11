@@ -7,6 +7,7 @@ export const edgeVertexShader = `
   attribute vec3 edgeEnd;
   varying vec2 strokePosition;
   varying float strokeLength;
+  varying float strokeW;
   void main() {
     vec4 start = projectionMatrix * modelViewMatrix * vec4(edgeStart, 1.0);
     vec4 end = projectionMatrix * modelViewMatrix * vec4(edgeEnd, 1.0);
@@ -23,7 +24,11 @@ export const edgeVertexShader = `
     clip.z -= 0.000002 * clip.w;
     gl_Position = clip;
     strokePosition = vec2(mix(-halfWidth, lengthPixels + halfWidth, endpoint), position.y * halfWidth);
-    strokeLength = lengthPixels;
+    // Multiplying by w and dividing in the fragment shader cancels perspective
+    // interpolation, keeping the signed distance truly linear in screen pixels.
+    strokePosition *= clip.w;
+    strokeLength = lengthPixels * clip.w;
+    strokeW = clip.w;
   }
 `;
 
@@ -35,10 +40,14 @@ export const edgeFragmentShader = `
   uniform float pixelRatio;
   varying vec2 strokePosition;
   varying float strokeLength;
+  varying float strokeW;
   void main() {
-    float distanceToLine = length(vec2(strokePosition.x - clamp(strokePosition.x, 0.0, strokeLength), strokePosition.y));
+    vec2 p = strokePosition / strokeW;
+    float lineLength = strokeLength / strokeW;
+    float distanceToLine = length(vec2(p.x - clamp(p.x, 0.0, lineLength), p.y));
     float halfWidth = strokeWidth * pixelRatio * 0.5;
-    float coverage = 1.0 - smoothstep(halfWidth - 0.75, halfWidth + 0.75, distanceToLine);
+    float feather = max(fwidth(distanceToLine), 0.65);
+    float coverage = 1.0 - smoothstep(halfWidth - feather, halfWidth + feather, distanceToLine);
     if (coverage < 0.01) discard;
     float core = 1.0 - smoothstep(0.0, halfWidth, distanceToLine);
     gl_FragColor = vec4(neonColour * (0.7 + core * 0.6), opacity * coverage);

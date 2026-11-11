@@ -10,6 +10,22 @@ export function Experiments({
 }) {
   return (
     <div className="experiment-options">
+      <label>
+        Effects quality{" "}
+        <select
+          aria-label="Effects quality"
+          value={value.effectsQuality}
+          onChange={(event) =>
+            onChange({ ...value, effectsQuality: event.target.value as Settings["effectsQuality"] })
+          }
+        >
+          {["low", "medium", "high"].map((quality) => (
+            <option key={quality} value={quality}>
+              {quality[0]!.toUpperCase() + quality.slice(1)}
+            </option>
+          ))}
+        </select>
+      </label>
       <ControlSettings value={value} onChange={onChange} />
       <label>
         Add a ball every{" "}

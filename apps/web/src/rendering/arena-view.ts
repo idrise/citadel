@@ -8,6 +8,7 @@ import { createArenaReflections } from "./arena-reflections";
 import { createStage } from "./stage";
 import { arcMesh } from "./arc";
 import { SEATS } from "./palette";
+import { effectsProfile, type EffectsQuality } from "./quality";
 import { createAimGuide } from "./aim-guide";
 
 export interface ViewOptions {
@@ -15,6 +16,7 @@ export interface ViewOptions {
   slowdown: boolean;
   reducedEffects: boolean;
   humanSeat: number;
+  quality?: EffectsQuality;
   musicPulse?: number;
   musicWave?: number;
 }
@@ -33,7 +35,8 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
     update(state: MatchState, dt: number, options: ViewOptions) {
       (stage.base.userData.update as (arena: ArenaGeometry) => void)(state.arena);
       reflection.update(state.arena);
-      reflection.setReduced(options.reducedEffects);
+      const profile = effectsProfile(options.quality, options.reducedEffects);
+      reflection.setReduced(!profile.reflections);
       state.players.forEach((player) => {
         const home = fortress(player.id, state.arena);
         const rail = stage.rails[player.id]!;
@@ -82,11 +85,11 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
       geometry = state.arena;
       for (const event of state.events) {
         if (event.id <= lastEvent) continue;
-        effects.emit(event, options.reducedEffects);
+        effects.emit(event, options.reducedEffects, profile.shards, profile.sparks, state);
         lastEvent = event.id;
       }
-      effects.update(dt, options.reducedEffects, state);
-      balls.update(state, options.reducedEffects);
+      effects.update(dt, options.reducedEffects, state, profile.shards, profile.sparks);
+      balls.update(state, options.reducedEffects, profile.trails);
       guide.hide();
       const defender = state.players[options.humanSeat];
       if (!defender || !alive(defender)) return;

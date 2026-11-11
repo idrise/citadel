@@ -49,7 +49,7 @@ export function createFractureBursts(root: Group) {
     return { group, material, ring, ringMaterial, shards, age: LIFE, size: 1 };
   });
   return {
-    emit(event: GameEvent, reduced: boolean) {
+    emit(event: GameEvent, reduced: boolean, parts = PARTS) {
       if (event.type !== "damage") return;
       const burst =
         bursts.find((item) => item.age >= LIFE) ?? bursts.reduce((a, b) => (a.age > b.age ? a : b));
@@ -78,10 +78,10 @@ export function createFractureBursts(root: Group) {
         );
         shard.turn = angle;
         shard.mesh.position.copy(shard.birth);
-        shard.mesh.visible = index < (reduced ? 3 : PARTS);
+        shard.mesh.visible = index < (reduced ? 3 : Math.min(parts, PARTS));
       });
     },
-    update(dt: number, reduced: boolean) {
+    update(dt: number, reduced: boolean, parts = PARTS) {
       for (const burst of bursts) {
         if (burst.age >= LIFE) continue;
         burst.age += Math.max(0, dt);
@@ -93,7 +93,7 @@ export function createFractureBursts(root: Group) {
         burst.ring.scale.setScalar(burst.size * (1 + t * 2.2));
         burst.ringMaterial.opacity = 0.75 * (1 - t) * (1 - t);
         burst.shards.forEach((shard, index) => {
-          shard.mesh.visible = index < (reduced ? 3 : PARTS);
+          shard.mesh.visible = index < (reduced ? 3 : Math.min(parts, PARTS));
           shard.mesh.position.copy(shard.birth).addScaledVector(shard.velocity, burst.age);
           shard.mesh.position.y -= 3 * burst.age * burst.age;
           shard.mesh.rotation.set(shard.turn + burst.age * 5, shard.turn, burst.age * 3);

@@ -19,6 +19,7 @@ import { createBloom } from "./bloom";
 import { createNeonEnvironment } from "./neon-environment";
 import { lightArena } from "./lighting";
 import { createWorldGrid } from "./world-grid";
+import { effectsProfile } from "./quality";
 import { musicLight } from "./music-light";
 
 /** Owns camera, projection and graphics resources. Gameplay stays in the simulation. */
@@ -79,6 +80,16 @@ export function createViewport(
       );
     },
     render(state: MatchState, dt: number, options: ViewOptions) {
+      const pixelRatio = effectsProfile(
+        options.quality,
+        options.reducedEffects,
+        window.devicePixelRatio,
+        renderer.capabilities.maxSamples,
+      ).pixelRatio;
+      if (renderer.getPixelRatio() !== pixelRatio) {
+        renderer.setPixelRatio(pixelRatio);
+        bloom.resize(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1));
+      }
       for (const light of scene.children)
         if (light instanceof PointLight) {
           const seat = fortress(light.userData.seat as number, state.arena);
@@ -111,7 +122,7 @@ export function createViewport(
       worldGrid.material.uniforms.musicWave!.value = options.reducedEffects
         ? -1
         : (options.musicWave ?? -1);
-      bloom.render(dt, options.reducedEffects, pulse);
+      bloom.render(dt, options.reducedEffects, pulse, options.quality);
     },
     dispose() {
       observer.disconnect();

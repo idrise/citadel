@@ -101,6 +101,16 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
         fail();
       }
     },
+    silence() {
+      // Explicit pause/focus loss cancels the tail retained for automatic results.
+      wanted = false;
+      endingUntil = 0;
+      try {
+        sync();
+      } catch {
+        fail();
+      }
+    },
     observe(frame: MusicFrame, events: readonly GameEvent[]) {
       if (disposed) return;
       const cues = director.observe(frame, events);

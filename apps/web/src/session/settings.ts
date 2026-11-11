@@ -1,6 +1,7 @@
 import { DEFAULT_OPTIONS, type BotDifficulty, type MatchOptions } from "../simulation/types";
 
 export interface GameSettings {
+  effectsQuality: "low" | "medium" | "high";
   botDifficulty: BotDifficulty;
   preview: boolean;
   slowdown: boolean;
@@ -31,6 +32,7 @@ export function withAssistance(settings: GameSettings, id: AssistanceMode): Game
 }
 export function createSettings(reducedEffects = false): GameSettings {
   return {
+    effectsQuality: "high",
     botDifficulty: "standard",
     preview: true,
     slowdown: false,

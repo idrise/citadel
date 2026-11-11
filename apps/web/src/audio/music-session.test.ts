@@ -148,3 +148,19 @@ it("can mute the final crowd tail immediately", async () => {
   expect(engine.setPlaying).toHaveBeenLastCalledWith(false, 0.45);
   music.dispose();
 });
+
+it("cuts the final crowd tail on explicit pause or focus loss", async () => {
+  const { music, engine } = fixture();
+  music.unlock();
+  music.setPlaying(true);
+  await flush();
+  music.observe(frame, [{ ...hit, type: "victory" }]);
+  music.setPlaying(false);
+  expect(music.snapshot().status).toBe("ending");
+  music.silence();
+  expect(music.snapshot().status).toBe("paused");
+  expect(engine.setPlaying).toHaveBeenLastCalledWith(false, 0.45);
+  music.setPlaying(false);
+  expect(music.snapshot().status).toBe("paused");
+  music.dispose();
+});

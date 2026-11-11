@@ -47,6 +47,11 @@ try {
     { name: "club-preview", options: { duration: 74, hits: true } },
     { name: "no-hit-preview", options: { duration: 34, hits: false } },
     { name: "cheer", options: { duration: 4.5, demo: "cheer", voices: ["cheer"], hits: false } },
+    {
+      name: "success",
+      options: { duration: 4.5, demo: "success", voices: ["success", "cheer"], hits: false },
+    },
+    { name: "loss", options: { duration: 3, demo: "loss", voices: ["damage"], hits: false } },
     { name: "layers", options: { duration: (256 * 60) / 136 / 4, demo: "layers", hits: false } },
   ];
   for (const { name, options } of cases) {
@@ -71,6 +76,9 @@ try {
     stems["club-preview"].peak >= 0.98 ||
     stems.cheer.rms < 0.004 ||
     stems.cheer.peak >= 0.98 ||
+    stems.success.rms < 0.004 ||
+    stems.success.peak >= 0.98 ||
+    stems.loss.rms < 0.0001 ||
     stems["no-hit-preview"].rms < 0.01
   )
     throw Error(
