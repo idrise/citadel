@@ -45,8 +45,8 @@ export function ControlSettings({
         </select>
       </label>
       <p className="settings-hint">
-        Preview suggests a short return with your bat held still. Slowdown gives every defender more
-        time.
+        Dotted paths assume your bat stays still; moving defenders can change them. Slowdown gives
+        every defender more time.
       </p>
     </>
   );

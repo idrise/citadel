@@ -11,9 +11,13 @@ interface Impact extends Contact {
   piece: number;
   offset: number;
 }
+export interface BallImpact extends Impact {
+  position: Vec2;
+}
+
 const rank = { paddle: 0, piece: 1, wall: 2 };
 
-/** Earliest impact first, with stable ties. Preview queries may stop after the first impact; gameplay resolves the full tick. */
+/** Gameplay resolves a full tick with stable ties. Queries stop at the first impact, without damage/serve side effects. */
 export function advanceBall(
   state: MatchState,
   ball: BallState,
@@ -22,7 +26,7 @@ export function advanceBall(
   options: MatchOptions,
   previousPieces: Vec2[][],
   stopAtFirstImpact = false,
-): void {
+): BallImpact | undefined {
   let remaining = dt;
   let elapsed = 0;
   let impacts = 0;
@@ -80,7 +84,9 @@ export function advanceBall(
     remaining -= travel;
     if (!hit) return;
     impacts++;
+    const report = stopAtFirstImpact ? { ...hit, position: { ...ball.position } } : undefined;
     if (hit.type === "piece") {
+      if (stopAtFirstImpact) return report;
       damagePiece(state, ball, hit.seat, hit.piece);
       return;
     }
@@ -95,7 +101,7 @@ export function advanceBall(
       emit(state, "wall", ball.position, -1);
     }
     ball.position = add(ball.position, scale(hit.normal, (hit.separation ?? 0) + 0.0001));
-    if (stopAtFirstImpact) return;
+    if (stopAtFirstImpact) return report;
   }
   if (remaining > 1e-7 && ball.phase === "active" && state.phase === "playing")
     state.stats.collisionCaps++;

@@ -1,16 +1,20 @@
-import { FIXED_DT } from "./arena";
+import { FIXED_DT, fortress } from "./arena";
 import { advanceBall } from "./ball";
 import { sweepCircle, sweepPaddle, sweepWalls, type Contact } from "./collision";
 import { alive, DEFAULT_OPTIONS, type BallState, type MatchState } from "./types";
 import { ARENA } from "./arena";
-import { add, dot, normalise, scale, sub, type Vec2 } from "./vector";
+import { add, dot, length, normalise, scale, sub, type Vec2 } from "./vector";
 
 export const PREVIEW_HORIZON = 0.45;
+export const PREVIEW_ACTIVATION_RADIUS = ARENA.railRadius + 4;
+export const OUTGOING_HORIZON = 0.9;
 export interface ReturnPreview {
   ballId: number;
   time: number;
   contact: Vec2;
   outgoing: Vec2;
+  points: Vec2[];
+  impacts: Vec2[];
 }
 
 /** Conditional on all bats/pieces staying at their current poses. Nothing writes into the live match. */
@@ -24,9 +28,13 @@ export function predictReturn(
   const angles = state.players.map((player) => player.angle);
   const pieces = state.players.map((player) => player.pieces.map((body) => body.position));
   const options = { ...DEFAULT_OPTIONS, humanSeat: seat, slowdown };
-  const candidates: ReturnPreview[] = [];
+  let selected: { preview: ReturnPreview; trial: MatchState; ball: BallState } | null = null;
   for (const source of state.balls) {
-    if (source.phase !== "active") continue;
+    if (
+      source.phase !== "active" ||
+      length(sub(source.position, fortress(seat).anchor)) > PREVIEW_ACTIVATION_RADIUS
+    )
+      continue;
     const ball: BallState = {
       ...source,
       position: { ...source.position },
@@ -39,21 +47,43 @@ export function predictReturn(
       stats: { ...state.stats },
       players: state.players.map((player) => ({ ...player, health: [...player.health] })),
     };
+    const points: Vec2[] = [{ ...ball.position }];
     for (let step = 0; step < Math.floor(PREVIEW_HORIZON / FIXED_DT); step++) {
-      advanceBall(trial, ball, angles, FIXED_DT, options, pieces, true);
-      const event = trial.events[0];
-      if (!event) continue;
-      if (event.type === "paddle" && event.seat === seat)
-        candidates.push({
+      const hit = advanceBall(trial, ball, angles, FIXED_DT, options, pieces, true);
+      points.push(hit?.position ?? { ...ball.position });
+      if (!hit) continue;
+      if (hit.type === "paddle" && hit.seat === seat) {
+        const preview: ReturnPreview = {
           ballId: ball.id,
-          time: (step + 1) * FIXED_DT,
-          contact: event.position,
+          time: step * FIXED_DT + hit.time,
+          contact: hit.position,
           outgoing: normalise(ball.velocity),
-        });
+          points,
+          impacts: [hit.position],
+        };
+        if (
+          !selected ||
+          preview.time < selected.preview.time ||
+          (preview.time === selected.preview.time && ball.id < selected.ball.id)
+        )
+          selected = { preview, trial, ball };
+      }
       break;
     }
   }
-  return candidates.sort((a, b) => a.time - b.time || a.ballId - b.ballId)[0] ?? null;
+  if (!selected) return null;
+  const { preview, trial, ball } = selected;
+  let walls = 0;
+  for (let step = 0; step < Math.floor(OUTGOING_HORIZON / FIXED_DT); step++) {
+    trial.events = [];
+    const hit = advanceBall(trial, ball, angles, FIXED_DT, options, pieces, true);
+    preview.points.push(hit?.position ?? { ...ball.position });
+    if (!hit) continue;
+    preview.impacts.push(hit.position);
+    // Show one bank, then end at the next collision. Frozen actors are conditional, not a promise.
+    if (hit.type !== "wall" || ++walls > 1) break;
+  }
+  return preview;
 }
 
 interface GuideContact extends Contact {

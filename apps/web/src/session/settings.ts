@@ -27,7 +27,7 @@ export function withAssistance(settings: GameSettings, id: AssistanceMode): Game
 }
 export function createSettings(reducedEffects = false): GameSettings {
   return {
-    preview: false,
+    preview: true,
     slowdown: false,
     reducedEffects,
     mouseSensitivity: 1,

@@ -1,4 +1,12 @@
-import { BoxGeometry, Group, Line, LineBasicMaterial, Mesh, MeshBasicMaterial } from "three";
+import {
+  BoxGeometry,
+  Group,
+  InstancedMesh,
+  Line,
+  LineBasicMaterial,
+  Mesh,
+  MeshBasicMaterial,
+} from "three";
 import { expect, it, vi } from "vite-plus/test";
 import { disposeScene } from "./dispose-scene";
 
@@ -29,4 +37,11 @@ it("also releases geometry and materials owned by trajectory preview lines", () 
   disposeScene(new Line(geometry, material));
   expect(geometryDisposal).toHaveBeenCalledTimes(1);
   expect(materialDisposal).toHaveBeenCalledTimes(1);
+});
+
+it("releases instance buffers used by the dotted trajectory display", () => {
+  const dots = new InstancedMesh(new BoxGeometry(), new MeshBasicMaterial(), 16);
+  const dispose = vi.spyOn(dots, "dispose");
+  disposeScene(dots);
+  expect(dispose).toHaveBeenCalledOnce();
 });

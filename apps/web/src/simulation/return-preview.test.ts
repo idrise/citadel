@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { ARENA, FIXED_DT, batCentre, fortress } from "./arena";
+import { ARENA, FIXED_DT, batCentre, clampPaddleAngle, fortress } from "./arena";
 import { advanceBall } from "./ball";
 import { paddleReturn } from "./collision";
 import { createMatch } from "./match";
@@ -100,3 +100,54 @@ it("stops outgoing guides at intact pieces, lets gaps through, and allows only o
   expect(bank[1]!.x).toBeCloseTo(9 - ARENA.ballRadius);
   expect(bank[2]!.x).toBeLessThan(bank[1]!.x);
 });
+
+it("draws from the approaching ball through its frozen-bat bounce to the next physical target", () => {
+  const { state, normal, contact } = returnFixture();
+  const piece = state.players[1]!.pieces[0]!;
+  piece.position = add(contact, scale(normal, 3));
+  const original = structuredClone(state);
+  const preview = predictReturn(state, 0, false)!;
+  expect(preview.points[0]).toEqual(state.balls[0]!.position);
+  expect(preview.points.some((point) => length(sub(point, contact)) < 1e-7)).toBe(true);
+  expect(preview.impacts).toHaveLength(2);
+  const end = preview.points.at(-1)!;
+  expect(length(sub(end, piece.position))).toBeCloseTo(piece.radius + ARENA.ballRadius, 7);
+  expect(state).toEqual(original);
+  expect(predictReturn(returnFixture(0, 0, 5).state, 0, false)).toBeNull();
+});
+
+it.each([-1, 1])(
+  "samples a real paddle bounce, a wall bank and its continuation on side %s",
+  (side) => {
+    const state = createMatch();
+    state.phase = "playing";
+    const angle = clampPaddleAngle(0, fortress(0).direction + side * 2),
+      offset = side * 0.6;
+    state.players[0]!.angle = angle;
+    const normal = unit(angle + offset * ARENA.batHalfAngle);
+    const point = add(
+      batCentre(0, angle),
+      scale(normal, ARENA.batRadius + ARENA.paddleThickness / 2 + ARENA.ballRadius),
+    );
+    state.balls = [
+      {
+        ...state.balls[0]!,
+        phase: "active",
+        position: add(point, scale(normal, 1.5)),
+        velocity: scale(normal, -24),
+      },
+    ];
+    const preview = predictReturn(state, 0, false)!;
+    expect(preview).not.toBeNull();
+    expect(
+      preview.impacts.some(
+        (hit) =>
+          Math.abs(
+            Math.max(Math.abs(hit.x), Math.abs(hit.y)) - (ARENA.halfSize - ARENA.ballRadius),
+          ) < 1e-7,
+      ),
+    ).toBe(true);
+    expect(preview.points.length).toBeGreaterThan(10);
+    expect(length(sub(preview.points.at(-1)!, preview.contact))).toBeGreaterThan(2);
+  },
+);

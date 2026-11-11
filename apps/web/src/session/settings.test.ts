@@ -23,7 +23,7 @@ it("compares all four aid modes without changing control or pacing choices", () 
     expect(next.ballInterval).toBe(10);
     expect(next.maxBalls).toBe(6);
   }
-  expect(settings.preview).toBe(false);
+  expect(settings.preview).toBe(true);
 });
 
 it("keeps informational preview and mouse sensitivity outside authoritative simulation options", () => {
