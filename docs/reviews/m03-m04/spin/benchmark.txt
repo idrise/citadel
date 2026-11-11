@@ -1,0 +1,5 @@
+1 finished 58.074999999997345 { paddleHits: 60, damage: 31, collisionCaps: 0 } [ 1, 0, 0, 0 ]
+21 finished 64.25833333333054 { paddleHits: 76, damage: 31, collisionCaps: 0 } [ 0, 1, 0, 0 ]
+2026 finished 49.883333333331144 { paddleHits: 61, damage: 31, collisionCaps: 0 } [ 1, 0, 0, 0 ]
+100 finished 60.98333333333051 { paddleHits: 66, damage: 31, collisionCaps: 0 } [ 0, 1, 0, 0 ]
+300 finished 62.30833333333044 { paddleHits: 72, damage: 31, collisionCaps: 0 } [ 0, 0, 0, 1 ]

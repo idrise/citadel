@@ -42,8 +42,10 @@ and end markers. Moving actors can change that forecast. Pressure slowdown
 remains optional and off. It only helps with later arrivals when two separated
 shots demand a fast move; ordinary shots and bat input stay at normal speed.
 The same rule applies to humans and bots.
-Brush the bat sideways into an incoming ball for a gentle, fading curve. It does
-not add speed; holding the bat still retains the established contact-position aim.
+Brush the bat sideways into an incoming ball for a visible, fading curve. A short
+100ms tolerance lets a quick flick count just before contact. Rotating cyan/pink
+arrow bands show opposite spin directions, with a longer trail tracing the bend.
+Spin does not add speed; holding the bat still retains the established contact-position aim.
 The dotted forecast follows curved incoming flight and assumes a stationary bat.
 The new ball size/speed and bank-shot reach reflect the initial hands-on feedback.
 The live perspective camera sits behind your selected fortress at about 38° over

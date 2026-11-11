@@ -3,13 +3,17 @@
 Status: **Awaiting review**, 11 November 2026. The user explicitly requested the
 relevant parts of both milestones together, with the existing feel preserved.
 A small swipe curve and destruction effects were pulled forward from M06/M07;
-M05 and the full pacing/audio/polish gates remain unstarted.
+M05 and the full pacing/audio/polish gates remain unstarted. The user could not
+reliably notice or trigger the initial curve, so this revision strengthens it,
+adds a short swipe tolerance and makes actual spin visible on the ball.
 
 ## Try it
 
 Run `pnpm dev`, open the local page and click **Play**. Brush the bat sideways
-while catching a ball to bend its return. Catch with the bat held still to keep
-the established contact-position aim. Watch a lost piece break up and the brief
+while catching a ball to bend its return. A quick mouse flick shortly before
+contact also counts. Rotating arrow bands and a cyan/pink tint show opposite
+spin directions; a longer dotted trail reveals the path. Hold the bat still
+for more than 100ms to retain the established contact-position aim. Watch a lost piece break up and the brief
 arc toward the revenge serve. Existing speed, bat responsiveness, timed arrivals,
 serve deadlines, default preview and optional pressure-only slowdown remain.
 
@@ -20,14 +24,25 @@ on the user's behalf.
 
 ## What changed
 
-- A moving bat imparts signed curvature, scaled by its actual capped angular
-  speed and how directly the ball approaches the face. Maximum initial turn rate
-  is **0.28 rad/s**, decaying exponentially at **2.6/s**: less than **6.2° total
-  bend** from a full swipe. It changes direction without adding speed. A held
-  bat returns with zero curve; ready balls and new serves reset it.
+- A moving bat imparts signed curvature from its **actual** capped motion.
+  A fading **100ms** memory makes a quick brush practical without changing bat
+  responsiveness or speed limits. Reversing overrides the remembered direction;
+  pressing against a stopped rail does not refresh it. Moderate motion receives
+  a square-root response, with a 45–100% incidence factor so glancing brushes
+  also register. Maximum initial turn rate is **1.4 rad/s**, decaying at **1.8/s**:
+  less than **45° total bend**, with no speed increase. A half-speed direct brush
+  produces over **2 units of lateral travel in 0.5s**. Held bats lose all swipe
+  memory after 100ms; ready balls and new serves reset ball spin.
+- Two broken arrow bands surround a spinning ball. Their signed rotation,
+  cyan/pink colour, opacity and scale indicate actual curve state; they fade
+  away as it expires. The ball itself receives a subtle matching tint. Curved
+  shots get up to twenty distance-spaced trail samples over about 4.4 units,
+  rather than a short frame-dependent tail. Normal shots retain a shorter trail.
+  Pause freezes the cue; reduced motion retains static direction/colour while
+  disabling rotation and trails. The bands do not enlarge the collider.
 - The dotted forecast consumes the same flight integrator. It still assumes
-  current bats/pieces remain stationary, so a last-moment swipe can change that
-  conditional destination. The optional pressure detector now samples curved
+  current bats/pieces remain stationary and lets recent swipe memory expire
+  through the same fixed steps, so a new swipe can change that conditional destination. The optional pressure detector now samples curved
   arrivals and rejects intervening live bodies; straight arrivals retain the
   previous path. Bots retain their limited linear estimates and use the same
   movement/curve rules as humans.
@@ -55,12 +70,14 @@ on the user's behalf.
 ## Evidence and checks
 
 - `pnpm check`: formatting, lint and strict types pass.
-- `pnpm test`: **156 tests in 24 files pass**. New cases cover opposite swipes,
+- `pnpm test`: **165 tests in 25 files pass**. New cases cover opposite swipes,
+  captured 12-pixel mouse brushes after the bat stops, timing expiry/reversal,
+  visible lateral travel, signed band rotation, pause/reduced mode, trail resets,
   speed/decay bounds, zero-spin behavior, forecast agreement, curved pressure
   arrivals/blockers, simultaneous damage/final hits, queued serves, effect
   lifetime/pause/reduced mode and unchanged authoritative state during effects.
 - Seven two-second regression fixtures run at **30/60/144 rendered FPS**, using
-  the fixed 120 Hz clock. They match checked-in full-trace digests; all 175 impact
+  the fixed 120 Hz clock. They match checked-in full-trace digests; all 171 impact
   events are recorded in [replays.json](reviews/m03-m04/replays.json). Cases cover
   a 240-unit/s exact wall corner, a 120-unit/s grazing bat hit, signed swipes,
   a missing health piece, an empty eliminated sector and eight curved balls at
@@ -68,11 +85,19 @@ on the user's behalf.
   No collision cap was reached. Tests assert the intended first contacts/signs,
   corner normal ordering, bounds, gap identity and no eliminated-sector damage.
 - `PAGES_BASE_PATH=/citadel/ pnpm build`: passes. The existing bundle-size warning
-  remains (871.11 kB minified / 236.71 kB gzip).
+  remains (873.75 kB minified / 237.64 kB gzip).
 - `PLAYWRIGHT_RENDERER=hardware pnpm test:browser --workers=1`: **12 pass** in
-  16.6 seconds, including full round/rematch, Pointer Lock, focus/pause, all human
+  17.3 seconds, including full round/rematch, Pointer Lock, focus/pause, all human
   seats, resize, assistance settings, Pages refresh and reduced rendering.
-- Native Chromium at 1440×1000: real input capture plus controlled physical
+- Native Chromium at 1440×1000: actual captured **±12-pixel mouse brushes** through
+  the real input adapter produce **±0.956 rad/s** spin at contact; the bat has
+  already stopped when contact occurs. No movement produces zero spin. Reviewed
+  [negative brush](reviews/m03-m04/spin/mouse-spin--1.png),
+  [held bat](reviews/m03-m04/spin/mouse-spin-0.png),
+  [positive brush](reviews/m03-m04/spin/mouse-spin-1.png) and
+  [static reduced-motion cue](reviews/m03-m04/spin/spin-reduced.png). These runs
+  produced no page errors; video is `/tmp/citadel-spin-review/mouse-brushes.webm`.
+- Earlier native captures: real input capture plus controlled physical
   damage and signed swipe fixtures produced no page errors. Reviewed
   [gameplay](reviews/m03-m04/gameplay.png),
   [fracture/return](reviews/m03-m04/fracture.png),
@@ -80,8 +105,8 @@ on the user's behalf.
   [negative swipe](reviews/m03-m04/curve--1.png) and
   [positive swipe](reviews/m03-m04/curve-1.png). Local videos are at
   `/tmp/citadel-m03-m04-review/gameplay.webm` and `curve-fixtures.webm` in that folder.
-- Five seeded all-bot rounds finish in **50.475–67.442s**, with zero collision
-  caps: [raw benchmark](reviews/m03-m04/benchmark.txt). Reproduce with
+- Five seeded all-bot rounds finish in **49.883–64.258s**, with zero collision
+  caps: [current raw benchmark](reviews/m03-m04/spin/benchmark.txt). Reproduce with
   `pnpm exec vpx tooling/benchmark.ts`. This is stall evidence, not human pacing
   evidence or approval of the two-minute target.
 
