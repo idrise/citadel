@@ -69,7 +69,7 @@ These are starting experiments authorised for the prototype, not permanent desig
 
 - **Feel:** Start with precise, responsive defence and deliberate contact-position aiming, then explore escalating arcade pressure. The balance between precision, survival and targeting rivals is still open.
 - **Movement:** Accumulate captured horizontal mouse deltas into a bounded bat-angle target, with a maximum paddle speed; start without pronounced acceleration lag. A late save should initially feel like moving too late rather than fighting momentum. Keyboard uses the same speed limits.
-- **Aiming and bat curvature:** The bat's curved face is independent of its travel rail: rail radius 4.4, bat-face radius 2.2 and half-angle 0.48 radians. Rendering and swept collision use the same shape. Contact normals plus a bounded contact-offset adjustment govern returns. Serve aiming spans twice the paddle-centre angle relative to the sector bisector, giving deliberate attacks on adjacent rivals and banks off either neighbouring wall. A short serve guide shows one wall rebound; defenders may intercept it. Actual serve direction has no random spread. Add movement-driven spin later.
+- **Aiming and bat curvature:** The bat's curved face is independent of its travel rail: rail radius 4.4, bat-face radius 2.2 and half-angle 0.48 radians. Rendering and swept collision use the same shape. Contact normals plus a bounded contact-offset adjustment govern returns. Serve aiming spans twice the paddle-centre angle relative to the sector bisector, giving deliberate attacks on adjacent rivals and banks off either neighbouring wall. A short serve guide shows one wall rebound; defenders may intercept it. Actual serve direction has no random spread. The user-requested M03/M04 swipe experiment adds a maximum 0.28 rad/s curve decaying at 2.6/s, preserving speed and held-bat aim; it awaits review.
 - **Piece placement and gaps:** User feedback replaces the long fixed health arc with a compact two-row formation inside the fortress. A destroyed piece leaves a real gap, but remaining pieces can subsequently move into that space under damped spring attraction and soft separation. Only an actual collision with a surviving piece causes damage; never substitute nearest-piece damage. Survivors gradually grow by 3.5% of their original size per loss, capped at 24.5%. Visible position and scale must match authoritative moving colliders. Initially paddles can intercept from either side so returning balls do not require an invisible exception. Review whether deeper rebounds are interesting or confusing.
 - **Aim help:** M02 user clarification selects a dotted forecast from the nearby ball through a bounce off the stationary current bat and onward toward the next impact. Use actual fixed-step trajectory samples, show bounce/end markers, and leave room for future curved shots. Consider the earliest incoming ball within 8.4 units of the human fortress anchor, with a 0.45-second incoming horizon and up to 0.9 seconds after contact / one bank. Freeze current actor poses for this conditional forecast; it is not a guaranteed destination. Keep Neither / Preview only / Pressure slowdown only / Both choices. Preview only is the proposed default following this feedback.
 - **Approach slowdown:** M02 feedback rejects routine delay. Keep optional **pressure-only relief**, off by default: detect two separated incoming catches within 0.45 seconds which demand a rapid move, and arm only the later arrival. It retains normal speed until the near-defence band, then uses a bounded 55% travel factor. Preserve the first catch's timing and ordinary bat responsiveness; maintain the existing speed cap. Latched relief can survive the first catch, and clears on departure/contact/exit/disable/elimination. Exclude paths already intercepted by another object and avoid triggering for shots one bat pose can cover. Apply equally to humans/bots; compare neither / preview / pressure-only / both. Thresholds remain reviewable and must be revisited with future spin.
@@ -283,7 +283,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** M02 approved by the user's 11 November 2026 feedback that the feel is good and request to work on relevant M03/M04 parts. **M03/M04 are In progress together by explicit user instruction**, including a small movement-driven curve and destruction flourish pulled forward from later polish. Preserve the approved feel; do not start M05 or the full M06 pacing gate.
+**Current position:** M02 approved by the user's 11 November 2026 feedback that the feel is good and request to work on relevant M03/M04 parts. **M03/M04 are Awaiting review together by explicit user instruction**, including a small movement-driven curve and destruction flourish pulled forward from later polish. Preserve the approved feel; do not start M05 or the full M06 pacing gate.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
@@ -316,14 +316,16 @@ When asked to **"do the next milestone"**:
 
 ### Current milestone work record
 
-- **Milestones:** Relevant M03/M04 work **In progress**, combined at the user's explicit request. M02 approved at `854276b`; its evidence remains in `docs/M02_REVIEW.md`.
+- **Milestones:** Relevant M03/M04 work **Awaiting review**, combined at the user's explicit request. M02 approved at `854276b`; its evidence remains in `docs/M02_REVIEW.md`.
 - **User scope:** “The feel is good so far … flourish and a little curve by moving the bat into the ball. Interpret as you wish.” This authorises combining these milestones and pulling a small swipe curve/destruction polish forward; it does not authorise a new pacing system or other layouts.
 - **Task checklist:**
-  - [ ] Audit existing CCD/rule coverage; add focused stress, impact-order, replay and render-rate fixtures for remaining M03 gaps.
-  - [ ] Add a bounded, decaying movement-driven curve, preserve speed and stationary returns, and keep the forecast on the same integrator.
-  - [ ] Cover final-piece/same-tick/serve-recipient/result edge cases and retain the documented revenge-serve behavior.
-  - [ ] Replace the small generic damage puff with a readable, procedural, pause-safe/reduced-effects flourish.
-  - [ ] Run checks, inspect rendered effects/curve examples and document the combined handoff; leave later milestones unstarted.
+  - [x] Audit existing CCD/rule coverage; add focused stress, impact-order, replay and render-rate fixtures for remaining M03 gaps.
+  - [x] Add a bounded, decaying movement-driven curve, preserve speed and stationary returns, and keep the forecast on the same integrator.
+  - [x] Cover final-piece/same-tick/serve-recipient/result edge cases and retain the documented revenge-serve behavior.
+  - [x] Replace the small generic damage puff with a readable, procedural, pause-safe/reduced-effects flourish.
+  - [x] Run checks, inspect rendered effects/curve examples and document the combined handoff; leave later milestones unstarted.
+- **Evidence:** `docs/M03_M04_REVIEW.md`; 156 unit tests, 12 native Chromium browser checks, Pages build and Vite+ checks pass. Seven replay fixtures match across 30/60/144 FPS; five all-bot rounds finish with zero collision caps. Native screenshots and local videos reviewed.
+- **Review choices:** Gentle swipe strength, breakup/return clarity, seeded elimination fallback and lower-ball-ID final-hit policy remain provisional. M05 includes the user's new layout-morphing note; no M05 code was started.
 - **Constraints:** No added input lag, routine slowdown, hit-stop, artwork textures, remote deployment, push or `gh` usage. Local commits remain frequent. M05 and the full M06/M07 work remain out of scope.
 
 ### Progress / approval ledger
@@ -332,8 +334,8 @@ When asked to **"do the next milestone"**:
 |---|---|---|---|---|---|
 | M01 | **First playable** | Four-seat prototype: human + bots, physical damage, revenge serve, rematch | Approved | 11 Nov 2026: user requested continuation | 415b2df; earlier checkpoints in Git |
 | M02 | Desktop core | Refine responsive controls, contact aiming, preview/slowdown experiments | Approved | 11 Nov 2026: feel good; user requested M03/M04 | 854276b |
-| M03 | Desktop core | Real ball physics, swept collisions and deflections | In progress | — | — |
-| M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | In progress | — | — |
+| M03 | Desktop core | Real ball physics, swept collisions and deflections | Awaiting review | — | 8fe9f47; review docs |
+| M04 | Desktop core | Harden physical damage, revenge serves, elimination and result rules | Awaiting review | — | 8fe9f47, 711d15d; review docs |
 | M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Not started | — | — |
 | M06 | Solo proof | Spin/ball tuning and evidence-based 2-minute escalation | Not started | — | — |
 | M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Not started | — | — |
@@ -509,4 +511,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Complete the user-authorised relevant M03/M04 work together, then stop for review.** Preserve the approved feel while adding a small swipe curve, readable destruction flourish and remaining physics/rule evidence. M05 and the full later pacing/polish milestones remain unstarted. User approval is still required before pushing or using `gh`.
+**M03/M04 delivered together — stop for review.** The approved feel is retained with a small swipe curve, readable destruction flourish and physics/rule evidence in `docs/M03_M04_REVIEW.md`. M05 and the full later pacing/polish milestones remain unstarted. User approval is still required before pushing or using `gh`.

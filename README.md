@@ -2,8 +2,8 @@
 
 A local-first paddle arena, built with strict TypeScript, React, Three.js and Vite+.
 The four-fortress game plays one human versus three bots, with physical health
-pieces, revenge serves, timed ball additions and rematch. M01 is approved; M02
-controls and aiming refinements are awaiting review.
+pieces, revenge serves, timed ball additions and rematch. M01/M02 are approved;
+M03/M04 swipe returns, destruction and rule hardening are awaiting review.
 
 ## Develop
 
@@ -28,7 +28,8 @@ the same opening; Rematch starts a new seeded round.
 The scene fills the viewport, with no visible HUD or surrounding text during play.
 
 Each hit destroys the actual piece struck. The damaged survivor gets the revenge
-serve. Surviving pieces grow slightly and gather into a compact formation using damped springs.
+serve, with a quick raised return arc. Lost pieces burst into small neon fragments
+and an expanding ring. Surviving pieces grow slightly and gather into a compact formation using damped springs.
 A ball can pass through any current gap; the outer walls rebound it back into play. Aim toward
 either end of your arc to bank off the walls beside your bat. The serve guide
 shows the first wall bounce; opponents can intercept it.
@@ -41,6 +42,9 @@ and end markers. Moving actors can change that forecast. Pressure slowdown
 remains optional and off. It only helps with later arrivals when two separated
 shots demand a fast move; ordinary shots and bat input stay at normal speed.
 The same rule applies to humans and bots.
+Brush the bat sideways into an incoming ball for a gentle, fading curve. It does
+not add speed; holding the bat still retains the established contact-position aim.
+The dotted forecast follows curved incoming flight and assumes a stationary bat.
 The new ball size/speed and bank-shot reach reflect the initial hands-on feedback.
 The live perspective camera sits behind your selected fortress at about 38° over
 solid raised walls and a deep 3D arena. Foreground panels are translucent to keep
@@ -113,7 +117,10 @@ pnpm exec vpx tooling/benchmark.ts
 ```
 
 This reports bot-only simulation results, not human playtest evidence. See
-[the M02 review and comparison](docs/M02_REVIEW.md) for validation, limitations and review prompts.
+[the M03/M04 review](docs/M03_M04_REVIEW.md) for current validation, limitations and
+review prompts; [the M02 comparison](docs/M02_REVIEW.md) records the approved control baseline.
+Physics regression logs can be regenerated with `pnpm exec vpx tooling/replay-physics.ts`;
+review their impacts before deliberately updating the checked-in golden file.
 
 ## GitHub Pages
 
