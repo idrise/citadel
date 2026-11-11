@@ -18,6 +18,11 @@ tester sessions and a public Pages URL are **not yet collected**.
 
 ## Recorded scripted observations
 
+Subsequent owner review found unrotated cuboid caps, inaudible own losses and
+negative-sounding enemy breaches with no obvious cheer. [M07 corrections](M07_CORRECTIONS.md)
+provide rotated corner posts, a stronger falling own-loss cue and separate rising
+cheers. Native session and four-ball mix auditions are ready; approval is pending.
+
 - M08 fresh production URL, six seats/human seat 5/standard bots/seed 2026:
   **67.69s**, human survival **57.58s**, six returns, five rival pieces broken,
   fifth place, zero collision caps. [Actual JSON](reviews/m08/six-seat-round.json).

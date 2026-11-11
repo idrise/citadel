@@ -1,5 +1,9 @@
 # M07 — legibility, impact and sound
 
+**Latest amendment:** [corner-cap rotation and revised loss/cheer sounds](M07_CORRECTIONS.md)
+addresses the owner's subsequent review. Its live and mixed auditions supersede
+the original audio examples below; it includes current cap screenshots and checks.
+
 Status: **Awaiting review**, 11 November 2026. Implementation and local checks
 complete; visual feel and musical taste need human review. M06's pacing comparison
 has not been performed. Ball speed, spin, health, spawn interval and match rules
