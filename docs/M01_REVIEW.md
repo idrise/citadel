@@ -1,8 +1,9 @@
 # M01 — first playable prototype
 
-Status: awaiting review of broader shader-based feature edges and solid wall
-cross-sections. The camera remains at about 38° with tight fullscreen framing.
-M02 has not started.
+Status: awaiting review of the exterior neon grid. The user reported that the
+shader edges and solid wall look is good, then requested more setting beyond the
+arena. The camera remains at about 38° with tight fullscreen framing. M02 has not
+started.
 
 ## Current build
 
@@ -50,6 +51,20 @@ Nonvisual controls/status remain available to assistive technology.
   keeps near-wall rebounds readable behind solid caps, using the same position
   and radius, without changing collision or input rules.
 
+## Exterior setting
+
+A procedural neon grid sits at **y = -3.08**, just below the entire plinth, on a
+600×600 world-space ground plane. Minor cells are **2 units**, with stronger
+lines every **10 units**. Lines fade between 38 and 125 units from the arena;
+derivative filtering suppresses distant cells as they shrink below a pixel.
+The plane is two triangles with no artwork textures or additional animation.
+
+The grid remains outside the arena's framing bounds, so it does not shrink or
+reposition the game. Camera motion supplies real perspective and parallax. The
+playing floor conceals the grid beneath it. Reduced effects retains the static
+grid while disabling the existing bloom/reflections. Simulation and input files
+are unchanged.
+
 ## Physical health cluster
 
 Eight pieces begin in two staggered rows inside each fortress, behind the defence
@@ -75,13 +90,14 @@ only trace hash is not a baseline for those rules.
 ## Validation actually run
 
 - `pnpm check`: formatting, lint and strict TypeScript passed.
-- `pnpm test`: **93 tests in 13 files** passed. Includes sharp/shallow fold
-  selection, suppression of triangle diagonals and smooth facets, screen and
+- `pnpm test`: **96 tests in 14 files** passed. Includes sharp/shallow fold
+  selection, exterior-grid separation from the plinth, fade/clip bounds and cleanup,
+  suppression of triangle diagonals and smooth facets, screen and
   reflection viewport updates, resource sharing/disposal, extruded wall cap
   dimensions, opaque structure/translucent faces, occluded-ball placement and
   the existing input, camera, health, collision, serve and determinism contracts.
 - `PAGES_BASE_PATH=/citadel/ pnpm build`: static production build passed.
-- Current shader/wall browser checks: **four focused cases passed** across runs:
+- Preceding shader/wall browser checks: **four focused cases passed** across runs:
   default/reduced shader and reflection rendering (no console/shader errors),
   stationary captured input through live camera motion, both relative-mouse bank
   limits, and hiding/restoring pause controls. The final render check passed in
@@ -91,8 +107,10 @@ only trace hash is not a baseline for those rules.
   retains the larger default viewport. Gameplay controls and complete round /
   results / rematch passed in the preceding revision. They are historical
   evidence rather than a fresh full-match run for this presentation-only change.
-- The final local gameplay capture rendered on **Apple M2 Pro / ANGLE Metal**;
-  it exercised real capture/steering/serving/release without page errors. This is
+- The exterior-grid revision was rendered on **Apple M2 Pro / ANGLE Metal**;
+  it exercised real capture/steering/serving/release and normal/reduced-effects
+  views without page or console errors. The full automated browser suite was not
+  rerun for this background-only change. This is
   rendered validation, not a measured frame-rate or cross-device claim.
 - `git diff --check` passed. The new shader/wall treatment was inspected in rendered
   screenshots and a desktop gameplay clip recorded locally with actual capture.
@@ -114,13 +132,15 @@ claim is made.
 
 ## Evidence and review
 
-- [Fullscreen perspective arena, lower camera](reviews/m01/perspective-fullscreen.png).
+- [Current exterior grid](reviews/m01/exterior-grid.png).
+- [Exterior grid with reduced effects](reviews/m01/exterior-grid-reduced.png).
+- Earlier wall-focused evidence: [fullscreen perspective arena, lower camera](reviews/m01/perspective-fullscreen.png).
 - [Gameplay with captured relative input](reviews/m01/perspective-gameplay.png).
 - [Solid wall cross-section with reduced effects](reviews/m01/solid-wall-reduced.png).
 - [Ball visibility behind an opaque cap](reviews/m01/ball-behind-cap.png). These last
   two are rendering diagnostics with the ball positioned behind the near corner,
   rather than normal gameplay captures.
-- Local gameplay capture: `/tmp/citadel-perspective-review/gameplay.webm`.
+- Local gameplay capture: `/tmp/citadel-grid-review/gameplay.webm`.
   It uses real mouse/serve input without gameplay state edits, captured in
   Chromium on Apple M2 Pro / ANGLE Metal.
   Temporary video is not checked into the repository.
@@ -128,8 +148,8 @@ claim is made.
   comparisons; they do not represent the current camera or fullscreen layout.
 
 Try **Play**, sweep the mouse both ways, then **Escape → Resume**. Check the lower,
-closer framing, broader sharp edges, solid wall thickness, frosted reflections
-and ball readability near the foreground caps.
+closer framing, exterior-grid contrast and depth, solid wall thickness, frosted
+reflections and ball readability near the foreground caps.
 The spring/growth tuning and 15-second ball interval remain provisional.
 
 Only four seats and one basic bot controller are implemented. Mobile, audio,
@@ -138,7 +158,7 @@ milestones. Same-tick balls resolve in ID order. No exhaustive collision or real
 hardware frame-rate claim is made. Settings reset on rematch; a lower live ball
 cap stops additions without deleting existing balls. The bundle still emits a
 
-greater-than-500 kB warning (about 856 kB minified / 232 kB gzip).
+greater-than-500 kB warning (about 858 kB minified / 232 kB gzip).
 
 The original sketch remains unavailable. No remote workflow, push, deployment,
 repository-setting change or `gh` command was performed.

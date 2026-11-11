@@ -40,7 +40,10 @@ soft frosted finish. Thick opaque wall caps, feet and supports frame the recesse
 faces. A custom shader widens edges where faces meet at 35° or more, giving bold
 neon outlines without lighting flat-face triangle seams. A faint ball ghost
 keeps rebounds readable when a solid cap blocks the camera. Dark faces and
-restrained bloom keep the glow concentrated on the edges.
+restrained bloom keep the glow concentrated on the edges. An exterior neon grid
+sits below the plinth, stretching into the distance with fading and filtered
+lines. It is a static world surface, so the live camera supplies its perspective
+and parallax.
 Pieces occupy compact staggered rows and grow by 3.5% per loss (up to 24.5%), with
 visible geometry matching the moving collision bodies. Relative mouse input is
 independent of camera motion. Reduced effects/motion disables bloom/reflections
