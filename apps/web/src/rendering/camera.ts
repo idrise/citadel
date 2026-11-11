@@ -1,11 +1,14 @@
-import { fortress } from "../simulation/arena";
+import { fortress, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
 import { Box3, MathUtils, PerspectiveCamera, Plane, Raycaster, Vector2, Vector3 } from "three";
 
 export const INPUT_PLANE_HEIGHT = 0.52;
 export const CAMERA_TARGET = { x: 0, y: -0.6, z: 0 } as const;
-export function createArenaCamera(humanSeat = 0): PerspectiveCamera {
+export function createArenaCamera(
+  humanSeat = 0,
+  arena: ArenaGeometry = SQUARE_ARENA,
+): PerspectiveCamera {
   const camera = new PerspectiveCamera(44, 1, 0.1, 180);
-  const anchor = fortress(humanSeat).anchor;
+  const anchor = fortress(humanSeat, arena).anchor;
   const distance = Math.hypot(anchor.x, anchor.y);
   camera.position.set((anchor.x / distance) * 25, 18.9, (anchor.y / distance) * 25);
   camera.lookAt(CAMERA_TARGET.x, CAMERA_TARGET.y, CAMERA_TARGET.z);
@@ -14,22 +17,32 @@ export function createArenaCamera(humanSeat = 0): PerspectiveCamera {
 }
 
 /** Fit perspective slopes, not parallel rays. Lens shift centres the complete solid arena. */
-export function fitArenaCamera(camera: PerspectiveCamera, bounds: Box3, aspect: number): void {
+export function fitArenaCamera(
+  camera: PerspectiveCamera,
+  bounds: Box3,
+  aspect: number,
+  corners?: readonly Vector3[],
+): void {
   camera.updateMatrixWorld();
   let minX = Infinity,
     maxX = -Infinity,
     minY = Infinity,
     maxY = -Infinity;
-  for (const x of [bounds.min.x, bounds.max.x])
-    for (const y of [bounds.min.y, bounds.max.y])
-      for (const z of [bounds.min.z, bounds.max.z]) {
-        const point = new Vector3(x, y, z).applyMatrix4(camera.matrixWorldInverse);
-        const depth = Math.max(camera.near, -point.z);
-        minX = Math.min(minX, point.x / depth);
-        maxX = Math.max(maxX, point.x / depth);
-        minY = Math.min(minY, point.y / depth);
-        maxY = Math.max(maxY, point.y / depth);
-      }
+  const points =
+    corners ??
+    [bounds.min.x, bounds.max.x].flatMap((x) =>
+      [bounds.min.y, bounds.max.y].flatMap((y) =>
+        [bounds.min.z, bounds.max.z].map((z) => new Vector3(x, y, z)),
+      ),
+    );
+  for (const corner of points) {
+    const point = corner.clone().applyMatrix4(camera.matrixWorldInverse);
+    const depth = Math.max(camera.near, -point.z);
+    minX = Math.min(minX, point.x / depth);
+    maxX = Math.max(maxX, point.x / depth);
+    minY = Math.min(minY, point.y / depth);
+    maxY = Math.max(maxY, point.y / depth);
+  }
   const halfTan = Math.max((maxY - minY) / 2, (maxX - minX) / (2 * aspect)) * 1.04;
   camera.fov = MathUtils.radToDeg(2 * Math.atan(halfTan));
   // Normalised viewport units preserve aspect and an exact inverse pointer projection.

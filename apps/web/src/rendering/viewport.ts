@@ -3,10 +3,13 @@ import {
   Box3,
   Color,
   PCFSoftShadowMap,
+  PointLight,
   Scene,
   Vector2,
+  Vector3,
   WebGLRenderer,
 } from "three";
+import { fortress, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
 import type { MatchState } from "../simulation/types";
 import { disposeScene } from "./dispose-scene";
 import { createArenaView, type ViewOptions } from "./arena-view";
@@ -19,7 +22,11 @@ import { createWorldGrid } from "./world-grid";
 import { musicLight } from "./music-light";
 
 /** Owns camera, projection and graphics resources. Gameplay stays in the simulation. */
-export function createViewport(container: HTMLElement, humanSeat = 0) {
+export function createViewport(
+  container: HTMLElement,
+  humanSeat = 0,
+  initial: ArenaGeometry = SQUARE_ARENA,
+) {
   const renderer = new WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = ACESFilmicToneMapping;
@@ -33,25 +40,29 @@ export function createViewport(container: HTMLElement, humanSeat = 0) {
   canvas.setAttribute("role", "application");
   const scene = new Scene();
   scene.background = new Color(0x080f1c);
-  const arena = createArenaView(humanSeat);
+  const arena = createArenaView(humanSeat, initial);
   const worldGrid = createWorldGrid();
   scene.add(arena.root, worldGrid);
-  const disposeLighting = lightArena(scene);
-  const disposeEnvironment = createNeonEnvironment(renderer, scene);
-  const camera = createArenaCamera(humanSeat);
+  const disposeLighting = lightArena(scene, initial);
+  const disposeEnvironment = createNeonEnvironment(renderer, scene, initial);
+  const camera = createArenaCamera(humanSeat, initial);
   const motion = createCameraMotion(camera);
   let aspect = 1;
   const bounds = new Box3().setFromObject(arena.root);
   // Frame the playing surface and wall tops; the structural plinth may extend below the view.
   bounds.min.y = 0;
   bounds.max.y = Math.max(bounds.max.y, 1.6);
+  let framingPoints = initial.vertices.flatMap((p) => [
+    new Vector3(p.x * 1.09, 0, p.y * 1.09),
+    new Vector3(p.x * 1.09, 2.34, p.y * 1.09),
+  ]);
   const bloom = createBloom(renderer, scene, camera);
   container.append(canvas);
   const resize = () => {
     const width = Math.max(container.clientWidth, 1);
     const height = Math.max(container.clientHeight, 1);
     aspect = width / height;
-    fitArenaCamera(camera, bounds, aspect);
+    fitArenaCamera(camera, bounds, aspect, framingPoints);
     renderer.setSize(width, height);
     bloom.resize(width, height);
   };
@@ -68,8 +79,29 @@ export function createViewport(container: HTMLElement, humanSeat = 0) {
       );
     },
     render(state: MatchState, dt: number, options: ViewOptions) {
+      for (const light of scene.children)
+        if (light instanceof PointLight) {
+          const seat = fortress(light.userData.seat as number, state.arena);
+          light.position.set(
+            seat.anchor.x + Math.cos(seat.direction) * 2.7,
+            1.8,
+            seat.anchor.y + Math.sin(seat.direction) * 2.7,
+          );
+          light.visible = state.players[seat.id]!.health.some(Boolean);
+        }
+      const home = fortress(humanSeat, state.arena);
+      motion.follow(Math.atan2(home.anchor.x, home.anchor.y));
       motion.update(dt, options.reducedEffects);
-      fitArenaCamera(camera, bounds, aspect);
+      framingPoints = state.arena.vertices.flatMap((p) => [
+        new Vector3(p.x * 1.09, 0, p.y * 1.09),
+        new Vector3(p.x * 1.09, 2.34, p.y * 1.09),
+      ]);
+      bounds.makeEmpty();
+      for (const p of state.arena.vertices) {
+        bounds.expandByPoint(new Vector3(p.x * 1.09, 0, p.y * 1.09));
+        bounds.expandByPoint(new Vector3(p.x * 1.09, 2.34, p.y * 1.09));
+      }
+      fitArenaCamera(camera, bounds, aspect, framingPoints);
       arena.update(state, dt, options);
       const pulse = options.musicPulse ?? 0;
       worldGrid.material.uniforms.musicGain!.value = musicLight(

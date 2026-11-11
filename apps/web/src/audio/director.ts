@@ -16,8 +16,8 @@ const clamp = (value: number) => Math.max(0, Math.min(1, value));
 
 /** Musical state only. It observes events, never changes match state or consumes match RNG. */
 export function createMusicDirector(humanSeat: number, seed: number) {
-  const parts: Part[] = Array.from({ length: 4 }, () => ({ streak: 0, phrase: [] }));
-  let frame: MusicFrame = { elapsed: 0, balls: 1, alive: [true, true, true, true] };
+  const parts: Part[] = Array.from({ length: 6 }, () => ({ streak: 0, phrase: [] }));
+  let frame: MusicFrame = { elapsed: 0, balls: 1, alive: Array<boolean>(6).fill(true) };
   let lastEvent = -1;
   let musicalStep = 0;
   let activeBalls = 1;

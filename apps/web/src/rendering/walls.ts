@@ -1,11 +1,11 @@
 import { BoxGeometry, Group, Mesh } from "three";
-import { ARENA, fortress } from "../simulation/arena";
+import { fortress, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
+import { polygonEdges } from "../simulation/polygon";
 import { createFeatureEdges } from "./feature-edges";
 import { frostedMaterial } from "./frosted-material";
 import {
   createWallCap,
   createWallFoot,
-  WALL_CENTRE,
   WALL_HEIGHT,
   WALL_PANEL_CENTRE_Y,
   WALL_PANEL_HEIGHT,
@@ -13,20 +13,16 @@ import {
 export { WALL_CENTRE, WALL_HEIGHT, WALL_THICKNESS } from "./wall-section";
 
 /** Thick opaque caps/feet and outer supports frame recessed faces; near glass keeps play visible. */
-export function createArenaWalls(humanSeat: number): Group {
+export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQUARE_ARENA): Group {
   const root = new Group();
   root.name = "arena-walls";
-  const anchor = fortress(humanSeat).anchor;
-  const length = ARENA.halfSize * 2;
-  for (let side = 0; side < 4; side++) {
-    const angle = (side * Math.PI) / 2;
-    const x = Math.sin(angle),
-      z = Math.cos(angle);
-    const near = x * anchor.x + z * anchor.y > 0.01;
+  const walls: Group[] = [];
+  const posts: Mesh[] = [];
+  // Minkowski blends have at most the sum of the endpoint edge counts.
+  for (let side = 0; side < 12; side++) {
+    const length = 1,
+      near = false;
     const wall = new Group();
-    wall.name = near ? "near-wall" : "rear-wall";
-    wall.position.set(x * ARENA.halfSize, 0, z * ARENA.halfSize);
-    wall.rotation.y = angle;
     const frameMaterial = frostedMaterial(0x33465b);
     for (const [name, geometry] of [
       ["wall-cap", createWallCap(length)],
@@ -69,20 +65,69 @@ export function createArenaWalls(humanSeat: number): Group {
       );
       wall.add(support);
     }
+    walls.push(wall);
     root.add(wall);
   }
-  for (const x of [-1, 1])
-    for (const z of [-1, 1]) {
-      const post = new Mesh(
-        new BoxGeometry(0.98, WALL_HEIGHT + 0.12, 0.98),
-        frostedMaterial(0x33465b),
-      );
-      post.position.set(x * WALL_CENTRE, (WALL_HEIGHT + 0.12) / 2, z * WALL_CENTRE);
-      post.name = "corner-post";
-      post.castShadow = true;
-      post.receiveShadow = true;
-      post.add(createFeatureEdges(post.geometry, 0x00cfff, { width: 4, power: 1.7 }));
-      root.add(post);
-    }
+  for (let index = 0; index < 12; index++) {
+    const post = new Mesh(
+      new BoxGeometry(0.98, WALL_HEIGHT + 0.12, 0.98),
+      frostedMaterial(0x33465b),
+    );
+    post.name = "corner-post";
+    post.castShadow = true;
+    post.receiveShadow = true;
+    post.add(createFeatureEdges(post.geometry, 0x00cfff, { width: 4, power: 1.7 }));
+    posts.push(post);
+    root.add(post);
+  }
+  let previous: ArenaGeometry | undefined;
+  const update = (arena: ArenaGeometry) => {
+    if (previous === arena) return;
+    previous = arena;
+    const anchor = fortress(humanSeat, arena).anchor;
+    const edges = polygonEdges(arena.vertices);
+    walls.forEach((wall, index) => {
+      const edge = edges[index];
+      wall.visible = Boolean(edge);
+      if (!edge) return;
+      const dx = edge.end.x - edge.start.x,
+        dz = edge.end.y - edge.start.y;
+      const length = Math.hypot(dx, dz);
+      wall.position.set((edge.start.x + edge.end.x) / 2, 0, (edge.start.y + edge.end.y) / 2);
+      wall.rotation.y = Math.atan2(-dz, dx);
+      wall.scale.x = length;
+      const near = edge.normal.x * anchor.x + edge.normal.y * anchor.y < -0.01;
+      wall.name = near ? "near-wall" : "rear-wall";
+      wall.traverse((object) => {
+        if (!(object instanceof Mesh)) return;
+        if (object.name === "wall-support") object.scale.x = 1 / length;
+        if (object.name === "wall-panel") {
+          const material = object.material as import("three").MeshPhysicalMaterial;
+          material.transparent = near;
+          material.opacity = near ? 0.14 : 1;
+          material.depthWrite = !near;
+          object.castShadow = !near;
+          const glow = object.children[0] as Mesh;
+          (glow.material as import("three").ShaderMaterial).uniforms.opacity!.value = near
+            ? 0.35
+            : 0.65;
+        }
+      });
+    });
+    posts.forEach((post, index) => {
+      const p = arena.vertices[index];
+      post.visible = Boolean(p);
+      if (p) {
+        const radius = Math.hypot(p.x, p.y);
+        post.position.set(
+          p.x * (1 + 0.68 / radius),
+          (WALL_HEIGHT + 0.12) / 2,
+          p.y * (1 + 0.68 / radius),
+        );
+      }
+    });
+  };
+  root.userData.update = update;
+  update(initial);
   return root;
 }

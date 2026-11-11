@@ -1,3 +1,6 @@
+import type { MatchState } from "../simulation/types";
+import type { PlayerCount } from "../simulation/arena";
+import { RoundReport } from "./RoundReport";
 import type { GameSettings as Settings } from "../session/settings";
 import { SEATS } from "../rendering/palette";
 import { Experiments } from "./Experiments";
@@ -7,6 +10,9 @@ import type { MusicStatus } from "../audio/ports";
 
 export function GameMenu({
   mode,
+  count,
+  onCount,
+  state,
   winner,
   humanSeat,
   settings,
@@ -16,6 +22,9 @@ export function GameMenu({
   onRestart,
   musicStatus,
 }: {
+  count: PlayerCount;
+  onCount: (count: PlayerCount) => void;
+  state: MatchState;
   mode: "start" | "paused" | "result";
   winner: string;
   humanSeat: number;
@@ -44,6 +53,22 @@ export function GameMenu({
       <div className="menu-panel">
         {mode === "paused" && <h2>Paused</h2>}
         {mode === "result" && <h2>{winner}</h2>}
+        {mode === "start" && (
+          <label className="players-choice">
+            Players{" "}
+            <select
+              aria-label="Players"
+              value={count}
+              onChange={(event) => onCount(Number(event.target.value) as PlayerCount)}
+            >
+              {([2, 3, 4, 5, 6] as const).map((value) => (
+                <option key={value} value={value}>
+                  {value} · you + {value - 1} {value === 2 ? "bot" : "bots"}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <button className="primary" onClick={mode === "result" ? onRestart : onPlay}>
           {mode === "start" ? "Play" : mode === "paused" ? "Resume" : "Rematch"}
         </button>
@@ -52,8 +77,45 @@ export function GameMenu({
             Restart
           </button>
         )}
+        {mode === "result" && <RoundReport state={state} humanSeat={humanSeat} />}
         <details className="settings-menu">
           <summary>Settings</summary>
+          <p className="menu-hint">Changing players or fortress starts a new round.</p>
+          {mode !== "start" && (
+            <label>
+              Players{" "}
+              <select
+                aria-label="Players"
+                value={count}
+                onChange={(event) => onCount(Number(event.target.value) as PlayerCount)}
+              >
+                {([2, 3, 4, 5, 6] as const).map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          <label>
+            Bot difficulty{" "}
+            <select
+              aria-label="Bot difficulty"
+              value={settings.botDifficulty}
+              onChange={(event) =>
+                onSettings({
+                  ...settings,
+                  botDifficulty: event.target.value as Settings["botDifficulty"],
+                })
+              }
+            >
+              {["beginner", "standard", "expert"].map((value) => (
+                <option key={value} value={value}>
+                  {value[0]!.toUpperCase() + value.slice(1)}
+                </option>
+              ))}
+            </select>
+          </label>
           <label>
             Your fortress{" "}
             <select
@@ -61,7 +123,7 @@ export function GameMenu({
               value={humanSeat}
               onChange={(event) => onSeat(Number(event.target.value))}
             >
-              {SEATS.map((seat, id) => (
+              {SEATS.slice(0, count).map((seat, id) => (
                 <option value={id} key={id}>
                   {seat.mark} {seat.name}
                 </option>
@@ -71,6 +133,12 @@ export function GameMenu({
           <Experiments value={settings} onChange={onSettings} />
           <MusicSettings value={settings} onChange={onSettings} status={musicStatus} />
         </details>
+        {mode === "paused" && (
+          <details className="round-report">
+            <summary>Round statistics</summary>
+            <RoundReport state={state} humanSeat={humanSeat} />
+          </details>
+        )}
         {mode === "paused" && (
           <button className="hide-controls" aria-keyshortcuts="H" onClick={() => setHidden(true)}>
             Hide controls (H)

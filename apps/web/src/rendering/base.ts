@@ -1,49 +1,40 @@
-import { BoxGeometry, ExtrudeGeometry, Group, Mesh, Shape } from "three";
+import { Group, Mesh } from "three";
 import { createFeatureEdges } from "./feature-edges";
 import { frostedMaterial } from "./frosted-material";
 import { createArenaWalls } from "./walls";
-import { ARENA } from "../simulation/arena";
+import { SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
+import { hullGeometry, replaceHull } from "./hull";
 
-function slab(halfSize: number, depth: number, colour: number) {
-  const outline = new Shape();
-  outline.moveTo(-halfSize, -halfSize);
-  outline.lineTo(halfSize, -halfSize);
-  outline.lineTo(halfSize, halfSize);
-  outline.lineTo(-halfSize, halfSize);
-  outline.closePath();
-  const geometry = new ExtrudeGeometry(outline, {
-    depth,
-    bevelEnabled: true,
-    bevelSize: 0.1,
-    bevelThickness: 0.1,
-    bevelSegments: 2,
-    steps: 1,
-  });
-  geometry.rotateX(Math.PI / 2);
-  const mesh = new Mesh(geometry, frostedMaterial(colour));
-  mesh.receiveShadow = true;
-  mesh.castShadow = true;
-  return mesh;
-}
-
-/** A deep structural base supports full-height perimeter walls. */
-export function createArenaBase(humanSeat = 0): Group {
+/** The solid plinth, floor and wall colliders share one polygon. */
+export function createArenaBase(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA): Group {
   const root = new Group();
-  const body = slab(ARENA.halfSize + 0.55, 2.1, 0x18263c);
-  body.position.y = -0.17;
-  root.add(body);
-  const foot = slab(ARENA.halfSize + 0.85, 0.45, 0x0d1524);
-  foot.position.y = -2.28;
-  root.add(foot);
-  const surface = new Mesh(
-    new BoxGeometry(ARENA.halfSize * 2, 0.12, ARENA.halfSize * 2),
-    frostedMaterial(0x1c2734),
-  );
-  surface.position.y = -0.05;
-  surface.receiveShadow = true;
-  root.add(surface);
-  body.add(createFeatureEdges(body.geometry, 0x009dd9, { width: 3, power: 1 }));
-  foot.add(createFeatureEdges(foot.geometry, 0x009dd9, { width: 3, power: 1 }));
-  root.add(createArenaWalls(humanSeat));
+  const specs = [
+    { margin: 0.55, top: -0.17, depth: 2.1, colour: 0x18263c },
+    { margin: 0.85, top: -2.28, depth: 0.45, colour: 0x0d1524 },
+    { margin: 0, top: 0.01, depth: 0.12, colour: 0x1c2734 },
+  ];
+  const slabs = specs.map((spec) => {
+    const mesh = new Mesh(
+      hullGeometry(initial.vertices, spec.margin, spec.top, spec.depth),
+      frostedMaterial(spec.colour),
+    );
+    mesh.receiveShadow = true;
+    mesh.castShadow = true;
+    if (spec.margin) mesh.add(createFeatureEdges(mesh.geometry, 0x009dd9, { width: 3, power: 1 }));
+    root.add(mesh);
+    return mesh;
+  });
+  const walls = createArenaWalls(humanSeat, initial);
+  root.add(walls);
+  let previous = initial;
+  root.userData.update = (arena: ArenaGeometry) => {
+    if (previous === arena) return;
+    previous = arena;
+    slabs.forEach((mesh, i) => {
+      const spec = specs[i]!;
+      replaceHull(mesh, hullGeometry(arena.vertices, spec.margin, spec.top, spec.depth));
+    });
+    (walls.userData.update as (arena: ArenaGeometry) => void)(arena);
+  };
   return root;
 }

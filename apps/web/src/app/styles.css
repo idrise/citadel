@@ -175,3 +175,33 @@ input[type="range"] {
   color: #8ba9ba;
   margin: 10px 0 0;
 }
+
+.players-choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.menu-hint {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+.round-report {
+  font-size: 0.85rem;
+  text-align: left;
+  margin: 1rem 0;
+}
+.round-report table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.round-report th,
+.round-report td {
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid #254758;
+  text-align: left;
+}
+.round-report summary {
+  cursor: pointer;
+}

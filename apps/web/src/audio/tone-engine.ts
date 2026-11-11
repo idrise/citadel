@@ -4,6 +4,7 @@ import { createInstruments } from "./tone-instruments";
 import type { MusicEngine } from "./ports";
 import { createBeatEnvelope } from "./beat-envelope";
 import { createEventConductor, type GridAnchor } from "./event-grid";
+import { createScheduleWindow } from "./schedule-window";
 import { arrangementAt } from "./arrangement";
 
 let replacedDefaultContext = false;
@@ -32,10 +33,12 @@ export function createToneEngine(
   const beats = createBeatEnvelope();
   const conductor = createEventConductor();
   let anchor: GridAnchor = { time: native.currentTime + 0.05, step: 0 };
+  const acceptStep = createScheduleWindow();
   const event = transport.scheduleRepeat((time) => {
     anchor = { time, step };
     const energy = arrangementAt(step).energy;
     const cues = onStep(step++);
+    if (!acceptStep(time, native.currentTime)) return;
     beats.scheduleEnergy(time, energy);
     for (const cue of cues) {
       if (cue.voice === "kick") beats.schedule(time, cue.velocity);

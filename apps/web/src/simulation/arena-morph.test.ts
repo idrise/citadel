@@ -1,3 +1,4 @@
+import { createFixedClock } from "../session/fixed-clock";
 import { expect, it } from "vite-plus/test";
 import { ARENA, FIXED_DT, fortress, type PlayerCount } from "./arena";
 import { beginArenaMorph, stepArenaMorph } from "./arena-morph";
@@ -114,3 +115,47 @@ it.each([2, 3, 4, 5, 6] as PlayerCount[])(
     expect(state.stats.collisionCaps).toBe(0);
   },
 );
+
+it("transports a held human target through the current tick's geometry before applying paddle speed", () => {
+  let state = createMatch(12, 4);
+  state.phase = "playing";
+  eliminate(state, 1);
+  beginArenaMorph(state);
+  stepArenaMorph(state, 2);
+  const id = 2,
+    home = fortress(id, state.arena);
+  state.players[id]!.angle = home.direction + 0.1;
+  const next = stepMatch(
+    state,
+    { ...IDLE_INTENT, targetAngle: state.players[id]!.angle },
+    { ...DEFAULT_OPTIONS, humanSeat: id },
+  );
+  expect(angleDifference(next.players[id]!.angle, fortress(id, next.arena).direction)).toBeCloseTo(
+    0.1,
+    10,
+  );
+});
+
+it("replays the changing boundary, pieces, bots and held target identically at 30/60/144 FPS", () => {
+  const replay = (fps: number) => {
+    let state = createMatch(31, 6);
+    state.phase = "playing";
+    eliminate(state, 2);
+    const clock = createFixedClock(),
+      initial = structuredClone(state);
+    const next = stepMatch(state, IDLE_INTENT);
+    expect(state).toEqual(initial);
+    expect(next).not.toBe(state);
+    for (let frame = 0; frame < fps * 12; frame++)
+      clock.advance(1 / fps, () => {
+        state = stepMatch(state, {
+          ...IDLE_INTENT,
+          targetAngle: fortress(0, state.arena).direction + 0.1,
+        });
+      });
+    return state;
+  };
+  const baseline = replay(30);
+  expect(replay(60)).toEqual(baseline);
+  expect(replay(144)).toEqual(baseline);
+});

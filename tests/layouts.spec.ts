@@ -1,0 +1,92 @@
+import { expect, test } from "@playwright/test";
+import { openGame, play, pause } from "./helpers";
+
+for (const [count, rounds] of [
+  [2, 3],
+  [3, 1],
+  [4, 4],
+  [5, 1],
+  [6, 3],
+] as const) {
+  test(`${count} seats: complete ${rounds} scripted desktop rounds and rematch with roster/settings intact`, async ({
+    page,
+  }) => {
+    test.setTimeout(300000);
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.stack ?? error.message));
+    await page.setViewportSize({ width: 480, height: 360 });
+    await openGame(page);
+    await page.getByLabel("Players", { exact: true }).selectOption(String(count));
+    await page.getByText("Settings", { exact: true }).click();
+    await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+    await page.getByLabel("Bot difficulty", { exact: true }).selectOption("standard");
+    await page.getByText("Settings", { exact: true }).click();
+    let sawTransition = false;
+    for (let round = 0; round < rounds; round++) {
+      const seat = round === 0 ? count - 1 : round % count;
+      await page.getByText("Settings", { exact: true }).click();
+      await page.getByLabel("Your fortress", { exact: true }).selectOption(String(seat));
+      await page.getByText("Settings", { exact: true }).click();
+      await expect(page.getByLabel("Survivors", { exact: true })).toHaveText(String(count));
+      await play(page);
+      await page.clock.runFor(1800);
+      const angle = Number(await page.getByLabel("Bat angle", { exact: true }).textContent());
+      await page.keyboard.down("KeyD");
+      await page.clock.runFor(100);
+      await page.keyboard.up("KeyD");
+      expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).not.toBe(
+        angle,
+      );
+      await pause(page);
+      const stats = await page.locator(".diagnostics").textContent();
+      await page.clock.runFor(300);
+      expect(await page.locator(".diagnostics").textContent()).toBe(stats);
+      await page.getByRole("button", { name: "Resume", exact: true }).click();
+      const rematch = page.getByRole("button", { name: "Rematch", exact: true });
+      for (let elapsed = 0; elapsed < 240 && !(await rematch.isVisible()); elapsed += 2) {
+        await page.clock.runFor(2000);
+        if ((await page.getByLabel("Arena transition", { exact: true }).textContent()) === "moving")
+          sawTransition = true;
+      }
+      await expect(rematch).toBeVisible();
+      await expect(page.getByRole("table", { name: "Round standings" })).toBeVisible();
+      await expect(page.getByLabel("Survivors", { exact: true })).toHaveText("1");
+      await rematch.click();
+      await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
+      await expect(page.getByLabel("Players", { exact: true })).toHaveValue(String(count));
+      await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("1");
+    }
+    if (count > 2) expect(sawTransition).toBe(true);
+    expect(errors).toEqual([]);
+  });
+}
+
+test("all six human fortresses support captured input, difficulty selection and shrinking the roster clamps the seat", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  await page.setViewportSize({ width: 640, height: 480 });
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.stack ?? error.message));
+  await openGame(page);
+  await page.getByLabel("Players", { exact: true }).selectOption("6");
+  for (let seat = 0; seat < 6; seat++) {
+    await page.getByText("Settings", { exact: true }).click();
+    await page
+      .getByLabel("Bot difficulty", { exact: true })
+      .selectOption(["beginner", "standard", "expert"][seat % 3]!);
+    await page.getByLabel("Your fortress", { exact: true }).selectOption(String(seat));
+    if ((await page.locator("details.settings-menu").getAttribute("open")) !== null)
+      await page.getByText("Settings", { exact: true }).click();
+    await play(page);
+    await page.clock.runFor(1800);
+    await pause(page);
+    await page.getByRole("button", { name: "Restart", exact: true }).click();
+  }
+  await page.getByLabel("Players", { exact: true }).selectOption("2");
+  await page.getByText("Settings", { exact: true }).click();
+  await expect(page.getByLabel("Your fortress", { exact: true })).toHaveValue("1");
+  await expect(page.getByLabel("Your fortress", { exact: true }).locator("option")).toHaveCount(2);
+  await expect(page.getByLabel("Bot difficulty", { exact: true })).toHaveValue("expert");
+  expect(errors).toEqual([]);
+});

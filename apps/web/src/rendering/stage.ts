@@ -1,28 +1,33 @@
 import { CylinderGeometry, Group, Mesh, MeshStandardMaterial } from "three";
-import { ARENA, FORTRESSES } from "../simulation/arena";
+import { ARENA, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
 import { createFeatureEdges } from "./feature-edges";
 import { arcMesh } from "./arc";
 import { createArenaBase } from "./base";
 import { createHealthFactory } from "./health-piece";
 import { SEATS } from "./palette";
 
-export function createStage(humanSeat = 0) {
+export function createStage(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA) {
   const root = new Group();
-  root.add(createArenaBase(humanSeat));
+  const base = createArenaBase(humanSeat, initial);
+  root.add(base);
+  const rails: Mesh[] = [],
+    marks: Mesh[] = [];
   const paddles: Mesh[] = [];
   const health: Group[][] = [];
-  for (const seat of FORTRESSES) {
+  for (const seat of initial.fortresses) {
     const { colour, sides } = SEATS[seat.id]!;
     const rail = arcMesh(
       ARENA.railRadius,
-      seat.direction - ARENA.sectorHalfAngle,
-      seat.direction + ARENA.sectorHalfAngle,
+      -seat.halfAngle,
+      seat.halfAngle,
       0.045,
       colour,
       0.035,
       0.15,
     );
     rail.position.set(seat.anchor.x, 0.02, seat.anchor.y);
+    rail.rotation.y = -seat.direction;
+    rails.push(rail);
     root.add(rail);
     const paddle = arcMesh(
       ARENA.batRadius,
@@ -62,7 +67,8 @@ export function createStage(humanSeat = 0) {
       0.15,
       seat.anchor.y + Math.sin(seat.direction) * markRadius,
     );
+    marks.push(mark);
     root.add(mark);
   }
-  return { root, paddles, health };
+  return { root, paddles, health, rails, marks, base };
 }

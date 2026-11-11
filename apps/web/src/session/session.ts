@@ -2,6 +2,7 @@ import { createDesktopInput } from "../input/desktop";
 import { createViewport } from "../rendering/viewport";
 import type { ViewOptions } from "../rendering/arena-view";
 import { SEATS } from "../rendering/palette";
+import type { PlayerCount } from "../simulation/arena";
 import { createMatch, stepMatch } from "../simulation/match";
 import { alive, type GameEvent, type MatchState } from "../simulation/types";
 import { createFixedClock } from "./fixed-clock";
@@ -20,10 +21,11 @@ export function createSession(
   seed: number,
   humanSeat: number,
   onSnapshot: (snapshot: SessionSnapshot) => void,
+  count: PlayerCount = 4,
 ) {
-  const viewport = createViewport(container, humanSeat);
+  let state = createMatch(seed, count);
+  const viewport = createViewport(container, humanSeat, state.arena);
   const clock = createFixedClock();
-  let state = createMatch(seed);
   let paused = true;
   let started = false;
   let notice = "Defend your eight pieces. Last fortress standing wins.";
@@ -50,6 +52,7 @@ export function createSession(
       if (started && state.phase !== "finished") setPaused(true);
     },
     () => settings.mouseSensitivity,
+    () => state.arena,
   );
   const abort = new AbortController();
   window.addEventListener("blur", () => setPaused(true), { signal: abort.signal });

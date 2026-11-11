@@ -105,3 +105,17 @@ it("introduces ball layers on a bar boundary and emits a musical arrival cue", (
   expect(director.snapshot().layers).toBe(3);
   expect(director.step(81).some((c) => c.voice === "acid")).toBe(true);
 });
+
+it.each([4, 5])(
+  "keeps a separate human phrase at expanded seat %s and follows a living survivor",
+  (seat) => {
+    const director = createMusicDirector(seat, 2026);
+    const expanded = { elapsed: 12, balls: 2, alive: Array<boolean>(6).fill(true) };
+    expect(director.observe(expanded, [event(0, "paddle", seat)])[0]!.voice).toBe("hit");
+    expect(director.snapshot()).toMatchObject({ seat, notes: 1, streak: 1 });
+    expanded.alive[seat] = false;
+    director.observe(expanded, [event(1, "damage", seat), event(2, "paddle", 3)]);
+    expect(director.snapshot()).toMatchObject({ seat: 3, notes: 1 });
+    expect(() => director.step(80)).not.toThrow();
+  },
+);

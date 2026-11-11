@@ -2,6 +2,7 @@ import {
   ARENA,
   FIXED_DT,
   createArena,
+  fortress,
   clampPaddleAngle,
   railPosition,
   type PlayerCount,
@@ -94,9 +95,16 @@ export function stepMatch(
   };
   beginArenaMorph(state);
   if (state.phase === "playing") stepArenaMorph(state, dt);
-  const inputs = state.players.map((player) =>
-    player.id === options.humanSeat ? human : botIntent(state, player.id, options.botDifficulty),
-  );
+  const inputs = state.players.map((player) => {
+    if (player.id !== options.humanSeat) return botIntent(state, player.id, options.botDifficulty);
+    if (human.targetAngle === null) return human;
+    // Intent is expressed in the geometry visible before this fixed step.
+    const turn = angleDifference(
+      fortress(player.id, state.arena).direction,
+      fortress(player.id, previous.arena).direction,
+    );
+    return { ...human, targetAngle: human.targetAngle + turn };
+  });
   const previousPieces = state.players.map((player) => player.pieces.map((body) => body.position));
   state.players.forEach((player) => stepHealth(player, dt, state.arena));
   const previousAngles = state.players.map((player) => player.angle);

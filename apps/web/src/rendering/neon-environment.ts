@@ -8,16 +8,20 @@ import {
   Scene,
   type WebGLRenderer,
 } from "three";
-import { FORTRESSES } from "../simulation/arena";
+import { SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
 import { disposeScene } from "./dispose-scene";
 import { SEATS } from "./palette";
 
 /** Procedural light cards for rough metallic reflections; no image/HDRI assets. */
-export function createNeonEnvironment(renderer: WebGLRenderer, scene: Scene): () => void {
+export function createNeonEnvironment(
+  renderer: WebGLRenderer,
+  scene: Scene,
+  arena: ArenaGeometry = SQUARE_ARENA,
+): () => void {
   const studio = new Scene();
   studio.background = new Color(0x030710);
   const geometry = new BoxGeometry(4.5, 6, 0.1);
-  for (const seat of FORTRESSES) {
+  for (const seat of arena.fortresses) {
     const card = new Mesh(
       geometry,
       new MeshBasicMaterial({

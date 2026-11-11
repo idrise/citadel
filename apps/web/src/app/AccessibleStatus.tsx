@@ -17,6 +17,11 @@ export function AccessibleStatus({
         mouse and pauses.
       </p>
       <output aria-label="Round phase">{state.phase}</output>
+      <output aria-label="Arena players">{state.arena.count}</output>
+      <output aria-label="Arena transition">{state.morph ? "moving" : "settled"}</output>
+      <output aria-label="Survivors">
+        {state.players.filter((player) => player.health.some(Boolean)).length}
+      </output>
       <output aria-label="Balls in play">{state.balls.length}</output>
       <output aria-label="Music status">{snapshot.music.status}</output>
       <output aria-label="Music section">{snapshot.music.section}</output>

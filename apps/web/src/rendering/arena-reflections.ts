@@ -1,27 +1,20 @@
-import { ARENA, fortress } from "../simulation/arena";
+import { Shape, ShapeGeometry } from "three";
+import { fortress, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
+import { polygonEdges } from "../simulation/polygon";
 import { createFloorReflection, createFrostedReflection } from "./floor-reflection";
 import { WALL_PANEL_HEIGHT, WALL_PANEL_CENTRE_Y } from "./wall-section";
 
-/** Capture floor and visible inner wall faces without mirrors recursively rendering each other. */
-export function createArenaReflections(humanSeat: number) {
-  const reflections = [createFloorReflection()];
-  const anchor = fortress(humanSeat).anchor;
-  for (let side = 0; side < 4; side++) {
-    const angle = (side * Math.PI) / 2;
-    const x = Math.sin(angle),
-      z = Math.cos(angle);
-    if (x * anchor.x + z * anchor.y >= -0.01) continue;
-    const reflection = createFrostedReflection(ARENA.halfSize * 2, WALL_PANEL_HEIGHT, 256, 0.25);
+/** A bounded pool of planar captures follows the same moving boundary as the walls. */
+export function createArenaReflections(humanSeat: number, initial: ArenaGeometry = SQUARE_ARENA) {
+  const floor = createFloorReflection();
+  const walls = Array.from({ length: 12 }, () =>
+    createFrostedReflection(1, WALL_PANEL_HEIGHT, 256, 0.25),
+  );
+  walls.forEach((reflection) => {
     reflection.mesh.name = "wall-reflection";
-    reflection.mesh.position.set(
-      x * (ARENA.halfSize - 0.008),
-      WALL_PANEL_CENTRE_Y,
-      z * (ARENA.halfSize - 0.008),
-    );
-    reflection.mesh.rotation.y = angle + Math.PI;
-    reflections.push(reflection);
-  }
-  const meshes = reflections.map((reflection) => reflection.mesh);
+  });
+  const reflections = [floor, ...walls],
+    meshes = reflections.map((reflection) => reflection.mesh);
   for (const mesh of meshes) {
     const draw = mesh.onBeforeRender.bind(mesh);
     mesh.onBeforeRender = function (...args) {
@@ -30,16 +23,55 @@ export function createArenaReflections(humanSeat: number) {
       try {
         draw(...args);
       } finally {
-        meshes.forEach((other, index) => {
-          other.visible = visibility[index]!;
+        meshes.forEach((other, i) => {
+          other.visible = visibility[i]!;
         });
       }
     };
   }
+  let previous: ArenaGeometry | undefined,
+    reduced = false;
+  let visible = meshes.map(() => false);
+  const apply = () =>
+    meshes.forEach((mesh, index) => {
+      mesh.visible = !reduced && visible[index]!;
+    });
+  const update = (arena: ArenaGeometry) => {
+    if (previous === arena) return;
+    previous = arena;
+    const shape = new Shape();
+    arena.vertices.forEach((p, i) => (i === 0 ? shape.moveTo(p.x, -p.y) : shape.lineTo(p.x, -p.y)));
+    shape.closePath();
+    floor.mesh.geometry.dispose();
+    floor.mesh.geometry = new ShapeGeometry(shape);
+    const anchor = fortress(humanSeat, arena).anchor,
+      edges = polygonEdges(arena.vertices);
+    visible = [
+      true,
+      ...walls.map((reflection, index) => {
+        const edge = edges[index];
+        if (!edge) return false;
+        const dx = edge.end.x - edge.start.x,
+          dz = edge.end.y - edge.start.y;
+        reflection.mesh.scale.x = Math.hypot(dx, dz);
+        reflection.mesh.position.set(
+          (edge.start.x + edge.end.x) / 2 + edge.normal.x * 0.008,
+          WALL_PANEL_CENTRE_Y,
+          (edge.start.y + edge.end.y) / 2 + edge.normal.y * 0.008,
+        );
+        reflection.mesh.rotation.y = Math.atan2(-dz, dx) + Math.PI;
+        return edge.normal.x * anchor.x + edge.normal.y * anchor.y > 0.01;
+      }),
+    ];
+    apply();
+  };
+  update(initial);
   return {
     meshes,
-    setReduced(reduced: boolean) {
-      for (const mesh of meshes) mesh.visible = !reduced;
+    update,
+    setReduced(value: boolean) {
+      reduced = value;
+      apply();
     },
     dispose() {
       for (const reflection of reflections) reflection.dispose();

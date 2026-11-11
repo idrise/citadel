@@ -1,3 +1,4 @@
+import type { PlayerCount } from "../simulation/arena";
 import { useEffect, useRef, useState } from "react";
 import { createSession, type GameSession, type SessionSnapshot } from "../session/session";
 import { SEATS } from "../rendering/palette";
@@ -8,6 +9,8 @@ import type { GameSettings } from "../session/settings";
 
 export function GamePanel({
   humanSeat,
+  count,
+  onCount,
   seed,
   onRematch,
   onRestart,
@@ -16,6 +19,8 @@ export function GamePanel({
   onSettings,
 }: {
   humanSeat: number;
+  count: PlayerCount;
+  onCount: (count: PlayerCount) => void;
   seed: number;
   onRematch: () => void;
   onRestart: () => void;
@@ -27,7 +32,7 @@ export function GamePanel({
   const session = useRef<GameSession | null>(null);
   const [unavailable, setUnavailable] = useState(false);
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => ({
-    state: createMatch(seed),
+    state: createMatch(seed, count),
     paused: true,
     started: false,
     notice: "",
@@ -45,7 +50,7 @@ export function GamePanel({
   useEffect(() => {
     if (!container.current) return;
     try {
-      const game = createSession(container.current, seed, humanSeat, setSnapshot);
+      const game = createSession(container.current, seed, humanSeat, setSnapshot, count);
       session.current = game;
       return () => {
         game.dispose();
@@ -54,7 +59,7 @@ export function GamePanel({
     } catch {
       setUnavailable(true);
     }
-  }, [seed, humanSeat]);
+  }, [seed, humanSeat, count]);
   useEffect(() => {
     session.current?.configure(settings);
   }, [settings]);
@@ -81,6 +86,9 @@ export function GamePanel({
         mode && (
           <GameMenu
             mode={mode}
+            count={count}
+            onCount={onCount}
+            state={snapshot.state}
             winner={winner}
             humanSeat={humanSeat}
             settings={settings}
