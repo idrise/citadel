@@ -332,15 +332,16 @@ When asked to **"do the next milestone"**:
 
 ### Music detour — Awaiting review
 
-- **Authorisation:** User requested their Tone.js music-director proposal, selected dark driving synth techno, then requested slight beat-driven rendering with the explicit rule: **“The music shouldn’t change the gameplay at all.”** The sparse first pass was rejected; the user requested a deeper 90s DJ-style melodic/build/drop arrangement, citing the build to *Insomnia* as a structural reference.
+- **Authorisation/latest direction:** User requested stronger experience-to-music coupling, researched layering methods, beat/sub-beat-aligned bat sounds and an FM audience when a ball physically damages a piece. Further steering requests harmonies/instruments as balls increase and a **muted hats → snare → driving kick** opening. This replaces the previous immediate-kick/melody opening. The 90s DJ-style journey to a drop remains the structural direction.
 - **Delivered checklist:**
-  - [x] Replace the sparse loop with an original 136 BPM score: immediate melody/bass, groove, melodic breakdown, snare/noise build, one-beat breath, full drop around 28s, then evolving melodic/build sections.
-  - [x] Keep per-player live accents and hit-grown counter-melodies; guarantee authored musical content without a streak. Keep all synthesis procedural and Tone.js 15.1.22 lazy-loaded.
-  - [x] Make beat presentation visible: bloom 0.25–0.51, exterior grid brightness and travelling light waves. Retain reduced-mode suppression and a separate Beat lighting toggle.
-  - [x] Retain mute/volume, pause/focus and teardown handling, graceful audio failure, and the strict music-to-gameplay boundary.
-  - [x] Validate isolated stem balance, no-hit music, actual live audio/video, unit/replay identity, production browser flows and Pages build.
-- **Defaults/evidence:** `docs/MUSIC_REVIEW.md`; music on at 45%, Beat lighting on unless reduced mode suppresses it. 182 unit tests and 14 native Chromium browser checks pass. `f173c17` contains the score/presentation revision. Hear `docs/reviews/music/club/club-preview.mp3` and watch `club-build-drop.mp4` in that folder; these are review exports, never runtime assets.
-- **Permanent boundary:** Music observes events only. Beats, musical intensity, builds/drops and their visual pulses must never alter simulation timing/rules, balls, paddles, bots, inputs, spawning or RNG. No beat-driven camera motion. Full M05/M06/M07 gates remain unstarted; this detour and M03/M04 still await user review.
+  - [x] Quiet staged intro at 136 BPM; kick around 7s, melodic space/build and first drop around 28s.
+  - [x] Ball-driven layers on bar boundaries: 2 harmony/organ, 3 arpeggio/acid, 4 FM brass. Bounded families for 5–8 balls; chord-aware voicings and interlocking rhythms.
+  - [x] Per-player phrases and streak-driven percussion/responses/fills; damaged defender's performance parts reset.
+  - [x] Audio-grid bat notes (32nds, 5–60ms), eighth-note answers/arrival cues, and a pooled FM/formant crowd on authoritative piece hits. Dense breaches coalesce; final cheer can finish after results without delaying victory.
+  - [x] Preserve audio-clock bloom/grid waves, mute/volume, reduced mode, pause/focus/teardown and graceful failure handling.
+  - [x] Research notes, isolated crowd, one-to-four-ball comparison, real-game audio/video, 193 unit tests, 15 native Chromium checks and Pages build evidence.
+- **Defaults/evidence:** `docs/MUSIC_REVIEW.md`; `fbc2499` contains this revision. Music on at 45%, Beat lighting on unless reduced mode suppresses it. Current auditions live under `docs/reviews/music/interactive/`; these are review exports, never game assets. Default ball interval remains 15s.
+- **Permanent boundary:** Music observes events only. Musical quantisation delays sounds, never collisions, rules, inputs, health, spawning or RNG. No music-driven camera motion. Full M05/M06/M07 gates remain unstarted; music and M03/M04 still await user review.
 
 ### Progress / approval ledger
 

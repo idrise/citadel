@@ -1,0 +1,113 @@
+{
+  "stems": {
+    "drums": {
+      "peak": 0.15425685048103333,
+      "rms": 0.018322709853820198,
+      "channels": 2,
+      "duration": 7.0588235294117645,
+      "bpm": 136,
+      "sections": []
+    },
+    "bass": {
+      "peak": 0.15140651166439056,
+      "rms": 0.014377394477181156,
+      "channels": 2,
+      "duration": 7.0588235294117645,
+      "bpm": 136,
+      "sections": []
+    },
+    "melody": {
+      "peak": 0.13475751876831055,
+      "rms": 0.014000825104003814,
+      "channels": 2,
+      "duration": 7.0588235294117645,
+      "bpm": 136,
+      "sections": []
+    },
+    "club-preview": {
+      "peak": 0.4415576457977295,
+      "rms": 0.02830731108313032,
+      "channels": 2,
+      "duration": 74,
+      "bpm": 136,
+      "sections": [
+        {
+          "section": "intro",
+          "rms": 0.0043476615856286255
+        },
+        {
+          "section": "groove",
+          "rms": 0.026479051053316757
+        },
+        {
+          "section": "breakdown",
+          "rms": 0.022289073041595425
+        },
+        {
+          "section": "build",
+          "rms": 0.027457482970162386
+        },
+        {
+          "section": "drop",
+          "rms": 0.04051943293912597
+        },
+        {
+          "section": "melodic",
+          "rms": 0.024470501540593985
+        }
+      ]
+    },
+    "no-hit-preview": {
+      "peak": 0.4317121207714081,
+      "rms": 0.02555041840029363,
+      "channels": 2,
+      "duration": 34,
+      "bpm": 136,
+      "sections": [
+        {
+          "section": "intro",
+          "rms": 0.004200002393945074
+        },
+        {
+          "section": "groove",
+          "rms": 0.026410394416143845
+        },
+        {
+          "section": "breakdown",
+          "rms": 0.02251595395628104
+        },
+        {
+          "section": "build",
+          "rms": 0.027389202738390645
+        },
+        {
+          "section": "drop",
+          "rms": 0.04054303781066452
+        },
+        {
+          "section": "melodic",
+          "rms": 0
+        }
+      ]
+    },
+    "cheer": {
+      "peak": 0.08492368459701538,
+      "rms": 0.00828463827380038,
+      "channels": 2,
+      "duration": 4.5,
+      "bpm": 136,
+      "sections": []
+    },
+    "layers": {
+      "peak": 0.270565927028656,
+      "rms": 0.029550759097037246,
+      "channels": 2,
+      "duration": 28.235294117647058,
+      "bpm": 136,
+      "sections": []
+    }
+  },
+  "melodyToDrumsDb": -2.336721479104921,
+  "bassToDrumsDb": -2.106190313596105,
+  "errors": []
+}

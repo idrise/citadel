@@ -1,0 +1,39 @@
+{
+  "sections": [
+    {
+      "second": 7,
+      "section": "intro",
+      "layers": "1"
+    },
+    {
+      "second": 14,
+      "section": "breakdown",
+      "layers": "2"
+    },
+    {
+      "second": 21,
+      "section": "build",
+      "layers": "2"
+    },
+    {
+      "second": 27,
+      "section": "build",
+      "layers": "3"
+    },
+    {
+      "second": 30,
+      "section": "drop",
+      "layers": "3"
+    },
+    {
+      "second": 40,
+      "section": "drop",
+      "layers": "4"
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.",
+    "Events scheduled inside of scheduled callbacks should use the passed in scheduling time. See https://github.com/Tonejs/Tone.js/wiki/Accurate-Timing"
+  ]
+}

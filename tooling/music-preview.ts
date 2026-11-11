@@ -49,7 +49,7 @@ export async function renderMusicPreview(
         director.observe(frame, []);
         instruments!.play(only(director.step(musicalStep)), time);
         const events: GameEvent[] = [];
-        if (options.hits !== false && step % 14 === 4)
+        if (options.hits !== false && step >= 32 && step % 14 === 4)
           events.push({
             id: eventId++,
             tick: step,
@@ -100,5 +100,10 @@ export async function renderMusicPreview(
   instruments?.dispose();
   limiter?.dispose();
   audio.dispose();
-  return { ...encoded, duration, bpm: MUSIC_BPM, sections };
+  return {
+    ...encoded,
+    duration,
+    bpm: MUSIC_BPM,
+    sections: options.demo || options.startStep ? [] : sections,
+  };
 }

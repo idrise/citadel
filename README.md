@@ -66,18 +66,19 @@ and holds the current camera pose without a snap.
 
 ## Music
 
-Press Play for an original 136 BPM club arrangement: plucked melody and rolling
-bass from the opening, a melodic breakdown, rising snare/noise build, then a full
-drop around 28 seconds. A later melodic section and longer build keep it evolving.
-Returns add live accents and grow your counter-melody; damage resets your part.
-The authored song stays melodic even with no hits.
+Press Play for a 136 BPM adaptive club score. Muted hats open, snare and melodic
+hints join, then the driving kick enters. The build leads to a drop around 28s.
+Two balls add harmony, three add FM arpeggios/acid counter-line, four add FM brass.
+New parts enter on bar boundaries. Returns grow your own phrase and performance
+layers; losing a piece resets your part and triggers a synthesised FM audience.
+Bat notes align to 32nds with a short bounded delay; replies/cheers use eighths.
+Collisions, movement and results always happen immediately and never wait for music.
 
-Kick beats swell the bloom and send travelling light waves over the exterior
-grid. **Beat lighting** has its own setting; **Reduced effects & motion** disables
-it. Music, volume (default 45%) and beat-lighting choices survive round changes.
-Pause/focus loss silences the music; Resume continues it. Audio and visual beats
-never change gameplay. No recorded audio assets are loaded by the game.
-See the [music review, stereo audition and build/drop video](docs/MUSIC_REVIEW.md).
+Kick beats swell the bloom and send travelling waves over the exterior grid.
+**Beat lighting** has its own setting; **Reduced effects & motion** disables it.
+Pause/focus loss silences the music; Resume continues it. Music, volume (default
+45%) and beat-lighting choices survive round changes. No recorded audio assets
+are loaded. See the [music review, layer comparison and crowd audition](docs/MUSIC_REVIEW.md).
 
 ## Check and build
 
