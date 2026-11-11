@@ -20,7 +20,7 @@ export function createFeedback(context: Tone.BaseContext, output: Tone.InputNode
     voice: Tone.FMSynth,
     maxPolyphony: 8,
     options: {
-      volume: -10,
+      volume: -1,
       harmonicity: 3.5,
       modulationIndex: 3,
       envelope: { attack: 0.001, decay: 0.07, sustain: 0, release: 0.06 },
@@ -35,7 +35,7 @@ export function createFeedback(context: Tone.BaseContext, output: Tone.InputNode
   }).connect(output);
   const crack = new Tone.NoiseSynth({
     context,
-    volume: -19,
+    volume: -12,
     envelope: { attack: 0.001, decay: 0.018, sustain: 0, release: 0.015 },
   }).connect(crackFilter);
   return {

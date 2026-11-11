@@ -42,6 +42,7 @@ try {
     for (const [name, label] of [
       ["success", "Your score"],
       ["loss", "Your loss"],
+      ["enemy", "Enemy break"],
       ["overlap", "Mixed breaches"],
     ]) {
       await page.evaluate(() => {

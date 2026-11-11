@@ -1,6 +1,7 @@
 import { createMusicDirector, type MusicFrame } from "./director";
 import type { EngineLoader, MusicEngine, MusicStatus } from "./ports";
 import type { GameEvent } from "../simulation/types";
+import { VICTORY_TAIL_SECONDS } from "./victory-outro";
 
 interface Dependencies {
   createContext: () => AudioContext;
@@ -117,9 +118,11 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
       if (engine && wanted && enabled && unlocked && !failed && !disposed)
         try {
           engine.play(cues);
-          if (events.some((event) => event.type === "victory")) {
-            endingUntil = (context?.currentTime ?? 0) + 2;
-            engine.finish();
+          const victory = events.find((event) => event.type === "victory");
+          if (victory) {
+            const won = victory.seat === humanSeat;
+            endingUntil = (context?.currentTime ?? 0) + (won ? VICTORY_TAIL_SECONDS : 2);
+            engine.finish(won);
           }
         } catch {
           fail();
@@ -142,12 +145,22 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
       return { status, ...director.snapshot() };
     },
     pulse() {
-      return enabled && wanted && volume > 0 && unlocked && !failed && !disposed
+      return enabled &&
+        (wanted || endingUntil > (context?.currentTime ?? 0)) &&
+        volume > 0 &&
+        unlocked &&
+        !failed &&
+        !disposed
         ? (engine?.pulse() ?? 0)
         : 0;
     },
     visuals() {
-      return enabled && wanted && volume > 0 && unlocked && !failed && !disposed
+      return enabled &&
+        (wanted || endingUntil > (context?.currentTime ?? 0)) &&
+        volume > 0 &&
+        unlocked &&
+        !failed &&
+        !disposed
         ? (engine?.visuals() ?? { pulse: 0, phase: -1, energy: 0 })
         : { pulse: 0, phase: -1, energy: 0 };
     },

@@ -69,6 +69,12 @@ test("a real human win keeps the arena alive for neon fireworks and scene rematc
   await page.clock.runFor(3500);
   const rematch = page.getByRole("button", { name: "Rematch", exact: true });
   await expect(rematch).toBeVisible();
+  await openSettings(page);
+  await page.clock.runFor(400);
+  expect(await page.locator(".diagnostics").textContent()).toBe(stats);
+  await page.getByRole("button", { name: "Resume", exact: true }).click();
+  await expect.poll(() => page.evaluate(() => document.pointerLockElement === null)).toBe(true);
+  await expect(rematch).toBeVisible();
   await rematch.click();
   await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
   await expect(page.getByLabel("Player count", { exact: true })).toHaveText("2");

@@ -33,9 +33,9 @@ export function mountBreachReview(human = 5) {
     music.unlock();
     music.setPlaying(true);
   });
-  const breach = (seat: number) => {
+  const breach = (seat: number, striker = human) => {
     const ball = state.balls[0]!;
-    ball.seat = human;
+    ball.seat = striker;
     launchBall(state, ball, DEFAULT_OPTIONS);
     observer.observe(state.events); // Attribution, without a serve sound contaminating the audition.
     const piece = state.players[seat]!.health.findIndex(Boolean);
@@ -47,6 +47,7 @@ export function mountBreachReview(human = 5) {
   };
   button("Your score", () => breach((human + 1) % 6));
   button("Your loss", () => breach(human));
+  button("Enemy break", () => breach((human + 1) % 6, (human + 2) % 6));
   button("Mixed breaches", () => {
     for (let i = 0; i < 3; i++) breach(human);
     breach((human + 1) % 6);

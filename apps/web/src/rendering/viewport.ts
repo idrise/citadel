@@ -130,8 +130,11 @@ export function createViewport(
         framingPoints.push(
           ...menu.framing(camera).map((p) => new Vector3(0, 2.34, 0).lerp(p, menuBlend)),
         );
-      if (menuState.mode === "victory")
-        framingPoints.push(new Vector3(-8, 10, 0), new Vector3(8, 10, 0));
+      if (state.phase === "finished" && state.winner === humanSeat) {
+        const reveal = options.reducedEffects ? 1 : 1 - Math.exp(-menuState.elapsed * 4);
+        const skyHeight = 2.34 + (10 - 2.34) * reveal;
+        framingPoints.push(new Vector3(-8, skyHeight, 0), new Vector3(8, skyHeight, 0));
+      }
       bounds.makeEmpty();
       for (const p of state.arena.vertices) {
         bounds.expandByPoint(new Vector3(p.x * 1.09, 0, p.y * 1.09));

@@ -48,8 +48,10 @@ export function createMusicDirector(humanSeat: number, seed: number) {
         }
         if (event.type === "launch")
           cues.push(cue("serve", 69, event.seat === humanSeat ? 0.38 : 0.12, 0.1));
-        if (event.type === "victory" && event.seat === humanSeat)
+        if (event.type === "victory" && event.seat === humanSeat) {
           cues.push(cue("victory", 86, 0.8, 1.2));
+          cues.push(cue("cheer", 62, 0.9, 1.15));
+        }
         if (event.type === "elimination")
           cues.push(
             cue(

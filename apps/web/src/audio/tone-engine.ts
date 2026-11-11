@@ -6,6 +6,7 @@ import { createBeatEnvelope } from "./beat-envelope";
 import { createEventConductor, type GridAnchor } from "./event-grid";
 import { createScheduleWindow } from "./schedule-window";
 import { arrangementAt } from "./arrangement";
+import { VICTORY_TAIL_SECONDS, victoryOutro } from "./victory-outro";
 
 let replacedDefaultContext = false;
 
@@ -30,6 +31,7 @@ export function createToneEngine(
   transport.bpm.value = MUSIC_BPM;
   let step = 0;
   let running = false;
+  let outroStart: number | null = null;
   const beats = createBeatEnvelope();
   const conductor = createEventConductor();
   let anchor: GridAnchor = { time: native.currentTime + 0.05, step: 0 };
@@ -37,7 +39,12 @@ export function createToneEngine(
   const event = transport.scheduleRepeat((time) => {
     anchor = { time, step };
     const energy = arrangementAt(step).energy;
-    const cues = onStep(step++);
+    const cues = outroStart === null ? onStep(step++) : victoryOutro(step++ - outroStart);
+    if (outroStart !== null && step - outroStart > 48) {
+      running = false;
+      transport.pause(time);
+      return;
+    }
     if (!acceptStep(time, native.currentTime)) return;
     beats.scheduleEnergy(time, energy);
     for (const cue of cues) {
@@ -66,11 +73,16 @@ export function createToneEngine(
         transport.start(now + 0.05);
       } else transport.pause(now);
     },
-    finish() {
-      running = false;
-      transport.pause(native.currentTime);
-      instruments.fadeScore(native.currentTime);
-      gate.gain.setTargetAtTime(0, native.currentTime + 2, 0.04);
+    finish(won = false) {
+      if (won) {
+        outroStart = step;
+        instruments.beginOutro(native.currentTime);
+      } else {
+        running = false;
+        transport.pause(native.currentTime);
+        instruments.fadeScore(native.currentTime);
+      }
+      gate.gain.setTargetAtTime(0, native.currentTime + (won ? VICTORY_TAIL_SECONDS : 2), 0.04);
     },
     dispose() {
       gate.gain.cancelScheduledValues(native.currentTime);

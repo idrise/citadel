@@ -22,7 +22,10 @@ try {
     AudioNode.prototype.connect = function (destination, ...args) {
       const result = Reflect.apply(connect, this, [destination, ...args]);
       if (destination === this.context.destination) {
-        const tap = this.context.createMediaStreamDestination();
+        const tap =
+          window.audioCapture?.context === this.context
+            ? window.audioCapture
+            : this.context.createMediaStreamDestination();
         Reflect.apply(connect, this, [tap]);
         window.audioCapture = tap;
       }
@@ -30,12 +33,15 @@ try {
     };
   });
   await page.goto(origin);
-  await page.getByLabel("Players", { exact: true }).selectOption("6");
+  for (let i = 0; i < 2; i++)
+    await page.getByRole("button", { name: "Increase players", exact: true }).click();
   await page.screenshot({ path: `${directory}/desktop-start.png` });
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
   await page.getByText("How to play", { exact: true }).click();
   await page.screenshot({ path: `${directory}/desktop-help.png` });
   await page.getByText("How to play", { exact: true }).click();
-  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await page.getByRole("button", { name: "Resume", exact: true }).click();
+  await page.getByRole("button", { name: "Start", exact: true }).click();
   await page.waitForFunction(() => Boolean(window.audioCapture));
   await page.getByLabel("Music status", { exact: true }).filter({ hasText: "playing" }).waitFor();
   await page.evaluate(() => {

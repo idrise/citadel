@@ -41,10 +41,10 @@ export function createSceneControls(
         if (!item) continue;
         button.disabled = item.disabled;
         Object.assign(button.style, {
-          left: `${item.left}px`,
-          top: `${item.top}px`,
-          width: `${item.width}px`,
-          height: `${item.height}px`,
+          left: `${Math.round(item.left)}px`,
+          top: `${Math.round(item.top)}px`,
+          width: `${Math.max(1, Math.round(item.width))}px`,
+          height: `${Math.max(1, Math.round(item.height))}px`,
         });
       }
     },

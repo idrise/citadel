@@ -47,6 +47,10 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
       arranged.gain.cancelScheduledValues(time);
       arranged.gain.setTargetAtTime(0, time, 0.025);
     },
+    beginOutro(time: number) {
+      arranged.gain.cancelScheduledValues(time);
+      arranged.gain.setTargetAtTime(0.7, time, 0.04);
+    },
     dispose() {
       feedback.dispose();
       crowd.dispose();

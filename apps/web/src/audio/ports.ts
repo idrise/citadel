@@ -5,7 +5,7 @@ export interface MusicEngine {
   setPlaying: (value: boolean, volume: number) => void;
   pulse: () => number;
   visuals: () => MusicVisuals;
-  finish: () => void;
+  finish: (won?: boolean) => void;
   dispose: () => void;
 }
 export type EngineLoader = (

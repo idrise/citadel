@@ -21,10 +21,12 @@ try {
     };
   });
   await page.goto(process.argv[3] ?? "http://127.0.0.1:5173");
-  await page.getByLabel("Players", { exact: true }).selectOption("6");
+  for (let i = 0; i < 2; i++)
+    await page.getByRole("button", { name: "Increase players", exact: true }).click();
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
   await page.getByText("Settings", { exact: true }).click();
   await page.getByLabel("Your fortress", { exact: true }).selectOption("5");
-  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await page.getByRole("button", { name: "Start", exact: true }).click();
   await page.getByLabel("Music status", { exact: true }).filter({ hasText: "playing" }).waitFor();
   await new Promise((resolve) => setTimeout(resolve, 2500));
   const metrics = await page.evaluate(

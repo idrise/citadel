@@ -127,7 +127,8 @@ it("lets the final breach cheer resolve without delaying results, while mute can
   music.setPlaying(false);
   expect(music.snapshot().status).toBe("ending");
   expect(engine.setPlaying).toHaveBeenLastCalledWith(true, 0.45);
-  host.currentTime = 2.1;
+  expect(engine.finish).toHaveBeenLastCalledWith(true);
+  host.currentTime = 6.1;
   music.setPlaying(false);
   expect(engine.setPlaying).toHaveBeenLastCalledWith(false, 0.45);
   music.dispose();
