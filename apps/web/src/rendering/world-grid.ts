@@ -17,6 +17,7 @@ export function createWorldGrid() {
       majorColour: { value: new Color(0x00c3ef).multiplyScalar(0.65) },
       groundColour: { value: new Color(0x030710) },
       hazeColour: { value: new Color(0x080f1c) },
+      musicGain: { value: 1 },
     },
     vertexShader: `
       varying vec2 groundPosition;
@@ -35,6 +36,7 @@ export function createWorldGrid() {
       uniform vec3 majorColour;
       uniform vec3 groundColour;
       uniform vec3 hazeColour;
+      uniform float musicGain;
       varying vec2 groundPosition;
 
       float grid(float spacing) {
@@ -55,7 +57,7 @@ export function createWorldGrid() {
         float nearArena = smoothstep(9.5, 16.0, max(abs(groundPosition.x), abs(groundPosition.y)));
         vec3 lines = minorColour * grid(minorSpacing) + majorColour * grid(majorSpacing);
         vec3 colour = mix(groundColour, hazeColour, haze);
-        colour += lines * (1.0 - haze) * mix(0.45, 1.0, nearArena);
+        colour += lines * (1.0 - haze) * mix(0.45, 1.0, nearArena) * musicGain;
         gl_FragColor = vec4(colour, 1.0);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>

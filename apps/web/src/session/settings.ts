@@ -8,6 +8,8 @@ export interface GameSettings {
   serveTimeout: number;
   ballInterval: number;
   maxBalls: number;
+  music: boolean;
+  musicVolume: number;
 }
 export const ASSISTANCE = [
   { id: "none", label: "Neither", preview: false, slowdown: false },
@@ -34,6 +36,8 @@ export function createSettings(reducedEffects = false): GameSettings {
     serveTimeout: 1.8,
     ballInterval: 15,
     maxBalls: 4,
+    music: true,
+    musicVolume: 0.45,
   };
 }
 export function matchOptions(settings: GameSettings, humanSeat: number): MatchOptions {

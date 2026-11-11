@@ -31,6 +31,7 @@ export function GamePanel({
     paused: true,
     started: false,
     notice: "",
+    music: { status: "idle", section: "pulse", intensity: 0, streak: 0, notes: 0, seat: humanSeat },
   }));
   useEffect(() => {
     if (!container.current) return;
@@ -74,6 +75,7 @@ export function GamePanel({
             winner={winner}
             humanSeat={humanSeat}
             settings={settings}
+            musicStatus={snapshot.music.status}
             onSettings={onSettings}
             onSeat={onSeat}
             onRestart={mode === "result" ? onRematch : onRestart}

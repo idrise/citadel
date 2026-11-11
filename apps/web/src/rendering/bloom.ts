@@ -3,6 +3,7 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { musicLight } from "./music-light";
 
 export function createBloom(renderer: WebGLRenderer, scene: Scene, camera: Camera) {
   const composer = new EffectComposer(renderer);
@@ -16,7 +17,8 @@ export function createBloom(renderer: WebGLRenderer, scene: Scene, camera: Camer
     resize(width: number, height: number) {
       composer.setSize(width, height);
     },
-    render(dt: number, reduced: boolean) {
+    render(dt: number, reduced: boolean, pulse = 0) {
+      bloom.strength = musicLight(pulse, reduced).bloomStrength;
       if (reduced) renderer.render(scene, camera);
       else composer.render(dt);
     },

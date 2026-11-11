@@ -6,12 +6,14 @@ import { createMatch, stepMatch } from "../simulation/match";
 import { alive, type GameEvent, type MatchState } from "../simulation/types";
 import { createFixedClock } from "./fixed-clock";
 import { createSettings, matchOptions, type GameSettings } from "./settings";
+import { createGameMusic, type MusicSnapshot } from "../audio/music-session";
 
 export interface SessionSnapshot {
   state: MatchState;
   paused: boolean;
   started: boolean;
   notice: string;
+  music: MusicSnapshot;
 }
 export function createSession(
   container: HTMLElement,
@@ -29,9 +31,11 @@ export function createSession(
   let lastTimestamp = 0;
   let lastReport = 0;
   let frame = 0;
-  const report = () => onSnapshot({ state, paused, started, notice });
+  const music = createGameMusic(seed, humanSeat);
+  const report = () => onSnapshot({ state, paused, started, notice, music: music.snapshot() });
   const setPaused = (value: boolean) => {
     paused = value;
+    music.setPlaying(started && !paused && state.phase !== "finished");
     input.clear();
     if (value) input.release();
     clock.reset();
@@ -71,11 +75,17 @@ export function createSession(
             notice = `${SEATS[event.seat]!.name} lost a piece. ${alive(state.players[event.seat]!) ? "Revenge serve." : "Fortress eliminated."}`;
         }
       });
+    music.observe(
+      { elapsed: state.elapsed, balls: state.balls.length, alive: state.players.map(alive) },
+      events,
+    );
+    music.setPlaying(started && !paused && state.phase !== "finished");
     const view: ViewOptions = {
       humanSeat,
       preview: settings.preview,
       slowdown: settings.slowdown,
       reducedEffects: settings.reducedEffects,
+      musicPulse: music.pulse(),
     };
     viewport.render({ ...state, events }, paused && started ? 0 : delta, view);
     if (state.phase === "finished") input.release();
@@ -90,21 +100,25 @@ export function createSession(
   return {
     start() {
       started = true;
+      music.unlock();
       setPaused(false);
       input.capture();
     },
     pause: () => setPaused(true),
     resume() {
+      music.unlock();
       setPaused(false);
       input.capture();
     },
     configure(next: GameSettings) {
       settings = next;
+      music.configure(next);
     },
     dispose() {
       cancelAnimationFrame(frame);
       abort.abort();
       input.dispose();
+      music.dispose();
       viewport.dispose();
     },
   };

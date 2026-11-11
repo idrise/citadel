@@ -16,6 +16,7 @@ import { createBloom } from "./bloom";
 import { createNeonEnvironment } from "./neon-environment";
 import { lightArena } from "./lighting";
 import { createWorldGrid } from "./world-grid";
+import { musicLight } from "./music-light";
 
 /** Owns camera, projection and graphics resources. Gameplay stays in the simulation. */
 export function createViewport(container: HTMLElement, humanSeat = 0) {
@@ -33,7 +34,8 @@ export function createViewport(container: HTMLElement, humanSeat = 0) {
   const scene = new Scene();
   scene.background = new Color(0x080f1c);
   const arena = createArenaView(humanSeat);
-  scene.add(arena.root, createWorldGrid());
+  const worldGrid = createWorldGrid();
+  scene.add(arena.root, worldGrid);
   const disposeLighting = lightArena(scene);
   const disposeEnvironment = createNeonEnvironment(renderer, scene);
   const camera = createArenaCamera(humanSeat);
@@ -69,7 +71,12 @@ export function createViewport(container: HTMLElement, humanSeat = 0) {
       motion.update(dt, options.reducedEffects);
       fitArenaCamera(camera, bounds, aspect);
       arena.update(state, dt, options);
-      bloom.render(dt, options.reducedEffects);
+      const pulse = options.musicPulse ?? 0;
+      worldGrid.material.uniforms.musicGain!.value = musicLight(
+        pulse,
+        options.reducedEffects,
+      ).gridGain;
+      bloom.render(dt, options.reducedEffects, pulse);
     },
     dispose() {
       observer.disconnect();

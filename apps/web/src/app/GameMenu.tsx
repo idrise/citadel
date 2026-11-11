@@ -2,6 +2,8 @@ import type { GameSettings as Settings } from "../session/settings";
 import { SEATS } from "../rendering/palette";
 import { Experiments } from "./Experiments";
 import { useEffect, useState } from "react";
+import { MusicSettings } from "./MusicSettings";
+import type { MusicStatus } from "../audio/ports";
 
 export function GameMenu({
   mode,
@@ -12,6 +14,7 @@ export function GameMenu({
   onSeat,
   onPlay,
   onRestart,
+  musicStatus,
 }: {
   mode: "start" | "paused" | "result";
   winner: string;
@@ -21,6 +24,7 @@ export function GameMenu({
   onSeat: (seat: number) => void;
   onPlay: () => void;
   onRestart: () => void;
+  musicStatus: MusicStatus;
 }) {
   const [hidden, setHidden] = useState(false);
   useEffect(() => {
@@ -65,6 +69,7 @@ export function GameMenu({
             </select>
           </label>
           <Experiments value={settings} onChange={onSettings} />
+          <MusicSettings value={settings} onChange={onSettings} status={musicStatus} />
         </details>
         {mode === "paused" && (
           <button className="hide-controls" aria-keyshortcuts="H" onClick={() => setHidden(true)}>
