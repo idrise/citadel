@@ -27,7 +27,9 @@ test("perspective walls and reflected bloom render, with a reduced-effects path"
 });
 
 test("live perspective camera cannot steer a stationary captured mouse", async ({ page }) => {
-  test.setTimeout(90000);
+  test.setTimeout(240000);
+  // Keep the longer live-motion run affordable in software WebGL; the render check uses full size.
+  await page.setViewportSize({ width: 800, height: 600 });
   await openGame(page, false);
   await play(page);
   await page.clock.runFor(1800);

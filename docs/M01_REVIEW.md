@@ -1,8 +1,8 @@
 # M01 — first playable prototype
 
-Status: awaiting review of the fullscreen perspective arena and relative mouse
-capture. The user requested a lower, closer camera after the first perspective
-pass; it is now about 38° with tighter framing. M02 has not started.
+Status: awaiting review of broader shader-based feature edges and solid wall
+cross-sections. The camera remains at about 38° with tight fullscreen framing.
+M02 has not started.
 
 ## Current build
 
@@ -25,22 +25,30 @@ Nonvisual controls/status remain available to assistive technology.
   Neither camera motion nor screen edges can steer or limit the captured mouse.
   Keyboard uses the existing simulation movement caps. Pause and reduced effects
   hold the current camera pose without snapping.
-- Four bevelled outer walls are **2 units tall and 0.5 units thick**, with thin
-  neon edges and vertical seams. Near panels are translucent so threats remain
-  visible; rear panels retain solid dark frosted faces. These replace the low
-  cutaway strips. The gameplay wall collision plane is unchanged.
-- Softened planar reflections on the floor and rear inner wall faces capture
-  actual moving geometry. Reflectors hide one another during captures to avoid
-  recursive rendering. Rough metal faces also use procedural neon light cards;
-  no image textures or HDRIs are used.
-- Darker ambient/key lighting and saturated player colours replace the pastel
-  treatment. Physical neon tubes trace both bat rims and end faces; health pieces
-  have glowing top/base rims and vertical spines. The plinth has two traced
-  levels. Wall seams are **0.024 units square on the inner surface**, rather than
-  full-thickness luminous slabs; perimeter lights meet cleanly at corners.
-- Bloom uses **0.5 radius**, **0.5 strength** and **1.05 threshold**, with HDR neon
-  cores and dark broad faces. The glow follows geometric edges rather than a
-  uniform bright wash. Reduced effects disables bloom and planar reflections.
+- Walls are **2.22 units tall and 0.96 units deep**, with opaque extruded caps,
+  broad top decks, chamfered shoulders, solid feet, outer supports and corner
+  posts. Recessed dark faces sit between the structural beams. Foreground faces
+  remain translucent; caps, feet and posts are real opaque solids. The physical
+  gameplay boundary remains at 9 units.
+- Floor and rear recessed faces capture softened moving reflections. Reflection
+  planes fit the recessed faces rather than covering the caps. Procedural neon
+  light cards supplement rough metal reflections; no image/HDRI assets are used.
+- Mesh edges are selected at **35° between adjacent face normals**, once when
+  geometry is built. Flat-face triangle diagonals and smooth cylinder facets are
+  omitted. A custom vertex shader expands selected edges in screen pixels;
+  fragment shading adds an antialiased bright core, shoulder and round joins.
+- Structural outlines are **3–4.5 CSS pixels** wide, including the far side of the
+  arena. The shader updates for each render viewport, reflection target and
+  display pixel ratio. It replaces the hand-placed tubes, skinny box strips and
+  decorative cylinder spines. Geometry bounds and shared resource cleanup are
+  retained. Strokes remain depth-tested against other solids.
+- Bloom uses **0.45 radius**, **0.25 strength** and **1.05 threshold**. Wider edges
+  need less bloom contribution to keep the metal faces dark and the ball clear.
+  Reduced effects disables bloom/reflections while preserving geometry and bold
+  feature edges.
+- A faint ball ghost appears only where opaque geometry occludes the ball. It
+  keeps near-wall rebounds readable behind solid caps, using the same position
+  and radius, without changing collision or input rules.
 
 ## Physical health cluster
 
@@ -67,25 +75,26 @@ only trace hash is not a baseline for those rules.
 ## Validation actually run
 
 - `pnpm check`: formatting, lint and strict TypeScript passed.
-- `pnpm test`: **86 tests in 12 files** passed. Includes unlimited relative deltas,
-  clamp/reversal, keyboard handover, capture rejection/disposal, perspective size,
-  solid wall geometry and thin surface seams, physical HDR bat outlines, framing through camera motion, reflection cleanup and the
-  existing health/damage/serve/elimination/replay/stress contracts.
+- `pnpm test`: **93 tests in 13 files** passed. Includes sharp/shallow fold
+  selection, suppression of triangle diagonals and smooth facets, screen and
+  reflection viewport updates, resource sharing/disposal, extruded wall cap
+  dimensions, opaque structure/translucent faces, occluded-ball placement and
+  the existing input, camera, health, collision, serve and determinism contracts.
 - `PAGES_BASE_PATH=/citadel/ pnpm build`: static production build passed.
-- All **ten browser cases** passed across full and focused Chromium runs:
-  captured steering/banks, focus/pause/held-key clearing, timed arrivals/restart,
-  complete round/results/rematch, live-camera input safety, default/reduced
-  rendering, pure fullscreen play, project-path refresh, narrow layout,
-  WebGL2 fallback and hidden pause controls. The complete-round focused rerun
-  passed in 2.0 minutes. Following the final neon revision,
-  `pnpm test:browser --grep 'captured controls|perspective walls|pause controls' --workers=1`
-  passed **3/3** in 1.3 minutes.
-- Full Chromium is required for actual Pointer Lock; the lightweight headless
-  shell rejected capture. Long gameplay cases use a 480×360 viewport and
-  180/300-second allowances for software WebGL. Dedicated rendering checks use
-  the larger default viewport. Earlier timeouts were resolved by those harness
-  changes and sequential focused runs; no gameplay state was edited.
-- `git diff --check` passed. The lower, tighter camera was inspected in rendered
+- Current shader/wall browser checks: **four focused cases passed** across runs:
+  default/reduced shader and reflection rendering (no console/shader errors),
+  stationary captured input through live camera motion, both relative-mouse bank
+  limits, and hiding/restoring pause controls. The final render check passed in
+  1.2 minutes and the focused live-camera rerun in 2.5 minutes under software WebGL.
+- Full Chromium is required for actual Pointer Lock. The live-camera check now
+  uses an 800×600 viewport and 240-second allowance; the dedicated render check
+  retains the larger default viewport. Gameplay controls and complete round /
+  results / rematch passed in the preceding revision. They are historical
+  evidence rather than a fresh full-match run for this presentation-only change.
+- The final local gameplay capture rendered on **Apple M2 Pro / ANGLE Metal**;
+  it exercised real capture/steering/serving/release without page errors. This is
+  rendered validation, not a measured frame-rate or cross-device claim.
+- `git diff --check` passed. The new shader/wall treatment was inspected in rendered
   screenshots and a desktop gameplay clip recorded locally with actual capture.
 - Simulation files were unchanged by this presentation/input revision. The five
   all-bot results below were recorded for the preceding health-cluster revision,
@@ -107,14 +116,20 @@ claim is made.
 
 - [Fullscreen perspective arena, lower camera](reviews/m01/perspective-fullscreen.png).
 - [Gameplay with captured relative input](reviews/m01/perspective-gameplay.png).
+- [Solid wall cross-section with reduced effects](reviews/m01/solid-wall-reduced.png).
+- [Ball visibility behind an opaque cap](reviews/m01/ball-behind-cap.png). These last
+  two are rendering diagnostics with the ball positioned behind the near corner,
+  rather than normal gameplay captures.
 - Local gameplay capture: `/tmp/citadel-perspective-review/gameplay.webm`.
-  It uses mouse/serve input at normal simulation speed, without state edits.
+  It uses real mouse/serve input without gameplay state edits, captured in
+  Chromium on Apple M2 Pro / ANGLE Metal.
   Temporary video is not checked into the repository.
 - Earlier orthographic images remain in the review directory as historical
   comparisons; they do not represent the current camera or fullscreen layout.
 
 Try **Play**, sweep the mouse both ways, then **Escape → Resume**. Check the lower,
-closer framing, visible wall height, frosted reflections and ball readability.
+closer framing, broader sharp edges, solid wall thickness, frosted reflections
+and ball readability near the foreground caps.
 The spring/growth tuning and 15-second ball interval remain provisional.
 
 Only four seats and one basic bot controller are implemented. Mobile, audio,
@@ -123,7 +138,7 @@ milestones. Same-tick balls resolve in ID order. No exhaustive collision or real
 hardware frame-rate claim is made. Settings reset on rematch; a lower live ball
 cap stops additions without deleting existing balls. The bundle still emits a
 
-greater-than-500 kB warning (about 855 kB minified / 232 kB gzip).
+greater-than-500 kB warning (about 856 kB minified / 232 kB gzip).
 
 The original sketch remains unavailable. No remote workflow, push, deployment,
 repository-setting change or `gh` command was performed.

@@ -36,8 +36,11 @@ The new ball size/speed and bank-shot reach reflect the initial hands-on feedbac
 The live perspective camera sits behind your selected fortress at about 38° over
 solid raised walls and a deep 3D arena. Foreground panels are translucent to keep
 balls visible; rear faces and the floor reflect actual moving geometry with a
-soft frosted finish. Saturated neon traces the full height of bats, health pieces
-and walls; a darker lighting setup keeps the glow concentrated on those edges.
+soft frosted finish. Thick opaque wall caps, feet and supports frame the recessed
+faces. A custom shader widens edges where faces meet at 35° or more, giving bold
+neon outlines without lighting flat-face triangle seams. A faint ball ghost
+keeps rebounds readable when a solid cap blocks the camera. Dark faces and
+restrained bloom keep the glow concentrated on the edges.
 Pieces occupy compact staggered rows and grow by 3.5% per loss (up to 24.5%), with
 visible geometry matching the moving collision bodies. Relative mouse input is
 independent of camera motion. Reduced effects/motion disables bloom/reflections
