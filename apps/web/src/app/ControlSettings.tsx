@@ -45,8 +45,8 @@ export function ControlSettings({
         </select>
       </label>
       <p className="settings-hint">
-        Dotted paths assume your bat stays still; moving defenders can change them. Slowdown gives
-        every defender more time.
+        Dotted paths assume your bat stays still; moving defenders can change them. Pressure
+        slowdown only helps when two incoming catches demand a fast move.
       </p>
     </>
   );

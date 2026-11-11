@@ -67,6 +67,15 @@ it.each([0, 1, 2, 3])(
 
 it("uses slowdown timing, suppresses distant/missed contacts and selects the earliest active ball", () => {
   const { state } = returnFixture();
+  state.balls.push({
+    ...state.balls[0]!,
+    id: 2,
+    position: {
+      x: fortress(0).anchor.x + Math.cos(fortress(0).direction + 0.7) * 5.8,
+      y: fortress(0).anchor.y + Math.sin(fortress(0).direction + 0.7) * 5.8,
+    },
+    velocity: scale(unit(fortress(0).direction + 0.7), -24),
+  });
   const fast = predictReturn(state, 0, false)!,
     slow = predictReturn(state, 0, true)!;
   expect(slow.time).toBeGreaterThan(fast.time);

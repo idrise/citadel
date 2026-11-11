@@ -12,8 +12,8 @@ export interface GameSettings {
 export const ASSISTANCE = [
   { id: "none", label: "Neither", preview: false, slowdown: false },
   { id: "preview", label: "Preview only", preview: true, slowdown: false },
-  { id: "slowdown", label: "Slowdown only", preview: false, slowdown: true },
-  { id: "both", label: "Preview + slowdown", preview: true, slowdown: true },
+  { id: "slowdown", label: "Pressure slowdown only", preview: false, slowdown: true },
+  { id: "both", label: "Preview + pressure slowdown", preview: true, slowdown: true },
 ] as const;
 export type AssistanceMode = (typeof ASSISTANCE)[number]["id"];
 export function assistanceMode(settings: GameSettings): AssistanceMode {

@@ -16,6 +16,12 @@ it.each([0, 1, 2, 3])(
     ball.phase = "active";
     ball.position = railPosition(seat, angle, 6.4);
     ball.velocity = scale(unit(angle), -24);
+    state.balls.push({
+      ...ball,
+      id: 1,
+      position: railPosition(seat, angle + 0.7, 5.8),
+      velocity: scale(unit(angle + 0.7), -24),
+    });
     const before = structuredClone(state);
     expect(approachSlowdown(state, ball, true)).toEqual({ seat, factor: APPROACH_SPEED_FACTOR });
     expect(state).toEqual(before);
@@ -23,7 +29,9 @@ it.each([0, 1, 2, 3])(
     ball.position = railPosition(seat, angle, 6.7);
     expect(approachSlowdown(state, ball, true).seat).toBe(seat);
     ball.slowSeat = null;
+    const saved = state.balls.pop()!;
     expect(approachSlowdown(state, ball, true).factor).toBe(1);
+    state.balls.push(saved);
     ball.slowSeat = seat;
     ball.position = railPosition(seat, angle, 7.1);
     expect(approachSlowdown(state, ball, true).factor).toBe(1);

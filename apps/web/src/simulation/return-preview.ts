@@ -1,7 +1,13 @@
 import { FIXED_DT, fortress } from "./arena";
 import { advanceBall } from "./ball";
 import { sweepCircle, sweepPaddle, sweepWalls, type Contact } from "./collision";
-import { alive, DEFAULT_OPTIONS, type BallState, type MatchState } from "./types";
+import {
+  alive,
+  DEFAULT_OPTIONS,
+  type BallState,
+  type MatchOptions,
+  type MatchState,
+} from "./types";
 import { ARENA } from "./arena";
 import { add, dot, length, normalise, scale, sub, type Vec2 } from "./vector";
 
@@ -15,6 +21,26 @@ export interface ReturnPreview {
   outgoing: Vec2;
   points: Vec2[];
   impacts: Vec2[];
+}
+
+/** Project other active balls as well when pressure relief depends on their arrival times. */
+function forecastStep(
+  trial: MatchState,
+  tracked: BallState,
+  angles: number[],
+  options: MatchOptions,
+  pieces: Vec2[][],
+) {
+  if (!options.slowdown)
+    return advanceBall(trial, tracked, angles, FIXED_DT, options, pieces, true);
+  let impact: ReturnType<typeof advanceBall>;
+  for (const ball of trial.balls) {
+    if (ball.phase !== "active") continue;
+    const hit = advanceBall(trial, ball, angles, FIXED_DT, options, pieces, true);
+    if (ball.id === tracked.id) impact = hit;
+    else if (hit?.type === "piece") ball.phase = "ready"; // No hypothetical damage or future serves.
+  }
+  return impact;
 }
 
 /** Conditional on all bats/pieces staying at their current poses. Nothing writes into the live match. */
@@ -42,14 +68,18 @@ export function predictReturn(
     };
     const trial: MatchState = {
       ...state,
-      balls: [ball],
+      balls: state.balls.map((other) =>
+        other.id === source.id
+          ? ball
+          : { ...other, position: { ...other.position }, velocity: { ...other.velocity } },
+      ),
       events: [],
       stats: { ...state.stats },
       players: state.players.map((player) => ({ ...player, health: [...player.health] })),
     };
     const points: Vec2[] = [{ ...ball.position }];
     for (let step = 0; step < Math.floor(PREVIEW_HORIZON / FIXED_DT); step++) {
-      const hit = advanceBall(trial, ball, angles, FIXED_DT, options, pieces, true);
+      const hit = forecastStep(trial, ball, angles, options, pieces);
       points.push(hit?.position ?? { ...ball.position });
       if (!hit) continue;
       if (hit.type === "paddle" && hit.seat === seat) {
@@ -76,7 +106,7 @@ export function predictReturn(
   let walls = 0;
   for (let step = 0; step < Math.floor(OUTGOING_HORIZON / FIXED_DT); step++) {
     trial.events = [];
-    const hit = advanceBall(trial, ball, angles, FIXED_DT, options, pieces, true);
+    const hit = forecastStep(trial, ball, angles, options, pieces);
     preview.points.push(hit?.position ?? { ...ball.position });
     if (!hit) continue;
     preview.impacts.push(hit.position);

@@ -120,6 +120,12 @@ describe("match rules", () => {
         position: railPosition(seat, angle, 6),
         velocity: scale(unit(angle), -12),
       };
+      state.balls.push({
+        ...state.balls[0]!,
+        id: 1,
+        position: railPosition(seat, angle + 0.7, 5.8),
+        velocity: scale(unit(angle + 0.7), -12),
+      });
       const options = { ...DEFAULT_OPTIONS, humanSeat: seat, slowdown: true };
       const slow = stepMatch(state, IDLE_INTENT, options);
       expect(length(sub(slow.balls[0]!.position, state.balls[0]!.position))).toBeCloseTo(
