@@ -10,7 +10,6 @@ import {
   WebGLRenderer,
   WebGLRenderTarget,
 } from "three";
-import { LuminosityHighPassShader } from "three/addons/shaders/LuminosityHighPassShader.js";
 import { createNeonBloomPass } from "../apps/web/src/rendering/neon-bloom";
 import { SEATS } from "../apps/web/src/rendering/palette";
 
@@ -18,7 +17,13 @@ import { SEATS } from "../apps/web/src/rendering/palette";
 export function reviewBloomExtraction(legacy = false) {
   const renderer = new WebGLRenderer();
   const pass = createNeonBloomPass();
-  if (legacy) pass.materialHighPassFilter.fragmentShader = LuminosityHighPassShader.fragmentShader;
+  if (legacy)
+    pass.materialHighPassFilter.fragmentShader = pass.materialHighPassFilter.fragmentShader
+      .replace(
+        "float brightness = peak * 0.52;",
+        "float brightness = max(luminance(texel.rgb), peak * 0.52);",
+      )
+      .replace("vec4(texel.rgb * gain, texel.a)", "texel");
   const input = new Float32Array(6 * 2 * 4);
   for (let row = 0; row < 2; row++)
     SEATS.forEach((seat, index) => {

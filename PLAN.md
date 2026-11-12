@@ -387,6 +387,11 @@ identical control bounds across every count. Updated screenshots and layout data
 
 **First-publish checklist — not yet performed:**
 
+12 November visual correction: the owner reported uneven fortress bloom. The
+extraction now balances glow luminance across seat hues; native 2/4/6 captures
+and measured GPU output are recorded in `docs/BLOOM_COLOUR_REVIEW.md`. Review
+the result in play; no gameplay rules or publication status changed.
+
 12 November: the owner reported the full software-WebGL browser suite taking
 minutes and a controls test failing on GitHub Actions. CI and Pages now run the
 production startup/refresh browser smoke test instead; the full suite remains a

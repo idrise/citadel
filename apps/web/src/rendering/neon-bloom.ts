@@ -1,7 +1,7 @@
 import { Vector2 } from "three";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
-/** Give saturated HDR emitters a peak-channel floor calibrated to the existing cyan walls. */
+/** Balance saturated HDR glow by perceived luminance, preserving the source hue. */
 export const neonBloomFragmentShader = `
   uniform sampler2D tDiffuse;
   uniform vec3 defaultColor;
@@ -12,9 +12,12 @@ export const neonBloomFragmentShader = `
   void main() {
     vec4 texel = texture2D(tDiffuse, vUv);
     float peak = max(texel.r, max(texel.g, texel.b));
-    float brightness = max(luminance(texel.rgb), peak * 0.52);
+    float brightness = peak * 0.52;
     float coverage = smoothstep(luminosityThreshold, luminosityThreshold + smoothWidth, brightness);
-    gl_FragColor = mix(vec4(defaultColor, defaultOpacity), texel, coverage);
+    float light = luminance(texel.rgb);
+    float saturation = peak > 0.0 ? (peak - min(texel.r, min(texel.g, texel.b))) / peak : 0.0;
+    float gain = mix(1.0, clamp(0.52 * peak / max(light, 0.0001), 0.5, 2.5), saturation);
+    gl_FragColor = mix(vec4(defaultColor, defaultOpacity), vec4(texel.rgb * gain, texel.a), coverage);
   }
 `;
 

@@ -21,6 +21,7 @@ import type { PlayerCount } from "../apps/web/src/simulation/arena";
 import { createArenaView } from "../apps/web/src/rendering/arena-view";
 import { createArenaCamera, fitArenaCamera } from "../apps/web/src/rendering/camera";
 import { createBloom } from "../apps/web/src/rendering/bloom";
+import { neonBloomFragmentShader } from "../apps/web/src/rendering/neon-bloom";
 import { createWorldGrid } from "../apps/web/src/rendering/world-grid";
 import { createNeonEnvironment } from "../apps/web/src/rendering/neon-environment";
 import { lightArena } from "../apps/web/src/rendering/lighting";
@@ -88,6 +89,13 @@ export function renderEdgeReview(
   const bloom = new UnrealBloomPass(new Vector2(1280, 900), 0.25, 0.45, 1.05),
     output = new OutputPass(),
     render = new RenderPass(scene, camera);
+  if (legacyBloom)
+    bloom.materialHighPassFilter.fragmentShader = neonBloomFragmentShader
+      .replace(
+        "float brightness = peak * 0.52;",
+        "float brightness = max(luminance(texel.rgb), peak * 0.52);",
+      )
+      .replace("vec4(texel.rgb * gain, texel.a)", "texel");
   old.addPass(render);
   old.addPass(bloom);
   old.addPass(output);

@@ -1,5 +1,25 @@
 # Bloom colour balance
 
+## 12 November: balance the extracted glow
+
+The earlier threshold correction made all seat colours eligible for bloom, but
+their extracted light was still uneven: equally powered gold contributed almost
+four times the luminance of violet. The bloom extraction now uses peak intensity
+for a common cutoff and adjusts the glow's luminance while preserving its hue.
+The adjustment is bounded and fades toward neutral colours; the underlying scene,
+simulation, reflections and reduced-effects rendering are unchanged.
+
+Matched native screenshots: [2 seats](reviews/m08/bloom-balance/2-after.png),
+[4 seats](reviews/m08/bloom-balance/4-after.png), and
+[6 seats before](reviews/m08/bloom-balance/6-before.png) /
+[after](reviews/m08/bloom-balance/6-after.png). The
+[GPU report](reviews/m08/bloom-balance/report.json) measures the six equal-powered
+seat colours: extracted luminance spread falls from 3.95:1 to 1.14:1; dim
+controls stay excluded and RGB ratios are preserved. Reflections, geometry and
+perceived brightness can still vary with colour and camera position.
+
+## Previous threshold correction
+
 The six-player view exposed a colour-dependent cutoff: the standard Three.js
 high-pass filter measures linear luminance against 1.05. At equal emission power,
 lime and gold pass while coral, amber, violet and rose can be rejected entirely.

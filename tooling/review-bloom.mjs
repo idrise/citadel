@@ -30,19 +30,25 @@ try {
     fileURLToPath(new URL("./bloom-review.ts", import.meta.url)),
   );
   for (const seat of samples.after) {
-    // Test the compiled shader's actual HDR output, including hue preservation.
+    // The compiled shader must preserve hue while balancing perceptual light.
+    const peakIndex = seat.input.indexOf(Math.max(...seat.input));
+    const gain = seat.extracted[peakIndex] / seat.input[peakIndex];
     seat.extracted.forEach((channel, index) =>
-      assert.ok(Math.abs(channel - seat.input[index]) < 0.002, seat.seat),
+      assert.ok(Math.abs(channel - seat.input[index] * gain) < 0.002, seat.seat),
     );
     assert.ok(
       seat.dim.every((channel) => channel === 0),
       `${seat.seat}: dark surfaces must stay excluded`,
     );
   }
+  const luminance = (rgb) => rgb[0] * 0.2125 + rgb[1] * 0.7154 + rgb[2] * 0.0721;
+  const spread = (rows) => {
+    const values = rows.map((row) => luminance(row.extracted));
+    return Math.max(...values) / Math.min(...values);
+  };
   assert.ok(
-    samples.before
-      .find((seat) => seat.seat === "Violet")
-      .extracted.every((channel) => channel === 0),
+    spread(samples.after) < spread(samples.before) * 0.65,
+    "glow luminance should be more even",
   );
   for (const count of [2, 4, 6])
     for (const mode of ["before", "after"]) {
