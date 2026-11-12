@@ -17,6 +17,7 @@ import type { SceneAction } from "../rendering/scene-menu";
 
 export interface SessionSnapshot {
   state: MatchState;
+  humanSeat: number;
   level: number;
   paused: boolean;
   started: boolean;
@@ -68,6 +69,7 @@ export function createSession(
   const report = () =>
     onSnapshot({
       state,
+      humanSeat,
       level,
       paused,
       started,
@@ -243,7 +245,7 @@ export function createSession(
       }
     },
     configureRoster(nextCount: PlayerCount, nextSeat: number, nextLevel: number) {
-      if (nextCount === count && nextSeat === humanSeat) return;
+      if (nextCount === count && nextSeat === humanSeat) return false;
       const animate = !started;
       const nextState = createMatch(seed, nextCount, ARENA.startingPieces, supplySeed);
       viewport.transitionTitle(nextState, nextSeat, animate);
@@ -268,6 +270,7 @@ export function createSession(
       clock.reset();
       present([], 0);
       report();
+      return true;
     },
     configure(next: GameSettings) {
       settings = next;

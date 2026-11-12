@@ -65,8 +65,10 @@ try {
     const summary = await page.evaluate(() => window.progressReview.summary());
     assert.equal(summary.collections, 1);
     assert.equal(summary.health, 4);
+    assert.ok(summary.minimumContainerClearance >= 0.01);
     checks.push({
       count,
+      minimumContainerClearance: summary.minimumContainerClearance,
       collections: summary.collections,
       health: summary.health,
       transferWarmFloodFraction: transfer.warmFloodFraction,

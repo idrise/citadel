@@ -43,6 +43,7 @@ export function GamePanel({
   const initialConfig = useRef({ seed, humanSeat, count, level });
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => ({
     state: createMatch(seed, count),
+    humanSeat,
     level,
     paused: true,
     started: false,
@@ -99,8 +100,10 @@ export function GamePanel({
   useEffect(() => {
     session.current?.configure(settings);
   }, [settings]);
+  const rosterReady = snapshot.humanSeat === humanSeat && snapshot.state.players.length === count;
   const mode =
-    settingsOpen || (snapshot.started && snapshot.paused && snapshot.state.phase !== "finished")
+    rosterReady &&
+    (settingsOpen || (snapshot.started && snapshot.paused && snapshot.state.phase !== "finished"))
       ? "paused"
       : null;
   return (
@@ -116,7 +119,7 @@ export function GamePanel({
           Ⅱ
         </button>
       )}
-      <AccessibleStatus snapshot={snapshot} humanSeat={humanSeat} />
+      <AccessibleStatus snapshot={snapshot} humanSeat={snapshot.humanSeat} />
       {!snapshot.started && !unavailable && (
         <p className="touch-hint">Drag to steer · Tap to serve</p>
       )}
@@ -128,7 +131,11 @@ export function GamePanel({
         mode && (
           <PauseMenu
             count={count}
-            onCount={onCount}
+            onCount={(value) => {
+              if (value === count) return;
+              setSettingsOpen(false);
+              onCount(value);
+            }}
             state={snapshot.state}
             totals={snapshot.totals}
             seed={seed}
@@ -138,7 +145,11 @@ export function GamePanel({
             settings={settings}
             musicStatus={snapshot.music.status}
             onSettings={onSettings}
-            onSeat={onSeat}
+            onSeat={(value) => {
+              if (value === humanSeat) return;
+              setSettingsOpen(false);
+              onSeat(value);
+            }}
             onRestart={onRestart}
             onResume={() => {
               setSettingsOpen(false);

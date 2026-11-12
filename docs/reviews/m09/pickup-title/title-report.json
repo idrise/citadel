@@ -1,0 +1,141 @@
+{
+  "kind": "Real production title controls, native GPU; persistent canvas and exact fixed UI bounds",
+  "positions": [
+    {
+      "count": 2,
+      "bounds": [
+        {
+          "x": 505,
+          "y": 298,
+          "width": 271,
+          "height": 49
+        },
+        {
+          "x": 504,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 716,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 558,
+          "y": 357,
+          "width": 164,
+          "height": 29
+        }
+      ]
+    },
+    {
+      "count": 4,
+      "bounds": [
+        {
+          "x": 505,
+          "y": 298,
+          "width": 271,
+          "height": 49
+        },
+        {
+          "x": 504,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 716,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 558,
+          "y": 357,
+          "width": 164,
+          "height": 29
+        }
+      ]
+    },
+    {
+      "count": 6,
+      "bounds": [
+        {
+          "x": 505,
+          "y": 298,
+          "width": 271,
+          "height": 49
+        },
+        {
+          "x": 504,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 716,
+          "y": 231,
+          "width": 60,
+          "height": 42
+        },
+        {
+          "x": 558,
+          "y": 357,
+          "width": 164,
+          "height": 29
+        }
+      ]
+    }
+  ],
+  "attempts": [
+    {
+      "seed": 1682274578,
+      "supplySeed": 3838603947,
+      "position": {
+        "x": -2.45950271642882,
+        "y": -0.1937346798830078
+      }
+    },
+    {
+      "seed": 1682274578,
+      "supplySeed": 4026488330,
+      "position": {
+        "x": -2.1146139460868008,
+        "y": -0.855144066888686
+      }
+    }
+  ],
+  "mobile": {
+    "width": 390,
+    "height": 844,
+    "bounds": [
+      {
+        "x": 90,
+        "y": 446,
+        "width": 210,
+        "height": 54
+      },
+      {
+        "x": 93,
+        "y": 362,
+        "width": 52,
+        "height": 52
+      },
+      {
+        "x": 245,
+        "y": 362,
+        "width": 52,
+        "height": 52
+      },
+      {
+        "x": 105,
+        "y": 519,
+        "width": 180,
+        "height": 48
+      }
+    ]
+  },
+  "errors": []
+}

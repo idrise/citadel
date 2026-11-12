@@ -48,7 +48,6 @@ test("clamping a selected fortress during the preview keeps the menu fixed and S
   await choosePlayers(page, 6);
   await openSettings(page);
   await page.getByLabel("Your fortress", { exact: true }).selectOption("5");
-  await page.getByRole("button", { name: "Resume", exact: true }).click();
   await choosePlayers(page, 2);
   await play(page);
   await page.clock.runFor(1800);
@@ -86,4 +85,23 @@ test("ordinary restarted attempts keep their opening seed but vary pickup seeds 
   expect(reports[0]!.seed).toBe(reports[1]!.seed);
   expect(reports[0]!.supplySeed).not.toBe(reports[1]!.supplySeed);
   expect(reports[0]!.supplies[0]!.position).not.toEqual(reports[1]!.supplies[0]!.position);
+});
+
+test("choosing the current roster keeps Settings usable without resetting the round", async ({
+  page,
+}) => {
+  await openGame(page);
+  await openSettings(page);
+  await page.getByLabel("Your fortress", { exact: true }).selectOption("0");
+  await page.getByLabel("Players", { exact: true }).selectOption("4");
+  await expect(page.getByRole("button", { name: "Resume", exact: true })).toBeVisible();
+  await play(page);
+  await page.clock.runFor(1800);
+  await page.keyboard.press("Escape");
+  await openSettings(page);
+  const before = await page.locator(".diagnostics").textContent();
+  await page.getByLabel("Your fortress", { exact: true }).selectOption("0");
+  await expect(page.getByRole("button", { name: "Resume", exact: true })).toBeVisible();
+  expect(await page.locator(".diagnostics").textContent()).toBe(before);
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
 });

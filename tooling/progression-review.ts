@@ -84,7 +84,20 @@ export function renderProgressionReview(
     let warm = 0;
     for (let i = 0; i < pixels.length; i += 4)
       if (pixels[i]! > 220 && pixels[i + 1]! > 180 && pixels[i + 2]! > 160) warm++;
+    const living = state.players[0]!.pieces.filter((_, i) => state.players[0]!.health[i]);
+    let clearance = Infinity;
+    living.forEach((piece, i) =>
+      living.slice(i + 1).forEach((other) => {
+        clearance = Math.min(
+          clearance,
+          Math.hypot(piece.position.x - other.position.x, piece.position.y - other.position.y) -
+            piece.radius -
+            other.radius,
+        );
+      }),
+    );
     return {
+      minimumContainerClearance: clearance,
       collections,
       health: state.players[0]!.health.filter(Boolean).length,
       warmFloodFraction: warm / (pixels.length / 4),

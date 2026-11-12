@@ -464,13 +464,16 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
-12 November pickup/title follow-up (in progress): the owner reported repeated
-pickup sites and collected containers intersecting existing health, and requested
-smooth player-count previews with stationary UI. Independent attempt seeds,
-collision-free placement/settling and a persistent title renderer with retargetable
-geometry/actor interpolation are implemented. Unit and focused browser checks pass;
-rendered review and final regression checks are ongoing. M09 awaits review; no push
-or deployment is authorised.
+12 November pickup/title follow-up: the owner reported repeated pickup sites,
+collected containers intersecting existing health, and snapping player-count
+previews. Ordinary attempts now have fresh independent pickup seeds, collection
+uses free positions and maintains separation while settling, and previews morph
+over 0.85 seconds on a persistent canvas with fixed menu controls. Rapid retargets,
+clamped fortresses, reduced motion, unchanged selections and input/audio/effects
+reset are covered. See `docs/PICKUP_TITLE_REVIEW.md` for 2/4/6/mobile frames,
+production video, real varied pickup sites, measured container clearance, 357 unit
+tests, 49 native root browser checks and eight Pages-path checks. M09 awaits review; no push or deployment is
+authorised. Implementation checkpoint: `587dc05`.
 
 12 November adaptive progression and supply amendment: the owner explicitly
 authorised 100 saved adaptive levels, rapid calibration from recent performance,
