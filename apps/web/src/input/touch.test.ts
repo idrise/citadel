@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vite-plus/test";
-import { fortress, SQUARE_ARENA } from "../simulation/arena";
-import { createTouchInput } from "./touch";
+import { fortress, SQUARE_ARENA, createArena, clampPaddleAngle } from "../simulation/arena";
+import { createTouchInput, touchSteeringSpan } from "./touch";
 
 function fixture() {
   const canvas = new EventTarget() as HTMLCanvasElement;
@@ -120,4 +120,47 @@ it("clamps travel and clears held input on pause", () => {
   send("pointerup", 100);
   expect(input.read().launch).toBe(false);
   input.dispose();
+});
+
+it("covers full legal travel in a comfortable short drag on each arena and tablet", () => {
+  for (const count of [2, 4, 6] as const)
+    for (const [width, height] of [
+      [320, 568],
+      [390, 844],
+      [844, 390],
+      [768, 1024],
+    ]) {
+      const arena = createArena(count),
+        canvas = new EventTarget() as HTMLCanvasElement;
+      canvas.setPointerCapture = vi.fn();
+      canvas.hasPointerCapture = () => false;
+      canvas.getBoundingClientRect = () => ({ width, height }) as DOMRect;
+      const home = fortress(0, arena),
+        low = clampPaddleAngle(0, home.direction - Math.PI / 2, arena),
+        high = clampPaddleAngle(0, home.direction + Math.PI / 2, arena);
+      const input = createTouchInput(
+        canvas,
+        0,
+        () => low,
+        () => arena,
+      );
+      input.capture();
+      const send = (type: string, x: number) =>
+        canvas.dispatchEvent(
+          Object.assign(new Event(type), {
+            pointerType: "touch",
+            pointerId: 1,
+            clientX: x,
+            clientY: 100,
+          }),
+        );
+      const span = touchSteeringSpan(width!, height!);
+      expect(span).toBeLessThanOrEqual(150);
+      send("pointerdown", 80);
+      send("pointermove", 80 + span);
+      expect(input.read().targetAngle).toBeCloseTo(high);
+      send("pointerup", 80 + span);
+      expect(input.read().launch).toBe(false);
+      input.dispose();
+    }
 });

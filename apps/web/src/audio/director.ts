@@ -106,7 +106,14 @@ export function createMusicDirector(humanSeat: number, seed: number) {
       musicalStep = step;
       if (step % 16 === 0) activeBalls = ballTier(frame.balls);
       const part = parts[focus()]!;
-      return composeStep(step, part.phrase, part.streak, intensity(), activeBalls);
+      return composeStep(
+        step,
+        part.phrase,
+        part.streak,
+        intensity(),
+        activeBalls,
+        ((seed ^ (seed >>> 16)) >>> 0) % 4,
+      );
     },
     snapshot() {
       const seat = focus(),

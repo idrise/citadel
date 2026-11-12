@@ -151,7 +151,7 @@ it("clamps unlimited deltas and clears held keys when capture is lost", async ()
   input.windowEvents.dispatchEvent(Object.assign(new Event("keydown"), { code: "KeyD" }));
   expect(input.controls.read().steer).toBe(1);
   input.controls.release();
-  expect(input.lost).toHaveBeenCalledTimes(1);
+  expect(input.lost).not.toHaveBeenCalled();
   expect(input.controls.read().steer).toBe(0);
   expect(input.controls.read().targetAngle).toBeNull();
   input.controls.dispose();
@@ -353,5 +353,18 @@ it("carries a captured relative target with a moving fortress without synthesisi
   input.controls.clear();
   input.setAngle(fortress(0, geometry).direction);
   expect(input.controls.read().targetAngle).toBeNull();
+  input.controls.dispose();
+});
+
+it("pauses only for unexpected lock loss, not intentional release after elimination", async () => {
+  const input = inputFixture();
+  input.controls.capture();
+  await Promise.resolve();
+  input.controls.release();
+  expect(input.lost).not.toHaveBeenCalled();
+  input.controls.capture();
+  await Promise.resolve();
+  input.documentEvents.exitPointerLock();
+  expect(input.lost).toHaveBeenCalledOnce();
   input.controls.dispose();
 });

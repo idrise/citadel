@@ -76,3 +76,19 @@ it("never schedules the same monophonic hi-hat twice when performance and global
         expect(cues.filter((cue) => cue.voice === "hat").length).toBeLessThanOrEqual(1);
       }
 });
+it("develops phrase shapes and harmonic voicings across longer rounds while keeping the intro intact", () => {
+  const signatures = Array.from({ length: 32 }, (_, bar) =>
+    JSON.stringify(
+      Array.from({ length: 16 }, (_, p) => composeStep((bar + 4) * 16 + p, [], 0, 0))
+        .flat()
+        .filter((c) => ["lead", "bass", "pad", "answer"].includes(c.voice)),
+    ),
+  );
+  expect(new Set(signatures).size).toBeGreaterThan(24);
+  for (const balls of [8, 12, 16])
+    for (let step = 0; step < 800; step++) {
+      const cues = composeStep(step, [62, 65], 16, 1, balls);
+      expect(cues.every((c) => Number.isFinite(c.note) && c.velocity <= 1)).toBe(true);
+      expect(cues.filter((c) => c.voice === "hat").length).toBeLessThanOrEqual(1);
+    }
+});

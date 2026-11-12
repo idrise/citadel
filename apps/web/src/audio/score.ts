@@ -1,11 +1,17 @@
 import { addBallLayers } from "./ball-layers";
-import { arrangementAt, HARMONY } from "./arrangement";
+import { arrangementAt, harmonyAt } from "./arrangement";
 import { SIXTEENTH, type MusicCue, type Voice } from "./music-types";
 
 // Two original syncopated calls, answered over changing chord voicings.
 const THEMES = [
   [0, -1, -1, 3, -1, 2, 4, -1, 5, -1, -1, 3, 2, -1, 1, -1],
   [2, -1, 3, -1, -1, 5, -1, 4, 3, -1, 2, -1, 0, -1, -1, 1],
+  [5, -1, -1, 4, 3, -1, 2, -1, -1, 3, -1, 1, 0, -1, -1, -1],
+  [-1, 0, -1, 2, -1, -1, 3, 4, -1, 5, -1, -1, 4, -1, 2, -1],
+  [0, -1, 4, -1, -1, 3, -1, -1, 2, -1, -1, 1, 0, -1, -1, 6],
+  [6, -1, -1, 5, -1, 4, -1, 3, -1, -1, 2, -1, 1, -1, 0, -1],
+  [3, -1, 2, -1, 0, -1, -1, -1, 2, -1, 4, -1, -1, 5, -1, 4],
+  [-1, -1, 0, -1, 3, -1, 4, -1, 5, -1, -1, 4, 2, -1, 1, -1],
 ] as const;
 export function composeStep(
   step: number,
@@ -13,6 +19,7 @@ export function composeStep(
   streak: number,
   pressure: number,
   balls = 1,
+  variant = 0,
 ): MusicCue[] {
   const a = arrangementAt(step),
     p = a.position;
@@ -26,7 +33,7 @@ export function composeStep(
   if (a.breath) return p === 12 ? [cue("breath", 0, 0, 4 * SIXTEENTH)] : [];
   const out: MusicCue[] = [];
   if (p === 0) out.push(cue("open", 0, 0));
-  const chord = HARMONY[a.bar % 4]!;
+  const chord = harmonyAt(a.bar, variant);
   const drop = a.section === "drop",
     build = a.section === "build",
     space = a.section === "breakdown" || a.section === "melodic";
@@ -42,11 +49,16 @@ export function composeStep(
       out.push(
         cue("player", phrase[Math.floor(step / 4) % phrase.length]!, 0.5, SIXTEENTH * 1.5, 0.3),
       );
-    return [...out, ...addBallLayers(step, out, balls, streak)];
+    return [...out, ...addBallLayers(step, out, balls, streak, variant)];
   }
   const kick = !space && (!build || a.progress > 0.5);
   if (kick && p % 4 === 0) out.push(cue("kick", 26, drop ? 0.95 : 0.8, 0.24));
-  if (!space && (!build || a.progress < 0.75) && [0, 3, 6, 8, 10, 14].includes(p)) {
+  if (
+    !space &&
+    (!build || a.progress < 0.75) &&
+    (([0, 3, 6, 8, 10, 14].includes(p) && a.bar % 4 < 2) ||
+      ([0, 2, 7, 8, 11, 15].includes(p) && a.bar % 4 >= 2))
+  ) {
     const octave = p === 6 || p === 14 ? 12 : 0;
     out.push(
       cue(
@@ -60,7 +72,7 @@ export function composeStep(
     if (octave === 0) out.push(cue("sub", chord.bass - 12, 0.5, SIXTEENTH * 1.5));
   }
   // The main theme is always present. A lack of hits can never reduce the soundtrack to drums.
-  const theme = THEMES[a.bar % 2]!,
+  const theme = THEMES[(a.bar + Math.floor(a.bar / 8) + variant * 2) % THEMES.length]!,
     degree: number = theme[p]!;
   if (degree >= 0 && (!build || a.progress < 0.75 || p % 2 === 0)) {
     const note = chord.scale[degree]!;
@@ -71,7 +83,7 @@ export function composeStep(
   }
   if (p === 0 && (space || drop || a.section === "groove"))
     out.push({
-      ...cue("pad", chord.pad[0], space ? 0.65 : 0.38, SIXTEENTH * 14, bright),
+      ...cue("pad", chord.pad[0]!, space ? 0.65 : 0.38, SIXTEENTH * 14, bright),
       notes: chord.pad,
     });
   if (phrase.length && p % 2 === 0) {
@@ -88,6 +100,11 @@ export function composeStep(
   if (!space && p % 2 === 0) out.push(cue("hat", 0, p % 4 === 2 ? 0.55 : 0.25, 0.035));
   if ((drop || a.section === "groove") && p % 4 === 2) out.push(cue("openHat", 0, 0.4, 0.12));
   if ((drop || a.section === "groove") && [4, 12].includes(p)) out.push(cue("clap", 0, 0.66, 0.11));
+  // Four/eight-bar answers and fills make long rounds develop rather than repeat a short loop.
+  if (!build && a.bar % 8 === 7 && [11, 14, 15].includes(p))
+    out.push(cue("snare", 0, p === 15 ? 0.5 : 0.28, 0.04, bright));
+  if (space && a.bar % 4 >= 2 && [3, 10, 14].includes(p))
+    out.push(cue("answer", chord.scale[(p + a.bar) % 7]! - 12, 0.42, SIXTEENTH * 2.5, 0.4));
   if (build) {
     const spacing = a.progress < 0.45 ? 4 : a.progress < 0.78 ? 2 : 1;
     if (p % spacing === 0)
@@ -97,5 +114,5 @@ export function composeStep(
   }
   if (a.first && drop) out.push(cue("crash", 0, 0.6, 1.2));
   if (drop && pressure > 0.5 && streak < 4 && p === 15) out.push(cue("hat", 0, 0.32, 0.04));
-  return [...out, ...addBallLayers(step, out, balls, streak)];
+  return [...out, ...addBallLayers(step, out, balls, streak, variant)];
 }

@@ -165,3 +165,38 @@ it("cuts the final crowd tail on explicit pause or focus loss", async () => {
   expect(music.snapshot().status).toBe("paused");
   music.dispose();
 });
+it("reports an interrupted Safari context honestly and recovers on the next explicit gesture", async () => {
+  const { host, engine, deps } = fixture();
+  const events = new EventTarget();
+  let state = "suspended";
+  Object.assign(host, {
+    addEventListener: events.addEventListener.bind(events),
+    removeEventListener: events.removeEventListener.bind(events),
+  });
+  Object.defineProperty(host, "state", { get: () => state });
+  host.resume.mockImplementation(async () => {
+    state = "running";
+    events.dispatchEvent(new Event("statechange"));
+  });
+  const music = createGameMusic(1, 0, deps);
+  music.setPlaying(true);
+  music.unlock();
+  await flush();
+  expect(music.snapshot().status).toBe("playing");
+  state = "interrupted";
+  events.dispatchEvent(new Event("statechange"));
+  expect(music.snapshot().status).toBe("waiting");
+  expect(engine.setPlaying).toHaveBeenLastCalledWith(false, 0.45);
+  expect(music.pulse()).toBe(0);
+  // Safari can resolve resume while still interrupted. Do not show a false playing status.
+  host.resume.mockImplementationOnce(async () => {});
+  music.unlock();
+  await flush();
+  expect(music.snapshot().status).toBe("waiting");
+  music.unlock();
+  await flush();
+  expect(music.snapshot().status).toBe("playing");
+  expect(deps.createContext).toHaveBeenCalledOnce();
+  expect(deps.load).toHaveBeenCalledOnce();
+  music.dispose();
+});

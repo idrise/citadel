@@ -68,10 +68,11 @@ export function createDesktopInput(
       if (document.pointerLockElement === canvas) {
         if (!captureWanted || disposed) document.exitPointerLock();
       } else {
+        const unexpected = captureWanted;
         captureWanted = false;
         captureEpoch++;
         clear();
-        if (!disposed) lostCapture();
+        if (!disposed && unexpected) lostCapture();
       }
     },
     options,

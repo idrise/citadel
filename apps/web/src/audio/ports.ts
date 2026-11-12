@@ -1,6 +1,7 @@
 import type { MusicCue, MusicVisuals } from "./music-types";
 
 export interface MusicEngine {
+  steer?: (velocity: number, position: number) => void;
   play: (cues: readonly MusicCue[]) => void;
   setPlaying: (value: boolean, volume: number) => void;
   pulse: () => number;
@@ -13,6 +14,7 @@ export type EngineLoader = (
   onStep: (step: number) => readonly MusicCue[],
 ) => Promise<MusicEngine>;
 export type MusicStatus =
+  | "waiting"
   | "idle"
   | "loading"
   | "playing"

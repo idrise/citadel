@@ -55,6 +55,7 @@ export function createToneEngine(
     instruments.play(cues, time);
   }, "16n");
   return {
+    steer: instruments.steer,
     play(cues) {
       for (const planned of conductor.plan(cues, native.currentTime, anchor))
         instruments.play([planned.cue], planned.time);
@@ -63,6 +64,7 @@ export function createToneEngine(
     visuals: () => (running ? beats.frame(native.currentTime) : { pulse: 0, phase: -1, energy: 0 }),
     setPlaying(value, volume) {
       const now = native.currentTime;
+      if (!value) instruments.steer(0, 0);
       gate.gain.cancelScheduledValues(now);
       gate.gain.setTargetAtTime(value ? volume : 0, now, 0.008);
       if (value === running) return;

@@ -1,4 +1,4 @@
-import { arrangementAt, HARMONY } from "./arrangement";
+import { arrangementAt, harmonyAt } from "./arrangement";
 import { SIXTEENTH, type MusicCue } from "./music-types";
 export function ballTier(balls: number) {
   return Math.max(1, Math.min(4, Math.floor(balls)));
@@ -19,11 +19,12 @@ export function addBallLayers(
   base: readonly MusicCue[],
   balls: number,
   streak: number,
+  variant = 0,
 ): MusicCue[] {
   const a = arrangementAt(step),
     tier = ballTier(balls),
     p = a.position,
-    chord = HARMONY[a.bar % 4]!;
+    chord = harmonyAt(a.bar, variant);
   if (a.breath) return [];
   const space = a.section === "breakdown" || a.section === "melodic",
     out: MusicCue[] = [];
@@ -40,7 +41,7 @@ export function addBallLayers(
     if (p === 0 && !base.some((c) => c.voice === "pad"))
       out.push({
         voice: "pad",
-        note: chord.pad[0],
+        note: chord.pad[0]!,
         notes: chord.pad,
         duration: SIXTEENTH * 14,
         velocity: 0.48,
@@ -68,7 +69,7 @@ export function addBallLayers(
   if (tier >= 4 && [0, 6, 10].includes(p))
     out.push({
       voice: "brass",
-      note: chord.pad[0] + 12,
+      note: chord.pad[0]! + 12,
       notes: chord.pad.map((note) => note + 12),
       velocity: space ? 0.32 : 0.55,
       duration: SIXTEENTH * 1.6,
@@ -87,7 +88,7 @@ export function addBallLayers(
   if (streak >= 12 && p === 14)
     out.push({
       voice: "brass",
-      note: chord.pad[0],
+      note: chord.pad[0]!,
       notes: chord.pad.map((note) => note + 12),
       velocity: 0.4,
       duration: SIXTEENTH * 1.5,

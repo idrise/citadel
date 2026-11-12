@@ -8,7 +8,7 @@ import { enterMobileFullscreen, fullscreenActive } from "../input/fullscreen";
 import { createViewport } from "../rendering/viewport";
 import type { ViewOptions } from "../rendering/arena-view";
 import { SEATS } from "../rendering/palette";
-import { ARENA, type PlayerCount } from "../simulation/arena";
+import { ARENA, fortress, type PlayerCount } from "../simulation/arena";
 import { createMatch, stepMatch } from "../simulation/match";
 import { alive, type GameEvent, type MatchState } from "../simulation/types";
 import { createFixedClock } from "./fixed-clock";
@@ -177,7 +177,7 @@ export function createSession(
     music.setPlaying(started && !paused && state.phase !== "finished");
     if (started && state.phase === "finished" && !paused) endingTime += delta;
     present(observed, paused && started ? 0 : delta);
-    if (state.phase === "finished") {
+    if (state.phase === "finished" || !alive(state.players[humanSeat]!)) {
       input.release();
       touch.release();
     }
@@ -188,6 +188,14 @@ export function createSession(
     frame = requestAnimationFrame(animate);
   };
   function present(events: GameEvent[], dt: number) {
+    const human = state.players[humanSeat]!;
+    const home = fortress(humanSeat, state.arena);
+    music.steer(
+      !paused && alive(human)
+        ? (human.swipe?.velocity ?? 0) * Math.min(1, (human.swipe?.remaining ?? 0) / 0.1)
+        : 0,
+      (human.angle - home.direction) / home.halfAngle,
+    );
     const musicVisuals = music.visuals();
     const view: ViewOptions = {
       humanSeat,
@@ -273,6 +281,7 @@ export function createSession(
   }
   return {
     start,
+    unlockAudio: () => music.unlock(),
     pause: () => setPaused(true),
     resume() {
       if (touchMode && started) void enterMobileFullscreen();
@@ -284,7 +293,7 @@ export function createSession(
       }
       music.unlock();
       setPaused(false);
-      if (state.phase !== "finished") {
+      if (state.phase !== "finished" && alive(state.players[humanSeat]!)) {
         if (touchMode) touch.capture();
         else input.capture();
       }

@@ -352,3 +352,38 @@ input[type="range"] {
     display: none;
   }
 }
+
+.elimination-actions {
+  position: fixed;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  right: max(20px, env(safe-area-inset-right));
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-width: calc(100vw - 40px);
+  padding: 12px;
+  background: #081521e8;
+  border: 1px solid #427b8e;
+  border-radius: 10px;
+}
+.elimination-actions p {
+  margin: 0;
+  width: 100%;
+  color: #e5edf5;
+}
+.elimination-actions button {
+  min-height: 44px;
+  min-width: 100px;
+  padding: 10px 14px;
+  font-size: 16px;
+}
+
+.enable-sound {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  left: 16px;
+  z-index: 15;
+  min-height: 44px;
+}

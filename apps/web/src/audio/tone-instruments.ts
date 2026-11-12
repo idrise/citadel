@@ -1,3 +1,4 @@
+import { createPaddleSwish } from "./tone-swish";
 import * as Tone from "tone";
 import type { MusicCue } from "./music-types";
 import { createMelodic } from "./tone-melodic";
@@ -18,6 +19,7 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
   }).connect(output);
   const duck = new Tone.Gain({ context, gain: 1 }).connect(compressor);
   const arranged = new Tone.Gain({ context, gain: 1 }).connect(duck);
+  const swish = createPaddleSwish(context, compressor);
   const melodic = createMelodic(context, arranged);
   const drums = createDrums(context, arranged, compressor);
   const feedback = createFeedback(context, compressor);
@@ -25,6 +27,7 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
   const crowd = createCrowd(context, compressor);
   const reactive = createReactiveVoices(context, arranged, compressor);
   return {
+    steer: swish.steer,
     play(cues: readonly MusicCue[], time: number) {
       for (const cue of cues) {
         const at = time;
@@ -59,6 +62,7 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
       arranged.gain.setTargetAtTime(0.7, time, 0.04);
     },
     dispose() {
+      swish.dispose();
       feedback.dispose();
       impacts.dispose();
       crowd.dispose();

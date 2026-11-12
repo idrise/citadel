@@ -38,6 +38,7 @@ export function GamePanel({
   const session = useRef<GameSession | null>(null);
   const [unavailable, setUnavailable] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [watchingSeed, setWatchingSeed] = useState<number | null>(null);
   const callbacks = useRef({ count, onCount, level, onComplete });
   callbacks.current = { count, onCount, level, onComplete };
   const initialConfig = useRef({ seed, humanSeat, count, level });
@@ -124,7 +125,36 @@ export function GamePanel({
           Ⅱ
         </button>
       )}
+      {snapshot.started &&
+        !snapshot.paused &&
+        settings.music &&
+        ["waiting", "unavailable"].includes(snapshot.music.status) && (
+          <button className="enable-sound" onClick={() => session.current?.unlockAudio()}>
+            Enable sound
+          </button>
+        )}
       <AccessibleStatus snapshot={snapshot} humanSeat={snapshot.humanSeat} />
+      {snapshot.started &&
+        !snapshot.paused &&
+        snapshot.state.phase !== "finished" &&
+        !snapshot.state.players[snapshot.humanSeat]!.health.some(Boolean) && (
+          <div className="elimination-actions" role="group" aria-label="Eliminated fortress">
+            {watchingSeed !== snapshot.seed && (
+              <>
+                <p role="status">
+                  Fortress lost.
+                  {snapshot.demotion ? ` Demoted to level ${snapshot.demotion.to}.` : ""}
+                </p>
+                <button className="secondary" onClick={() => setWatchingSeed(snapshot.seed)}>
+                  Watch
+                </button>
+              </>
+            )}
+            <button className="primary" onClick={() => session.current?.nextRound(level)}>
+              Retry level {level}
+            </button>
+          </div>
+        )}
       {!snapshot.started && !unavailable && (
         <p className="touch-hint">Drag to steer · Tap to serve</p>
       )}

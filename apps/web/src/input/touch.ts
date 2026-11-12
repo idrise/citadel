@@ -1,6 +1,11 @@
 import { clampPaddleAngle, fortress, type ArenaGeometry } from "../simulation/arena";
 import { IDLE_INTENT, type PlayerIntent } from "../simulation/types";
 
+/** Full legal travel fits a short comfortable drag, independently of arena size. */
+export function touchSteeringSpan(width: number, height: number) {
+  return Math.max(88, Math.min(150, Math.min(width, height || width) * 0.3));
+}
+const DRAG_THRESHOLD = 5;
 /** One captured finger steers relatively; a stationary tap serves once. */
 export function createTouchInput(
   canvas: HTMLCanvasElement,
@@ -51,10 +56,14 @@ export function createTouchInput(
     (event) => {
       if (event.pointerId !== pointer) return;
       distance = Math.max(distance, Math.hypot(event.clientX - startX, event.clientY - startY));
-      if (distance >= 8) {
+      if (distance >= DRAG_THRESHOLD) {
         rebase();
-        const width = Math.max(canvas.getBoundingClientRect().width, 1);
-        const delta = ((event.clientX - lastX) * 2.4) / width;
+        const rect = canvas.getBoundingClientRect();
+        const home = fortress(seat, geometry());
+        const low = clampPaddleAngle(seat, home.direction - Math.PI / 2, geometry());
+        const high = clampPaddleAngle(seat, home.direction + Math.PI / 2, geometry());
+        const delta =
+          ((event.clientX - lastX) * (high - low)) / touchSteeringSpan(rect.width, rect.height);
         const actual = currentAngle();
         if (target !== null && (target - actual) * delta < 0) target = actual;
         target = clampPaddleAngle(seat, (target ?? actual) + delta, geometry());
@@ -73,8 +82,8 @@ export function createTouchInput(
     if (
       event.type === "pointerup" &&
       event.timeStamp - startedAt <= 350 &&
-      distance < 8 &&
-      Math.hypot(event.clientX - startX, event.clientY - startY) < 8
+      distance < DRAG_THRESHOLD &&
+      Math.hypot(event.clientX - startX, event.clientY - startY) < DRAG_THRESHOLD
     )
       launch = true;
     pointer = null;

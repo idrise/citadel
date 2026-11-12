@@ -1,3 +1,9 @@
+import {
+  createPlaybackContext,
+  releasePlaybackContext,
+  primeContext,
+  contextRunning,
+} from "./mobile-context";
 import { createMusicDirector, type MusicFrame } from "./director";
 import type { EngineLoader, MusicEngine, MusicStatus } from "./ports";
 import type { GameEvent } from "../simulation/types";
@@ -8,7 +14,7 @@ interface Dependencies {
   load: EngineLoader;
 }
 const defaults: Dependencies = {
-  createContext: () => new AudioContext({ latencyHint: "interactive" }),
+  createContext: createPlaybackContext,
   load: async (context, onStep) =>
     (await import("./tone-engine")).createToneEngine(context, onStep),
 };
@@ -29,9 +35,10 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
   let endingUntil = 0;
   const sync = () => {
     if (!engine || disposed) return;
+    if (!wanted) engine.steer?.(0, 0);
     if (endingUntil > (context?.currentTime ?? 0) && enabled && volume > 0 && !failed) return;
     endingUntil = 0;
-    const playing = enabled && wanted && unlocked && !failed;
+    const playing = enabled && wanted && unlocked && !failed && contextRunning(context);
     const key = `${playing}:${volume}`;
     if (applied === key) return;
     applied = key;
@@ -45,7 +52,20 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
       /* Audio is optional. */
     }
   };
+  const stateChanged = () => {
+    if (!contextRunning(context)) {
+      unlocked = false;
+      endingUntil = 0;
+    } else unlocked = true;
+    try {
+      sync();
+    } catch {
+      fail();
+    }
+  };
   const close = (host: AudioContext) => {
+    host.removeEventListener?.("statechange", stateChanged);
+    releasePlaybackContext(host);
     void host.close().catch(() => {});
   };
   return {
@@ -55,12 +75,14 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
         // Native resume runs inside the Play/Resume click, before any dynamic import awaits.
         context ??= dependencies.createContext();
         const host = context;
+        host.addEventListener?.("statechange", stateChanged);
+        primeContext(host);
         failed = false;
         void host
           .resume()
           .then(() => {
             if (!disposed) {
-              unlocked = true;
+              unlocked = contextRunning(host);
               sync();
             }
           })
@@ -82,6 +104,9 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
       } catch {
         fail();
       }
+    },
+    steer(velocity: number, position: number) {
+      if (engine && wanted && enabled && unlocked && !failed) engine.steer?.(velocity, position);
     },
     configure(next: { music: boolean; musicVolume: number }) {
       enabled = next.music;
@@ -122,6 +147,7 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
           if (victory) {
             const won = victory.seat === humanSeat;
             endingUntil = (context?.currentTime ?? 0) + (won ? VICTORY_TAIL_SECONDS : 2);
+            engine.steer?.(0, 0);
             engine.finish(won);
           }
         } catch {
@@ -135,13 +161,15 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
           ? "unavailable"
           : endingUntil > (context?.currentTime ?? 0)
             ? "ending"
-            : engine && unlocked
-              ? wanted
-                ? "playing"
-                : "paused"
-              : loading
-                ? "loading"
-                : "idle";
+            : wanted && context && !contextRunning(context)
+              ? "waiting"
+              : engine && unlocked
+                ? wanted
+                  ? "playing"
+                  : "paused"
+                : loading
+                  ? "loading"
+                  : "idle";
       return { status, ...director.snapshot() };
     },
     pulse() {
