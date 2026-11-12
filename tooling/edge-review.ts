@@ -2,6 +2,7 @@ import {
   ACESFilmicToneMapping,
   Box3,
   Color,
+  HalfFloatType,
   Mesh,
   PCFSoftShadowMap,
   Scene,
@@ -9,6 +10,7 @@ import {
   Vector2,
   Vector3,
   WebGLRenderer,
+  WebGLRenderTarget,
 } from "three";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
@@ -30,6 +32,7 @@ export function renderEdgeReview(
   legacy?: { vertex: string; fragment: string },
   reduced = false,
   dense = false,
+  legacyBloom = false,
 ) {
   const state = createMatch(2026, count);
   const ball = state.balls[0]!;
@@ -73,7 +76,15 @@ export function renderEdgeReview(
     ]);
   fitArenaCamera(camera, new Box3().setFromPoints(points), 1280 / 900, points);
   const current = createBloom(renderer, scene, camera),
-    old = new EffectComposer(renderer);
+    old = new EffectComposer(
+      renderer,
+      legacyBloom
+        ? new WebGLRenderTarget(1, 1, {
+            type: HalfFloatType,
+            samples: Math.min(4, renderer.capabilities.maxSamples),
+          })
+        : undefined,
+    );
   const bloom = new UnrealBloomPass(new Vector2(1280, 900), 0.25, 0.45, 1.05),
     output = new OutputPass(),
     render = new RenderPass(scene, camera);
@@ -90,7 +101,7 @@ export function renderEdgeReview(
     quality: "high",
   });
   for (let i = 0; i < 3; i++)
-    if (legacy && !reduced) old.render(0);
+    if ((legacy || legacyBloom) && !reduced) old.render(0);
     else current.render(0, reduced, 0, "high");
   return {
     samples: legacy || reduced ? 0 : Math.min(4, renderer.capabilities.maxSamples),

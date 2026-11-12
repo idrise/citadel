@@ -1,14 +1,13 @@
 import {
   HalfFloatType,
   WebGLRenderTarget,
-  Vector2,
   type Camera,
   type Scene,
   type WebGLRenderer,
 } from "three";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { createNeonBloomPass } from "./neon-bloom";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { effectsProfile, type EffectsQuality } from "./quality";
 import { musicLight } from "./music-light";
@@ -27,7 +26,7 @@ export function createBloom(
   const composer = new EffectComposer(renderer, target);
   let samples = target.samples;
   const renderPass = new RenderPass(scene, camera);
-  const bloom = new UnrealBloomPass(new Vector2(1, 1), 0.25, 0.45, 1.05);
+  const bloom = createNeonBloomPass();
   const output = new OutputPass();
   composer.addPass(renderPass);
   const foreground = overlay ? new RenderPass(overlay.scene, overlay.camera) : null;

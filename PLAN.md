@@ -352,6 +352,17 @@ publication/public-verification tasks and is In progress until those are done;
 approval is not evidence of a successful public deployment. External feedback is
 still uncollected. Do not start M09, change pacing, push or deploy from this approval.
 
+**Subsequent M07 bloom correction — visual review pending:** The user reported
+little glow on the right of the six-player arena. The luminance-only bloom cutoff
+rejected saturated colours at emission levels where lime/gold passed. A
+cyan-calibrated peak-channel floor now preserves their halos without a blanket
+increase in strength or wall haze. Native GPU assertions cover all six colours
+and dim-surface rejection; matched 2/4/6 before/after captures are recorded in
+`docs/BLOOM_COLOUR_REVIEW.md`. Vite+ check, 284 unit tests / 49 files, Pages build
+and four focused production browser checks pass. Gameplay/audio remain unchanged.
+This is a follow-up correction to the approved presentation, not a new milestone;
+public deployment remains unverified and no push is authorised.
+
 **Latest title amendment:** The user accepted the title geometry and requested a
 darker background and placement relative to the camera. `2318be7` separates the
 camera-mounted 3D foreground from arena framing, so changing 2–6-player layouts
