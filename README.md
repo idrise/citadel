@@ -1,4 +1,4 @@
-# Neon Citadel
+# Citadel
 
 A local-first paddle arena, built with strict TypeScript, React, Three.js and Vite+.
 Choose 2–6 fortresses: one human versus 1–5 bots, with physical health pieces,
@@ -35,16 +35,20 @@ from the title and Pause menu.
 
 Use the floating title's **− / +** buttons to choose 2–6 players, then **START**.
 The lettering and buttons are procedural 3D meshes.
-The title's darker arena background stays separate from its camera-relative
-lettering/buttons, so changing the board size keeps controls in place. Normal
-brightness returns when play starts. **Settings** opens the compact
-Pause panel, offering Beginner/Standard/Expert
-bots and any human fortress. Two seats use a rectangle, then triangle, square,
-pentagon and hexagon. Eliminations gradually move walls and surviving fortresses
-to the new layout, preserving health and relative steering. Wins celebrate in the
-arena with neon fireworks, a musical closing phrase and a floating **AGAIN** button.
+The title rises from the floor with the same reflected lettering as each level
+introduction. Its controls stay fixed while the board morphs between player counts.
+**Settings** opens the compact Pause panel for effects, audio, assistance and your
+fortress. The saved 100-level challenge controls bot skill, ball speed, bat width,
+ball count and pickups (introduced at level 5). A ball unlocks every 6–7 levels,
+reaching 16 at level 100. A first win advances to level 2; three consecutive losses
+demote one level with a notice. Earlier losses retry the same challenge.
+Two seats use a rectangle, then triangle, square, pentagon and hexagon.
+Eliminations gradually move walls and surviving fortresses to the new layout,
+preserving health and relative steering. Wins celebrate in the arena with neon
+fireworks, a musical closing phrase and a **NEXT** button. Eliminated players can
+choose **Watch** or **Retry** immediately while bots continue playing.
 Other results show **ROUND OVER** in the scene.
-Both win and loss text retain the title's darkened backdrop while the foreground
+Settled result screens dim the arena while the foreground
 lettering stays bright. Pause has optional Round statistics
 and **Export round** for a local JSON summary; nothing is uploaded. How to play and
 version/build details stay in Pause.
@@ -57,7 +61,11 @@ small corner controls for screenshots. Settings offers 0.5–2× mouse sensitivi
 and Neither / Preview only / Pressure slowdown / Both assistance modes. Settings
 are saved locally across refresh, Restart, Rematch and seat changes. Restart repeats
 the same opening; Rematch starts a new seeded round.
-The scene fills the viewport, with no visible HUD or surrounding text during play.
+The scene fills the viewport, with no visible HUD during active play.
+Mobile uses a steeper portrait camera, a shorter steering drag and a bounded GPU
+budget with bloom and floor reflections. Interrupted audio offers **Enable sound**.
+See the [mobile feedback review](docs/MOBILE_FEEDBACK_REVIEW.md) for evidence and
+the remaining physical-device validation.
 Your default fortress is coral. Active balls and trails carry the last striker's
 colour; ready revenge balls show their next server. Banks keep shot credit.
 

@@ -1,0 +1,26 @@
+[
+  {
+    "level": 1,
+    "ticks": 32400,
+    "peakBalls": 1,
+    "medianTickMs": 0.023000000000024556,
+    "p95TickMs": 0.08725000000004002,
+    "maxTickMs": 1.7570420000000126
+  },
+  {
+    "level": 50,
+    "ticks": 10956,
+    "peakBalls": 8,
+    "medianTickMs": 0.03604200000017954,
+    "p95TickMs": 0.25554200000010496,
+    "maxTickMs": 1.4090419999999995
+  },
+  {
+    "level": 100,
+    "ticks": 12230,
+    "peakBalls": 16,
+    "medianTickMs": 0.18029100000012477,
+    "p95TickMs": 1.2340830000002825,
+    "maxTickMs": 3.957666999999674
+  }
+]

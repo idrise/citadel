@@ -1,4 +1,4 @@
-# NEON CITADEL — PLAN.md
+# CITADEL — PLAN.md
 
 **Status:** Shared design in progress; confirmed rules and provisional prototype experiments distinguished below.  
 **Updated:** 12 November 2026\
@@ -414,7 +414,7 @@ passed. The revised workflow still needs a GitHub run and public verification.
 - [ ] Record external desktop feedback when available. M06 pacing study and M09 touch remain unstarted.
 
 The user rejected the abrupt DOM landing/result panels and requested a procedural
-neon CITADEL title over the arena, +/− selection for 2–6 players, Start, and neon
+Citadel title over the arena, +/− selection for 2–6 players, Start, and neon
 fireworks for a human victory. Their explicit follow-up retains advanced settings
 in Pause. Replace visible title/results with scene geometry; keep React only for
 the requested pause settings and invisible accessibility/status composition.
@@ -463,6 +463,41 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 - **Permanent boundary:** Music observes events only. Musical quantisation delays sounds, never collisions, rules, inputs, health, spawning or RNG. No music-driven camera motion. User accepted the detour for now and requested M05; full M06/M07 remain unstarted.
 
 ### Progress / approval ledger
+
+12 November mobile-feedback / sixteen-ball amendment: the owner requested every
+item in `TODO.md`, a sixteen-ball level 100 and an extra ball every 5–10 levels.
+The live cap now unlocks every 6–7 levels; four-ball and higher challenges reach
+the cap by 30 seconds of play (two-second arrivals at level 100). The renderer,
+queued serves and last-striker observer support all sixteen balls. A natural
+seed-one Chromium capture shows sixteen balls at 30.49 seconds with zero collision caps.
+
+All nine TODO implementation items are delivered locally: Citadel naming;
+larger safe portrait framing; spatially tracked, floor-growing wall pillars and
+reusable bounded beam buffers; shorter 88–150px full-travel touch steering;
+reflected floor title; mobile audio routing/gesture/interruption recovery;
+longer seeded score phrases and FM bat swish; immediate Watch/Retry after human
+elimination; and measured mobile render-cost reductions. Mobile retains bloom
+and one floor reflection with bounded pixel ratio and no shadow/MSAA passes.
+Instanced trails and stable light counts reduce allocations, draw calls and
+roster/elimination shader changes. The measured six-seat mobile draw count fell
+from 1,107 to 491 (56%); physical iPad/iPhone stall resolution still needs tester
+confirmation. This explicit feedback request authorises these performance fixes,
+but does not complete or automatically start the full M10 physical-device gate.
+
+Current review/evidence: `docs/MOBILE_FEEDBACK_REVIEW.md` and
+`docs/reviews/m09/mobile-todos/`. Validated checkpoints: `883a070` for sixteen-ball
+pressure and `20df7ca` for audio/touch/early-retry. Final validation:
+`vp check --fix` is clean; 422 unit tests / 68 files pass.
+The broad native root browser run passed 58/59; a stale level-40 idle-survival
+assumption was moved to level 10 and the final focused root rerun passed 15/15,
+covering that scenario plus changed title/mobile layouts. All 59 distinct root
+scenarios have passing coverage across those runs. The Pages production build
+passed 26/26 selected checks. Native Chromium/WebKit frame/audio samples and
+morph/pressure captures have no browser errors. Both build bases pass with the
+existing ~963kB main-chunk advisory; `git diff --check` is clean. Rendering checkpoint:
+`511ba4b`. M09 awaits review; M06 human pacing, M08 public verification and
+M10 physical-device validation remain open.
+
 
 12 November combined-difficulty amendment: the owner added ball count, pickup
 count, ball speed and bat size to the saved 100-level curve, with supplies unlocked
@@ -787,4 +822,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/M09_TOUCH_REVIEW.md`, `docs/PROGRESSION_AND_SUPPLIES_REVIEW.md` and `docs/DIFFICULTY_CURVE_REVIEW.md`, especially phone readability, the three-loss ladder, combined pressure ramp and reflected floor introduction. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

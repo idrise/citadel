@@ -1,3 +1,5 @@
+> Updated by [the mobile feedback review](MOBILE_FEEDBACK_REVIEW.md): the current curve reaches 16 balls, with unlocks every 6–7 levels. The measurements and eight-ball captures below describe the preceding revision.
+
 # Ball, pickup and bat progression — M09 follow-up
 
 12 November 2026. The owner requested ball count, pickup count, ball speed and bat

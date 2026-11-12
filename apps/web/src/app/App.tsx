@@ -22,7 +22,7 @@ export function App() {
   }, [progress]);
   return (
     <main className="game-root">
-      <h1 className="sr-only">Neon Citadel</h1>
+      <h1 className="sr-only">Citadel</h1>
       <GamePanel
         level={levelFor(progress, count)}
         demotion={progress.demotion?.count === count ? progress.demotion : null}

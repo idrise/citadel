@@ -1,0 +1,17 @@
+[
+  {
+    "name": "soundtrack",
+    "peak": 0.455369770526886,
+    "rms": 0.031789867820793224,
+    "channels": 2,
+    "duration": 32,
+    "bpm": 136,
+    "sections": []
+  },
+  {
+    "name": "paddle-swish",
+    "peak": 0.06800777465105057,
+    "rms": 0.014546157203393296,
+    "channels": 2
+  }
+]

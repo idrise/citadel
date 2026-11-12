@@ -1,0 +1,17 @@
+{
+  "reports": [
+    {
+      "engine": "webkit",
+      "browser": "27.2",
+      "layout": "390x844@2, six seats, default high effects, live audio; native clock",
+      "samples": 482,
+      "medianMs": 17,
+      "p95Ms": 19,
+      "maxMs": 30,
+      "medianDraws": 491,
+      "maxOutputRms": 0.05430798537921405,
+      "stalls": []
+    }
+  ],
+  "errors": []
+}

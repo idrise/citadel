@@ -4,8 +4,8 @@ import { openGame, play, pause, saveLevel, choosePlayers } from "./helpers";
 test("captured controls, focus pause, timed balls and restart work", async ({ page }) => {
   test.setTimeout(180000);
   await page.setViewportSize({ width: 480, height: 360 });
-  await saveLevel(page, 40);
-  await openGame(page);
+  await saveLevel(page, 10);
+  await openGame(page, true, 1);
   await play(page);
   await page.clock.runFor(1800);
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
@@ -24,7 +24,7 @@ test("captured controls, focus pause, timed balls and restart work", async ({ pa
   expect(await page.getByLabel("Bat angle", { exact: true }).textContent()).toBe(angle);
   await page.keyboard.up("KeyD");
   await page.clock.runFor(15500);
-  await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("3");
+  await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("2");
   await pause(page);
   await page.getByRole("button", { name: "Restart", exact: true }).click();
   await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();

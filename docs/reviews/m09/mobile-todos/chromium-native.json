@@ -1,0 +1,17 @@
+{
+  "reports": [
+    {
+      "engine": "chromium",
+      "browser": "158.0.8127.18",
+      "layout": "390x844@2, six seats, default high effects, live audio; native clock",
+      "samples": 480,
+      "medianMs": 16.69999999999891,
+      "p95Ms": 16.799999999999272,
+      "maxMs": 33.19999999999891,
+      "medianDraws": 491,
+      "maxOutputRms": 0.054244359235873736,
+      "stalls": []
+    }
+  ],
+  "errors": []
+}

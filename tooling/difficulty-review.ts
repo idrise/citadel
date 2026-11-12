@@ -13,7 +13,7 @@ export function renderDifficultyReview(
   height = 900,
 ) {
   container.style.cssText = `width:${width}px;height:${height}px;position:relative`;
-  let state = createMatch(2026, count, 3, 2026, levelDifficulty(level)),
+  let state = createMatch(1, count, 3, 1, levelDifficulty(level)),
     time = 0,
     lastRender = 0;
   const viewport = createViewport(container, 0, state.arena);

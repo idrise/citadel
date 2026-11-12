@@ -11,8 +11,8 @@ test("production game fills the viewport and refreshes under the Pages path", as
     if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`);
   });
   await page.goto("./");
-  await expect(page).toHaveTitle("Neon Citadel");
-  const canvas = page.getByRole("application", { name: "Neon Citadel arena" });
+  await expect(page).toHaveTitle("Citadel");
+  const canvas = page.getByRole("application", { name: "Citadel arena" });
   await expect(canvas).toBeVisible();
   const bounds = (await canvas.boundingBox())!;
   expect(bounds.x).toBe(0);

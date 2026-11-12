@@ -60,12 +60,12 @@ try {
     checks.push(summary);
   }
   await mount(6, 100);
-  await page.evaluate(() => window.difficultyReview.advance(37));
+  await page.evaluate(() => window.difficultyReview.advance(32));
   const pressure = await page.evaluate(() => window.difficultyReview.summary());
-  assert.equal(pressure.balls, 8);
+  assert.equal(pressure.balls, 16);
   assert.equal(pressure.collisionCaps, 0);
   checks.push(pressure);
-  await page.screenshot({ path: `${directory}/eight-ball-pressure.png` });
+  await page.screenshot({ path: `${directory}/sixteen-ball-pressure.png` });
   const video = await page.evaluate(async () => {
     const recorder = new MediaRecorder(document.querySelector("canvas").captureStream(30), {
         mimeType: "video/webm;codecs=vp9",
@@ -75,7 +75,7 @@ try {
     recorder.ondataavailable = (e) => chunks.push(e.data);
     recorder.start();
     for (let frame = 0; frame <= 90; frame++) {
-      window.difficultyReview.advance(37 + frame / 30);
+      window.difficultyReview.advance(32 + frame / 30);
       await new Promise((resolve) => setTimeout(resolve, 1000 / 30));
     }
     await new Promise((resolve) => {
