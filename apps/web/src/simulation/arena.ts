@@ -4,6 +4,7 @@ import { add, angleDifference, clamp, scale, unit, type Vec2 } from "./vector";
 import { ARENA } from "./arena-tuning";
 import { fitDefenceLimits } from "./defence-limits";
 export { ARENA, FIXED_DT, MAX_BALLS } from "./arena-tuning";
+export const TRIANGLE_FORTRESS_INSET = 1.2;
 export type PlayerCount = 2 | 3 | 4 | 5 | 6;
 export interface ArenaGeometry {
   count: PlayerCount;
@@ -63,7 +64,10 @@ export function createArena(
         ].map(rotate)
       : anchors.map((p) => ({ ...p }));
   const halfAngle = count === 2 ? Math.PI / 2 : Math.PI / 2 - Math.PI / count;
-  const fortresses = anchors.map((anchor, index) => {
+  const fortresses = anchors.map((corner, index) => {
+    // The wall stays at the triangle tip; move the whole defence into its wider interior.
+    const anchor =
+      count === 3 ? scale(corner, (radius - TRIANGLE_FORTRESS_INSET) / radius) : corner;
     const direction = Math.atan2(-anchor.y, -anchor.x);
     const pieceAnchor = count === 3 ? add(anchor, scale(unit(direction), 0.6)) : anchor;
     return {
