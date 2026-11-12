@@ -68,6 +68,16 @@ export function AccessibleStatus({
           {ball.phase}
         </output>
       ))}
+      {state.balls.map((ball) => (
+        <span key={`flight-${ball.id}`}>
+          <output aria-label={`Ball ${ball.id} speed`}>
+            {Math.hypot(ball.velocity.x, ball.velocity.y).toFixed(2)}
+          </output>
+          <output aria-label={`Ball ${ball.id} rally time`}>
+            {(ball.rallyTime ?? 0).toFixed(2)}
+          </output>
+        </span>
+      ))}
       <output aria-label="Arena players">{state.arena.count}</output>
       <output aria-label="Arena transition">{state.morph ? "moving" : "settled"}</output>
       <output aria-label="Survivors">

@@ -1,3 +1,4 @@
+import { rallyBaseSpeed } from "./rally";
 import { FIXED_DT, fortress } from "./arena";
 import { advanceBall } from "./ball";
 import { sweepCircle, sweepPaddle, sweepWalls, type Contact } from "./collision";
@@ -34,11 +35,35 @@ function forecastStep(
 ) {
   for (const player of trial.players) player.swipe = rememberSwipe(player.swipe, 0, FIXED_DT);
   if (!options.slowdown)
-    return advanceBall(trial, tracked, angles, FIXED_DT, options, pieces, true);
+    return advanceBall(
+      trial,
+      tracked,
+      angles,
+      FIXED_DT,
+      {
+        ...options,
+        rallyAcceleration: tracked.rallyTime !== undefined,
+        ballSpeed: trial.difficulty?.ballSpeed ?? rallyBaseSpeed(tracked),
+      },
+      pieces,
+      true,
+    );
   let impact: ReturnType<typeof advanceBall>;
   for (const ball of trial.balls) {
     if (ball.phase !== "active") continue;
-    const hit = advanceBall(trial, ball, angles, FIXED_DT, options, pieces, true);
+    const hit = advanceBall(
+      trial,
+      ball,
+      angles,
+      FIXED_DT,
+      {
+        ...options,
+        rallyAcceleration: ball.rallyTime !== undefined,
+        ballSpeed: trial.difficulty?.ballSpeed ?? rallyBaseSpeed(ball),
+      },
+      pieces,
+      true,
+    );
     if (ball.id === tracked.id) impact = hit;
     else if (hit?.type === "piece") ball.phase = "ready"; // No hypothetical damage or future serves.
   }

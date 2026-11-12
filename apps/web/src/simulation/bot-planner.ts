@@ -1,3 +1,4 @@
+import { advanceRally, rallyBaseSpeed } from "./rally";
 import { ARENA, fortress } from "./arena";
 import { sweepCircle, sweepPaddle, sweepWalls } from "./collision";
 import { curveFlight } from "./flight";
@@ -14,8 +15,14 @@ export function planIntercept(
 ) {
   const home = fortress(seat, state.arena),
     player = state.players[seat]!;
-  let best: { point: Vec2; velocity: Vec2; time: number; angle: number; ballId: number } | null =
-    null;
+  let best: {
+    point: Vec2;
+    velocity: Vec2;
+    time: number;
+    angle: number;
+    ballId: number;
+    rallyTime?: number;
+  } | null = null;
   for (const source of state.balls) {
     if (
       source.phase !== "active" ||
@@ -23,12 +30,16 @@ export function planIntercept(
         length(source.velocity) * horizon
     )
       continue;
+    const forecast = { ...source };
+    const baseSpeed = state.difficulty?.ballSpeed ?? rallyBaseSpeed(source);
     let position = { ...source.position },
       velocity = { ...source.velocity },
       spin = source.spin;
     for (let elapsed = 0; elapsed < horizon - 1e-8; elapsed += 1 / 30) {
       const dt = Math.min(1 / 30, horizon - elapsed);
-      const flight = curveFlight(velocity, spin, dt);
+      forecast.velocity = velocity;
+      advanceRally(forecast, baseSpeed, dt, source.rallyTime !== undefined);
+      const flight = curveFlight(forecast.velocity, spin, dt);
       velocity = flight.velocity;
       spin = flight.spin;
       const rail = sweepCircle(
@@ -80,7 +91,14 @@ export function planIntercept(
           reach <= time + 0.08 &&
           (!best || time < best.time || (time === best.time && source.id < best.ballId))
         )
-          best = { point, velocity, time, angle, ballId: source.id };
+          best = {
+            point,
+            velocity,
+            time,
+            angle,
+            ballId: source.id,
+            ...(forecast.rallyTime !== undefined ? { rallyTime: forecast.rallyTime } : {}),
+          };
         break;
       }
       if (wall) {

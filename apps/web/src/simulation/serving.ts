@@ -35,6 +35,7 @@ export function readyBall(state: MatchState, seat: number, id = 0): BallState {
   const player = state.players[seat];
   const angle = player?.angle ?? fortress(seat, state.arena).direction;
   return {
+    ...(state.difficulty ? { rallyTime: 0 } : {}),
     id,
     striker: seat,
     phase: "ready",
@@ -50,6 +51,7 @@ export function launchBall(state: MatchState, ball: BallState, options: MatchOpt
   const angle = state.players[ball.seat]?.angle ?? fortress(ball.seat, state.arena).direction;
   ball.velocity = scale(serveDirection(ball.seat, angle, state.arena), options.ballSpeed);
   ball.phase = "active";
+  if (options.rallyAcceleration) ball.rallyTime = 0;
   ball.striker = ball.seat;
   ball.slowSeat = null;
   ball.spin = 0;
@@ -88,11 +90,13 @@ export function damagePiece(
   const recipient = alive(player)
     ? seat
     : (survivors[Math.floor(sample(state) * survivors.length)]?.id ?? survivors[0]!.id);
+  if (ball.rallyTime !== undefined) ball.rallyTime = 0;
   Object.assign(ball, readyBall(state, recipient, ball.id));
   damage.returnTo = { ...ball.position };
   for (const pending of state.balls) {
     if (pending.phase === "ready" && !alive(state.players[pending.seat]!)) {
       const target = survivors[Math.floor(sample(state) * survivors.length)]!.id;
+      if (pending.rallyTime !== undefined) pending.rallyTime = 0;
       Object.assign(pending, readyBall(state, target, pending.id));
     }
   }

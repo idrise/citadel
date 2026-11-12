@@ -1,3 +1,4 @@
+import { advanceRally, rallyBaseSpeed, rallyMultiplier } from "./rally";
 import { ARENA, FIXED_DT, fortress } from "./arena";
 import { sweepCircle, sweepPaddle, sweepWalls } from "./collision";
 import { CURVE_DECAY, MAX_SWIPE_CURVE, curveFlight } from "./flight";
@@ -35,21 +36,33 @@ export function pressureArrival(state: MatchState, ball: BallState, seat: number
   const offset = sub(ball.position, anchor);
   const speed = length(ball.velocity);
   const radius = ARENA.railRadius + 0.4;
-  if (!speed || length(offset) > radius + speed * horizon) return null;
+  const ramping = ball.rallyTime !== undefined;
+  const baseSpeed = state.difficulty?.ballSpeed ?? rallyBaseSpeed(ball);
+  const futureSpeed = ramping
+    ? baseSpeed * rallyMultiplier((ball.rallyTime ?? 0) + horizon)
+    : speed;
+  if (!speed || length(offset) > radius + futureSpeed * horizon) return null;
   // Conservative envelope around the straight path. Includes the fixed-step right-endpoint
   // integration error, so a curved shot can enter even when its initial ray misses the circle.
   const rate = Math.min(MAX_SWIPE_CURVE, Math.abs(ball.spin ?? 0));
   const turn = (rate * (1 - Math.exp(-CURVE_DECAY * horizon))) / CURVE_DECAY;
   const deviation = speed * ((rate * horizon) / CURVE_DECAY - turn / CURVE_DECAY + FIXED_DT * turn);
   const closest = clamp(-dot(offset, ball.velocity) / (speed * speed), 0, horizon);
-  if (length(add(offset, scale(ball.velocity, closest))) > radius + deviation) return null;
+  if (
+    length(add(offset, scale(ball.velocity, closest))) >
+    radius + deviation + (futureSpeed - speed) * horizon
+  )
+    return null;
   let position = ball.position,
     velocity = ball.velocity,
     spin = ball.spin ?? 0;
-  const step = spin === 0 ? horizon : FIXED_DT;
+  const forecast = { ...ball };
+  const step = spin === 0 && !ramping ? horizon : FIXED_DT;
   for (let elapsed = 0; elapsed < horizon - 1e-9; elapsed += step) {
     const dt = Math.min(step, horizon - elapsed);
-    const flight = curveFlight(velocity, spin, dt);
+    forecast.velocity = velocity;
+    advanceRally(forecast, baseSpeed, dt, ramping);
+    const flight = curveFlight(forecast.velocity, spin, dt);
     velocity = flight.velocity;
     spin = flight.spin;
     const hit = sweepCircle(position, velocity, anchor, ARENA.railRadius + 0.4, dt);

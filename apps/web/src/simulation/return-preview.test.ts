@@ -160,3 +160,37 @@ it.each([-1, 1])(
     expect(length(sub(preview.points.at(-1)!, preview.contact))).toBeGreaterThan(2);
   },
 );
+it("uses the rally ramp in its actual fixed-step contact forecast without advancing the live clock", () => {
+  const { state } = returnFixture(0, 0, 2.5),
+    ball = state.balls[0]!;
+  ball.rallyTime = 10;
+  ball.velocity = scale(normalise(ball.velocity), 24 * 1.1);
+  const saved = structuredClone(state),
+    preview = predictReturn(state, 0, false)!;
+  expect(preview).not.toBeNull();
+  expect(state).toEqual(saved);
+  const trial = structuredClone(state),
+    angles = trial.players.map((p) => p.angle),
+    pieces = trial.players.map((p) => p.pieces.map((b) => b.position));
+  let actualTime = 0,
+    contact: ReturnType<typeof advanceBall>;
+  for (let step = 0; step < 60; step++) {
+    contact = advanceBall(
+      trial,
+      trial.balls[0]!,
+      angles,
+      FIXED_DT,
+      { ...DEFAULT_OPTIONS, ballSpeed: 24, rallyAcceleration: true },
+      pieces,
+      true,
+    );
+    if (contact) {
+      actualTime = step * FIXED_DT + contact.time;
+      break;
+    }
+  }
+  expect(contact!.type).toBe("paddle");
+  expect(preview.time).toBeCloseTo(actualTime, 9);
+  expect(length(sub(preview.contact, contact!.position))).toBeLessThan(1e-7);
+  expect(length(trial.balls[0]!.velocity)).toBeGreaterThan(length(ball.velocity));
+});

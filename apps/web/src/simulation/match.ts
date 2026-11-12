@@ -93,6 +93,7 @@ export function stepMatch(
   const options = difficulty
     ? {
         ...requestedOptions,
+        rallyAcceleration: true,
         botLevel: difficulty.level,
         ballSpeed: difficulty.ballSpeed,
         ballInterval: difficulty.ballInterval,

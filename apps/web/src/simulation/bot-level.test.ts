@@ -60,3 +60,22 @@ it("keeps level-100 bots inside ordinary legal movement and preserves seeded rep
   }
   expect(state).toEqual(replay);
 });
+it("forecasts increasing rally speed from public ball state without changing it", () => {
+  const state = createMatch(7, 4),
+    home = fortress(0, state.arena),
+    ball = state.balls[0]!;
+  state.phase = "playing";
+  Object.assign(ball, {
+    phase: "active",
+    position: railPosition(0, home.direction, 9, state.arena),
+    velocity: scale(unit(home.direction), -24 * 1.5),
+    rallyTime: 18,
+    spin: 0,
+  });
+  const saved = structuredClone(state),
+    intercept = planIntercept(state, 0, 0.5);
+  expect(intercept).not.toBeNull();
+  expect(intercept!.rallyTime).toBeGreaterThan(18);
+  expect(Math.hypot(intercept!.velocity.x, intercept!.velocity.y)).toBeGreaterThan(36);
+  expect(state).toEqual(saved);
+});

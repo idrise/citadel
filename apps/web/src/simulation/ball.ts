@@ -1,3 +1,4 @@
+import { advanceRally } from "./rally";
 import { collectSupply, SUPPLIES } from "./supplies";
 import { ARENA } from "./arena";
 import { paddleReturn, sweepCircle, sweepPaddle, sweepWalls, type Contact } from "./collision";
@@ -29,6 +30,8 @@ export function advanceBall(
   previousPieces: Vec2[][],
   stopAtFirstImpact = false,
 ): BallImpact | undefined {
+  if (state.phase === "playing")
+    advanceRally(ball, options.ballSpeed, dt, options.rallyAcceleration === true);
   const flight = curveFlight(ball.velocity, ball.spin, dt);
   ball.velocity = flight.velocity;
   ball.spin = flight.spin;

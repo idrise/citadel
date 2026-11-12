@@ -45,6 +45,8 @@ export interface SupplyDrop {
   age: number;
 }
 export interface BallState {
+  /** Active-flight seconds since this ball last scored; absent in legacy fixed-speed replays. */
+  rallyTime?: number;
   striker?: number;
   id: number;
   phase: "ready" | "active";
@@ -87,6 +89,8 @@ export interface GameEvent {
 }
 export type BotDifficulty = "beginner" | "standard" | "expert";
 export interface MatchOptions {
+  /** Enabled by graded rounds; optional for legacy fixed-speed physics replays. */
+  rallyAcceleration?: boolean;
   /** Replay compatibility; current pointer response defaults to arena tuning. */
   pointerPaddleSpeed?: number;
   botDifficulty?: BotDifficulty;

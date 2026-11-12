@@ -1,3 +1,4 @@
+import { rallyMultiplier } from "./rally";
 import { expect, it } from "vite-plus/test";
 import { levelDifficulty } from "./difficulty";
 import { ARENA, batCentre, batHalfAngle, createArena, fortress, railPosition } from "./arena";
@@ -106,7 +107,10 @@ it.each([1, 50, 100])(
       state = stepMatch(state, undefined, { ...DEFAULT_OPTIONS, humanSeat: -1 });
     expect(state.stats.collisionCaps).toBe(0);
     for (const ball of state.balls.filter((b) => b.phase === "active"))
-      expect(length(ball.velocity)).toBeCloseTo(difficulty.ballSpeed, 6);
+      expect(length(ball.velocity)).toBeCloseTo(
+        difficulty.ballSpeed * rallyMultiplier(ball.rallyTime ?? 0),
+        6,
+      );
   },
 );
 it("a wide early bat catches a shot that passes the narrow level-100 bat", () => {

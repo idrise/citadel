@@ -1,3 +1,4 @@
+import { advanceRally, rallyBaseSpeed } from "./rally";
 import { ARENA, clampPaddleAngle } from "./arena";
 import { paddleReturn, sweepPaddle, sweepWalls } from "./collision";
 import { curveFlight, swipeCurve } from "./flight";
@@ -58,7 +59,7 @@ function segmentDistance(point: Vec2, start: Vec2, end: Vec2) {
 export function planBotShot(
   state: MatchState,
   seat: number,
-  contact: { point: Vec2; velocity: Vec2; angle: number },
+  contact: { point: Vec2; velocity: Vec2; angle: number; rallyTime?: number },
   speed: number,
   precision = 1,
 ): BotShot {
@@ -76,11 +77,19 @@ export function planBotShot(
     for (const swipe of precision < 0.2 ? [0] : [-brush, 0, brush]) {
       let position = add(add(start, scale(contact.velocity, hit.time)), scale(hit.normal, 0.001));
       let velocity = paddleReturn(contact.velocity, hit.offset, hit.normal);
+      const forecast = {
+        phase: "active" as const,
+        velocity,
+        ...(contact.rallyTime !== undefined ? { rallyTime: contact.rallyTime } : {}),
+      };
+      const baseSpeed = state.difficulty?.ballSpeed ?? rallyBaseSpeed(forecast);
       let spin = swipeCurve(swipe, contact.velocity, hit.normal);
       let score = -0.005 * Math.abs(swipe) - 0.002 * Math.abs(offset);
       for (let step = 0; step < steps; step++) {
         const dt = 1 / steps;
-        const flight = curveFlight(velocity, spin, dt);
+        forecast.velocity = velocity;
+        advanceRally(forecast, baseSpeed, dt, contact.rallyTime !== undefined);
+        const flight = curveFlight(forecast.velocity, spin, dt);
         velocity = flight.velocity;
         spin = flight.spin;
         const wall = sweepWalls(position, velocity, dt, state.arena).sort(
