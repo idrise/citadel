@@ -1,3 +1,4 @@
+import { VICTORY_HOLD_SECONDS } from "./victory-morph";
 import {
   AmbientLight,
   DirectionalLight,
@@ -56,7 +57,10 @@ export function createMenuOverlay() {
       return gain;
     },
     update(state: SceneMenuState, dt: number, width: number, height: number) {
-      const target = state.mode === "hidden" ? 1 : MENU_BACKGROUND_GAIN;
+      const celebrating =
+        (state.mode === "victory" || state.mode === "defeat") &&
+        state.elapsed < VICTORY_HOLD_SECONDS;
+      const target = state.mode === "hidden" || celebrating ? 1 : MENU_BACKGROUND_GAIN;
       gain =
         initial || state.reduced
           ? target

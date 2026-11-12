@@ -45,7 +45,7 @@ it("projects accessible scene controls, bounds player count, and waits before of
   ).toBe(true);
   expect(menu.update({ ...state, mode: "victory", elapsed: 1 }, 1280, 900)).toEqual([]);
   expect(
-    menu.update({ ...state, mode: "victory", elapsed: 4 }, 1280, 900).map((c) => c.action),
+    menu.update({ ...state, mode: "victory", elapsed: 5 }, 1280, 900).map((c) => c.action),
   ).toEqual(["rematch", "options"]);
   expect(menu.update({ ...state, mode: "hidden" }, 1280, 900)).toEqual([]);
   disposeScene(root);
@@ -106,7 +106,7 @@ it.each(["title", "victory", "defeat"] as const)(
   "dims the %s background while keeping its foreground visible and restores normal play",
   (mode) => {
     const overlay = createMenuOverlay(),
-      state = { mode, count: 4, elapsed: 0, reduced: false };
+      state = { mode, count: 4, elapsed: 5, reduced: false };
     overlay.update(state, 0, 1280, 900);
     expect(overlay.backgroundGain).toBe(MENU_BACKGROUND_GAIN);
     expect(MENU_BACKGROUND_GAIN).toBeLessThan(0.3);

@@ -12,6 +12,7 @@ import { effectsProfile, type EffectsQuality } from "./quality";
 import { createAimGuide } from "./aim-guide";
 import type { SceneMenuState } from "./scene-menu";
 import { createPaddleBlur } from "./paddle-blur";
+import { createVictoryMorph } from "./victory-morph";
 
 export interface ViewOptions {
   preview: boolean;
@@ -32,14 +33,38 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
   const guide = createAimGuide(stage.root);
   const effects = createEffects(stage.root);
   const paddleBlur = createPaddleBlur(stage.root, stage.paddles);
+  const victory = createVictoryMorph(humanSeat);
+  let displayArena = initial;
+  let victoryProgress = 0;
+  let victoryLight: { x: number; y: number } | undefined;
+  let endingTime = 0;
   let lastEvent = -1;
   let geometry = initial;
   return {
     root: stage.root,
     dispose: () => reflection.dispose(),
+    get displayArena() {
+      return displayArena;
+    },
+    get victoryProgress() {
+      return victoryProgress;
+    },
+    get victoryLight() {
+      return victoryLight;
+    },
     update(state: MatchState, dt: number, options: ViewOptions) {
-      (stage.base.userData.update as (arena: ArenaGeometry) => void)(state.arena);
-      reflection.update(state.arena);
+      endingTime = state.phase === "finished" ? endingTime + Math.max(0, dt) : 0;
+      const ending = victory.update(
+        state,
+        options.menu?.elapsed ?? endingTime,
+        options.reducedEffects,
+      );
+      displayArena = ending?.arena ?? state.arena;
+      victoryProgress = ending?.progress ?? 0;
+      victoryLight = ending?.light;
+      (stage.base.userData.update as (arena: ArenaGeometry) => void)(displayArena);
+      reflection.update(displayArena);
+      reflection.setVictory(Boolean(ending));
       const profile = effectsProfile(options.quality, options.reducedEffects);
       reflection.setReduced(!profile.reflections);
       state.players.forEach((player) => {
@@ -47,7 +72,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         const rail = stage.rails[player.id]!;
         rail.position.set(home.anchor.x, 0.02, home.anchor.y);
         rail.rotation.y = -home.direction;
-        rail.visible = alive(player);
+        rail.visible = alive(player) && !ending;
         if (
           geometry !== state.arena &&
           Math.abs(fortress(player.id, geometry).halfAngle - home.halfAngle) > 1e-7
@@ -76,14 +101,20 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
           0.15,
           home.anchor.y + Math.sin(home.direction) * 0.9,
         );
+        if (ending?.winner === player.id) mark.position.set(ending.centre.x, 0.15, ending.centre.y);
         const paddle = stage.paddles[player.id]!;
         paddle.position.set(home.anchor.x, 0.95, home.anchor.y);
         paddle.rotation.y = -player.angle;
         paddle.visible = alive(player);
+        if (ending?.winner === player.id) {
+          paddle.position.set(ending.paddle.position.x, 0.95, ending.paddle.position.y);
+          paddle.rotation.y = -ending.paddle.angle;
+        }
         stage.health[player.id]!.forEach((piece, index) => {
           piece.visible = Boolean(player.health[index]);
           const body = player.pieces[index]!;
-          piece.position.set(body.position.x, 0, body.position.y);
+          const position = ending?.winner === player.id ? ending.pieces[index]! : body.position;
+          piece.position.set(position.x, 0, position.y);
           piece.scale.setScalar(body.radius / ARENA.pieceRadius);
         });
       });
@@ -107,7 +138,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
       balls.update(state, options.reducedEffects, profile.trails, options.ballOwners);
       guide.hide();
       const defender = state.players[options.humanSeat];
-      if (!defender || !alive(defender)) return;
+      if (state.phase === "finished" || !defender || !alive(defender)) return;
       const ownServe = state.balls.find(
         (ball) => ball.phase === "ready" && ball.seat === defender.id,
       );

@@ -30,11 +30,12 @@ export function createArenaReflections(humanSeat: number, initial: ArenaGeometry
     };
   }
   let previous: ArenaGeometry | undefined,
-    reduced = false;
+    reduced = false,
+    victory = false;
   let visible = meshes.map(() => false);
   const apply = () =>
     meshes.forEach((mesh, index) => {
-      mesh.visible = !reduced && visible[index]!;
+      mesh.visible = !reduced && visible[index]! && (!victory || index === 0);
     });
   const update = (arena: ArenaGeometry) => {
     if (previous === arena) return;
@@ -69,6 +70,10 @@ export function createArenaReflections(humanSeat: number, initial: ArenaGeometry
   return {
     meshes,
     update,
+    setVictory(value: boolean) {
+      victory = value;
+      apply();
+    },
     setReduced(value: boolean) {
       reduced = value;
       apply();

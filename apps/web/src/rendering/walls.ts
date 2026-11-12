@@ -21,8 +21,8 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
   const walls: Group[] = [];
   const posts: Mesh[] = [];
   const fits: ((length: number, start: number, end: number) => void)[][] = [];
-  // The fixed pool also accepts retargets from earlier builds/saved fixtures.
-  for (let side = 0; side < 12; side++) {
+  // Shared rays for the live outline and victory star need at most 22 segments.
+  for (let side = 0; side < 24; side++) {
     const length = 1,
       near = false;
     const wall = new Group();
@@ -75,7 +75,7 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
     walls.push(wall);
     root.add(wall);
   }
-  for (let index = 0; index < 12; index++) {
+  for (let index = 0; index < 24; index++) {
     const post = new Mesh(
       new BoxGeometry(0.98, WALL_HEIGHT + 0.12, 0.98),
       frostedMaterial(0x33465b),
@@ -93,11 +93,13 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
     previous = arena;
     const anchor = fortress(humanSeat, arena).anchor;
     const edges = polygonEdges(arena.vertices);
-    const turns = edges.map((edge, index) =>
-      Math.acos(
-        clamp(dot(edges[(index + edges.length - 1) % edges.length]!.normal, edge.normal), -1, 1),
-      ),
-    );
+    const turns = edges.map((edge, index) => {
+      const previous = edges[(index + edges.length - 1) % edges.length]!.normal;
+      return -Math.atan2(
+        previous.x * edge.normal.y - previous.y * edge.normal.x,
+        dot(previous, edge.normal),
+      );
+    });
     walls.forEach((wall, index) => {
       const edge = edges[index];
       wall.visible = Boolean(edge);

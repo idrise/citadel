@@ -464,6 +464,17 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November victory-star amendment: the owner requested a visible morph when
+only one player remains. The current floor/plinth/walls now become a five-point
+star over 2.8 seconds while the winner's actual paddle and surviving containers
+move into the centre. The board stays bright until rematch controls appear at
+4.5 seconds; reduced motion shows the settled star immediately with the same
+hold. Human and bot wins are supported, including a finish during an arena morph.
+Final simulation/replay state remains frozen. See `docs/VICTORY_MORPH_REVIEW.md`
+for 2/4/6, phone, bot and reduced captures, animation video, 321 unit tests and
+native desktop/mobile production checks at root and Pages base paths. M09 awaits
+owner review; M10 and publication remain unauthorised.
+
 12 November ball presentation amendment: the owner requested stronger visual
 impact and readable spin. Balls now have a 35% larger visible shell, bright core,
 dark procedural rotating seams, owner-coloured aura and stronger comet tail.

@@ -25,6 +25,7 @@ export function createStage(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA
       0.035,
       0.15,
     );
+    rail.name = `defence-rail-${seat.id}`;
     rail.position.set(seat.anchor.x, 0.02, seat.anchor.y);
     rail.rotation.y = -seat.direction;
     rails.push(rail);
@@ -38,6 +39,7 @@ export function createStage(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA
       0.85,
       1.5,
     );
+    paddle.name = `paddle-${seat.id}`;
     paddle.geometry.translate(ARENA.railRadius - ARENA.batRadius, 0, 0);
     paddle.add(createFeatureEdges(paddle.geometry, colour, { width: 4.5, power: 2 }));
     paddle.position.set(seat.anchor.x, 0.95, seat.anchor.y);

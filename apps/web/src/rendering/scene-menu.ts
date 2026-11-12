@@ -1,3 +1,4 @@
+import { VICTORY_HOLD_SECONDS, VICTORY_MORPH_SECONDS } from "./victory-morph";
 import {
   BoxGeometry,
   Box3,
@@ -105,7 +106,9 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       group.scale.setScalar(Math.min(0.78, (halfHeight * camera.aspect * 1.7) / 16));
       const compact = state.touch || width < 700 || height < 500;
       const result = state.mode !== "title",
-        reveal = state.reduced ? 1 : Math.max(0, Math.min(1, (state.elapsed - 1.6) / 0.8));
+        reveal = state.reduced
+          ? 1
+          : Math.max(0, Math.min(1, (state.elapsed - VICTORY_MORPH_SECONDS) / 0.6));
       title.visible = !result;
       victory.visible = state.mode === "victory" && reveal > 0;
       defeat.visible = state.mode === "defeat" && reveal > 0;
@@ -120,7 +123,7 @@ export function createSceneMenu(camera: PerspectiveCamera) {
         group.add(countText);
         count = state.count;
       }
-      const available = state.reduced || state.elapsed >= 3.5;
+      const available = state.elapsed >= VICTORY_HOLD_SECONDS;
       for (const button of controls) {
         button.item.visible = result
           ? (button.action === "rematch" || button.action === "options") && available

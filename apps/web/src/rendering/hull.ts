@@ -2,7 +2,7 @@ import { BufferGeometry, Float32BufferAttribute, Mesh, type Material } from "thr
 import type { Vec2 } from "../simulation/vector";
 import { featureEdgeGeometry } from "./feature-edges";
 
-/** A convex fan and bevelled side rings; only rebuilt while the authoritative polygon moves. */
+/** An origin-centred radial fan and bevelled side rings, including the victory star. */
 export function hullGeometry(
   vertices: readonly Vec2[],
   margin: number,

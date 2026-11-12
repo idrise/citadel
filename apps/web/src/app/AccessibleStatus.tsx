@@ -1,3 +1,4 @@
+import { VICTORY_HOLD_SECONDS } from "../rendering/victory-morph";
 import type { SessionSnapshot } from "../session/session";
 import { SEATS } from "../rendering/palette";
 
@@ -28,7 +29,7 @@ export function AccessibleStatus({
         {!snapshot.started
           ? "title"
           : state.phase === "finished"
-            ? snapshot.endingTime < 3.5
+            ? snapshot.endingTime < VICTORY_HOLD_SECONDS
               ? "celebrating"
               : "result"
             : snapshot.paused

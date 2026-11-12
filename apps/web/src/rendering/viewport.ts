@@ -99,6 +99,8 @@ export function createViewport(
         renderer.setPixelRatio(pixelRatio);
         bloom.resize(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1));
       }
+      arena.update(state, dt, options);
+      const displayArena = arena.displayArena;
       for (const light of scene.children)
         if (light instanceof PointLight) {
           const seat = fortress(light.userData.seat as number, state.arena);
@@ -107,6 +109,8 @@ export function createViewport(
             1.8,
             seat.anchor.y + Math.sin(seat.direction) * 2.7,
           );
+          if (arena.victoryLight && state.winner === seat.id)
+            light.position.set(arena.victoryLight.x, 2.5, arena.victoryLight.y);
           light.visible = state.players[seat.id]!.health.some(Boolean);
         }
       const home = fortress(humanSeat, state.arena);
@@ -116,9 +120,11 @@ export function createViewport(
           ? (state.players[humanSeat]!.angle - home.direction) / home.halfAngle
           : 0;
       motion.update(dt, options.reducedEffects, paddleOffset, cameraDanger(state, humanSeat));
-      framingPoints = state.arena.vertices.flatMap((p) => [
-        new Vector3(p.x * 1.09, 0, p.y * 1.09),
-        new Vector3(p.x * 1.09, 2.34, p.y * 1.09),
+      // Acute star tips have longer wall miters; include the plinth during the reveal.
+      const border = 1.09 + arena.victoryProgress * 0.2;
+      framingPoints = displayArena.vertices.flatMap((p) => [
+        new Vector3(p.x * border, -2.73 * arena.victoryProgress, p.y * border),
+        new Vector3(p.x * border, 2.34, p.y * border),
       ]);
       const menuState = options.menu ?? {
         mode: "hidden" as const,
@@ -126,18 +132,17 @@ export function createViewport(
         elapsed: 0,
         reduced: options.reducedEffects,
       };
-      if (state.phase === "finished" && state.winner === humanSeat) {
+      if (state.phase === "finished" && state.winner !== null) {
         const reveal = options.reducedEffects ? 1 : 1 - Math.exp(-menuState.elapsed * 4);
         const skyHeight = 2.34 + (10 - 2.34) * reveal;
         framingPoints.push(new Vector3(-8, skyHeight, 0), new Vector3(8, skyHeight, 0));
       }
       bounds.makeEmpty();
-      for (const p of state.arena.vertices) {
+      for (const p of displayArena.vertices) {
         bounds.expandByPoint(new Vector3(p.x * 1.09, 0, p.y * 1.09));
         bounds.expandByPoint(new Vector3(p.x * 1.09, 2.34, p.y * 1.09));
       }
       fitArenaCamera(camera, bounds, aspect, framingPoints);
-      arena.update(state, dt, options);
       fireworks.update(
         dt,
         state.phase === "finished" && state.winner === humanSeat,
