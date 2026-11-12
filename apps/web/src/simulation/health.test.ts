@@ -25,7 +25,7 @@ it("starts with separated, compact physical targets behind each defence arc", ()
 it.each([1, 2, 3, 4, 5, 6, 7])(
   "%s survivors grow modestly and settle together without escaping or overlapping",
   (count) => {
-    const player = createMatch().players[0]!;
+    const player = createMatch(1, 4, 8).players[0]!;
     player.health = player.health.map((_, index) => index < count);
     const before = structuredClone(player.pieces[0]!.position);
     for (let tick = 0; tick < 300; tick++) stepHealth(player, FIXED_DT);

@@ -7,7 +7,7 @@ import { approachSlowdown } from "./slowdown";
 import { scale, unit } from "./vector";
 
 function incoming(seat: number, offset: number, radius: number, id: number) {
-  const state = createMatch();
+  const state = createMatch(1, 4, 8);
   const angle = fortress(seat).direction + offset;
   return {
     ...state.balls[0]!,
@@ -19,7 +19,7 @@ function incoming(seat: number, offset: number, radius: number, id: number) {
 }
 
 it.each([0, 1, 2, 3])("only relieves separated rapid catches, equally for defender %s", (seat) => {
-  const state = createMatch();
+  const state = createMatch(1, 4, 8);
   state.phase = "playing";
   state.balls = [incoming(seat, 0, 6, 0)];
   expect(hasDefencePressure(state, seat)).toBe(false);
@@ -39,7 +39,7 @@ it.each([0, 1, 2, 3])("only relieves separated rapid catches, equally for defend
 });
 
 it("lets the second catch retain bounded relief after the first threat has gone", () => {
-  const state = createMatch();
+  const state = createMatch(1, 4, 8);
   state.phase = "playing";
   state.balls = [incoming(0, -0.4, 6, 0), incoming(0, 0.4, 6.1, 1)];
   const result = approachSlowdown(state, state.balls[1]!, true);
@@ -55,7 +55,7 @@ it("lets the second catch retain bounded relief after the first threat has gone"
 });
 
 it("does not slow an ordinary shot because a second ball will be intercepted first", () => {
-  const state = createMatch();
+  const state = createMatch(1, 4, 8);
   state.phase = "playing";
   state.balls = [incoming(0, 0, 6, 0), incoming(0, 0.7, 6.2, 1)];
   expect(hasDefencePressure(state, 0)).toBe(true);
@@ -66,7 +66,7 @@ it("does not slow an ordinary shot because a second ball will be intercepted fir
 
 it("buys a real second catch at the original movement cap without delaying the first ball", () => {
   const catches = (enabled: boolean) => {
-    let state = createMatch();
+    let state = createMatch(1, 4, 8);
     state.phase = "playing";
     const base = fortress(0).direction;
     state.players[0]!.angle = base - 0.35;

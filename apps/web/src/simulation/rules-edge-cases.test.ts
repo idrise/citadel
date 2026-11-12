@@ -98,7 +98,7 @@ it("two same-tick balls cannot destroy the same isolated piece twice or substitu
   const result = stepMatch(state);
   expect(result.stats.damage).toBe(1);
   expect(result.events.filter((e) => e.type === "damage" && e.piece === 0)).toHaveLength(1);
-  expect(result.players[0]!.health.filter(Boolean)).toHaveLength(ARENA.pieces - 1);
+  expect(result.players[0]!.health.filter(Boolean)).toHaveLength(ARENA.startingPieces - 1);
   expect(result.balls[0]!.phase).toBe("ready");
   expect(result.balls[1]!.phase).toBe("active");
 });

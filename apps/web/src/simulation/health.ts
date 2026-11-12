@@ -2,10 +2,24 @@ import { ARENA, fortress, SQUARE_ARENA, type ArenaGeometry } from "./arena";
 import { HEALTH_GROWTH_PER_LOSS, healthFormation } from "./health-layout";
 import type { PieceBody, PlayerState } from "./types";
 import { containCircle } from "./polygon";
-import { add, length, normalise, scale, sub } from "./vector";
+import { add, clamp, length, normalise, scale, sub } from "./vector";
 
-export function createPieceBodies(seat: number, arena: ArenaGeometry = SQUARE_ARENA): PieceBody[] {
-  return fortress(seat, arena).pieces.map((position) => ({
+export function createPieceBodies(
+  seat: number,
+  arena: ArenaGeometry = SQUARE_ARENA,
+  count?: number,
+): PieceBody[] {
+  const home = fortress(seat, arena);
+  const inset = Math.max(0, (Math.PI / 4 - home.halfAngle) / (Math.PI / 12)) * 0.6;
+  const anchor = add(
+    home.anchor,
+    scale({ x: Math.cos(home.direction), y: Math.sin(home.direction) }, inset),
+  );
+  const positions =
+    count === undefined
+      ? home.pieces
+      : healthFormation(anchor, home.direction, count, ARENA.pieceRadius);
+  return positions.map((position) => ({
     position: { ...position },
     velocity: { x: 0, y: 0 },
     radius: ARENA.pieceRadius,
@@ -20,7 +34,9 @@ export function stepHealth(
 ): void {
   const indices = player.health.flatMap((intact, index) => (intact ? [index] : []));
   if (!indices.length) return;
-  const radius = ARENA.pieceRadius * (1 + (ARENA.pieces - indices.length) * HEALTH_GROWTH_PER_LOSS);
+  const radius =
+    ARENA.pieceRadius *
+    (1 + clamp(player.pieces.length - indices.length, 0, 7) * HEALTH_GROWTH_PER_LOSS);
   const seat = fortress(player.id, arena);
   const inset = Math.max(0, (Math.PI / 4 - seat.halfAngle) / (Math.PI / 12)) * 0.6;
   const anchor = add(

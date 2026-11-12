@@ -11,6 +11,7 @@ export function ExportRound({
   humanSeat,
   settings,
   initialSettings,
+  level,
 }: {
   state: MatchState;
   totals: RoundTotals;
@@ -18,6 +19,7 @@ export function ExportRound({
   humanSeat: number;
   settings: GameSettings;
   initialSettings: GameSettings;
+  level: number;
 }) {
   const [failed, setFailed] = useState(false);
   return (
@@ -28,7 +30,7 @@ export function ExportRound({
           try {
             downloadRound(
               createRoundExport(
-                { seed, humanSeat, settings, initialSettings, build: BUILD_INFO },
+                { seed, humanSeat, settings, initialSettings, level, build: BUILD_INFO },
                 state,
                 totals,
               ),

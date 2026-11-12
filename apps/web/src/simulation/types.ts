@@ -28,7 +28,13 @@ export interface BotState {
   serveDelay: number;
   serveTarget: Vec2 | null;
 }
+export interface SupplyDrop {
+  id: number;
+  position: Vec2;
+  age: number;
+}
 export interface BallState {
+  striker?: number;
   id: number;
   phase: "ready" | "active";
   seat: number;
@@ -48,7 +54,16 @@ export interface ImpactDetails {
 export interface GameEvent {
   id: number;
   tick: number;
-  type: "arrival" | "launch" | "paddle" | "wall" | "damage" | "elimination" | "victory";
+  type:
+    | "arrival"
+    | "launch"
+    | "paddle"
+    | "wall"
+    | "damage"
+    | "elimination"
+    | "victory"
+    | "supply"
+    | "collection";
   position: Vec2;
   seat: number;
   piece: number | null;
@@ -64,6 +79,7 @@ export interface MatchOptions {
   /** Replay compatibility; current pointer response defaults to arena tuning. */
   pointerPaddleSpeed?: number;
   botDifficulty?: BotDifficulty;
+  botLevel?: number;
   humanSeat: number;
   slowdown: boolean;
   serveTimeout: number;
@@ -89,6 +105,8 @@ export interface MatchState {
   players: PlayerState[];
   bots: BotState[];
   balls: BallState[];
+  supplies: SupplyDrop[];
+  nextSupplyId: number;
   nextBallId: number;
   rng: number;
   winner: number | null;

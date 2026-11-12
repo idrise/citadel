@@ -4,6 +4,7 @@ import { createFeatureEdges } from "./feature-edges";
 import { arcMesh } from "./arc";
 import { createArenaBase } from "./base";
 import { createHealthFactory } from "./health-piece";
+import { SUPPLIES } from "../simulation/supplies";
 import { SEATS } from "./palette";
 
 export function createStage(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA) {
@@ -54,7 +55,8 @@ export function createStage(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA
     });
     const healthPiece = createHealthFactory(colour);
     health.push(
-      seat.pieces.map((position, index) => {
+      Array.from({ length: SUPPLIES.maxPieces }, (_, index) => {
+        const position = seat.pieces[index] ?? seat.anchor;
         const piece = healthPiece();
         piece.name = `health-${seat.id}-${index}`;
         piece.position.set(position.x, 0, position.y);

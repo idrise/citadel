@@ -19,7 +19,7 @@ for (const [count, rounds] of [
     await choosePlayers(page, count);
     await openSettings(page);
     await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
-    await page.getByLabel("Bot difficulty", { exact: true }).selectOption("standard");
+    await expect(page.getByLabel("Bot difficulty", { exact: true })).toHaveCount(0);
     await openSettings(page);
     let sawTransition = false;
     for (let round = 0; round < rounds; round++) {
@@ -65,7 +65,7 @@ for (const [count, rounds] of [
   });
 }
 
-test("all six human fortresses support captured input, difficulty selection and shrinking the roster clamps the seat", async ({
+test("all six human fortresses support captured input, adaptive levels and shrinking the roster clamps the seat", async ({
   page,
 }) => {
   test.setTimeout(90000);
@@ -76,9 +76,7 @@ test("all six human fortresses support captured input, difficulty selection and 
   await choosePlayers(page, 6);
   for (let seat = 0; seat < 6; seat++) {
     await openSettings(page);
-    await page
-      .getByLabel("Bot difficulty", { exact: true })
-      .selectOption(["beginner", "standard", "expert"][seat % 3]!);
+    await expect(page.getByLabel("Round level", { exact: true })).toHaveText("1");
     await page.getByLabel("Your fortress", { exact: true }).selectOption(String(seat));
     await play(page);
     await page.clock.runFor(1800);
@@ -89,7 +87,7 @@ test("all six human fortresses support captured input, difficulty selection and 
   await openSettings(page);
   await expect(page.getByLabel("Your fortress", { exact: true })).toHaveValue("1");
   await expect(page.getByLabel("Your fortress", { exact: true }).locator("option")).toHaveCount(2);
-  await expect(page.getByLabel("Bot difficulty", { exact: true })).toHaveValue("expert");
+  await expect(page.getByLabel("Bot difficulty", { exact: true })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 

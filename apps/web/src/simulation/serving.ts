@@ -36,6 +36,7 @@ export function readyBall(state: MatchState, seat: number, id = 0): BallState {
   const angle = player?.angle ?? fortress(seat, state.arena).direction;
   return {
     id,
+    striker: seat,
     phase: "ready",
     seat,
     age: 0,
@@ -49,6 +50,7 @@ export function launchBall(state: MatchState, ball: BallState, options: MatchOpt
   const angle = state.players[ball.seat]?.angle ?? fortress(ball.seat, state.arena).direction;
   ball.velocity = scale(serveDirection(ball.seat, angle, state.arena), options.ballSpeed);
   ball.phase = "active";
+  ball.striker = ball.seat;
   ball.slowSeat = null;
   ball.spin = 0;
   emit(state, "launch", ball.position, ball.seat, null, { ballId: ball.id });
@@ -78,6 +80,7 @@ export function damagePiece(
     state.phase = "finished";
     state.winner = survivors[0]?.id ?? null;
     state.balls = [];
+    state.supplies = [];
     emit(state, "victory", ball.position, state.winner ?? -1, null, { ballId: ball.id });
     return;
   }

@@ -143,7 +143,7 @@ Bots arrive **before** advanced polish and before mobile/networking:
 
 - One human can fill any seat in a 2–6 player local game; all other seats are bots.
 - Bots use the **same public game state and intent interface as a human**, with no wallhack/future-state privilege beyond a limited, explicit prediction horizon.
-- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. Difficulty levels: **Beginner / Standard / Expert**, tuned by skill parameters rather than cheating.
+- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. The owner now requests **100 adaptive levels**, replacing configurable Beginner/Standard/Expert choices. Start at level 1; learn between completed rounds from a bounded recent sample, move both up and down, soften return rounds after a week away, and persist progress locally. Level 100 uses the strongest legal visible-state bot controller. Show the level before the opening ball.
 - Bot randomness is seeded for repeatable test runs. Instrument who takes damage, causes deflections, survives and wins, plus mean/median duration. Bots must not all make exactly the same decisions.
 - Use separate match test seeds, not hand-scripted victories. One human vs five bots must be playable locally with **no network or account**.
 - The same bots can later fill unoccupied multiplayer seats, take over a disconnect or support practice. Their behaviour belongs in the pure simulation module (`apps/web/src/simulation` initially; extract `packages/simulation` when useful), not networking/UI.
@@ -463,6 +463,14 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 - **Permanent boundary:** Music observes events only. Musical quantisation delays sounds, never collisions, rules, inputs, health, spawning or RNG. No music-driven camera motion. User accepted the detour for now and requested M05; full M06/M07 remain unstarted.
 
 ### Progress / approval ledger
+
+12 November adaptive progression amendment (in progress): the owner explicitly
+authorised 100 saved adaptive levels, rapid calibration from recent performance,
+levels moving backwards after losses/inactivity, and a level introduction before
+the opening ball. This replaces the bot difficulty selector. A further authorised
+rule change starts each fortress with three containers and introduces temporary
+collectible supply drops; implementation and validation are ongoing. These
+requests do not approve M10, multiplayer or publication.
 
 12 November victory-star amendment: the owner requested a visible morph when
 only one player remains. The current floor/plinth/walls now become a five-point

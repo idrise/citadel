@@ -17,6 +17,12 @@ export function AccessibleStatus({
         Relative mouse steers. Click or Space serves. A/D or arrows also steer. Escape releases the
         mouse and pauses. On touch screens, drag left or right to steer and tap to serve.
       </p>
+      <output aria-label="Round level">{snapshot.level}</output>
+      {snapshot.started && snapshot.state.phase === "countdown" && (
+        <output aria-label="Level introduction" aria-live="polite">
+          Level {snapshot.level}
+        </output>
+      )}
       <output aria-label="Round phase">{state.phase}</output>
       <output aria-label="Round winner" aria-live="polite">
         {state.phase === "finished"
@@ -54,6 +60,10 @@ export function AccessibleStatus({
       </output>
       <output aria-label="Your pieces broken">{snapshot.totals.players[humanSeat]!.scored}</output>
       <output aria-label="Your returns">{snapshot.totals.players[humanSeat]!.returns}</output>
+      <output aria-label="Supply containers">{state.supplies.length}</output>
+      <output aria-label="Supply phase">
+        {state.elapsed < 60 ? "supplying" : "final stretch"}
+      </output>
       <output aria-label="Balls in play">{state.balls.length}</output>
       <output aria-label="Music status">{snapshot.music.status}</output>
       <output aria-label="Music section">{snapshot.music.section}</output>

@@ -29,7 +29,7 @@ test("captured controls, focus pause, timed balls and restart work", async ({ pa
   await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
   await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("1");
   for (const seat of ["Coral", "Amber", "Violet", "Rose"])
-    await expect(page.getByLabel(`${seat} health`, { exact: true })).toHaveText("8");
+    await expect(page.getByLabel(`${seat} health`, { exact: true })).toHaveText("3");
 });
 
 test("a complete seeded round reaches results and rematches without state edits", async ({

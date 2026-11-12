@@ -1,3 +1,4 @@
+import { stepSupplies } from "./supplies";
 import {
   ARENA,
   FIXED_DT,
@@ -10,6 +11,7 @@ import {
 import { beginArenaMorph, stepArenaMorph } from "./arena-morph";
 import { createPieceBodies, stepHealth } from "./health";
 import { advanceBall } from "./ball";
+import { botLevelProfile } from "./bot-level";
 import { botIntent } from "./bots";
 import { sample } from "./random";
 import { emit, launchBall, readyBall } from "./serving";
@@ -24,7 +26,13 @@ import {
 import { angleDifference, clamp } from "./vector";
 import { rememberSwipe } from "./flight";
 
-export function createMatch(seed = 1, count: PlayerCount = 4): MatchState {
+export function createMatch(
+  seed = 1,
+  count: PlayerCount = 4,
+  initialPieces: number = ARENA.startingPieces,
+): MatchState {
+  if (!Number.isInteger(initialPieces) || initialPieces < 1 || initialPieces > 12)
+    throw new Error("Invalid initial containers");
   const arena = createArena(count);
   const state: MatchState = {
     arena,
@@ -39,8 +47,8 @@ export function createMatch(seed = 1, count: PlayerCount = 4): MatchState {
     players: arena.fortresses.map((seat) => ({
       id: seat.id,
       angle: seat.direction,
-      health: Array<boolean>(ARENA.pieces).fill(true),
-      pieces: createPieceBodies(seat.id, arena),
+      health: Array<boolean>(initialPieces).fill(true),
+      pieces: createPieceBodies(seat.id, arena, initialPieces),
     })),
     bots: arena.fortresses.map((seat) => ({
       targetAngle: seat.direction,
@@ -49,6 +57,8 @@ export function createMatch(seed = 1, count: PlayerCount = 4): MatchState {
       serveTarget: null,
     })),
     balls: [],
+    supplies: [],
+    nextSupplyId: 0,
     winner: null,
     events: [],
     nextEventId: 0,
@@ -73,6 +83,7 @@ export function stepMatch(
     ...previous,
     tick: previous.tick + 1,
     events: [],
+    supplies: previous.supplies.map((drop) => ({ ...drop, position: { ...drop.position } })),
     players: previous.players.map((player) => ({
       ...player,
       health: [...player.health],
@@ -96,7 +107,8 @@ export function stepMatch(
   beginArenaMorph(state);
   if (state.phase === "playing") stepArenaMorph(state, dt);
   const inputs = state.players.map((player) => {
-    if (player.id !== options.humanSeat) return botIntent(state, player.id, options.botDifficulty);
+    if (player.id !== options.humanSeat)
+      return botIntent(state, player.id, options.botLevel ?? options.botDifficulty);
     if (human.targetAngle === null) return human;
     // Intent is expressed in the geometry visible before this fixed step.
     const turn = angleDifference(
@@ -126,7 +138,9 @@ export function stepMatch(
     const speed =
       seat === options.humanSeat && input.targetAngle !== null
         ? (options.pointerPaddleSpeed ?? ARENA.pointerPaddleSpeed)
-        : ARENA.paddleSpeed;
+        : options.botLevel !== undefined && seat !== options.humanSeat
+          ? botLevelProfile(options.botLevel).speed
+          : ARENA.paddleSpeed;
     player.angle = clampPaddleAngle(
       seat,
       player.angle + clamp(difference, -speed * dt, speed * dt),
@@ -138,6 +152,7 @@ export function stepMatch(
     state.countdown = Math.max(0, state.countdown - dt);
     if (state.countdown === 0) state.phase = "playing";
   } else state.elapsed += dt;
+  stepSupplies(state, dt);
   const served = new Set<number>();
   for (const ball of state.balls) {
     if (state.phase === "finished") break;

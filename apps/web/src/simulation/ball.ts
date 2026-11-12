@@ -1,3 +1,4 @@
+import { collectSupply, SUPPLIES } from "./supplies";
 import { ARENA } from "./arena";
 import { paddleReturn, sweepCircle, sweepPaddle, sweepWalls, type Contact } from "./collision";
 import { damagePiece, emit } from "./serving";
@@ -7,7 +8,7 @@ import { approachSlowdown } from "./slowdown";
 import { contactSwipe, curveFlight, swipeCurve } from "./flight";
 
 interface Impact extends Contact {
-  type: "paddle" | "piece" | "wall";
+  type: "paddle" | "piece" | "wall" | "pickup";
   seat: number;
   piece: number;
   offset: number;
@@ -16,7 +17,7 @@ export interface BallImpact extends Impact {
   position: Vec2;
 }
 
-const rank = { paddle: 0, piece: 1, wall: 2 };
+const rank = { paddle: 0, piece: 1, wall: 2, pickup: 3 };
 
 /** Gameplay resolves a full tick with stable ties. Queries stop at the first impact, without damage/serve side effects. */
 export function advanceBall(
@@ -66,7 +67,7 @@ export function advanceBall(
       if (paddle) contacts.push({ ...paddle, type: "paddle", seat: player.id, piece: -1 });
       player.pieces.forEach((body, piece) => {
         if (!player.health[piece]) return;
-        const beforePiece = previousPieces[player.id]![piece]!;
+        const beforePiece = previousPieces[player.id]?.[piece] ?? body.position;
         const pieceVelocity = scale(sub(body.position, beforePiece), 1 / dt);
         const centre = add(beforePiece, scale(pieceVelocity, elapsed));
         const contact = sweepCircle(
@@ -80,6 +81,30 @@ export function advanceBall(
           contacts.push({ ...contact, type: "piece", seat: player.id, piece, offset: 0 });
       });
     }
+    const collector = state.players[ball.striker ?? ball.seat];
+    if (
+      collector &&
+      alive(collector) &&
+      collector.health.filter(Boolean).length < SUPPLIES.maxPieces
+    )
+      for (const drop of state.supplies) {
+        if (drop.age < SUPPLIES.fall) continue;
+        const contact = sweepCircle(
+          ball.position,
+          velocity,
+          drop.position,
+          SUPPLIES.radius + ARENA.ballRadius,
+          remaining,
+        );
+        if (contact)
+          contacts.push({
+            ...contact,
+            type: "pickup",
+            seat: collector.id,
+            piece: drop.id,
+            offset: 0,
+          });
+      }
     contacts.sort(
       (a, b) =>
         a.time - b.time || rank[a.type] - rank[b.type] || a.seat - b.seat || a.piece - b.piece,
@@ -93,6 +118,13 @@ export function advanceBall(
     impacts++;
     const report = stopAtFirstImpact ? { ...hit, position: { ...ball.position } } : undefined;
     const incoming = { ...ball.velocity };
+    if (hit.type === "pickup") {
+      if (stopAtFirstImpact) return report;
+      const collection = collectSupply(state, ball, hit.piece);
+      if (collection && collection.piece !== null)
+        previousPieces[collection.seat]![collection.piece] = { ...collection.returnTo! };
+      continue;
+    }
     if (hit.type === "piece") {
       if (stopAtFirstImpact) return report;
       damagePiece(state, ball, hit.seat, hit.piece, {
@@ -105,6 +137,7 @@ export function advanceBall(
       return;
     }
     if (hit.type === "paddle") {
+      ball.striker = hit.seat;
       const angularVelocity =
         (state.players[hit.seat]!.angle -
           (previousAngles[hit.seat] ?? state.players[hit.seat]!.angle)) /

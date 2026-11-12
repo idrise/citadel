@@ -1,8 +1,7 @@
-import { DEFAULT_OPTIONS, type BotDifficulty, type MatchOptions } from "../simulation/types";
+import { DEFAULT_OPTIONS, type MatchOptions } from "../simulation/types";
 
 export interface GameSettings {
   effectsQuality: "low" | "medium" | "high";
-  botDifficulty: BotDifficulty;
   preview: boolean;
   slowdown: boolean;
   reducedEffects: boolean;
@@ -33,7 +32,6 @@ export function withAssistance(settings: GameSettings, id: AssistanceMode): Game
 export function createSettings(reducedEffects = false): GameSettings {
   return {
     effectsQuality: "high",
-    botDifficulty: "standard",
     preview: true,
     slowdown: false,
     reducedEffects,
@@ -46,11 +44,15 @@ export function createSettings(reducedEffects = false): GameSettings {
     musicLights: true,
   };
 }
-export function matchOptions(settings: GameSettings, humanSeat: number): MatchOptions {
+export function matchOptions(
+  settings: GameSettings,
+  humanSeat: number,
+  level?: number,
+): MatchOptions {
   return {
     ...DEFAULT_OPTIONS,
     humanSeat,
-    botDifficulty: settings.botDifficulty,
+    ...(level === undefined ? {} : { botLevel: level }),
     slowdown: settings.slowdown,
     serveTimeout: settings.serveTimeout,
     ballInterval: settings.ballInterval,

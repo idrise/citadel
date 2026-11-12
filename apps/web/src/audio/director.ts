@@ -61,6 +61,16 @@ export function createMusicDirector(humanSeat: number, seed: number) {
               0.35,
             ),
           );
+        if (event.type === "collection")
+          cues.push(
+            cue(
+              "success",
+              event.seat === humanSeat ? 88 : 76,
+              event.seat === humanSeat ? 0.85 : 0.3,
+              0.35,
+            ),
+          );
+        if (event.type === "supply") cues.push(cue("unlock", 81, 0.25, 0.2));
         if (event.type === "arrival") cues.push(cue("unlock", 74, 0.55, 0.35));
         const part = parts[event.seat];
         if (!part) continue;

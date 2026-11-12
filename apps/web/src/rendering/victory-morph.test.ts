@@ -30,7 +30,6 @@ function finished(count: PlayerCount, winner = 0) {
     if (p.id !== winner) p.health.fill(false);
   });
   state.players[winner]!.health[1] = false;
-  state.players[winner]!.health[4] = false;
   return state;
 }
 

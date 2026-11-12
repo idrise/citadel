@@ -67,9 +67,10 @@ export function createBallView(root: Group) {
       reduced: boolean,
       trailLimit = 20,
       owners?: ReadonlyMap<number, number>,
+      hide = false,
     ) {
       balls.forEach((view, index) => {
-        const active = state.phase === "finished" ? undefined : state.balls[index];
+        const active = state.phase === "finished" || hide ? undefined : state.balls[index];
         const strength = spinStrength(active?.spin ?? 0);
         const owner =
           active?.phase === "ready" ? active.seat : active ? owners?.get(active.id) : undefined;

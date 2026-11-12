@@ -20,7 +20,6 @@ export function renderVictoryReview(
     if (player.id !== winner) player.health.fill(false);
   });
   state.players[winner]!.health[1] = false;
-  state.players[winner]!.health[4] = false;
   const saved = JSON.stringify(state);
   const viewport = createViewport(container, 0, state.arena);
   let lastTime = 0;

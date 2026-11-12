@@ -1,3 +1,4 @@
+import { createSupplyView } from "./supply-view";
 import { ARENA, SQUARE_ARENA, fortress, type ArenaGeometry } from "../simulation/arena";
 import { serveDirection } from "../simulation/aim";
 import { alive, type MatchState } from "../simulation/types";
@@ -30,6 +31,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
   const reflection = createArenaReflections(humanSeat, initial);
   stage.root.add(...reflection.meshes);
   const balls = createBallView(stage.root);
+  const supplies = createSupplyView(stage.root);
   const guide = createAimGuide(stage.root);
   const effects = createEffects(stage.root);
   const paddleBlur = createPaddleBlur(stage.root, stage.paddles);
@@ -67,6 +69,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
       reflection.setVictory(Boolean(ending));
       const profile = effectsProfile(options.quality, options.reducedEffects);
       reflection.setReduced(!profile.reflections);
+      supplies.update(state, dt, options.reducedEffects);
       state.players.forEach((player) => {
         const home = fortress(player.id, state.arena);
         const rail = stage.rails[player.id]!;
@@ -111,8 +114,9 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
           paddle.rotation.y = -ending.paddle.angle;
         }
         stage.health[player.id]!.forEach((piece, index) => {
-          piece.visible = Boolean(player.health[index]);
-          const body = player.pieces[index]!;
+          piece.visible = Boolean(player.health[index]) && !supplies.inTransit(player.id, index);
+          const body = player.pieces[index];
+          if (!body) return;
           const position = ending?.winner === player.id ? ending.pieces[index]! : body.position;
           piece.position.set(position.x, 0, position.y);
           piece.scale.setScalar(body.radius / ARENA.pieceRadius);
@@ -135,10 +139,22 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         lastEvent = event.id;
       }
       effects.update(dt, options.reducedEffects, state, profile.shards, profile.sparks);
-      balls.update(state, options.reducedEffects, profile.trails, options.ballOwners);
+      balls.update(
+        state,
+        options.reducedEffects,
+        profile.trails,
+        options.ballOwners,
+        options.menu?.mode === "level",
+      );
       guide.hide();
       const defender = state.players[options.humanSeat];
-      if (state.phase === "finished" || !defender || !alive(defender)) return;
+      if (
+        options.menu?.mode === "level" ||
+        state.phase === "finished" ||
+        !defender ||
+        !alive(defender)
+      )
+        return;
       const ownServe = state.balls.find(
         (ball) => ball.phase === "ready" && ball.seat === defender.id,
       );

@@ -7,12 +7,12 @@ it("ranks stable seat IDs by elimination order and gives the last survivor first
   state.phase = "playing";
   for (const id of [1, 0]) {
     state.players[id]!.health.fill(false);
-    state.players[id]!.health[7] = true;
+    state.players[id]!.health[2] = true;
     state.elapsed += 10;
-    damagePiece(state, state.balls[0]!, id, 7);
+    damagePiece(state, state.balls[0]!, id, 2);
   }
   expect(standings(state).map((p) => [p.seat, p.place, p.health])).toEqual([
-    [2, 1, 8],
+    [2, 1, 3],
     [0, 2, 0],
     [1, 3, 0],
   ]);

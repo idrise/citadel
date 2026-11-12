@@ -7,7 +7,7 @@ import { alive, DEFAULT_OPTIONS, IDLE_INTENT, type MatchState } from "./types";
 import { add, length, normalise, scale, sub, unit } from "./vector";
 
 function shotAtPiece(piece = 7): MatchState {
-  const state = createMatch(7);
+  const state = createMatch(7, 4, 8);
   state.phase = "playing";
   const seat = fortress(0);
   const direction = normalise(sub(seat.pieces[piece]!, seat.anchor));

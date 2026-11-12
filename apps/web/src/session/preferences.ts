@@ -35,8 +35,6 @@ export function parsePreferences(raw: string | null, reduced = false): SoloPrefe
     }
     if ([1, 2, 3, 4, 6, 8].includes(Number(saved.maxBalls)))
       settings.maxBalls = Number(saved.maxBalls);
-    if (["beginner", "standard", "expert"].includes(String(saved.botDifficulty)))
-      settings.botDifficulty = saved.botDifficulty as GameSettings["botDifficulty"];
     if (["low", "medium", "high"].includes(String(saved.effectsQuality)))
       settings.effectsQuality = saved.effectsQuality as GameSettings["effectsQuality"];
     return { count, humanSeat: seat, settings };

@@ -5,6 +5,7 @@ import { standings } from "../simulation/standings";
 
 export function createRoundExport(
   context: {
+    level?: number;
     seed: number;
     humanSeat: number;
     initialSettings: GameSettings;
@@ -21,6 +22,7 @@ export function createRoundExport(
     createdAt,
     build: { ...context.build },
     seed: context.seed,
+    level: context.level ?? null,
     initialPlayers: state.players.length,
     humanSeat: context.humanSeat,
     phase: state.phase,

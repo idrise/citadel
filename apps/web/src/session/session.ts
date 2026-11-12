@@ -1,3 +1,4 @@
+import { createProgressRecorder, type LevelResult } from "./progression";
 import { createRoundObserver, type RoundTotals } from "./round-observer";
 import { createDesktopInput } from "../input/desktop";
 import { createTouchInput } from "../input/touch";
@@ -15,6 +16,7 @@ import type { SceneAction } from "../rendering/scene-menu";
 
 export interface SessionSnapshot {
   state: MatchState;
+  level: number;
   paused: boolean;
   started: boolean;
   notice: string;
@@ -31,8 +33,11 @@ export function createSession(
   onSnapshot: (snapshot: SessionSnapshot) => void,
   count: PlayerCount = 4,
   onSceneAction: (action: SceneAction) => void = () => {},
+  level = 1,
+  onComplete: (result: LevelResult) => void = () => {},
 ) {
   let state = createMatch(seed, count);
+  const resultFor = createProgressRecorder(humanSeat, level);
   const viewport = createViewport(container, humanSeat, state.arena, (action) => {
     if (action === "start") start();
     else {
@@ -49,7 +54,7 @@ export function createSession(
   let started = false;
   let endingTime = 0;
   let menuSuppressed = false;
-  let notice = "Defend your eight pieces. Last fortress standing wins.";
+  let notice = "Defend your three containers. Last fortress standing wins.";
   let settings = createSettings(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   let initialSettings: GameSettings | null = null;
   let lastTimestamp = 0;
@@ -60,6 +65,7 @@ export function createSession(
   const report = () =>
     onSnapshot({
       state,
+      level,
       paused,
       started,
       notice,
@@ -135,7 +141,7 @@ export function createSession(
         state = stepMatch(
           state,
           touchMode ? touch.read() : input.read(),
-          matchOptions(settings, humanSeat),
+          matchOptions(settings, humanSeat, level),
         );
         events.push(...state.events);
         for (const event of state.events) {
@@ -145,6 +151,8 @@ export function createSession(
             notice = `${SEATS[event.seat]!.name} lost a piece. ${alive(state.players[event.seat]!) ? "Revenge serve." : "Fortress eliminated."}`;
         }
       });
+    const result = started ? resultFor(state) : null;
+    if (result) onComplete(result);
     const observed = observer.observe(events, state.balls.length);
     music.observe(
       { elapsed: state.elapsed, balls: state.balls.length, alive: state.players.map(alive) },
@@ -178,7 +186,10 @@ export function createSession(
               ? state.winner === humanSeat
                 ? "victory"
                 : "defeat"
-              : "hidden",
+              : state.phase === "countdown"
+                ? "level"
+                : "hidden",
+        level,
         count,
         elapsed: endingTime,
         reduced: settings.reducedEffects,

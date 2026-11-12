@@ -16,7 +16,8 @@ import { mobileMenuLayout } from "./mobile-menu-layout";
 export type SceneAction = "start" | "decrease" | "increase" | "options" | "rematch";
 export interface SceneMenuState {
   touch?: boolean;
-  mode: "title" | "victory" | "defeat" | "hidden";
+  mode: "title" | "victory" | "defeat" | "hidden" | "level";
+  level?: number;
   count: number;
   elapsed: number;
   reduced: boolean;
@@ -95,7 +96,7 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       hover = action;
     },
     update(state: SceneMenuState, width: number, height: number): SceneControl[] {
-      group.visible = state.mode !== "hidden";
+      group.visible = state.mode !== "hidden" && state.mode !== "level";
       if (!group.visible) return [];
       camera.aspect = width / Math.max(height, 1);
       camera.updateProjectionMatrix();

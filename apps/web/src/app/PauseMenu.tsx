@@ -20,6 +20,7 @@ export function PauseMenu({
   totals,
   seed,
   initialSettings,
+  level,
   humanSeat,
   settings,
   onSettings,
@@ -34,6 +35,7 @@ export function PauseMenu({
   totals: RoundTotals;
   seed: number;
   initialSettings: GameSettings;
+  level: number;
   humanSeat: number;
   settings: GameSettings;
   onSettings: (settings: GameSettings) => void;
@@ -82,25 +84,7 @@ export function PauseMenu({
               ))}
             </select>
           </label>
-          <label>
-            Bot difficulty{" "}
-            <select
-              aria-label="Bot difficulty"
-              value={settings.botDifficulty}
-              onChange={(event) =>
-                onSettings({
-                  ...settings,
-                  botDifficulty: event.target.value as GameSettings["botDifficulty"],
-                })
-              }
-            >
-              {["beginner", "standard", "expert"].map((value) => (
-                <option key={value} value={value}>
-                  {value[0]!.toUpperCase() + value.slice(1)}
-                </option>
-              ))}
-            </select>
-          </label>
+          <p>Level {level} of 100 · Difficulty adjusts between rounds.</p>
           <label>
             Your fortress{" "}
             <select
@@ -129,6 +113,7 @@ export function PauseMenu({
           humanSeat={humanSeat}
           settings={settings}
           initialSettings={initialSettings}
+          level={level}
         />
         <GameHelp />
         <button className="hide-controls" aria-keyshortcuts="H" onClick={() => setHidden(true)}>

@@ -43,10 +43,10 @@ it("validates version/types/ranges and clamps a restored human seat to the roste
     musicVolume: 1,
     mouseSensitivity: 0.5,
     maxBalls: 4,
-    botDifficulty: "standard",
     effectsQuality: "high",
   });
   expect(restored.settings).not.toHaveProperty("unknown");
+  expect(restored.settings).not.toHaveProperty("botDifficulty");
 });
 it("remains playable when storage is blocked, full or unavailable", () => {
   const blocked = () => {

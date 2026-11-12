@@ -1,3 +1,4 @@
+import type { LevelResult } from "../session/progression";
 import { createRoundObserver } from "../session/round-observer";
 import type { PlayerCount } from "../simulation/arena";
 import { useEffect, useRef, useState } from "react";
@@ -18,7 +19,11 @@ export function GamePanel({
   onSeat,
   settings,
   onSettings,
+  level,
+  onComplete,
 }: {
+  level: number;
+  onComplete: (result: LevelResult) => void;
   humanSeat: number;
   count: PlayerCount;
   onCount: (count: PlayerCount) => void;
@@ -33,10 +38,12 @@ export function GamePanel({
   const session = useRef<GameSession | null>(null);
   const [unavailable, setUnavailable] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const callbacks = useRef({ onCount, onRematch });
-  callbacks.current = { onCount, onRematch };
+  const callbacks = useRef({ onCount, onRematch, onComplete });
+  callbacks.current = { onCount, onRematch, onComplete };
+  const [roundLevel] = useState(level);
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => ({
     state: createMatch(seed, count),
+    level: roundLevel,
     paused: true,
     started: false,
     notice: "",
@@ -72,6 +79,8 @@ export function GamePanel({
             callbacks.current.onCount(Math.min(6, count + 1) as PlayerCount);
           if (action === "rematch") callbacks.current.onRematch();
         },
+        roundLevel,
+        (result) => callbacks.current.onComplete(result),
       );
       session.current = game;
       return () => {
@@ -81,7 +90,7 @@ export function GamePanel({
     } catch {
       setUnavailable(true);
     }
-  }, [seed, humanSeat, count]);
+  }, [seed, humanSeat, count, roundLevel]);
   useEffect(() => {
     session.current?.configure(settings);
   }, [settings]);
@@ -119,6 +128,7 @@ export function GamePanel({
             totals={snapshot.totals}
             seed={seed}
             initialSettings={snapshot.initialSettings ?? settings}
+            level={snapshot.level}
             humanSeat={humanSeat}
             settings={settings}
             musicStatus={snapshot.music.status}

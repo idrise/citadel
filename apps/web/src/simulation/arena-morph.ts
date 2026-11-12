@@ -1,3 +1,4 @@
+import { carrySupplies } from "./supplies";
 import { ARENA, createArena, fortress, type ArenaGeometry, type PlayerCount } from "./arena";
 import { fitDefenceLimits } from "./defence-limits";
 import { carryPoint, containCircle } from "./polygon";
@@ -102,6 +103,7 @@ export function stepArenaMorph(state: MatchState, dt: number): void {
     );
     ball.slowSeat = null;
   }
+  carrySupplies(state, before, after);
   state.arena = after;
   state.morph = elapsed >= morph.duration ? null : { ...morph, elapsed };
 }

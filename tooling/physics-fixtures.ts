@@ -17,7 +17,7 @@ export const PHYSICS_CASES = [
 ] as const;
 export type PhysicsCase = (typeof PHYSICS_CASES)[number];
 export function physicsFixture(name: PhysicsCase) {
-  const state = createMatch(2026);
+  const state = createMatch(2026, 4, 8);
   state.phase = "playing";
   const base = fortress(0).direction;
   const ball = state.balls[0]!;
@@ -93,7 +93,8 @@ export function replayPhysics(name: PhysicsCase, fps = 120) {
         swipes: state.players.map((p) => p.swipe),
         stats: state.stats,
         winner: state.winner,
-        balls: state.balls,
+        // Ownership is new metadata; retain the reviewed eight-piece collision trace.
+        balls: state.balls.map((ball) => ({ ...ball, striker: undefined })),
         events: state.events,
       };
       hash.update(
