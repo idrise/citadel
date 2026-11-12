@@ -21,16 +21,6 @@ try {
     }),
   );
   await page.goto(`${origin}/__paddle-review`);
-  const mask = await page.evaluate(
-    async (path) => {
-      const { reviewPaddleMask } = await import(`/@fs${path}`);
-      return { before: reviewPaddleMask(true), after: reviewPaddleMask() };
-    },
-    fileURLToPath(new URL("./paddle-mask-review.ts", import.meta.url)),
-  );
-  assert.ok(mask.before.inside > 50, "unmasked exposures must reproduce inner-face overlap");
-  assert.equal(mask.after.inside, 0, "no trail pixels may paint the live bat");
-  assert.ok(mask.after.outside > 50, "the visible trail must remain outside the bat");
   for (const count of [2, 4, 6])
     for (const mode of ["before", "after"]) {
       await page.evaluate(
@@ -54,7 +44,7 @@ try {
   assert.deepEqual(errors, []);
   await writeFile(
     `${directory}/report.json`,
-    JSON.stringify({ counts: [2, 4, 6], modes: ["before", "after"], mask, errors }, null, 2) + "\n",
+    JSON.stringify({ counts: [2, 4, 6], modes: ["before", "after"], errors }, null, 2) + "\n",
   );
   console.log(JSON.stringify({ directory, errors }));
 } finally {

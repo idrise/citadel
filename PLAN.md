@@ -464,6 +464,14 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November bat-trail revision: the owner reported the shader blur still was not
+working and explicitly requested a few historical renders of the bat, nothing
+special. The effect now draws 2/3/4 faded copies of the full body and neon outline
+on Low/Medium/High, using actual stored poses. Reduced motion disables it. The
+custom smear/mask shader and its GPU-mask fixture were removed. See
+`docs/PADDLE_MOTION_REVIEW.md` for native 2/4/6 captures, movement video and checks.
+M09 still awaits review; gameplay and mouse input are unchanged by this revision.
+
 12 November sound follow-up: the owner requested louder sound effects and audible,
 distinct wall/paddle bounces. Dedicated low wall knocks and brighter bat pings
 now use the live bus at higher levels; wall cues retain successive fast bounces.

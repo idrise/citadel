@@ -90,11 +90,13 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
       geometry = state.arena;
       paddleBlur.update(
         state,
-        options.reducedEffects || options.quality === "low"
+        options.reducedEffects
           ? 0
-          : options.quality === "medium"
-            ? 6
-            : 12,
+          : options.quality === "low"
+            ? 2
+            : options.quality === "medium"
+              ? 3
+              : 4,
       );
       for (const event of state.events) {
         if (event.id <= lastEvent) continue;

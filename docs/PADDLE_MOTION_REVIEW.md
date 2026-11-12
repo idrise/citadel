@@ -1,6 +1,28 @@
 # Paddle motion and mouse response
 
-## Latest sensitivity and blur correction
+## Current implementation: simple historical copies
+
+The owner reported the blur still was not working and asked for the bat to be
+rendered a few times in history, with nothing special. The custom instanced
+smear/mask shader has been removed. The current effect draws the complete bat
+body and neon outline at up to four recorded past poses, about 33/67/100/133ms
+old, with decreasing opacity. These are real stored poses, not interpolated
+positions. Low quality uses two copies, Medium three and High four; only reduced
+effects/motion disables the trail. Pause holds history; stopping, elimination
+and restart clear it. Duplicate sparse history is never stacked.
+
+Reviewed native 2/4/6 renders: [2](reviews/m09/bat-history/2-after.png),
+[4](reviews/m09/bat-history/4-after.png), [6](reviews/m09/bat-history/6-after.png).
+[Real-time scripted touch capture](reviews/m09/bat-history/gameplay.webm) shows
+the copies during ordinary movement. The actual bat's opaque materials remain
+unchanged; the copies own faded materials and their own outline rendering.
+
+Validation: Vite+ check, 307 unit tests, production build, six focused native
+Chromium presentation/touch checks and the rendered review pass. The existing
+bundle-size warning remains. Subjective appearance on the owner's device still
+needs review. This supersedes the shader-based approaches recorded below.
+
+## Earlier sensitivity and instanced blur correction (superseded)
 
 12 November: the owner still needed too much mouse travel and saw an inner-bat
 flash instead of a readable blur. The baseline mouse gain is now 0.005 rad/pixel,

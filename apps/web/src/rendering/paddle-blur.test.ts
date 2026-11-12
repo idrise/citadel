@@ -1,6 +1,6 @@
-import { InstancedMesh, ShaderMaterial } from "three";
+import { Mesh, MeshStandardMaterial, ShaderMaterial } from "three";
 import { expect, it } from "vite-plus/test";
-import { ARENA, FIXED_DT, fortress } from "../simulation/arena";
+import { fortress } from "../simulation/arena";
 import { createMatch } from "../simulation/match";
 import { createStage } from "./stage";
 import { createPaddleBlur } from "./paddle-blur";
@@ -11,50 +11,59 @@ function fixture() {
   state.phase = "playing";
   const stage = createStage();
   const blur = createPaddleBlur(stage.root, stage.paddles);
-  const all = stage.root.getObjectByName("paddle-motion-blurs")!.children as InstancedMesh<
-    import("three").BufferGeometry,
-    ShaderMaterial
-  >[];
-  const ghosts = () => all.filter((mesh) => mesh.count > 0);
-  const move = (tick: number, offset: number, budget = 12) => {
+  const all = stage.root.getObjectByName("paddle-motion-blurs")!.children as Mesh[];
+  const ghosts = () => all.filter((mesh) => mesh.visible);
+  const move = (tick: number, offset: number, budget = 4) => {
     state.tick = tick;
     state.players[0]!.angle = fortress(0, state.arena).direction + offset;
     const original = structuredClone(state);
     blur.update(state, budget);
     expect(state).toEqual(original);
   };
-  return { state, stage, blur, ghosts, move, all };
+  const sweep = (budget = 4) =>
+    [0, 4, 8, 12, 16].forEach((tick, index) => move(tick, index * 0.1, budget));
+  return { state, stage, blur, ghosts, move, sweep };
 }
 
-it("shows a short instanced trail, freezes on pause and fades when the bat stops", () => {
+it("draws complete faded bat copies at actual historical poses, not interpolated positions", () => {
   const f = fixture();
-  f.move(0, 0);
-  expect(f.ghosts()).toHaveLength(0);
-  f.move(12, ARENA.paddleSpeed * FIXED_DT * 12);
-  expect(f.ghosts()).toHaveLength(1);
-  const mesh = f.ghosts()[0]!;
-  expect(mesh.count).toBe(12);
-  const matrices = Array.from(mesh.instanceMatrix.array);
+  f.sweep();
+  const ghosts = f.ghosts();
+  expect(ghosts).toHaveLength(4);
+  expect(
+    (f.stage.paddles[0]!.material as MeshStandardMaterial[]).every(
+      (material) => !material.transparent && material.opacity === 1,
+    ),
+  ).toBe(true);
+  const base = fortress(0, f.state.arena).direction;
+  ghosts.forEach((ghost, index) => {
+    expect(ghost.geometry).toBe(f.stage.paddles[0]!.geometry);
+    expect(ghost.rotation.y).toBeCloseTo(-(base + (3 - index) * 0.1));
+    const materials = ghost.material as MeshStandardMaterial[];
+    expect(materials.every((material) => material.transparent && !material.depthWrite)).toBe(true);
+    expect(materials[0]!.opacity).toBe([0.32, 0.23, 0.15, 0.08][index]);
+    expect(((ghost.children[0] as Mesh).material as ShaderMaterial).name).toBe("NeonFeatureEdges");
+  });
+  const poses = ghosts.map((mesh) => mesh.rotation.y);
   f.blur.update(f.state);
-  expect(Array.from(mesh.instanceMatrix.array)).toEqual(matrices);
-  f.move(25, ARENA.paddleSpeed * FIXED_DT * 12);
+  expect(f.ghosts().map((mesh) => mesh.rotation.y)).toEqual(poses);
+  f.move(36, 0.4);
   expect(f.ghosts()).toHaveLength(0);
   disposeScene(f.stage.root);
 });
 
-it("clears on reduced effects, elimination and restart, and bounds the medium budget", () => {
+it("retains two copies at the low budget and clears on reduced motion, elimination and restart", () => {
   const f = fixture();
-  f.move(0, 0);
-  f.move(12, 0.32, 6);
-  expect(f.ghosts()[0]!.count).toBe(6);
-  f.move(13, 0.34, 0);
+  f.sweep(2);
+  expect(f.ghosts()).toHaveLength(2);
+  f.move(17, 0.42, 0);
   expect(f.ghosts()).toHaveLength(0);
-  f.move(14, 0.36);
+  f.move(18, 0.44);
   expect(f.ghosts()).toHaveLength(0);
-  f.move(26, 0.6);
+  f.move(22, 0.54);
   expect(f.ghosts()).toHaveLength(1);
   f.state.players[0]!.health.fill(false);
-  f.move(27, 0.6);
+  f.move(26, 0.6);
   expect(f.ghosts()).toHaveLength(0);
   f.state.players[0]!.health.fill(true);
   f.move(0, 0);
@@ -62,16 +71,10 @@ it("clears on reduced effects, elimination and restart, and bounds the medium bu
   disposeScene(f.stage.root);
 });
 
-it("avoids stacking missing early history and keeps the live bat mask aligned", () => {
+it("does not stack the same historical frame when a slow render has only one old pose", () => {
   const f = fixture();
   f.move(0, 0);
-  f.move(1, 0.1);
-  expect(f.ghosts()[0]!.count).toBeLessThanOrEqual(1);
-  const home = fortress(0, f.state.arena);
-  expect(f.all[0]!.material.uniforms.anchor!.value.toArray()).toEqual([
-    home.anchor.x,
-    home.anchor.y,
-  ]);
-  expect(f.all[0]!.material.uniforms.angle!.value).toBe(f.state.players[0]!.angle);
+  f.move(16, 0.4);
+  expect(f.ghosts()).toHaveLength(1);
   disposeScene(f.stage.root);
 });
