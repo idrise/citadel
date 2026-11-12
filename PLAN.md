@@ -464,6 +464,15 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November ball presentation amendment: the owner requested stronger visual
+impact and readable spin. Balls now have a 35% larger visible shell, bright core,
+dark procedural rotating seams, owner-coloured aura and stronger comet tail.
+Signed surface and band rotation follow actual spin; the occlusion ghost shares
+the surface pose. Collision radius remains 0.187 and simulation is unchanged.
+See `docs/BALL_PRESENTATION_REVIEW.md` for rendered 2/4/6, crowded/mobile/reduced
+views, video and 308 unit / eleven native browser checks. Awaiting owner review;
+this does not start M10 or authorise publication.
+
 12 November opacity amendment: the owner said the simple historical bat copies
 look great but are too strong. Their body/outline opacities are reduced to
 20/14/9/5 percent, retaining the same history and movement. M09 awaits review.

@@ -2,9 +2,10 @@ import { Group, Mesh, MeshBasicMaterial } from "three";
 import { expect, it } from "vite-plus/test";
 import { createMatch } from "../simulation/match";
 import { MAX_SWIPE_CURVE } from "../simulation/flight";
-import { createBallView } from "./ball-view";
+import { BALL_VISUAL_RADIUS, createBallView } from "./ball-view";
 import { createSpinView, NEGATIVE_SPIN, POSITIVE_SPIN } from "./spin-view";
 import { disposeScene } from "./dispose-scene";
+import { ARENA } from "../simulation/arena";
 
 it("shows signed rotating spin bands, holds them on pause/reduced motion, and clears them on serve", () => {
   const root = new Group(),
@@ -82,5 +83,46 @@ it("keeps a distance-spaced curved trail, freezes on pause, and clears it on bal
   view.update(state, false);
   expect(trail()).toHaveLength(0);
   expect(root.children.some((child) => child.name === "ball-spin" && child.visible)).toBe(false);
+  disposeScene(root);
+});
+
+it("rotates the marked ball surface with signed spin, holds it paused/reduced and keeps physics unchanged", () => {
+  const root = new Group(),
+    view = createBallView(root),
+    state = createMatch();
+  const ball = state.balls[0]!;
+  ball.phase = "active";
+  ball.spin = 1;
+  const original = structuredClone(state);
+  view.update(state, false);
+  expect(state).toEqual(original);
+  const mesh = root.children.find((p) => p.name === "game-ball") as Mesh<
+    import("three").SphereGeometry
+  >;
+  expect(mesh.geometry.parameters.radius).toBe(BALL_VISUAL_RADIUS);
+  expect(ARENA.ballRadius).toBe(0.187);
+  state.tick = 12;
+  view.update(state, false);
+  expect(mesh.rotation.y).toBeLessThan(0);
+  const ghost = root.children.find((p) => p.name === "occluded-ball") as Mesh;
+  expect(ghost.rotation.y).toBe(mesh.rotation.y);
+  const rotation = mesh.rotation.y;
+  view.update(state, false);
+  expect(mesh.rotation.y).toBe(rotation);
+  state.tick = 24;
+  view.update(state, true);
+  expect(mesh.rotation.y).toBe(rotation);
+  state.tick = 36;
+  ball.spin = -1;
+  view.update(state, false);
+  expect(mesh.rotation.y).toBeGreaterThan(rotation);
+  ball.spin = 0;
+  const stopped = mesh.rotation.y;
+  state.tick = 48;
+  view.update(state, false);
+  expect(mesh.rotation.y).toBe(stopped);
+  ball.phase = "ready";
+  view.update(state, false);
+  expect(mesh.rotation.y).toBeCloseTo(0);
   disposeScene(root);
 });

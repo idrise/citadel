@@ -35,7 +35,10 @@ export function renderEdgeReview(
   dense = false,
   legacyBloom = false,
   paddleMotion: "none" | "before" | "after" = "none",
+  ballReview?: { close?: boolean; width?: number; height?: number },
 ) {
+  const width = ballReview?.width ?? 1280,
+    height = ballReview?.height ?? 900;
   const state = createMatch(2026, count);
   const ball = state.balls[0]!;
   state.balls = dense
@@ -47,9 +50,21 @@ export function renderEdgeReview(
         spin: id % 2 ? 0.8 : -0.8,
       }))
     : [];
+  if (ballReview) {
+    state.phase = "playing";
+    if (!dense)
+      state.balls = [0, 1, 2].map((id) => ({
+        ...ball,
+        id,
+        phase: "active" as const,
+        position: { x: (id - 1) * (ballReview.close ? 2 : 4), y: 0 },
+        velocity: { x: 0, y: 0 },
+        spin: id === 0 ? 0 : id === 1 ? 1.4 : -1.4,
+      }));
+  }
   const renderer = new WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(1);
-  renderer.setSize(1280, 900);
+  renderer.setSize(width, height);
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
   renderer.shadowMap.enabled = true;
@@ -72,11 +87,17 @@ export function renderEdgeReview(
         }
     });
   const camera = createArenaCamera(0, state.arena),
-    points = state.arena.vertices.flatMap((p) => [
-      new Vector3(p.x * 1.09, 0, p.y * 1.09),
-      new Vector3(p.x * 1.09, 2.34, p.y * 1.09),
-    ]);
-  fitArenaCamera(camera, new Box3().setFromPoints(points), 1280 / 900, points);
+    points = ballReview?.close
+      ? [new Vector3(-3.2, 0, -1), new Vector3(3.2, 1.3, 1)]
+      : state.arena.vertices.flatMap((p) => [
+          new Vector3(p.x * 1.09, 0, p.y * 1.09),
+          new Vector3(p.x * 1.09, 2.34, p.y * 1.09),
+        ]);
+  if (ballReview?.close) {
+    camera.position.set(0, 5, 8);
+    camera.lookAt(0, 0.58, 0);
+  }
+  fitArenaCamera(camera, new Box3().setFromPoints(points), width / height, points);
   const current = createBloom(renderer, scene, camera),
     old = new EffectComposer(
       renderer,
@@ -100,14 +121,15 @@ export function renderEdgeReview(
   old.addPass(render);
   old.addPass(bloom);
   old.addPass(output);
-  old.setSize(1280, 900);
-  current.resize(1280, 900);
+  old.setSize(width, height);
+  current.resize(width, height);
   const reviewOptions = {
     humanSeat: 0,
     preview: false,
     slowdown: false,
     reducedEffects: reduced,
     quality: "high" as const,
+    ballOwners: new Map(state.balls.map((item) => [item.id, item.id % count])),
   };
   if (paddleMotion !== "none") {
     state.phase = "playing";
@@ -125,6 +147,11 @@ export function renderEdgeReview(
     else current.render(0, reduced, 0, "high");
   return {
     samples: legacy || reduced ? 0 : Math.min(4, renderer.capabilities.maxSamples),
+    advanceBallReview(ticks: number) {
+      state.tick += ticks;
+      arena.update(state, ticks / 120, reviewOptions);
+      current.render(0, reduced, 0, "high");
+    },
     dispose() {
       current.dispose();
       bloom.dispose();

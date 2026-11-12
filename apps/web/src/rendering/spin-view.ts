@@ -48,7 +48,7 @@ export function createSpinView(root: Group) {
         ballId = ball?.id ?? -1;
       }
       if (ball && !reduced && lastTick >= 0)
-        phase += Math.max(0, tick - lastTick) * FIXED_DT * Math.sign(spin) * (8 + strength * 12);
+        phase += Math.max(0, tick - lastTick) * FIXED_DT * spin * 5;
       lastTick = tick;
       group.visible = ball?.phase === "active" && strength > 0.025;
       if (!group.visible || !ball) return;

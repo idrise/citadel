@@ -1,5 +1,9 @@
 # M09 mobile review
 
+The later ball-presence and readable-spin amendment is documented in
+[ball presentation review](BALL_PRESENTATION_REVIEW.md), including close-ups,
+2/4/6-player and crowded phone views, spin animation and gameplay capture.
+
 The later request for louder, distinct wall and paddle sounds is delivered for
 review in [bounce audio review](BOUNCE_AUDIO_REVIEW.md).
 

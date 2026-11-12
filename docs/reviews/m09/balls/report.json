@@ -1,0 +1,5 @@
+{
+  "kind": "Actual rendering in fixed spin fixtures; three balls are zero / positive / negative spin",
+  "counts": [2, 4, 6],
+  "errors": []
+}

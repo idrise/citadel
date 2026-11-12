@@ -7,7 +7,7 @@ import { createFloorReflection } from "./floor-reflection";
 import { frostedMaterial } from "./frosted-material";
 import { createArenaView } from "./arena-view";
 import { disposeScene } from "./dispose-scene";
-import { createBallView } from "./ball-view";
+import { BALL_VISUAL_RADIUS, createBallView } from "./ball-view";
 
 it.each([0, 1, 2, 3])(
   "puts the camera behind human seat %s with that fortress at the near edge",
@@ -65,17 +65,21 @@ it("renders a growing physical piece at its current collider position and radius
   disposeScene(view.root);
 });
 
-it("keeps an occluded ball readable through solid walls without changing its position or radius", () => {
+it("keeps the occlusion ghost aligned with the enlarged presentation shell without moving simulation", () => {
   const root = new Group();
   const view = createBallView(root);
   const state = createMatch();
   state.balls[0]!.position = { x: -8.75, y: 8.75 };
+  const before = structuredClone(state);
   view.update(state, false);
+  expect(state).toEqual(before);
   const ghosts = root.children.filter((part) => part.name === "occluded-ball") as Mesh[];
   expect(ghosts.filter((part) => part.visible)).toHaveLength(1);
   const ghost = ghosts[0]!;
   expect(ghost.position).toEqual(new Vector3(-8.75, 0.58, 8.75));
-  expect((ghost.geometry as import("three").SphereGeometry).parameters.radius).toBe(0.187);
+  expect((ghost.geometry as import("three").SphereGeometry).parameters.radius).toBe(
+    BALL_VISUAL_RADIUS,
+  );
   const material = ghost.material as import("three").MeshBasicMaterial;
   expect(material.depthTest).toBe(true);
   expect(material.depthFunc).toBe(GreaterDepth);

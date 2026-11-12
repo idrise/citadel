@@ -29,6 +29,15 @@ it("tints each active ball and trail with its last striker, while ready balls us
   expect((mesh.material as import("three").MeshStandardMaterial).color.getHex()).toBe(
     SEATS[2]!.colour,
   );
+  const tail = root.children.find((p) => p.name === "ball-trail") as Mesh;
+  const aura = mesh.getObjectByName("ball-aura") as Mesh<
+    import("three").BufferGeometry,
+    import("three").ShaderMaterial
+  >;
+  expect(aura.material.uniforms.colour!.value.getHex()).toBe(SEATS[2]!.colour);
+  expect(
+    (tail.material as import("three").MeshBasicMaterial).color.clone().multiplyScalar(0.5).getHex(),
+  ).toBe(SEATS[2]!.colour);
   ball.phase = "ready";
   ball.seat = 1;
   balls.update(state, false, 20, new Map([[ball.id, 2]]));
