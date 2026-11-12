@@ -104,7 +104,7 @@ export function recordResult(progress: PlayerProgress, result: LevelResult): Pla
         : consistent
           ? clamp(desired, result.level + 1, result.level + step)
           : result.level + 1
-      : clamp(desired, result.level - step, result.level);
+      : result.level;
   return {
     level: clamp(level, 1, 100),
     count: result.count,
@@ -161,8 +161,15 @@ export function parseProgress(raw: string | null): PlayerProgress {
       value.recent.length !== Math.min(value.rounds, RESULT_WINDOW)
     )
       return freshProgress();
+    // Older builds demoted immediately on defeat. Restore that attempt for a fair retry;
+    // levelFor still applies any returning-player relief from the original result date.
+    const last = value.recent.at(-1) as LevelResult | undefined;
+    const retryLevel =
+      last && last.place > 1 && last.count === value.count
+        ? Math.max(value.level, last.level)
+        : value.level;
     return {
-      level: value.level,
+      level: retryLevel,
       count: value.count as PlayerCount,
       best: value.best,
       rounds: value.rounds,

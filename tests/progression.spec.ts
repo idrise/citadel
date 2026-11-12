@@ -99,3 +99,77 @@ test("a returning phone player gets a gentler saved level without repeated refre
   await page.screenshot({ path: testInfo.outputPath("returning-phone-level.png") });
   expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).best, key)).toBe(90);
 });
+
+test("a loss retries the played level directly and preserves it after reload", async ({
+  page,
+}, testInfo) => {
+  await page.addInitScript(
+    ({ key, now }) => {
+      if (!localStorage.getItem(key))
+        localStorage.setItem(
+          key,
+          JSON.stringify({
+            version: 1,
+            level: 2,
+            count: 2,
+            best: 1,
+            rounds: 1,
+            recent: [{ level: 1, count: 2, place: 1, at: now }],
+          }),
+        );
+    },
+    { key, now: Date.now() },
+  );
+  await openGame(page);
+  await choosePlayers(page, 2);
+  await openSettings(page);
+  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+  await page.getByLabel("Your fortress", { exact: true }).selectOption("1");
+  await play(page);
+  await page.keyboard.down("KeyD");
+  for (
+    let seconds = 0;
+    seconds < 120 &&
+    (await page.getByLabel("Round phase", { exact: true }).textContent()) !== "finished";
+    seconds++
+  )
+    await page.clock.runFor(1000);
+  await page.keyboard.up("KeyD");
+  await expect(page.getByLabel("Round winner", { exact: true })).toHaveText("Coral wins");
+  await page.clock.runFor(1000);
+  const progress = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
+  expect(progress.level).toBe(2);
+  expect(progress.rounds).toBe(2);
+  await page.getByRole("button", { name: "Retry", exact: true }).click();
+  await expect(page.getByLabel("Level introduction", { exact: true })).toHaveText("Level 2");
+  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeHidden();
+  await page.screenshot({ path: testInfo.outputPath("retry-level-2.png") });
+  await page.clock.runFor(1600);
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
+  await page.reload();
+  await expect(page.getByLabel("Round level", { exact: true })).toHaveText("2");
+});
+
+test("an older loss-demoted save restores the level that was played", async ({ page }) => {
+  await page.addInitScript(
+    ({ key, now }) =>
+      localStorage.setItem(
+        key,
+        JSON.stringify({
+          version: 1,
+          level: 1,
+          count: 4,
+          best: 1,
+          rounds: 2,
+          recent: [
+            { level: 1, count: 4, place: 1, at: now - 1000 },
+            { level: 2, count: 4, place: 4, at: now },
+          ],
+        }),
+      ),
+    { key, now: Date.now() },
+  );
+  await openGame(page);
+  await expect(page.getByLabel("Round level", { exact: true })).toHaveText("2");
+  expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).level, key)).toBe(2);
+});

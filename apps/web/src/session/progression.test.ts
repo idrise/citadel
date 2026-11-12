@@ -15,7 +15,7 @@ import {
   WEEK_MS,
 } from "./progression";
 
-it("advances on every win, accelerates consistent wins, reaches the ceiling quickly and comes back down", () => {
+it("advances on every win, accelerates consistent wins, reaches the ceiling quickly and holds it on losses", () => {
   let progress = freshProgress();
   expect(levelFor(progress, 6, 0)).toBe(1);
   progress = recordResult(progress, { level: 1, count: 4, place: 1, at: 0 });
@@ -25,12 +25,12 @@ it("advances on every win, accelerates consistent wins, reaches the ceiling quic
   expect(progress.level).toBe(100);
   for (let i = 0; i < 12; i++)
     progress = recordResult(progress, { level: progress.level, count: 4, place: 4, at: i + 20 });
-  expect(progress.level).toBeLessThan(50);
+  expect(progress.level).toBe(100);
   expect(progress.best).toBe(100);
   expect(progress.recent).toHaveLength(RESULT_WINDOW);
   for (let i = 0; i < 30; i++)
     progress = recordResult(progress, { level: progress.level, count: 4, place: 4, at: i + 100 });
-  expect(progress.level).toBe(1);
+  expect(progress.level).toBe(100);
 });
 
 it("softens a return after a week without compounding refreshes or erasing the personal best", () => {
@@ -60,7 +60,11 @@ it("uses finishing position and arena size as evidence rather than treating all 
   const previous = { ...freshProgress(), level: 70 };
   const second = recordResult(previous, { level: 70, count: 6, place: 2, at: 0 });
   const last = recordResult(previous, { level: 70, count: 6, place: 6, at: 0 });
-  expect(second.level).toBeGreaterThan(last.level);
+  expect(second.level).toBe(70);
+  expect(last.level).toBe(70);
+  expect(estimateSkill(second.recent, 0).posterior).not.toEqual(
+    estimateSkill(last.recent, 0).posterior,
+  );
   for (const skill of [-30, 50, 160])
     for (const count of [2, 4, 6]) {
       let sum = 0;
@@ -69,33 +73,32 @@ it("uses finishing position and arena size as evidence rather than treating all 
     }
 });
 
-it("learns around noisy synthetic player abilities within a small sample, without a 100-round grind", () => {
-  const errors: number[] = [];
-  let randomState = 1234;
-  const random = () => {
-    randomState = (Math.imul(randomState, 1664525) + 1013904223) >>> 0;
-    return (randomState + 0.5) / 4294967296;
-  };
-  const performance = (skill: number) => skill - 8 * Math.log(-Math.log(random()));
-  for (const count of [2, 4, 6] as const)
-    for (const skill of [30, 65, 100])
-      for (let trial = 0; trial < 15; trial++) {
-        let progress = freshProgress();
-        for (let round = 0; round < 14; round++) {
-          const level = levelFor(progress, count, round);
-          const human = performance(skill);
-          const place =
-            1 +
-            Array.from({ length: count - 1 }, () => performance(level)).filter((bot) => bot > human)
-              .length;
-          progress = recordResult(progress, { level, count, place, at: round });
-        }
-        const target = Math.max(1, Math.min(100, skill - 8 * Math.log(1.5 * (count - 1))));
-        errors.push(Math.abs(progress.level - target));
+it("uses losses to temper future upward calibration without demoting a retry", () => {
+  const history = (place: number) => ({
+    ...freshProgress(),
+    level: 70,
+    rounds: 3,
+    recent: Array.from({ length: 3 }, (_, at) => ({ level: 70, count: 4 as const, place, at })),
+  });
+  const win = { level: 70, count: 4 as const, place: 1, at: 3 };
+  expect(recordResult(history(4), win).level).toBe(71);
+  expect(recordResult(history(1), win).level).toBeGreaterThan(71);
+});
+
+it("retries the actual played level for every losing place and roster, including adjusted attempts", () => {
+  for (const count of [2, 3, 4, 5, 6] as const)
+    for (const level of [1, 2, 35, 80, 100])
+      for (let place = 2; place <= count; place++) {
+        // Saved rating can differ from the attempted level after inactivity or roster changes.
+        const progress = recordResult(
+          { ...freshProgress(), level: 99 },
+          { level, count, place, at: 1000 },
+        );
+        expect(progress.level).toBe(level);
+        expect(levelFor(progress, count, 1000)).toBe(level);
+        expect(parseProgress(JSON.stringify({ version: 1, ...progress }))).toEqual(progress);
+        expect(progress.recent.at(-1)).toEqual({ level, count, place, at: 1000 });
       }
-  errors.sort((a, b) => a - b);
-  expect(errors[Math.floor(errors.length / 2)]).toBeLessThan(9);
-  expect(errors[Math.floor(errors.length * 0.9)]).toBeLessThan(19);
 });
 
 it("records a finished round once and ignores title, abandoned rounds, and draws", () => {
@@ -178,4 +181,20 @@ it("winning level one always leads to two, including progress saved by an older 
   const previous = recordResult(freshProgress(), { level: 1, count: 2, place: 1, at: 0 });
   const legacy = { ...previous, level: 1 };
   expect(recordResult(legacy, { level: 1, count: 2, place: 1, at: 1 }).level).toBe(2);
+});
+
+it("repairs an older loss-demoted save while preserving inactivity relief and win advances", () => {
+  const old = {
+    ...freshProgress(),
+    level: 1,
+    count: 4 as const,
+    rounds: 1,
+    recent: [{ level: 80, count: 4 as const, place: 4, at: 1000 }],
+  };
+  const repaired = parseProgress(JSON.stringify({ version: 1, ...old }));
+  expect(repaired.level).toBe(80);
+  expect(levelFor(repaired, 4, WEEK_MS + 1000)).toBe(70);
+  expect(repaired.recent).toEqual(old.recent);
+  const won = recordResult(freshProgress(), { level: 1, count: 4, place: 1, at: 1000 });
+  expect(parseProgress(JSON.stringify({ version: 1, ...won })).level).toBe(2);
 });

@@ -8,8 +8,8 @@ between rounds, and bots that aim at pickup containers and use curves. M09 remai
 
 - Winning level 1 always unlocks level 2, including progress saved by older builds.
   Every subsequent win advances at least one level, capped at 100. Sustained wins
-  retain the existing faster adaptive calibration; losses and inactivity can lower
-  the next attempt's level. Progress is still saved locally once per attempt.
+  retain the existing faster adaptive calibration. Losses retry the level played;
+  inactivity can still lower the returning player's next attempt. Progress is still saved locally once per attempt.
 - After a 0.9-second result beat, **NEXT** starts the next level directly. **RETRY**
   starts a new attempt after defeat; level 100 offers **AGAIN**. The level appears
   during the opening countdown. There is no intervening title or second Start click.
@@ -20,7 +20,7 @@ between rounds, and bots that aim at pickup containers and use curves. M09 remai
 - The victory star still morphs over 2.8 seconds and stays bright through 4.5 seconds
   if the player waits. Continuing early skips the remaining celebration. A player
   eliminated before the other bots finish can also use Pause → Play again to start
-  directly at their saved adjusted level.
+  directly at the same level played.
 
 Numeric level bots now prefer reachable landed supplies on serves, re-evaluate
 consumed/expired targets, and consider supplies on returns. Defending an incoming
@@ -36,6 +36,21 @@ No collision-time spin override, extra health award, teleport or future input is
 available to the AI. Shot selection is cached briefly while high-level interception
 can still update at its reaction rate. Named legacy bot profiles remain available for
 historical replay fixtures.
+
+## Loss retry correction
+
+The owner clarified that a defeat must retain the attempted level. Retry and early
+Pause → Play again now do so. Finishing positions remain in the recent history to
+temper future upward jumps, but cannot demote an immediate retry. Older saves
+that already dropped after a loss restore that last attempted level automatically;
+returning-player inactivity relief still uses the original result date.
+
+Validation: **372 unit tests / 63 files pass**, strict checks and root/Pages builds
+pass, and **five production progression browser checks pass at each path**. A real
+level-two defeat retries level two immediately and still loads level two after
+refresh; old-save repair is also exercised in the browser. The initial bidirectional
+calibration test was replaced with same-level retry and upward-calibration tests to
+match this clarified rule. [Level-two retry capture](reviews/m09/fast-progression/retry-level-2.png).
 
 ## Rendered evidence
 

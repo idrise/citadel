@@ -464,6 +464,16 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November retry-level correction: the owner clarified that losing must retry the
+same level played. Losses now retain that level for direct Retry and early Play
+again; recorded finishing places only temper future upward calibration. Older
+loss-demoted saves restore the last attempted level automatically. Inactivity
+relief remains available for returning players. Validation: 372 unit tests plus
+five production progression checks at root and five at the Pages path, including
+a real level-two defeat, direct level-two retry, reload and old-save repair.
+See `docs/FAST_PROGRESSION_BOTS_REVIEW.md` and its retry screenshot. M09 awaits
+review; no push or deployment is authorised.
+
 12 November fast-progression / bot-tactics follow-up: level-one wins now always
 advance to two, every later win advances at least one level, and sustained wins
 retain rapid adaptive calibration. NEXT / RETRY is available after a 0.9-second
