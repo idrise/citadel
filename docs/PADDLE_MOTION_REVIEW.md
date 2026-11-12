@@ -2,6 +2,14 @@
 
 ## Current implementation: simple historical copies
 
+The owner liked the historical-copy effect and requested a softer opacity.
+Copies now fade through 20%, 14%, 9% and 5% opacity (previously 32%, 23%, 15%
+and 8%), keeping the live bat more prominent.
+Softer renders: [2 players](reviews/m09/bat-history/2-soft.png),
+[4 players](reviews/m09/bat-history/4-soft.png), [6 players](reviews/m09/bat-history/6-soft.png).
+Vite+ check and the three focused history-copy unit tests pass; the native
+render review reports no browser errors.
+
 The owner reported the blur still was not working and asked for the bat to be
 rendered a few times in history, with nothing special. The custom instanced
 smear/mask shader has been removed. The current effect draws the complete bat

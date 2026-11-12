@@ -17,7 +17,7 @@ export function createPaddleBlur(root: Group, paddles: readonly Mesh[]) {
   const history: Pose[][] = paddles.map(() => []);
   const ghosts = paddles.map((paddle, seat) =>
     Array.from({ length: COPIES }, (_, index) => {
-      const opacity = [0.32, 0.23, 0.15, 0.08][index]!;
+      const opacity = [0.2, 0.14, 0.09, 0.05][index]!;
       const fade = (source: Material) => {
         const material = source.clone();
         material.transparent = true;

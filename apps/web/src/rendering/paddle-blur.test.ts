@@ -41,7 +41,7 @@ it("draws complete faded bat copies at actual historical poses, not interpolated
     expect(ghost.rotation.y).toBeCloseTo(-(base + (3 - index) * 0.1));
     const materials = ghost.material as MeshStandardMaterial[];
     expect(materials.every((material) => material.transparent && !material.depthWrite)).toBe(true);
-    expect(materials[0]!.opacity).toBe([0.32, 0.23, 0.15, 0.08][index]);
+    expect(materials[0]!.opacity).toBe([0.2, 0.14, 0.09, 0.05][index]);
     expect(((ghost.children[0] as Mesh).material as ShaderMaterial).name).toBe("NeonFeatureEdges");
   });
   const poses = ghosts.map((mesh) => mesh.rotation.y);

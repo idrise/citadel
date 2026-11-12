@@ -464,6 +464,10 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November opacity amendment: the owner said the simple historical bat copies
+look great but are too strong. Their body/outline opacities are reduced to
+20/14/9/5 percent, retaining the same history and movement. M09 awaits review.
+
 12 November bat-trail revision: the owner reported the shader blur still was not
 working and explicitly requested a few historical renders of the bat, nothing
 special. The effect now draws 2/3/4 faded copies of the full body and neon outline
