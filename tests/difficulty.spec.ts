@@ -7,8 +7,8 @@ for (const [level, balls, pickups, speed, bat] of [
   [4, 1, 0, "14.61", "1.33"],
   [5, 1, 1, "14.81", "1.32"],
   [10, 2, 1, "15.82", "1.29"],
-  [50, 4, 4, "23.90", "1.00"],
-  [100, 8, 7, "34.00", "0.70"],
+  [50, 8, 4, "23.90", "1.00"],
+  [100, 16, 7, "34.00", "0.70"],
 ] as const)
   test(`level ${level} owns ball pressure, pickup budget and physical bat size`, async ({
     page,

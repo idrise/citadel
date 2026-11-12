@@ -66,3 +66,17 @@ it("resets credit on revenge launch and distinguishes self hits, unknown credit 
   snapshot.players[0]!.scored = 100;
   expect(observer.snapshot().players[0]!.scored).toBe(1);
 });
+it("tracks all sixteen ball owners and their damage credit independently", () => {
+  const observer = createRoundObserver(6);
+  observer.observe(
+    Array.from({ length: 16 }, (_, id) => e(id, "launch", id % 6, id)),
+    16,
+  );
+  const damage = observer.observe(
+    Array.from({ length: 16 }, (_, id) => e(id + 16, "damage", (id + 1) % 6, id)),
+    16,
+  );
+  expect(observer.owners().size).toBe(16);
+  expect(observer.snapshot().peakBalls).toBe(16);
+  damage.forEach((event, id) => expect(event.attackerSeat).toBe(id % 6));
+});

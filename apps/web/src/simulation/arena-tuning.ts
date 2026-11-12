@@ -14,3 +14,5 @@ export const ARENA = {
   ballRadius: 0.187,
 } as const;
 export const FIXED_DT = 1 / 120;
+
+export const MAX_BALLS = 16;

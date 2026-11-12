@@ -1,3 +1,4 @@
+import { MAX_BALLS } from "../simulation/arena";
 import type { GameEvent } from "../simulation/types";
 
 export interface PlayerTotals {
@@ -24,7 +25,7 @@ export function createRoundObserver(count: number) {
     peakBalls = 1;
   return {
     observe(events: readonly GameEvent[], balls = 1): GameEvent[] {
-      peakBalls = Math.max(peakBalls, Math.min(8, balls));
+      peakBalls = Math.max(peakBalls, Math.min(MAX_BALLS, balls));
       const observed: GameEvent[] = [];
       for (const event of events) {
         if (event.id <= lastEvent) continue;
@@ -35,7 +36,7 @@ export function createRoundObserver(count: number) {
           (event.type === "launch" || event.type === "paddle") &&
           defender &&
           ball !== undefined &&
-          (strikers.has(ball) || strikers.size < 8)
+          (strikers.has(ball) || strikers.size < MAX_BALLS)
         )
           strikers.set(ball, event.seat);
         if (event.type === "paddle" && defender) defender.returns++;

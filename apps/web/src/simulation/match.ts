@@ -4,6 +4,7 @@ import type { RoundDifficulty } from "./difficulty";
 import { stepSupplies } from "./supplies";
 import {
   ARENA,
+  MAX_BALLS,
   FIXED_DT,
   createArena,
   fortress,
@@ -203,7 +204,7 @@ export function stepMatch(
   }
   if (state.phase === "playing") {
     const desired = Math.min(
-      clamp(Math.floor(options.maxBalls), 1, 8),
+      clamp(Math.floor(options.maxBalls), 1, MAX_BALLS),
       1 + Math.floor(state.elapsed / Math.max(1, options.ballInterval)),
     );
     while (state.balls.length < desired) {

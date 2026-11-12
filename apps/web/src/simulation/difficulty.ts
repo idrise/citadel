@@ -14,10 +14,11 @@ export interface RoundDifficulty {
 export function levelDifficulty(requested: number): RoundDifficulty {
   const level = clamp(Math.floor(Number.isFinite(requested) ? requested : 1), 1, 100);
   const t = (level - 1) / 99;
+  const maxBalls = 1 + Math.floor(((level - 1) * 15) / 99);
   return {
     level,
-    maxBalls: 1 + Math.floor((level + 5) / 15), // 10, 25, 40, 55, 70, 85, 100
-    ballInterval: 22 - 17 * t,
+    maxBalls,
+    ballInterval: Math.min(12, 30 / Math.max(1, maxBalls - 1)),
     ballSpeed: 14 + 20 * t,
     pickupCount: level < 5 ? 0 : 1 + Math.floor((level - 5) / 15),
     batScale: level <= 50 ? 1.35 - (0.35 * (level - 1)) / 49 : 1 - (0.3 * (level - 50)) / 50,

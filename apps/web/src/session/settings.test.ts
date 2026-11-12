@@ -53,8 +53,8 @@ it("takes pacing from the level and ignores obsolete saved ball overrides", () =
   const legacy = { ...createSettings(), maxBalls: 8, ballInterval: 1 };
   expect(matchOptions(legacy, 0, 1)).toMatchObject({ maxBalls: 1, ballSpeed: 14 });
   expect(matchOptions(legacy, 0, 100)).toMatchObject({
-    maxBalls: 8,
+    maxBalls: 16,
     ballSpeed: 34,
-    ballInterval: 5,
+    ballInterval: 2,
   });
 });

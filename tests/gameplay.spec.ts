@@ -24,7 +24,7 @@ test("captured controls, focus pause, timed balls and restart work", async ({ pa
   expect(await page.getByLabel("Bat angle", { exact: true }).textContent()).toBe(angle);
   await page.keyboard.up("KeyD");
   await page.clock.runFor(15500);
-  await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("2");
+  await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("3");
   await pause(page);
   await page.getByRole("button", { name: "Restart", exact: true }).click();
   await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
@@ -46,8 +46,8 @@ test("a complete seeded round reaches results and rematches without state edits"
   await choosePlayers(page, 6);
   await play(page);
   await page.clock.runFor(33000);
-  await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("3");
-  await page.screenshot({ path: testInfo.outputPath("perspective-three-balls.png") });
+  await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("6");
+  await page.screenshot({ path: testInfo.outputPath("perspective-six-balls.png") });
   const rematch = page.getByRole("button", {
     name: /^(Next level|Retry|Play again)$/,
     exact: true,

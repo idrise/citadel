@@ -23,17 +23,18 @@ it("spreads monotonic pressure across all 100 levels, with staggered ball and pi
     expect(next.maxBalls).toBeGreaterThanOrEqual(before.maxBalls);
     expect(next.pickupCount).toBeGreaterThanOrEqual(before.pickupCount);
     expect(next.ballSpeed).toBeGreaterThan(before.ballSpeed);
-    expect(next.ballInterval).toBeLessThan(before.ballInterval);
+    expect(next.ballInterval).toBeLessThanOrEqual(before.ballInterval);
     expect(next.batScale).toBeLessThan(before.batScale);
-    if (next.maxBalls > before.maxBalls) expect([10, 25, 40, 55, 70, 85, 100]).toContain(level);
+    if (next.maxBalls > before.maxBalls)
+      expect([8, 15, 21, 28, 34, 41, 48, 54, 61, 67, 74, 81, 87, 94, 100]).toContain(level);
     if (next.pickupCount > before.pickupCount) expect([5, 20, 35, 50, 65, 80, 95]).toContain(level);
     before = next;
   }
   expect(before).toMatchObject({
-    maxBalls: 8,
+    maxBalls: 16,
     pickupCount: 7,
     ballSpeed: 34,
-    ballInterval: 5,
+    ballInterval: 2,
     batScale: 0.7,
   });
   expect(levelDifficulty(NaN)).toEqual(levelDifficulty(1));
@@ -160,7 +161,7 @@ it("preserves the round's bat width throughout elimination morphs and all derive
   }
 });
 
-it("keeps all eight queued level-100 serves inside the walls and visibly separated at travel limits", () => {
+it("keeps all sixteen queued level-100 serves inside the walls and visibly separated at travel limits", () => {
   for (const count of [2, 3, 4, 5, 6] as const)
     for (const side of [0, 1]) {
       let state = createMatch(7, count, 3, 7, levelDifficulty(100));
@@ -173,7 +174,7 @@ it("keeps all eight queued level-100 serves inside the walls and visibly separat
       const options = { ...DEFAULT_OPTIONS, humanSeat: -1, serveTimeout: Infinity };
       state = stepMatch(state, IDLE_INTENT, options, 0);
       state = stepMatch(state, IDLE_INTENT, options, 0);
-      expect(state.balls).toHaveLength(8);
+      expect(state.balls).toHaveLength(16);
       for (const ball of state.balls) {
         for (const edge of polygonEdges(state.arena.vertices))
           expect(dot(sub(ball.position, edge.start), edge.normal)).toBeGreaterThanOrEqual(

@@ -3,7 +3,7 @@ import { add, angleDifference, clamp, scale, unit, type Vec2 } from "./vector";
 
 import { ARENA } from "./arena-tuning";
 import { fitDefenceLimits } from "./defence-limits";
-export { ARENA, FIXED_DT } from "./arena-tuning";
+export { ARENA, FIXED_DT, MAX_BALLS } from "./arena-tuning";
 export type PlayerCount = 2 | 3 | 4 | 5 | 6;
 export interface ArenaGeometry {
   count: PlayerCount;

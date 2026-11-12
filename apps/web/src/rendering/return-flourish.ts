@@ -1,3 +1,4 @@
+import { MAX_BALLS } from "../simulation/arena";
 import {
   BufferGeometry,
   Float32BufferAttribute,
@@ -17,7 +18,7 @@ const DURATION = 0.18;
 /** A brief raised arc indicates the revenge transfer without delaying or moving the real ball. */
 export function createReturnFlourishes(root: Group) {
   const sphere = new SphereGeometry(0.075, 8, 6);
-  const flights = Array.from({ length: 8 }, () => {
+  const flights = Array.from({ length: MAX_BALLS }, () => {
     const group = new Group();
     group.name = "revenge-flourish";
     group.visible = false;
