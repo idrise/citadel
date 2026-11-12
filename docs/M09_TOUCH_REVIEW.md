@@ -1,4 +1,52 @@
-# Early mobile tester build
+# M09 mobile review
+
+The owner requested full M09 on 12 November after finding the mobile title and
+logo too small. The current build uses a responsive procedural menu: a large
+CITADEL title and stacked controls in portrait, with title and controls alongside
+each other in landscape. Visible buttons and their semantic hit targets are at
+least 44 CSS pixels high on compact screens. Mobile Pause settings use readable
+text, scroll within the safe area, and keep Resume reachable. Touch instructions
+appear in the title menu. The keyboard-only hide-controls action is hidden on
+touch screens to avoid trapping the user without a resume button.
+
+Touch drag steers, a short tap serves, and drags/long presses/cancelled gestures
+never serve. Lifting a finger permits repositioning without a jump. Rotation
+discards the held gesture; backgrounding pauses the game and foregrounding waits
+for explicit Resume. Canvas gesture suppression leaves the settings panel
+scrollable. Safe-area insets keep the game and touch pause button clear of cutouts.
+
+The owner also reported dragging mouse response and explicitly approved raising
+the movement limit. Mouse/touch targets now follow at up to 16 rad/s, compared
+with the previous 3.2 rad/s. A representative 0.5-radian target is reached within
+50ms in unit coverage. Keyboard and bots keep their existing movement rate.
+The historical collision replay fixtures explicitly retain their authored 3.2
+rad/s pointer speed; their reviewed impact digests remain unchanged.
+
+Current evidence: [small phone title](reviews/m09/release/title-320.png),
+[portrait title](reviews/m09/release/title-390.png), [landscape title](reviews/m09/release/title-844.png),
+[tablet title](reviews/m09/release/title-1024.png),
+[2-player gameplay](reviews/m09/release/play-2-landscape.png),
+[4-player gameplay](reviews/m09/release/play-4-landscape.png),
+[6-player gameplay](reviews/m09/release/play-6-landscape.png),
+[result screen](reviews/m09/release/result-6.png), and
+[scripted gameplay video](reviews/m09/release/mobile-gameplay.webm).
+All 2/3/4/5/6-seat matches complete and rematch
+through normal touch input, with rotation, serving and focus/visibility pause
+checks. Match progression uses emulated time and reduced effects; this is
+automation, not human playtest evidence.
+
+Validation: Vite+ check, 299 unit tests, a root-path production build and 17
+distinct native Chromium browser tests pass (full 16-test run plus focused mouse
+and tablet checks after the final layout adjustment). The original bundle-size warning
+remains. Physical Android/iPhone, Safari, real cutouts, sustained frame rate and
+battery/heat are unverified; M10 owns device performance testing. Owner review
+of mobile readability, drag sensitivity and mouse feel remains required.
+
+Reproduce with a root-path production build, then
+`PAGES_BASE_PATH=/ PLAYWRIGHT_RENDERER=hardware pnpm exec playwright test tests/mobile-release.spec.ts tests/touch.spec.ts tests/scene-ui.spec.ts tests/controls.spec.ts tests/presentation.spec.ts --workers=1`.
+The existing CI smoke gate is retained; the full rendering suite runs locally.
+
+## Earlier tester experiment
 
 12 November 2026: David Brown requested a little camera motion, a zoom as danger
 looms and a sideways shimmy when the bat moves. The owner also requested touch

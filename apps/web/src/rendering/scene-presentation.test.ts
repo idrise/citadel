@@ -124,3 +124,33 @@ it.each(["title", "victory", "defeat"] as const)(
     overlay.dispose();
   },
 );
+
+it("gives phone title and result controls finger-sized targets in portrait and landscape", () => {
+  const camera = new PerspectiveCamera(44, 1, 0.1, 200);
+  const menu = createSceneMenu(camera);
+  for (const [width, height] of [
+    [320, 568],
+    [390, 844],
+    [844, 390],
+    [667, 320],
+    [768, 1024],
+    [1024, 768],
+  ]) {
+    for (const mode of ["title", "victory", "defeat"] as const) {
+      const controls = menu.update(
+        { mode, count: 4, elapsed: 5, reduced: true, touch: true },
+        width!,
+        height!,
+      );
+      for (const control of controls) {
+        expect(control.width).toBeGreaterThanOrEqual(44);
+        expect(control.height).toBeGreaterThanOrEqual(44);
+        expect(control.left).toBeGreaterThanOrEqual(12);
+        expect(control.top).toBeGreaterThanOrEqual(12);
+        expect(control.left + control.width).toBeLessThanOrEqual(width! - 12);
+        expect(control.top + control.height).toBeLessThanOrEqual(height! - 12);
+      }
+    }
+  }
+  disposeScene(camera);
+});

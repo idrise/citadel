@@ -41,6 +41,11 @@ export function AccessibleStatus({
             ?.name ?? "Unclaimed"}
         </output>
       ))}
+      {state.balls.map((ball) => (
+        <output key={`phase-${ball.id}`} aria-label={`Ball ${ball.id} phase`}>
+          {ball.phase}
+        </output>
+      ))}
       <output aria-label="Arena players">{state.arena.count}</output>
       <output aria-label="Arena transition">{state.morph ? "moving" : "settled"}</output>
       <output aria-label="Survivors">

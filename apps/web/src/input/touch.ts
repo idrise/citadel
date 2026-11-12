@@ -18,6 +18,7 @@ export function createTouchInput(
   let target: number | null = null;
   let base = fortress(seat, geometry()).direction;
   let launch = false;
+  let startedAt = 0;
   function rebase() {
     const next = fortress(seat, geometry()).direction;
     if (target !== null) target = clampPaddleAngle(seat, target + next - base, geometry());
@@ -36,6 +37,7 @@ export function createTouchInput(
     (event) => {
       if (!enabled || event.pointerType !== "touch" || pointer !== null) return;
       pointer = event.pointerId;
+      startedAt = event.timeStamp;
       startX = lastX = event.clientX;
       startY = event.clientY;
       distance = 0;
@@ -52,11 +54,10 @@ export function createTouchInput(
       if (distance >= 8) {
         rebase();
         const width = Math.max(canvas.getBoundingClientRect().width, 1);
-        target = clampPaddleAngle(
-          seat,
-          (target ?? currentAngle()) + ((event.clientX - lastX) * 2.4) / width,
-          geometry(),
-        );
+        const delta = ((event.clientX - lastX) * 2.4) / width;
+        const actual = currentAngle();
+        if (target !== null && (target - actual) * delta < 0) target = actual;
+        target = clampPaddleAngle(seat, (target ?? actual) + delta, geometry());
         lastX = event.clientX;
       }
       event.preventDefault();
@@ -65,8 +66,13 @@ export function createTouchInput(
   );
   const finish = (event: PointerEvent) => {
     if (event.pointerId !== pointer) return;
+    if (event.type !== "pointerup") {
+      target = null;
+      launch = false;
+    }
     if (
       event.type === "pointerup" &&
+      event.timeStamp - startedAt <= 350 &&
       distance < 8 &&
       Math.hypot(event.clientX - startX, event.clientY - startY) < 8
     )

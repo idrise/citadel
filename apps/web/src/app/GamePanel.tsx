@@ -97,6 +97,9 @@ export function GamePanel({
         </button>
       )}
       <AccessibleStatus snapshot={snapshot} humanSeat={humanSeat} />
+      {!snapshot.started && !unavailable && (
+        <p className="touch-hint">Drag to steer · Tap to serve</p>
+      )}
       {unavailable ? (
         <div className="game-overlay">
           <p role="status">WebGL2 is needed to render the arena.</p>

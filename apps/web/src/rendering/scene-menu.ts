@@ -1,5 +1,6 @@
 import {
   BoxGeometry,
+  Box3,
   Group,
   Mesh,
   MeshStandardMaterial,
@@ -9,9 +10,11 @@ import {
 import { createNeonLettering } from "./neon-lettering";
 import { createFeatureEdges } from "./feature-edges";
 import { disposeScene } from "./dispose-scene";
+import { mobileMenuLayout } from "./mobile-menu-layout";
 
 export type SceneAction = "start" | "decrease" | "increase" | "options" | "rematch";
 export interface SceneMenuState {
+  touch?: boolean;
   mode: "title" | "victory" | "defeat" | "hidden";
   count: number;
   elapsed: number;
@@ -40,6 +43,12 @@ export function createSceneMenu(camera: PerspectiveCamera) {
   heading.add(victory);
   const defeat = createNeonLettering("ROUND OVER", 1.3, 0xa9c9ff);
   heading.add(defeat);
+  const textWidths = new Map(
+    [title, victory, defeat].map((text) => [
+      text,
+      new Box3().setFromObject(text).getSize(new Vector3()).x,
+    ]),
+  );
   const players = createNeonLettering("PLAYERS", 0.32);
   players.position.y = -1.6;
   group.add(players);
@@ -94,13 +103,14 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       group.position.set(0, halfHeight * 0.67, -depth);
       group.rotation.set(-0.35, 0, 0);
       group.scale.setScalar(Math.min(0.78, (halfHeight * camera.aspect * 1.7) / 16));
+      const compact = state.touch || width < 700 || height < 500;
       const result = state.mode !== "title",
         reveal = state.reduced ? 1 : Math.max(0, Math.min(1, (state.elapsed - 1.6) / 0.8));
       title.visible = !result;
       victory.visible = state.mode === "victory" && reveal > 0;
       defeat.visible = state.mode === "defeat" && reveal > 0;
       heading.scale.setScalar(result ? 0.85 + 0.15 * reveal : 1);
-      heading.position.y = result ? (1 - reveal) * -0.4 : 0;
+      heading.position.set(0, result ? (1 - reveal) * -0.4 : 0, 0);
       players.visible = countText.visible = !result;
       if (count !== state.count) {
         group.remove(countText);
@@ -126,6 +136,47 @@ export function createSceneMenu(camera: PerspectiveCamera) {
           : hover === button.action
             ? 1
             : 0.7;
+      }
+      if (compact) {
+        const layout = mobileMenuLayout(width, height, result);
+        group.position.set(0, 0, -depth);
+        group.rotation.set(0, 0, 0);
+        group.scale.setScalar((2 * halfHeight) / height);
+        heading.position.set(layout.title.x, height / 2 - layout.title.y, 0);
+        heading.scale.setScalar(1);
+        for (const text of [title, victory, defeat])
+          text.scale.setScalar(layout.title.width / textWidths.get(text)!);
+        players.position.set(layout.label.x, height / 2 - layout.label.y, 0);
+        players.scale.setScalar(16 / 0.32);
+        countText.position.set(layout.count.x, height / 2 - layout.count.y, 0);
+        countText.scale.setScalar(34 / 0.9);
+        for (const button of controls) {
+          const placement = layout.controls[button.action];
+          button.item.position.set(placement.x, height / 2 - placement.y, 0);
+          button.item.scale.set(
+            placement.width / button.width,
+            placement.height / button.height,
+            10,
+          );
+        }
+      } else {
+        for (const text of [title, victory, defeat]) text.scale.setScalar(1);
+        players.position.set(0, -1.6, 0);
+        players.scale.setScalar(1);
+        countText.position.set(0, -2.5, 0);
+        countText.scale.setScalar(1);
+        const positions = {
+          decrease: [-2.1, -2.5],
+          increase: [2.1, -2.5],
+          start: [0, -4.05],
+          rematch: [0, -3.4],
+          options: [0, result ? -4.5 : -5.1],
+        };
+        for (const button of controls) {
+          const [x, y] = positions[button.action];
+          button.item.position.set(x!, y!, 0);
+          button.item.scale.setScalar(1);
+        }
       }
       camera.updateMatrixWorld(true);
       return controls

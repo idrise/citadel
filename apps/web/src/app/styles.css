@@ -32,10 +32,31 @@ body,
   outline: none;
   touch-action: none;
 }
+.viewport {
+  inset: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+  width: auto;
+  height: auto;
+}
+.touch-hint {
+  display: none;
+}
 .touch-pause {
   display: none;
 }
 @media (pointer: coarse) {
+  .touch-hint {
+    display: block;
+    position: fixed;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    left: 16px;
+    right: 16px;
+    margin: 0;
+    text-align: center;
+    color: #b5d9e5;
+    font-size: 16px;
+    pointer-events: none;
+  }
   .touch-pause {
     display: block;
     position: fixed;
@@ -46,6 +67,9 @@ body,
     padding: 0;
     opacity: 0.8;
   }
+}
+.scene-controls button {
+  touch-action: manipulation;
 }
 .scene-controls {
   position: absolute;
@@ -255,4 +279,40 @@ input[type="range"] {
   width: 100%;
   background: transparent;
   font-size: 0.8rem;
+}
+@media (pointer: coarse) {
+  .game-overlay[data-mode="paused"] {
+    place-items: center;
+    padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+      max(12px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
+  .game-overlay[data-mode="paused"] .menu-panel {
+    width: min(360px, 100%);
+    max-height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    min-height: 0;
+    padding: 20px;
+    overscroll-behavior: contain;
+  }
+  .game-overlay[data-mode="paused"] h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  .game-overlay[data-mode="paused"] button,
+  .game-overlay[data-mode="paused"] summary,
+  .settings-menu select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .game-overlay[data-mode="paused"] button {
+    padding: 10px 14px;
+  }
+  .settings-menu,
+  .game-help,
+  .menu-hint,
+  .settings-hint {
+    font-size: 14px;
+  }
+  .game-overlay[data-mode="paused"] .hide-controls {
+    display: none;
+  }
 }

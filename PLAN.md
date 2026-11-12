@@ -127,7 +127,13 @@ The previously discussed sketch is a **layout reference**, not a requirement to 
 
 **Desktop now:** Start/Resume captures the mouse using Pointer Lock. Horizontal relative movement changes a bounded target angle on the curved track, independent of screen edges and camera motion; primary click launches an attached ball. A/D or Left/Right steer; Space/Enter launch. Escape/P pauses and releases capture; focus loss or browser capture loss also pauses and clears input. Resume requires an explicit click. The Three.js canvas fills the viewport with no visible HUD or surrounding text during play. Render the CITADEL title, 2–6-player −/+ controls, Start and win/loss/rematch in the Three.js scene. Retain nonvisual accessible status and the compact Pause settings panel by explicit user choice. A human victory keeps presentation alive with neon-shader fireworks and a finite musical resolution; it never opens an automatic DOM result popup. Pause controls sit in a small corner panel; H hides/restores them for unobstructed screenshots while simulation remains paused. The human can choose a fortress in Settings while testing geometry.
 
-**Mobile later:** Use Pointer Events and pointer capture; relative drag is the first touch experiment, and **tap** launches. Distinguish tap and drag to avoid accidental serves. Test an optional dedicated large launch target if tapping while steering proves awkward. Disable scrolling/zoom gestures only over the active game surface; respect safe areas, rotation and reduced-quality mode.
+**Mobile:** Pointer Events and capture support relative drag and tap-to-launch. Drags, long presses and cancellations do not serve. The procedural title/results use phone-sized layouts, and a safe-area pause button provides settings access. Canvas gestures suppress page scrolling; settings remain scrollable. Rotation clears a held drag, and backgrounding pauses until explicit resume. M09 review determines whether a dedicated launch target is needed.
+
+**12 November pointer-response amendment:** The owner explicitly requested almost
+immediate mouse following even if it increases the movement limit. Human mouse
+and touch targets now follow at up to 16 rad/s; keyboard and bot movement remain
+3.2 rad/s. This supersedes the earlier identical-cap experiment. Swept collisions
+still use actual simulated paddle movement.
 
 All devices feed the same versioned **`PlayerIntent`** (e.g. desired angle or angular motion + `launch`). The simulation applies identical movement caps regardless of device.
 
@@ -283,7 +289,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** On 12 November 2026 the user requested early touch controls and camera responses for a mobile tester, ahead of the normal milestone order. This focused M09 work is **In progress** and ready for tester review; it is not a full mobile acceptance or M10 performance gate. David Brown requested camera movement, a danger zoom and paddle-following shimmy. M07 is Approved; the delivered local M08 build is approved, with public verification still outstanding. M06 pacing comparisons remain outstanding. No push or manual deployment is authorised by this request.
+**Current position:** On 12 November 2026 the owner explicitly requested full M09 after finding mobile menus too small. M09 is **Awaiting review**: larger procedural title/result layouts, finger-sized controls, touch gestures, safe-area handling, rotation/background lifecycle and complete emulated mobile matches across 2–6 seats are delivered. The owner also authorised much faster mouse following; pointer targets now use a 16 rad/s cap while keyboard and bots retain 3.2 rad/s. Physical phone/Safari validation and M10 performance work remain outstanding. M08 public verification and M06 pacing comparisons remain open. No push or manual deployment is authorised.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
@@ -474,7 +480,7 @@ for 2/4/6 renders and checks; M09 remains In progress and no push is authorised.
 | M06 | Solo proof | Spin/ball tuning and evidence-based 2-minute escalation | Not started | — | — |
 | M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Approved | 11 Nov 2026: “I think 7 and 8 are good.” | f729bd1, 0c84d6b, 551f559; docs/M07_REVIEW.md and docs/SCENE_PRESENTATION_REVIEW.md |
 | M08 | **Desktop validation gate** | Public-ready static solo build, playtests and decision | In progress | 11 Nov 2026: local build approved; public verification outstanding | 643f704, 6727aac, 2318be7, df309ef; docs/SCENE_PRESENTATION_REVIEW.md; public verification pending; initial tester feedback recorded |
-| M09 | Mobile | Touch steering, tap launch and responsive layouts | In progress | 12 Nov 2026: early tester request; review pending | docs/M09_TOUCH_REVIEW.md; real-device and full match validation outstanding |
+| M09 | Mobile | Touch steering, tap launch and responsive layouts | Awaiting review | 12 Nov 2026: full M09 requested; approval pending | docs/M09_TOUCH_REVIEW.md; complete emulated 2–6-seat matches; physical-device review outstanding |
 | M10 | **Mobile validation gate** | Mobile GPU/performance/accessibility and real-device tests | Not started | — | — |
 | M11 | Multiplayer | WebRTC host/client prototype with local/manual signalling | Not started | — | — |
 | M12 | Multiplayer | Cloudflare private-room signalling, invitations and reconnect | Not started | — | — |
@@ -648,4 +654,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review the early mobile tester build** in `docs/M09_TOUCH_REVIEW.md`. M09 remains in progress pending real-device play, complete mobile round checks and review. M08 still needs public-site verification; M06 remains unstarted. The tester request does not authorise pushing, manually deploying or using `gh`.
+**Review M09** using `docs/M09_TOUCH_REVIEW.md`, especially phone readability and fast pointer response. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

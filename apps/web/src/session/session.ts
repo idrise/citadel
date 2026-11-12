@@ -160,6 +160,7 @@ export function createSession(
       humanSeat,
       ballOwners: observer.owners(),
       menu: {
+        touch: touchMode,
         mode: menuSuppressed
           ? "hidden"
           : !started

@@ -4,6 +4,8 @@ import { createTouchInput } from "./touch";
 
 function fixture() {
   const canvas = new EventTarget() as HTMLCanvasElement;
+  const windowEvents = new EventTarget();
+  Object.defineProperty(canvas, "ownerDocument", { value: { defaultView: windowEvents } });
   let captured: number | null = null;
   canvas.setPointerCapture = vi.fn((id) => {
     captured = id;
@@ -21,17 +23,18 @@ function fixture() {
     () => home,
     () => SQUARE_ARENA,
   );
-  const send = (type: string, x: number, y = 100, id = 1) =>
-    canvas.dispatchEvent(
-      Object.assign(new Event(type, { cancelable: true }), {
-        pointerType: "touch",
-        pointerId: id,
-        clientX: x,
-        clientY: y,
-      }),
-    );
+  const send = (type: string, x: number, y = 100, id = 1, timestamp?: number) => {
+    const event = Object.assign(new Event(type, { cancelable: true }), {
+      pointerType: "touch",
+      pointerId: id,
+      clientX: x,
+      clientY: y,
+    });
+    if (timestamp !== undefined) Object.defineProperty(event, "timeStamp", { value: timestamp });
+    return canvas.dispatchEvent(event);
+  };
   input.capture();
-  return { canvas, input, home, send, release };
+  return { canvas, input, home, send, release, windowEvents };
 }
 
 it("steers with captured horizontal finger movement and never serves a drag", () => {
@@ -40,6 +43,32 @@ it("steers with captured horizontal finger movement and never serves a drag", ()
   send("pointermove", 200);
   expect(input.read().targetAngle).toBeGreaterThan(home);
   send("pointerup", 200);
+  expect(input.read().launch).toBe(false);
+  input.dispose();
+});
+
+it("discards the active drag on rotation or viewport resize", () => {
+  const { input, send, windowEvents } = fixture();
+  send("pointerdown", 100);
+  send("pointermove", 200);
+  expect(input.read().targetAngle).not.toBeNull();
+  windowEvents.dispatchEvent(new Event("resize"));
+  send("pointerup", 200);
+  expect(input.read().targetAngle).toBeNull();
+  expect(input.read().launch).toBe(false);
+  input.dispose();
+});
+
+it("never serves a long press and cancels a lost gesture without trailing movement", () => {
+  const { input, send } = fixture();
+  send("pointerdown", 100, 100, 1, 0);
+  send("pointerup", 100, 100, 1, 1000);
+  expect(input.read().launch).toBe(false);
+  send("pointerdown", 100);
+  send("pointermove", 200);
+  expect(input.read().targetAngle).not.toBeNull();
+  send("lostpointercapture", 200);
+  expect(input.read().targetAngle).toBeNull();
   expect(input.read().launch).toBe(false);
   input.dispose();
 });
