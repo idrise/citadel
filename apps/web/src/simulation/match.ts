@@ -1,3 +1,5 @@
+import { queuedServePosition } from "./serve-queue";
+import type { Vec2 } from "./vector";
 import type { RoundDifficulty } from "./difficulty";
 import { stepSupplies } from "./supplies";
 import {
@@ -171,18 +173,23 @@ export function stepMatch(
   } else state.elapsed += dt;
   stepSupplies(state, dt);
   const served = new Set<number>();
+  const waitingPositions: Vec2[] = [];
   for (const ball of state.balls) {
     if (state.phase === "finished") break;
     if (ball.phase === "ready") {
       const queueIndex = state.balls.filter(
         (queued) => queued.phase === "ready" && queued.seat === ball.seat && queued.id < ball.id,
       ).length;
-      ball.position = railPosition(
-        ball.seat,
-        state.players[ball.seat]!.angle,
-        ARENA.railRadius + 0.4 + queueIndex * ARENA.ballRadius * 2.3,
-        state.arena,
-      );
+      const angle = state.players[ball.seat]!.angle;
+      ball.position = state.difficulty
+        ? queuedServePosition(ball.seat, angle, queueIndex, state.arena, waitingPositions)
+        : railPosition(
+            ball.seat,
+            angle,
+            ARENA.railRadius + 0.4 + queueIndex * ARENA.ballRadius * 2.3,
+            state.arena,
+          );
+      waitingPositions.push(ball.position);
       if (state.phase !== "playing") continue;
       ball.age += dt;
       if (

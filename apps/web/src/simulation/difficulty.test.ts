@@ -159,3 +159,30 @@ it("preserves the round's bat width throughout elimination morphs and all derive
     expect(state.arena.count).toBe(2);
   }
 });
+
+it("keeps all eight queued level-100 serves inside the walls and visibly separated at travel limits", () => {
+  for (const count of [2, 3, 4, 5, 6] as const)
+    for (const side of [0, 1]) {
+      let state = createMatch(7, count, 3, 7, levelDifficulty(100));
+      state.phase = "playing";
+      state.elapsed = 40;
+      for (const player of state.players) {
+        const home = fortress(player.id, state.arena);
+        player.angle = home.direction + home.angleLimits![side]!;
+      }
+      const options = { ...DEFAULT_OPTIONS, humanSeat: -1, serveTimeout: Infinity };
+      state = stepMatch(state, IDLE_INTENT, options, 0);
+      state = stepMatch(state, IDLE_INTENT, options, 0);
+      expect(state.balls).toHaveLength(8);
+      for (const ball of state.balls) {
+        for (const edge of polygonEdges(state.arena.vertices))
+          expect(dot(sub(ball.position, edge.start), edge.normal)).toBeGreaterThanOrEqual(
+            ARENA.ballRadius + 0.02,
+          );
+        for (const other of state.balls.filter((b) => b.id > ball.id))
+          expect(length(sub(ball.position, other.position))).toBeGreaterThanOrEqual(
+            ARENA.ballRadius * 2.7,
+          );
+      }
+    }
+});
