@@ -1,4 +1,4 @@
-import { SUPPLIES } from "./supplies";
+import { tacticalBotIntent } from "./bot-tactics";
 import { visibleTargets } from "./health";
 import { aimServeAt } from "./aim";
 import { ARENA, clampPaddleAngle, fortress } from "./arena";
@@ -8,8 +8,7 @@ import { alive, type BotDifficulty, type MatchState, type PlayerIntent } from ".
 import { add, angleDifference, angleOf, clamp, dot, length, scale, sub } from "./vector";
 
 export { BOT_PROFILES } from "./bot-level";
-import { BOT_PROFILES, botLevelProfile } from "./bot-level";
-import { planIntercept } from "./bot-planner";
+import { BOT_PROFILES } from "./bot-level";
 
 /** Limited linear prediction from the same visible ball state available to the player. */
 export function botIntent(
@@ -17,8 +16,8 @@ export function botIntent(
   seat: number,
   difficulty: BotDifficulty | number = "standard",
 ): PlayerIntent {
-  const profile =
-    typeof difficulty === "number" ? botLevelProfile(difficulty) : BOT_PROFILES[difficulty];
+  if (typeof difficulty === "number") return tacticalBotIntent(state, seat, difficulty);
+  const profile = BOT_PROFILES[difficulty];
   const bot = state.bots[seat];
   const player = state.players[seat];
   if (!bot || !player || !alive(player))
@@ -41,24 +40,13 @@ export function botIntent(
       const targets = visibleTargets(
         state.players.filter((other) => other.id !== seat && alive(other)),
       );
-      const supply =
-        typeof difficulty === "number" &&
-        difficulty >= 85 &&
-        player.health.filter(Boolean).length < 4
-          ? state.supplies.find((drop) => drop.age >= SUPPLIES.fall)
-          : undefined;
-      bot.serveTarget =
-        supply?.position ?? targets[Math.floor(sample(state) * targets.length)] ?? null;
+      bot.serveTarget = targets[Math.floor(sample(state) * targets.length)] ?? null;
     }
     if (bot.serveTarget) bot.targetAngle = aimServeAt(seat, bot.serveTarget, state.arena);
   } else {
     bot.serveTarget = null;
   }
   if (ball?.phase === "active" && state.elapsed >= bot.reactionAt) {
-    const planned =
-      typeof difficulty === "number" && difficulty >= 85
-        ? planIntercept(state, seat, profile.horizon)
-        : null;
     const base = fortress(seat, state.arena);
     const collision = sweepCircle(
       ball.position,
@@ -67,23 +55,18 @@ export function botIntent(
       ARENA.railRadius + ARENA.ballRadius + ARENA.paddleThickness / 2,
       profile.horizon,
     );
-    const forecast =
-      planned?.point ??
-      add(ball.position, scale(ball.velocity, collision?.time ?? profile.horizon));
+    const forecast = add(ball.position, scale(ball.velocity, collision?.time ?? profile.horizon));
     const contactAngle = angleOf(sub(forecast, base.anchor));
     const targets = visibleTargets(
       state.players.filter((other) => other.id !== seat && alive(other)),
     );
-    const target =
-      typeof difficulty === "number" && difficulty >= 85
-        ? targets.toSorted((a, b) => length(sub(a, forecast)) - length(sub(b, forecast)))[0]
-        : targets[Math.floor(sample(state) * targets.length)];
+    const target = targets[Math.floor(sample(state) * targets.length)];
     const desiredAngle = target ? angleOf(sub(target, forecast)) : base.direction;
     const aimOffset = clamp(angleDifference(desiredAngle, contactAngle) / 0.85, -0.8, 0.8);
     const error = (sample(state) - 0.5) * profile.error;
     bot.targetAngle = clampPaddleAngle(
       seat,
-      contactAngle - aimOffset * ARENA.paddleHalfAngle * (planned ? 0.25 : 1) + error,
+      contactAngle - aimOffset * ARENA.paddleHalfAngle + error,
       state.arena,
     );
     bot.reactionAt = state.elapsed + profile.reaction + sample(state) * profile.jitter;

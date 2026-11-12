@@ -28,6 +28,14 @@ export interface BotState {
   reactionAt: number;
   serveDelay: number;
   serveTarget: Vec2 | null;
+  stroke?: {
+    ballId: number;
+    angle: number;
+    contactAngle: number;
+    swipe: number;
+    contactAt: number;
+    plannedAt: number;
+  };
 }
 export interface SupplyDrop {
   id: number;

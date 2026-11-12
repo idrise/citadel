@@ -10,10 +10,9 @@ export function App() {
     loadPreferences(window.matchMedia("(prefers-reduced-motion: reduce)").matches),
   );
   const [progress, setProgress] = useState(loadProgress);
-  const [seed, setSeed] = useState(roundSeed);
+  const [seed] = useState(roundSeed);
   const [count, setCount] = useState<PlayerCount>(initial.count);
   const [humanSeat, setHumanSeat] = useState(initial.humanSeat);
-  const [round, setRound] = useState(0);
   const [settings, setSettings] = useState(initial.settings);
   useEffect(() => {
     savePreferences({ count, humanSeat, settings });
@@ -25,7 +24,6 @@ export function App() {
     <main className="game-root">
       <h1 className="sr-only">Neon Citadel</h1>
       <GamePanel
-        key={`${seed}-${round}`}
         level={levelFor(progress, count)}
         onComplete={(result) => setProgress((current) => recordResult(current, result))}
         count={count}
@@ -37,8 +35,6 @@ export function App() {
         humanSeat={humanSeat}
         settings={settings}
         onSettings={setSettings}
-        onRestart={() => setRound((value) => value + 1)}
-        onRematch={() => setSeed((value) => (value + 1) >>> 0)}
         onSeat={setHumanSeat}
       />
     </main>

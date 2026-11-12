@@ -25,7 +25,10 @@ test("fresh six-seat desktop round exports an honest local result and resets on 
   await page.keyboard.down("KeyA");
   await page.clock.runFor(100);
   await page.keyboard.up("KeyA");
-  const rematch = page.getByRole("button", { name: "Rematch", exact: true });
+  const rematch = page.getByRole("button", {
+    name: /^(Next level|Retry|Play again)$/,
+    exact: true,
+  });
   for (let seconds = 0; seconds < 240 && !(await rematch.isVisible()); seconds += 2)
     await page.clock.runFor(2000);
   await expect(rematch).toBeVisible();

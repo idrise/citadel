@@ -110,14 +110,17 @@ for (const count of [2, 3, 4, 5, 6]) {
     for (
       let elapsed = 0;
       elapsed < 240 &&
-      !(await page.getByRole("button", { name: "Rematch", exact: true }).isVisible());
+      !(await page
+        .getByRole("button", { name: /^(Next level|Retry|Play again)$/, exact: true })
+        .isVisible());
       elapsed += 10
     )
       await page.clock.runFor(10000);
     await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("finished");
     await page.screenshot({ path: testInfo.outputPath(`result-${count}.png`) });
-    await page.getByRole("button", { name: "Rematch", exact: true }).tap();
-    await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: /^(Next level|Retry|Play again)$/, exact: true }).tap();
+    await expect(page.getByRole("button", { name: "Start", exact: true })).toBeHidden();
+    await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("countdown");
     await expect(page.getByLabel("Player count", { exact: true })).toHaveText(String(count));
     expect(errors).toEqual([]);
   });

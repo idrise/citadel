@@ -1,4 +1,4 @@
-import { VICTORY_HOLD_SECONDS, VICTORY_MORPH_SECONDS } from "./victory-morph";
+export const RESULT_ACTION_SECONDS = 0.9;
 import {
   BoxGeometry,
   Box3,
@@ -87,7 +87,19 @@ export function createSceneMenu(camera: PerspectiveCamera) {
     lettering.position.z = 0.15;
     item.add(body, lettering);
     group.add(item);
-    return { action, label, item, body, material, glow, width, height, disabled: false };
+    return {
+      action,
+      label: String(label),
+      lettering,
+      text: String(text),
+      item,
+      body,
+      material,
+      glow,
+      width,
+      height,
+      disabled: false,
+    };
   });
   let count = 4,
     hover: SceneAction | null = null;
@@ -107,9 +119,7 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       group.scale.setScalar(Math.min(0.78, (halfHeight * camera.aspect * 1.7) / 16));
       const compact = state.touch || width < 700 || height < 500;
       const result = state.mode !== "title",
-        reveal = state.reduced
-          ? 1
-          : Math.max(0, Math.min(1, (state.elapsed - VICTORY_MORPH_SECONDS) / 0.6));
+        reveal = state.reduced ? 1 : Math.max(0, Math.min(1, (state.elapsed - 0.15) / 0.6));
       title.visible = !result;
       victory.visible = state.mode === "victory" && reveal > 0;
       defeat.visible = state.mode === "defeat" && reveal > 0;
@@ -124,8 +134,21 @@ export function createSceneMenu(camera: PerspectiveCamera) {
         group.add(countText);
         count = state.count;
       }
-      const available = state.elapsed >= VICTORY_HOLD_SECONDS;
+      const available = state.elapsed >= RESULT_ACTION_SECONDS;
       for (const button of controls) {
+        if (button.action === "rematch") {
+          const next = state.mode === "victory" && (state.level ?? 1) < 100;
+          const text = next ? "NEXT" : state.mode === "defeat" ? "RETRY" : "AGAIN";
+          button.label = next ? "Next level" : state.mode === "defeat" ? "Retry" : "Play again";
+          if (text !== button.text) {
+            button.item.remove(button.lettering);
+            disposeScene(button.lettering);
+            button.lettering = createNeonLettering(text, 0.45, 0x96eaff);
+            button.lettering.position.z = 0.15;
+            button.item.add(button.lettering);
+            button.text = text;
+          }
+        }
         button.item.visible = result
           ? (button.action === "rematch" || button.action === "options") && available
           : button.action !== "rematch";

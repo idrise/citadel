@@ -28,27 +28,10 @@ test("introduces the level before play, pauses the introduction and never rates 
   expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).rounds, key)).toBe(0);
 });
 
-test("a real second win advances the next level once and survives rematch and reload", async ({
+test("a first win advances 1 to 2 and one click starts the next round without recreating the canvas", async ({
   page,
-}) => {
+}, testInfo) => {
   test.setTimeout(90000);
-  await page.addInitScript(
-    ({ key, now }) => {
-      if (!localStorage.getItem(key))
-        localStorage.setItem(
-          key,
-          JSON.stringify({
-            version: 1,
-            level: 1,
-            count: 2,
-            best: 1,
-            rounds: 1,
-            recent: [{ level: 1, count: 2, place: 1, at: now }],
-          }),
-        );
-    },
-    { key, now: Date.now() },
-  );
   await openGame(page);
   await choosePlayers(page, 2);
   await openSettings(page);
@@ -63,12 +46,22 @@ test("a real second win advances the next level once and survives rematch and re
     await page.clock.runFor(1000);
   await expect(page.getByLabel("Round winner", { exact: true })).toHaveText("You win");
   const progress = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
-  expect(progress.rounds).toBe(2);
-  expect(progress.level).toBeGreaterThan(1);
+  expect(progress.rounds).toBe(1);
+  expect(progress.level).toBe(2);
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText("1");
   await page.clock.runFor(6000);
-  expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).rounds, key)).toBe(2);
-  await page.getByRole("button", { name: "Rematch", exact: true }).click();
+  expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).rounds, key)).toBe(1);
+  await page.screenshot({ path: testInfo.outputPath("level-1-win.png") });
+  await page.locator("canvas").evaluate((canvas) => canvas.setAttribute("data-continued", "same"));
+  await page.getByRole("button", { name: "Next level", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeHidden();
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("countdown");
+  await expect(page.getByLabel("Level introduction", { exact: true })).toHaveText("Level 2");
+  await expect(page.locator("canvas")).toHaveAttribute("data-continued", "same");
+  await page.screenshot({ path: testInfo.outputPath("level-2-start.png") });
+  await expect.poll(() => page.evaluate(() => Boolean(document.pointerLockElement))).toBe(true);
+  await page.clock.runFor(1600);
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(progress.level));
   await page.reload();
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(progress.level));

@@ -76,7 +76,10 @@ test("a real human win keeps the arena alive for neon fireworks and scene rematc
   await expect.poll(() => page.evaluate(() => document.pointerLockElement === null)).toBe(true);
   expect(owners.has("Coral")).toBe(true);
   expect(owners.has("Amber")).toBe(true);
-  const rematch = page.getByRole("button", { name: "Rematch", exact: true });
+  const rematch = page.getByRole("button", {
+    name: /^(Next level|Retry|Play again)$/,
+    exact: true,
+  });
   await expect(rematch).toBeHidden();
   const stats = await page.locator(".diagnostics").textContent();
   const before = await page.screenshot({ path: testInfo.outputPath("victory-early.png") });
@@ -84,10 +87,10 @@ test("a real human win keeps the arena alive for neon fireworks and scene rematc
   const after = await page.screenshot({ path: testInfo.outputPath("victory-fireworks.png") });
   expect(before.equals(after)).toBe(false);
   expect(await page.locator(".diagnostics").textContent()).toBe(stats);
-  await expect(rematch).toBeHidden();
+  await expect(rematch).toBeVisible();
   await page.clock.runFor(2100);
   await page.screenshot({ path: testInfo.outputPath("victory-star-hold.png") });
-  await expect(rematch).toBeHidden();
+  await expect(rematch).toBeVisible();
   expect(await page.locator(".diagnostics").textContent()).toBe(stats);
   await page.clock.runFor(1400);
   await expect(rematch).toBeVisible();
@@ -102,7 +105,8 @@ test("a real human win keeps the arena alive for neon fireworks and scene rematc
   await page.clock.runFor(50);
   await page.screenshot({ path: testInfo.outputPath("victory-readable-high.png") });
   await rematch.click();
-  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeHidden();
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("countdown");
   await expect(page.getByLabel("Player count", { exact: true })).toHaveText("2");
   expect(errors).toEqual([]);
 });

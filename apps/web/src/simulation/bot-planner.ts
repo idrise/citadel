@@ -6,7 +6,12 @@ import { add, angleDifference, angleOf, dot, length, scale, sub, type Vec2 } fro
 
 /** Bounded visible-state forecast: curve, wall banks and intervening actors.
  * No future inputs, RNG writes or full-match search. At most 30 steps per ball. */
-export function planIntercept(state: MatchState, seat: number, horizon: number) {
+export function planIntercept(
+  state: MatchState,
+  seat: number,
+  horizon: number,
+  speed: number = ARENA.pointerPaddleSpeed,
+) {
   const home = fortress(seat, state.arena),
     player = state.players[seat]!;
   let best: { point: Vec2; velocity: Vec2; time: number; angle: number; ballId: number } | null =
@@ -70,7 +75,7 @@ export function planIntercept(state: MatchState, seat: number, horizon: number) 
           time = elapsed + rail.time;
         const angle = angleOf(sub(point, home.anchor));
         // Prioritise the earliest reachable catch; deterministic ball ID resolves ties.
-        const reach = Math.abs(angleDifference(angle, player.angle)) / ARENA.pointerPaddleSpeed;
+        const reach = Math.abs(angleDifference(angle, player.angle)) / speed;
         if (
           reach <= time + 0.08 &&
           (!best || time < best.time || (time === best.time && source.id < best.ballId))

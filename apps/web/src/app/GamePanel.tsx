@@ -14,8 +14,6 @@ export function GamePanel({
   count,
   onCount,
   seed,
-  onRematch,
-  onRestart,
   onSeat,
   settings,
   onSettings,
@@ -28,8 +26,6 @@ export function GamePanel({
   count: PlayerCount;
   onCount: (count: PlayerCount) => void;
   seed: number;
-  onRematch: () => void;
-  onRestart: () => void;
   settings: GameSettings;
   onSettings: (value: GameSettings) => void;
   onSeat: (seat: number) => void;
@@ -38,11 +34,12 @@ export function GamePanel({
   const session = useRef<GameSession | null>(null);
   const [unavailable, setUnavailable] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const callbacks = useRef({ count, onCount, onRematch, onComplete });
-  callbacks.current = { count, onCount, onRematch, onComplete };
+  const callbacks = useRef({ count, onCount, level, onComplete });
+  callbacks.current = { count, onCount, level, onComplete };
   const initialConfig = useRef({ seed, humanSeat, count, level });
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => ({
     state: createMatch(seed, count),
+    seed,
     humanSeat,
     level,
     paused: true,
@@ -80,7 +77,7 @@ export function GamePanel({
             callbacks.current.onCount(Math.max(2, callbacks.current.count - 1) as PlayerCount);
           if (action === "increase")
             callbacks.current.onCount(Math.min(6, callbacks.current.count + 1) as PlayerCount);
-          if (action === "rematch") callbacks.current.onRematch();
+          if (action === "rematch") session.current?.nextRound(callbacks.current.level);
         },
         level,
         (result) => callbacks.current.onComplete(result),
@@ -138,7 +135,7 @@ export function GamePanel({
             }}
             state={snapshot.state}
             totals={snapshot.totals}
-            seed={seed}
+            seed={snapshot.seed}
             initialSettings={snapshot.initialSettings ?? settings}
             level={snapshot.level}
             humanSeat={humanSeat}
@@ -150,7 +147,12 @@ export function GamePanel({
               setSettingsOpen(false);
               onSeat(value);
             }}
-            onRestart={onRestart}
+            onRestart={() => {
+              setSettingsOpen(false);
+              if (!snapshot.state.players[humanSeat]!.health.some(Boolean))
+                session.current?.nextRound(level);
+              else session.current?.restart();
+            }}
             onResume={() => {
               setSettingsOpen(false);
               session.current?.resume();

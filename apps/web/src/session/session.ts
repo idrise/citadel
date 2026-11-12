@@ -17,6 +17,7 @@ import type { SceneAction } from "../rendering/scene-menu";
 
 export interface SessionSnapshot {
   state: MatchState;
+  seed: number;
   humanSeat: number;
   level: number;
   paused: boolean;
@@ -39,7 +40,7 @@ export function createSession(
   level = 1,
   onComplete: (result: LevelResult) => void = () => {},
 ) {
-  const supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
+  let supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
   let state = createMatch(seed, count, ARENA.startingPieces, supplySeed);
   let resultFor = createProgressRecorder(humanSeat, level);
   const viewport = createViewport(container, humanSeat, state.arena, (action) => {
@@ -69,6 +70,7 @@ export function createSession(
   const report = () =>
     onSnapshot({
       state,
+      seed,
       humanSeat,
       level,
       paused,
@@ -226,6 +228,38 @@ export function createSession(
     if (touchMode) touch.capture();
     else input.capture();
   };
+  function resetRound(
+    nextCount: PlayerCount,
+    nextSeat: number,
+    nextLevel: number,
+    animate: boolean,
+  ) {
+    supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
+    const nextState = createMatch(seed, nextCount, ARENA.startingPieces, supplySeed);
+    viewport.transitionTitle(nextState, nextSeat, animate);
+    input.dispose();
+    touch.dispose();
+    music.dispose();
+    count = nextCount;
+    humanSeat = nextSeat;
+    level = nextLevel;
+    state = nextState;
+    started = false;
+    paused = true;
+    menuSuppressed = false;
+    endingTime = 0;
+    initialSettings = null;
+    notice = "Defend your three containers. Last fortress standing wins.";
+    observer = createRoundObserver(count);
+    resultFor = createProgressRecorder(humanSeat, level);
+    input = makeInput();
+    touch = makeTouch();
+    music = createGameMusic(seed, humanSeat);
+    music.configure(settings);
+    clock.reset();
+    present([], 0);
+    report();
+  }
   return {
     start,
     pause: () => setPaused(true),
@@ -244,32 +278,17 @@ export function createSession(
         else input.capture();
       }
     },
+    restart() {
+      resetRound(count, humanSeat, level, false);
+    },
+    nextRound(nextLevel: number) {
+      seed = (seed + 1) >>> 0;
+      resetRound(count, humanSeat, nextLevel, false);
+      start();
+    },
     configureRoster(nextCount: PlayerCount, nextSeat: number, nextLevel: number) {
       if (nextCount === count && nextSeat === humanSeat) return false;
-      const animate = !started;
-      const nextState = createMatch(seed, nextCount, ARENA.startingPieces, supplySeed);
-      viewport.transitionTitle(nextState, nextSeat, animate);
-      input.dispose();
-      touch.dispose();
-      music.dispose();
-      count = nextCount;
-      humanSeat = nextSeat;
-      level = nextLevel;
-      state = nextState;
-      started = false;
-      paused = true;
-      menuSuppressed = false;
-      endingTime = 0;
-      initialSettings = null;
-      observer = createRoundObserver(count);
-      resultFor = createProgressRecorder(humanSeat, level);
-      input = makeInput();
-      touch = makeTouch();
-      music = createGameMusic(seed, humanSeat);
-      music.configure(settings);
-      clock.reset();
-      present([], 0);
-      report();
+      resetRound(nextCount, nextSeat, nextLevel, !started);
       return true;
     },
     configure(next: GameSettings) {

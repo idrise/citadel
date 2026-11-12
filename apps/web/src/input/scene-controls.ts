@@ -39,6 +39,7 @@ export function createSceneControls(
         const item = controls.find((control) => control.action === action);
         button.hidden = !item;
         if (!item) continue;
+        button.setAttribute("aria-label", item.label);
         button.disabled = item.disabled;
         Object.assign(button.style, {
           left: `${Math.round(item.left)}px`,

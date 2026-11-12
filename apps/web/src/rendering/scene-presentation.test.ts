@@ -43,7 +43,7 @@ it("projects accessible scene controls, bounds player count, and waits before of
   expect(
     menu.update({ ...state, count: 6 }, 1280, 900).find((c) => c.action === "increase")!.disabled,
   ).toBe(true);
-  expect(menu.update({ ...state, mode: "victory", elapsed: 1 }, 1280, 900)).toEqual([]);
+  expect(menu.update({ ...state, mode: "victory", elapsed: 0.8 }, 1280, 900)).toEqual([]);
   expect(
     menu.update({ ...state, mode: "victory", elapsed: 5 }, 1280, 900).map((c) => c.action),
   ).toEqual(["rematch", "options"]);
@@ -151,6 +151,23 @@ it("gives phone title and result controls finger-sized targets in portrait and l
         expect(control.top + control.height).toBeLessThanOrEqual(height! - 12);
       }
     }
+  }
+  disposeScene(camera);
+});
+
+it("offers the appropriate direct continuation after a brief result beat", () => {
+  const camera = new PerspectiveCamera(44, 1, 0.1, 180),
+    menu = createSceneMenu(camera);
+  for (const [mode, level, label] of [
+    ["victory", 1, "Next level"],
+    ["defeat", 45, "Retry"],
+    ["victory", 100, "Play again"],
+  ] as const) {
+    const state = { mode, level, count: 4, elapsed: 0.89, reduced: false };
+    expect(menu.update(state, 1280, 900)).toEqual([]);
+    expect(
+      menu.update({ ...state, elapsed: 0.9 }, 1280, 900).find((c) => c.action === "rematch")?.label,
+    ).toBe(label);
   }
   disposeScene(camera);
 });

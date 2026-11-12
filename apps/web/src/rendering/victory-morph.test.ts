@@ -104,12 +104,14 @@ it.each([2, 3, 4, 5, 6] as const)(
   },
 );
 
-it("keeps the star bright and rematch unavailable during the victory hold, including reduced mode", () => {
+it("keeps the star bright while allowing the player to continue during the victory hold, including reduced mode", () => {
   for (const mode of ["victory", "defeat"] as const)
     for (const reduced of [false, true]) {
       const overlay = createMenuOverlay();
       for (const elapsed of [0, VICTORY_MORPH_SECONDS, VICTORY_HOLD_SECONDS - 0.01]) {
-        expect(overlay.update({ mode, elapsed, count: 4, reduced }, 1, 1280, 900)).toEqual([]);
+        expect(
+          overlay.update({ mode, elapsed, count: 4, reduced }, 1, 1280, 900).map((c) => c.action),
+        ).toEqual(elapsed < 0.9 ? [] : ["rematch", "options"]);
         expect(overlay.backgroundGain).toBe(1);
       }
       expect(

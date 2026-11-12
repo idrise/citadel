@@ -15,11 +15,11 @@ import {
   WEEK_MS,
 } from "./progression";
 
-it("starts easy, requires consistent wins, reaches the ceiling quickly and comes back down", () => {
+it("advances on every win, accelerates consistent wins, reaches the ceiling quickly and comes back down", () => {
   let progress = freshProgress();
   expect(levelFor(progress, 6, 0)).toBe(1);
   progress = recordResult(progress, { level: 1, count: 4, place: 1, at: 0 });
-  expect(progress.level).toBe(1);
+  expect(progress.level).toBe(2);
   for (let i = 0; i < 7; i++)
     progress = recordResult(progress, { level: progress.level, count: 4, place: 1, at: i + 1 });
   expect(progress.level).toBe(100);
@@ -158,4 +158,24 @@ it("saves a known personal loss immediately while remaining bots continue, witho
   state.phase = "finished";
   state.winner = 2;
   expect(recorder(state, 300)).toBeNull();
+});
+
+it("always advances a win, even after losses or at a roster-adjusted level, and caps at 100", () => {
+  for (const level of [1, 25, 70, 99, 100]) {
+    const previous = {
+      ...freshProgress(),
+      level,
+      rounds: 1,
+      recent: [{ level, count: 4 as const, place: 4, at: 0 }],
+    };
+    expect(recordResult(previous, { level, count: 4, place: 1, at: 1 }).level).toBe(
+      Math.min(100, level + 1),
+    );
+  }
+});
+
+it("winning level one always leads to two, including progress saved by an older build", () => {
+  const previous = recordResult(freshProgress(), { level: 1, count: 2, place: 1, at: 0 });
+  const legacy = { ...previous, level: 1 };
+  expect(recordResult(legacy, { level: 1, count: 2, place: 1, at: 1 }).level).toBe(2);
 });

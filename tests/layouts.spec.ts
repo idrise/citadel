@@ -23,6 +23,7 @@ for (const [count, rounds] of [
     await openSettings(page);
     let sawTransition = false;
     for (let round = 0; round < rounds; round++) {
+      if (round > 0) await pause(page);
       const seat = round === 0 ? count - 1 : round % count;
       await openSettings(page);
       await page.getByLabel("Your fortress", { exact: true }).selectOption(String(seat));
@@ -42,7 +43,10 @@ for (const [count, rounds] of [
       await page.clock.runFor(300);
       expect(await page.locator(".diagnostics").textContent()).toBe(stats);
       await page.getByRole("button", { name: "Resume", exact: true }).click();
-      const rematch = page.getByRole("button", { name: "Rematch", exact: true });
+      const rematch = page.getByRole("button", {
+        name: /^(Next level|Retry|Play again)$/,
+        exact: true,
+      });
       for (let elapsed = 0; elapsed < 240 && !(await rematch.isVisible()); elapsed += 2) {
         await page.clock.runFor(2000);
         if ((await page.getByLabel("Arena transition", { exact: true }).textContent()) === "moving")
@@ -56,7 +60,8 @@ for (const [count, rounds] of [
       await expect(page.getByLabel("Survivors", { exact: true })).toHaveText("1");
       await page.getByRole("button", { name: "Resume", exact: true }).click();
       await rematch.click();
-      await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Start", exact: true })).toBeHidden();
+      await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("countdown");
       await expect(page.getByLabel("Player count", { exact: true })).toHaveText(String(count));
       await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("1");
     }

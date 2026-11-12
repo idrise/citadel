@@ -45,7 +45,10 @@ test("a complete seeded round reaches results and rematches without state edits"
   await page.clock.runFor(33000);
   await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("3");
   await page.screenshot({ path: testInfo.outputPath("perspective-three-balls.png") });
-  const rematch = page.getByRole("button", { name: "Rematch", exact: true });
+  const rematch = page.getByRole("button", {
+    name: /^(Next level|Retry|Play again)$/,
+    exact: true,
+  });
   for (let elapsed = 33; elapsed < 240 && !(await rematch.isVisible()); elapsed += 15)
     await page.clock.runFor(15000);
   await expect(rematch).toBeVisible();
@@ -53,7 +56,8 @@ test("a complete seeded round reaches results and rematches without state edits"
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("finished");
   await expect.poll(() => page.evaluate(() => document.pointerLockElement === null)).toBe(true);
   await rematch.click();
-  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeHidden();
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("countdown");
   expect(errors).toEqual([]);
 });
 

@@ -99,9 +99,11 @@ export function recordResult(progress: PlayerProgress, result: LevelResult): Pla
   const consistent = recent.slice(-3).filter((r) => r.place === 1).length >= 2;
   const level =
     result.place === 1
-      ? consistent
-        ? clamp(desired, result.level, result.level + step)
-        : result.level
+      ? result.level === 1
+        ? 2
+        : consistent
+          ? clamp(desired, result.level + 1, result.level + step)
+          : result.level + 1
       : clamp(desired, result.level - step, result.level);
   return {
     level: clamp(level, 1, 100),
