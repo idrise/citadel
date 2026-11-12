@@ -464,6 +464,24 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November returning-melody amendment: the owner likes the new musical variety
+but requests regular returns to the original tune, with small per-bar instrument,
+effect and harmony changes. The original call/answer now opens the first groove
+and returns for two bars in each eight-bar phrase, with original notes/rhythm and
+canonical harmony shared across every round variant. Newer melodies remain between
+returns. Bounded filter, echo, pan and articulation changes colour each bar;
+sparse quiet one-ball harmony and bell/answer/FM accents support the tune while
+ball tiers retain their fuller orchestration. The staged hats/snare/kick opening,
+build/drop timing, live feedback and simulation/audio-clock separation remain.
+See `docs/MOTIF_RETURN_REVIEW.md` and `docs/reviews/music/motif-return/` for actual
+graph auditions and validation. This is an explicit audio follow-up, not approval
+of a later milestone or public deployment. Local implementation: `a18235c`.
+Validation: clean `vp check`, 449 unit tests / 72 files, root and Pages production
+builds, 3/3 root browser audio checks and 5/5 Pages browser audio/Retry checks.
+Two actual-graph auditions have nonzero output, peaks below 0.41 and zero browser
+errors. The existing ~967kB main-chunk advisory remains; subjective listening and
+physical-device review remain open. M09 awaits review.
+
 12 November scene-Retry / triangle-gap correction: the owner rejected the visible
 React retry card and clarified that the triangle bats still almost sealed the
 walls. The earlier inset widened travel but its 0.015-unit fitting margin let the
@@ -873,4 +891,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

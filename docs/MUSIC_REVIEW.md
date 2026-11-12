@@ -1,3 +1,5 @@
+> Latest musical follow-up: [returning original melody and subtle bar colour](MOTIF_RETURN_REVIEW.md).
+
 # Music detour — play builds the arrangement
 
 Status: **Accepted for now**, 11 November 2026: the user requested M05. This revision follows the request

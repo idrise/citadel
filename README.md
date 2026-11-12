@@ -64,6 +64,8 @@ small corner controls for screenshots. Settings offers 0.5–2× mouse sensitivi
 and Neither / Preview only / Pressure slowdown / Both assistance modes. Settings
 are saved locally across refresh, Restart, Rematch and seat changes. Restart repeats
 the same opening; Rematch starts a new seeded round.
+The original music theme returns regularly between variations, with quiet harmony
+and changing bar colours; [audition the latest score](docs/MOTIF_RETURN_REVIEW.md).
 The scene fills the viewport, with no visible HUD during active play.
 Mobile uses a steeper portrait camera, a shorter steering drag and a bounded GPU
 budget with bloom and floor reflections. Interrupted audio offers **Enable sound**.

@@ -1,0 +1,27 @@
+{
+  "reports": [
+    {
+      "name": "one-ball-home-and-departure",
+      "duration": 16,
+      "balls": 1,
+      "startStep": 64,
+      "peak": 0.20830665528774261,
+      "rms": 0.019697943101810927,
+      "channels": 2,
+      "bpm": 136,
+      "sections": []
+    },
+    {
+      "name": "layered-drop-and-return",
+      "duration": 20,
+      "balls": 3,
+      "startStep": 256,
+      "peak": 0.4088408350944519,
+      "rms": 0.03139844592723549,
+      "channels": 2,
+      "bpm": 136,
+      "sections": []
+    }
+  ],
+  "errors": []
+}
