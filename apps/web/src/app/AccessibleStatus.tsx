@@ -20,6 +20,13 @@ export function AccessibleStatus({
         Relative mouse steers. Click or Space serves. A/D or arrows also steer. Escape releases the
         mouse and pauses. On touch screens, drag left or right to steer and tap to serve.
       </p>
+      {snapshot.started &&
+        state.phase !== "finished" &&
+        !state.players[humanSeat]!.health.some(Boolean) && (
+          <output aria-label="Elimination result" aria-live="polite">
+            Fortress lost. Watch or retry.
+          </output>
+        )}
       <output aria-label="Progress update" aria-live="polite">
         {snapshot.demotion
           ? `Demoted to level ${snapshot.demotion.to} after three consecutive losses.`

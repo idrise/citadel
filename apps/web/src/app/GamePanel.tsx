@@ -38,7 +38,6 @@ export function GamePanel({
   const session = useRef<GameSession | null>(null);
   const [unavailable, setUnavailable] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [watchingSeed, setWatchingSeed] = useState<number | null>(null);
   const callbacks = useRef({ count, onCount, level, onComplete });
   callbacks.current = { count, onCount, level, onComplete };
   const initialConfig = useRef({ seed, humanSeat, count, level });
@@ -83,7 +82,8 @@ export function GamePanel({
             callbacks.current.onCount(Math.max(2, callbacks.current.count - 1) as PlayerCount);
           if (action === "increase")
             callbacks.current.onCount(Math.min(6, callbacks.current.count + 1) as PlayerCount);
-          if (action === "rematch") session.current?.nextRound(callbacks.current.level);
+          if (action === "rematch" || action === "retry")
+            session.current?.nextRound(callbacks.current.level);
         },
         level,
         (result) => callbacks.current.onComplete(result),
@@ -134,27 +134,6 @@ export function GamePanel({
           </button>
         )}
       <AccessibleStatus snapshot={snapshot} humanSeat={snapshot.humanSeat} />
-      {snapshot.started &&
-        !snapshot.paused &&
-        snapshot.state.phase !== "finished" &&
-        !snapshot.state.players[snapshot.humanSeat]!.health.some(Boolean) && (
-          <div className="elimination-actions" role="group" aria-label="Eliminated fortress">
-            {watchingSeed !== snapshot.seed && (
-              <>
-                <p role="status">
-                  Fortress lost.
-                  {snapshot.demotion ? ` Demoted to level ${snapshot.demotion.to}.` : ""}
-                </p>
-                <button className="secondary" onClick={() => setWatchingSeed(snapshot.seed)}>
-                  Watch
-                </button>
-              </>
-            )}
-            <button className="primary" onClick={() => session.current?.nextRound(level)}>
-              Retry level {level}
-            </button>
-          </div>
-        )}
       {!snapshot.started && !unavailable && (
         <p className="touch-hint">Drag to steer · Tap to serve</p>
       )}

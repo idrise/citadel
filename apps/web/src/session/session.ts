@@ -48,7 +48,11 @@ export function createSession(
   let resultFor = createProgressRecorder(humanSeat, level);
   const viewport = createViewport(container, humanSeat, state.arena, (action) => {
     if (action === "start") start();
-    else {
+    else if (action === "watch") {
+      watching = true;
+      present([], 0);
+      report();
+    } else {
       if (action === "options") {
         menuSuppressed = true;
         setPaused(true);
@@ -60,6 +64,8 @@ export function createSession(
   let observer = createRoundObserver(count);
   let paused = true;
   let started = false;
+  let watching = false;
+  let continuationLevel = level;
   let endingTime = 0;
   let menuSuppressed = false;
   let notice = "Defend your three containers. Last fortress standing wins.";
@@ -201,6 +207,9 @@ export function createSession(
       humanSeat,
       ballOwners: observer.owners(),
       menu: {
+        ...(started && !paused && !menuSuppressed && state.phase === "playing" && !alive(human)
+          ? { spectator: { watching, level: continuationLevel, demotion } }
+          : {}),
         touch: touchMode,
         mode: menuSuppressed
           ? "hidden"
@@ -266,6 +275,8 @@ export function createSession(
     started = false;
     paused = true;
     menuSuppressed = false;
+    watching = false;
+    continuationLevel = nextLevel;
     endingTime = 0;
     initialSettings = null;
     notice = "Defend your three containers. Last fortress standing wins.";
@@ -307,6 +318,7 @@ export function createSession(
       start();
     },
     configureRoster(nextCount: PlayerCount, nextSeat: number, nextLevel: number) {
+      continuationLevel = nextLevel;
       if (nextCount === count && nextSeat === humanSeat) return false;
       resetRound(nextCount, nextSeat, nextLevel, !started);
       return true;

@@ -17,6 +17,8 @@ export function createSceneControls(
     ["increase", "Increase players"],
     ["options", "Settings"],
     ["rematch", "Rematch"],
+    ["retry", "Retry"],
+    ["watch", "Watch"],
   ] as const) {
     const button = document.createElement("button");
     button.setAttribute("aria-label", label);

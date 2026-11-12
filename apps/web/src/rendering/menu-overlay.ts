@@ -1,3 +1,4 @@
+import { createSpectatorMenu } from "./scene-spectator";
 import { VICTORY_HOLD_SECONDS } from "./victory-morph";
 import {
   AmbientLight,
@@ -24,6 +25,7 @@ export function createMenuOverlay() {
   light.position.set(3, 5, 8);
   scene.add(light);
   const menu = createSceneMenu(camera);
+  const spectator = createSpectatorMenu(camera);
   const dimmer = new ShaderPass({
     uniforms: { tDiffuse: { value: null }, gain: { value: 1 } },
     vertexShader:
@@ -49,7 +51,10 @@ export function createMenuOverlay() {
     scene,
     camera,
     dimmer,
-    hover: (action: SceneAction | null) => menu.hover(action),
+    hover: (action: SceneAction | null) => {
+      menu.hover(action);
+      spectator.hover(action);
+    },
     get visible() {
       return visible;
     },
@@ -75,7 +80,9 @@ export function createMenuOverlay() {
       dimmer.enabled = gain !== 1;
       veil.opacity = 1 - gain;
       const controls = menu.update(state, width, height);
-      return controls;
+      const liveControls = spectator.update(state.spectator, width, height);
+      visible ||= liveControls.length > 0;
+      return [...controls, ...liveControls];
     },
     renderDirect(renderer: WebGLRenderer) {
       const autoClear = renderer.autoClear;

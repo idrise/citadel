@@ -14,8 +14,16 @@ import { createFeatureEdges } from "./feature-edges";
 import { disposeScene } from "./dispose-scene";
 import { mobileMenuLayout } from "./mobile-menu-layout";
 
-export type SceneAction = "start" | "decrease" | "increase" | "options" | "rematch";
+export type SceneAction =
+  | "start"
+  | "decrease"
+  | "increase"
+  | "options"
+  | "rematch"
+  | "retry"
+  | "watch";
 export interface SceneMenuState {
+  spectator?: { watching: boolean; level: number; demotion?: Demotion | null };
   touch?: boolean;
   mode: "title" | "victory" | "defeat" | "hidden" | "level";
   level?: number;
