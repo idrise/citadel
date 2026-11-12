@@ -1,0 +1,27 @@
+{
+  "kind": "Staged incoming ball; normal level-100 bot movement, curve and pickup physics",
+  "checks": [
+    {
+      "count": 2,
+      "spin": 1.3903250782821872,
+      "collections": 1,
+      "health": 4,
+      "caps": 0
+    },
+    {
+      "count": 4,
+      "spin": 1.3903250782821877,
+      "collections": 1,
+      "health": 4,
+      "caps": 0
+    },
+    {
+      "count": 6,
+      "spin": 1.3903250782821879,
+      "collections": 1,
+      "health": 4,
+      "caps": 0
+    }
+  ],
+  "errors": []
+}

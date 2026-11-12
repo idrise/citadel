@@ -464,6 +464,21 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November fast-progression / bot-tactics follow-up: level-one wins now always
+advance to two, every later win advances at least one level, and sustained wins
+retain rapid adaptive calibration. NEXT / RETRY is available after a 0.9-second
+result beat and starts the next countdown directly on the same canvas, with the
+saved level, settings and input gesture preserved. Waiting still permits the full
+victory-star morph. Numeric bots aim serves and returns at available pickups and
+choose signed brushes through ordinary paddle/curve physics. See
+`docs/FAST_PROGRESSION_BOTS_REVIEW.md` for 2/4/6/mobile captures, curved-pickup video,
+370 unit tests, 49 full native root browser checks, a final progression recheck,
+nine Pages-path checks and bounded bot-only samples. Level-100 bot-only endgames
+remain long; the M06 human pacing gate and physical phone/Safari validation remain
+open. M09 awaits review. Local implementation checkpoint: `2b74c87`. No push or
+deployment is authorised.
+
+
 12 November pickup/title follow-up: the owner reported repeated pickup sites,
 collected containers intersecting existing health, and snapping player-count
 previews. Ordinary attempts now have fresh independent pickup seeds, collection
@@ -732,4 +747,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/M09_TOUCH_REVIEW.md` and `docs/PROGRESSION_AND_SUPPLIES_REVIEW.md`, especially phone readability, fast pointer response, saved level adjustment and collectible containers. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/M09_TOUCH_REVIEW.md`, `docs/PROGRESSION_AND_SUPPLIES_REVIEW.md` and `docs/FAST_PROGRESSION_BOTS_REVIEW.md`, especially phone readability, pointer response, direct next-level flow and tactical pickup/curve play. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

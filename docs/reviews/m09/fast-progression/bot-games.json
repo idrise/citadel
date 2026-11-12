@@ -1,0 +1,104 @@
+{
+  "kind": "Seed 2026; three initial containers; bot-only; bounded 122 seconds including countdown",
+  "games": [
+    {
+      "level": 1,
+      "count": 2,
+      "elapsed": 17.033333333333008,
+      "finished": true,
+      "winner": 0,
+      "curves": 0,
+      "collections": 2,
+      "collisionCaps": 0,
+      "computeMilliseconds": 41.027125
+    },
+    {
+      "level": 1,
+      "count": 4,
+      "elapsed": 49.13333333333119,
+      "finished": true,
+      "winner": 2,
+      "curves": 20,
+      "collections": 6,
+      "collisionCaps": 0,
+      "computeMilliseconds": 214.699292
+    },
+    {
+      "level": 1,
+      "count": 6,
+      "elapsed": 55.59166666666415,
+      "finished": true,
+      "winner": 4,
+      "curves": 20,
+      "collections": 7,
+      "collisionCaps": 0,
+      "computeMilliseconds": 425.799458
+    },
+    {
+      "level": 50,
+      "count": 2,
+      "elapsed": 28.591666666665684,
+      "finished": true,
+      "winner": 1,
+      "curves": 14,
+      "collections": 3,
+      "collisionCaps": 0,
+      "computeMilliseconds": 44.37408400000004
+    },
+    {
+      "level": 50,
+      "count": 4,
+      "elapsed": 42.05833333333159,
+      "finished": true,
+      "winner": 3,
+      "curves": 25,
+      "collections": 5,
+      "collisionCaps": 0,
+      "computeMilliseconds": 170.077
+    },
+    {
+      "level": 50,
+      "count": 6,
+      "elapsed": 50.82499999999776,
+      "finished": true,
+      "winner": 5,
+      "curves": 32,
+      "collections": 6,
+      "collisionCaps": 0,
+      "computeMilliseconds": 336.40654199999994
+    },
+    {
+      "level": 100,
+      "count": 2,
+      "elapsed": 72.35833333333699,
+      "finished": true,
+      "winner": 1,
+      "curves": 214,
+      "collections": 7,
+      "collisionCaps": 0,
+      "computeMilliseconds": 310.9056659999999
+    },
+    {
+      "level": 100,
+      "count": 4,
+      "elapsed": 120.49166666670862,
+      "finished": false,
+      "winner": null,
+      "curves": 432,
+      "collections": 7,
+      "collisionCaps": 0,
+      "computeMilliseconds": 1045.738709
+    },
+    {
+      "level": 100,
+      "count": 6,
+      "elapsed": 120.49166666670862,
+      "finished": false,
+      "winner": null,
+      "curves": 416,
+      "collections": 7,
+      "collisionCaps": 0,
+      "computeMilliseconds": 2290.3635419999996
+    }
+  ]
+}
