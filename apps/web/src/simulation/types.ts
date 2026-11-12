@@ -61,6 +61,8 @@ export interface GameEvent {
 }
 export type BotDifficulty = "beginner" | "standard" | "expert";
 export interface MatchOptions {
+  /** Replay compatibility; current pointer response defaults to arena tuning. */
+  pointerPaddleSpeed?: number;
   botDifficulty?: BotDifficulty;
   humanSeat: number;
   slowdown: boolean;

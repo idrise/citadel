@@ -37,19 +37,31 @@ describe("match rules", () => {
     }
     expect(first).toEqual(second);
   });
-  it("applies one identical movement cap to mouse targets, keyboard and bots", () => {
+  it("follows pointer targets quickly while retaining the keyboard and bot movement rate", () => {
     const state = createMatch(1);
     const target = fortress(0).direction + 0.5;
     const next = stepMatch(state, { ...IDLE_INTENT, targetAngle: target });
     expect(next.players[0]!.angle - state.players[0]!.angle).toBeCloseTo(
-      ARENA.paddleSpeed * FIXED_DT,
+      ARENA.pointerPaddleSpeed * FIXED_DT,
     );
     const keyboard = stepMatch(state, { ...IDLE_INTENT, steer: 1 });
-    expect(keyboard.players[0]!.angle).toBeCloseTo(next.players[0]!.angle);
-    for (const player of next.players)
+    expect(keyboard.players[0]!.angle - state.players[0]!.angle).toBeCloseTo(
+      ARENA.paddleSpeed * FIXED_DT,
+    );
+    for (const player of next.players.slice(1))
       expect(Math.abs(player.angle - state.players[player.id]!.angle)).toBeLessThanOrEqual(
         ARENA.paddleSpeed * FIXED_DT + 1e-10,
       );
+  });
+  it("reaches a fast pointer flick within 50ms and stays exactly at its target", () => {
+    let state = createMatch(1);
+    const target = fortress(0).direction + 0.5;
+    for (let tick = 0; tick < 6; tick++)
+      state = stepMatch(state, { ...IDLE_INTENT, targetAngle: target });
+    expect(state.players[0]!.angle).toBeCloseTo(target, 12);
+    for (let tick = 0; tick < 6; tick++)
+      state = stepMatch(state, { ...IDLE_INTENT, targetAngle: target });
+    expect(state.players[0]!.angle).toBeCloseTo(target, 12);
   });
   it("destroys only the physically struck piece and gives the damaged defender the revenge serve", () => {
     const next = stepMatch(shotAtPiece());

@@ -68,7 +68,7 @@ it("restores full stored speed immediately after a paddle hit and when the exper
 });
 
 it.each([0, 1, 2, 3])(
-  "keeps mouse/keyboard speed caps, rail limits and exact stopping identical for seat %s",
+  "keeps pointer and keyboard response bounded, rail-clamped and exact at the target for seat %s",
   (seat) => {
     let mouse = createMatch(2),
       keyboard = createMatch(2);
@@ -77,14 +77,14 @@ it.each([0, 1, 2, 3])(
     const start = fortress(seat).direction;
     mouse = stepMatch(mouse, { ...IDLE_INTENT, targetAngle: start + 0.45 }, options);
     keyboard = stepMatch(keyboard, { ...IDLE_INTENT, steer: 1 }, options);
-    expect(mouse.players[seat]!.angle).toBeCloseTo(keyboard.players[seat]!.angle);
-    expect(mouse.players[seat]!.angle - start).toBeCloseTo(ARENA.paddleSpeed * FIXED_DT);
+    expect(keyboard.players[seat]!.angle - start).toBeCloseTo(ARENA.paddleSpeed * FIXED_DT);
+    expect(mouse.players[seat]!.angle - start).toBeCloseTo(ARENA.pointerPaddleSpeed * FIXED_DT);
     const target = start + 0.123;
     for (let tick = 0; tick < 120; tick++) {
       const before = mouse.players[seat]!.angle;
       mouse = stepMatch(mouse, { ...IDLE_INTENT, targetAngle: target }, options);
       expect(Math.abs(mouse.players[seat]!.angle - before)).toBeLessThanOrEqual(
-        ARENA.paddleSpeed * FIXED_DT + 1e-10,
+        ARENA.pointerPaddleSpeed * FIXED_DT + 1e-10,
       );
     }
     expect(mouse.players[seat]!.angle).toBeCloseTo(target, 10);

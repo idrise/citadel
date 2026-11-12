@@ -5,6 +5,20 @@ async function settings(page: import("@playwright/test").Page) {
   await openSettings(page);
 }
 
+test("a mouse flick reaches the requested bat position within 50ms", async ({ page }) => {
+  await page.setViewportSize({ width: 800, height: 600 });
+  await openGame(page);
+  await play(page);
+  await page.mouse.move(0, 300);
+  await page.clock.runFor(150);
+  const before = Number(await page.getByLabel("Bat angle", { exact: true }).textContent());
+  await page.mouse.move(100, 300);
+  await page.clock.runFor(50);
+  const after = Number(await page.getByLabel("Bat angle", { exact: true }).textContent());
+  expect(after - before).toBeGreaterThan(22);
+  expect(after - before).toBeLessThan(24);
+});
+
 test("aid modes and sensitivity survive restart and every human fortress", async ({ page }) => {
   test.setTimeout(180000);
   await page.setViewportSize({ width: 800, height: 600 });

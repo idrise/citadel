@@ -67,6 +67,8 @@ export function replayPhysics(name: PhysicsCase, fps = 120) {
   const events: MatchState["events"] = [];
   const options = {
     ...DEFAULT_OPTIONS,
+    // These reviewed collision fixtures retain their originally authored swipe speed.
+    pointerPaddleSpeed: ARENA.paddleSpeed,
     humanSeat: 0,
     serveTimeout: 10,
     maxBalls: 8,

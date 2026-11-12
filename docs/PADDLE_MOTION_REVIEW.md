@@ -1,5 +1,9 @@
 # Paddle motion and mouse response
 
+The subsequent full M09 request authorises a faster pointer movement limit;
+see [current mobile review](M09_TOUCH_REVIEW.md). The original-cap description
+below records the earlier checkpoint.
+
 12 November 2026. Dave's supplied wording was “Bit of left right shimmy when you
 move the bumper”; no supplied message explicitly mentions blur. The owner has
 now requested paddle motion blur as well, and reported inconsistent mouse motion.

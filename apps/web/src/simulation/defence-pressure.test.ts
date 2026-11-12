@@ -64,7 +64,7 @@ it("does not slow an ordinary shot because a second ball will be intercepted fir
   expect(approachSlowdown(state, state.balls[0]!, true).factor).toBe(1);
 });
 
-it("buys a real second catch without delaying the first ball or increasing paddle speed", () => {
+it("buys a real second catch at the original movement cap without delaying the first ball", () => {
   const catches = (enabled: boolean) => {
     let state = createMatch();
     state.phase = "playing";
@@ -78,7 +78,7 @@ it("buys a real second catch without delaying the first ball or increasing paddl
       state = stepMatch(
         state,
         { ...IDLE_INTENT, targetAngle: base + (returns ? 0.35 : -0.35) },
-        { ...DEFAULT_OPTIONS, slowdown: enabled, ballInterval: 999 },
+        { ...DEFAULT_OPTIONS, slowdown: enabled, ballInterval: 999, pointerPaddleSpeed: 3.2 },
       );
       expect(Math.abs(state.players[0]!.angle - before)).toBeLessThanOrEqual(3.2 / 120 + 1e-10);
       const hits = state.events.filter(

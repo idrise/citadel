@@ -123,9 +123,13 @@ export function stepMatch(
       clampPaddleAngle(seat, requested, state.arena),
       player.angle,
     );
+    const speed =
+      seat === options.humanSeat && input.targetAngle !== null
+        ? (options.pointerPaddleSpeed ?? ARENA.pointerPaddleSpeed)
+        : ARENA.paddleSpeed;
     player.angle = clampPaddleAngle(
       seat,
-      player.angle + clamp(difference, -ARENA.paddleSpeed * dt, ARENA.paddleSpeed * dt),
+      player.angle + clamp(difference, -speed * dt, speed * dt),
       state.arena,
     );
     player.swipe = rememberSwipe(player.swipe, (player.angle - before) / dt, dt);

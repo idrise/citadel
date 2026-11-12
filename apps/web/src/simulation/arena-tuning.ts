@@ -7,6 +7,7 @@ export const ARENA = {
   batHalfAngle: 0.48,
   paddleThickness: 0.28,
   paddleSpeed: 3.2,
+  pointerPaddleSpeed: 16,
   pieceRadius: 0.26,
   pieces: 8,
   ballRadius: 0.187,
