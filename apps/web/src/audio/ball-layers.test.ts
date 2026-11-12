@@ -1,10 +1,15 @@
 import { expect, it } from "vite-plus/test";
 import { composeStep } from "./score";
-import { harmonyNote } from "./ball-layers";
+import { addBallLayers, harmonyNote } from "./ball-layers";
 import { HARMONY } from "./arrangement";
 const voices = (balls: number, streak = 0) =>
   new Set(
-    Array.from({ length: 16 }, (_, i) => composeStep(64 + i, [62, 65, 69], streak, 0, balls))
+    Array.from({ length: 16 }, (_, i) => {
+      const base = composeStep(64 + i, [62, 65, 69], 0, 0, 1).filter(
+        (c) => c.voice === "lead" || c.voice === "pad",
+      );
+      return addBallLayers(64 + i, base, balls, streak);
+    })
       .flat()
       .map((c) => c.voice),
   );

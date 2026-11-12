@@ -1,3 +1,4 @@
+import { isHomeBar } from "./phrasing";
 import type { MusicSection } from "./music-types";
 
 /** Original club structure: a short mix-in, groove, melodic space, tension and a real release. */
@@ -69,7 +70,8 @@ export function harmonyAt(bar: number, variant = 0) {
   const journey = [
     0, 1, 2, 3, 0, 2, 1, 3, 1, 2, 0, 3, 2, 1, 3, 0, 0, 1, 3, 2, 1, 0, 2, 3, 2, 3, 1, 0, 1, 2, 3, 0,
   ];
-  const chord = HARMONY[journey[(((bar + variant * 4) % 32) + 32) % 32]!]!;
+  const chord =
+    HARMONY[isHomeBar(bar) ? bar % 4 : journey[(((bar + variant * 4) % 32) + 32) % 32]!]!;
   const inversion = Math.floor(bar / 8) % 3;
   const pad = chord.pad.map((note, i) => note + (i < inversion ? 12 : 0)).sort((a, b) => a - b);
   return { ...chord, pad };

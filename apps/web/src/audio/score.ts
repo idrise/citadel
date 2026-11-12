@@ -1,18 +1,8 @@
-import { addBallLayers } from "./ball-layers";
+import { barFeel, isHomeBar, melodyAt } from "./phrasing";
+import { addBallLayers, harmonyNote } from "./ball-layers";
 import { arrangementAt, harmonyAt } from "./arrangement";
 import { SIXTEENTH, type MusicCue, type Voice } from "./music-types";
 
-// Two original syncopated calls, answered over changing chord voicings.
-const THEMES = [
-  [0, -1, -1, 3, -1, 2, 4, -1, 5, -1, -1, 3, 2, -1, 1, -1],
-  [2, -1, 3, -1, -1, 5, -1, 4, 3, -1, 2, -1, 0, -1, -1, 1],
-  [5, -1, -1, 4, 3, -1, 2, -1, -1, 3, -1, 1, 0, -1, -1, -1],
-  [-1, 0, -1, 2, -1, -1, 3, 4, -1, 5, -1, -1, 4, -1, 2, -1],
-  [0, -1, 4, -1, -1, 3, -1, -1, 2, -1, -1, 1, 0, -1, -1, 6],
-  [6, -1, -1, 5, -1, 4, -1, 3, -1, -1, 2, -1, 1, -1, 0, -1],
-  [3, -1, 2, -1, 0, -1, -1, -1, 2, -1, 4, -1, -1, 5, -1, 4],
-  [-1, -1, 0, -1, 3, -1, 4, -1, 5, -1, -1, 4, 2, -1, 1, -1],
-] as const;
 export function composeStep(
   step: number,
   phrase: readonly number[],
@@ -34,6 +24,8 @@ export function composeStep(
   const out: MusicCue[] = [];
   if (p === 0) out.push(cue("open", 0, 0));
   const chord = harmonyAt(a.bar, variant);
+  const feel = barFeel(a.bar, variant),
+    home = isHomeBar(a.bar);
   const drop = a.section === "drop",
     build = a.section === "build",
     space = a.section === "breakdown" || a.section === "melodic";
@@ -71,15 +63,35 @@ export function composeStep(
     );
     if (octave === 0) out.push(cue("sub", chord.bass - 12, 0.5, SIXTEENTH * 1.5));
   }
-  // The main theme is always present. A lack of hits can never reduce the soundtrack to drums.
-  const theme = THEMES[(a.bar + Math.floor(a.bar / 8) + variant * 2) % THEMES.length]!,
+  // Returns preserve the original notes/rhythm while the surrounding bars develop.
+  const theme = melodyAt(a.bar, variant),
     degree: number = theme[p]!;
   if (degree >= 0 && (!build || a.progress < 0.75 || p % 2 === 0)) {
     const note = chord.scale[degree]!;
     out.push({
-      ...cue("lead", note, drop ? 0.9 : space ? 0.82 : 0.72, SIXTEENTH * (space ? 2 : 1.6), bright),
+      ...cue(
+        "lead",
+        note,
+        drop ? 0.9 : space ? 0.82 : 0.72,
+        SIXTEENTH * (space ? 2 : 1.6) * feel.articulation,
+        Math.max(0, Math.min(1, bright + feel.brightness)),
+      ),
+      pan: feel.pan,
+      echo: feel.echo,
       notes: drop ? [note, note - 12] : [note],
     });
+  }
+  const lead = out.find((item) => item.voice === "lead");
+  // Sparse, quiet harmony can support the tune even before the second ball unlocks its full layer.
+  if (balls < 2 && lead && (home || feel.accompaniment === "harmony") && (p % 4 === 0 || p === 14))
+    out.push(cue("harmony", harmonyNote(lead.note, chord.pad), 0.27, lead.duration * 1.1, 0.45));
+  if (!build && !space) {
+    if (balls < 3 && feel.accompaniment === "bells" && [7, 15].includes(p))
+      out.push(cue("arp", chord.scale[p === 7 ? 2 : 0] + 12, 0.22, SIXTEENTH * 0.7, 0.6));
+    if (feel.accompaniment === "answer" && p === 15)
+      out.push(cue("answer", chord.scale[(a.bar + 2) % 7]!, 0.24, SIXTEENTH * 1.25, 0.45));
+    if (balls < 4 && feel.accompaniment === "brass" && p === 10)
+      out.push(cue("brass", chord.pad[1]!, 0.2, SIXTEENTH * 1.5, 0.45));
   }
   if (p === 0 && (space || drop || a.section === "groove"))
     out.push({

@@ -40,6 +40,9 @@ export interface MusicCue {
   duration: number;
   velocity: number;
   brightness?: number;
+  /** Arranged lead colour only; live feedback retains its independent mix. */
+  pan?: number;
+  echo?: number;
 }
 export interface MusicFrame {
   elapsed: number;

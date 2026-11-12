@@ -15,6 +15,7 @@ export function createMelodic(context: Tone.BaseContext, output: Tone.InputNode)
     rolloff: -24,
     Q: 0.8,
   }).connect(delay);
+  const leadPan = new Tone.Panner({ context, pan: 0 }).connect(leadFilter);
   const lead = new Tone.PolySynth({
     context,
     voice: Tone.Synth,
@@ -24,7 +25,7 @@ export function createMelodic(context: Tone.BaseContext, output: Tone.InputNode)
       oscillator: { type: "fatsawtooth", count: 2, spread: 11 },
       envelope: { attack: 0.004, decay: 0.18, sustain: 0.04, release: 0.12 },
     },
-  }).connect(leadFilter);
+  }).connect(leadPan);
   const padPan = new Tone.Panner({ context, pan: -0.12 }).connect(delay);
   const padFilter = new Tone.Filter({
     context,
@@ -96,6 +97,8 @@ export function createMelodic(context: Tone.BaseContext, output: Tone.InputNode)
       const { voice, duration, velocity } = cue,
         brightness = cue.brightness ?? 0.6;
       if (voice === "lead") {
+        leadPan.pan.setValueAtTime(Math.max(-0.2, Math.min(0.2, cue.pan ?? 0)), time);
+        delay.wet.setValueAtTime(Math.max(0.1, Math.min(0.35, cue.echo ?? 0.22)), time);
         leadFilter.frequency.setValueAtTime(900 + brightness * 4900, time);
         lead.triggerAttackRelease((cue.notes ?? [cue.note]).map(hz), duration, time, velocity);
       } else if (voice === "pad") {
@@ -116,6 +119,7 @@ export function createMelodic(context: Tone.BaseContext, output: Tone.InputNode)
     dispose() {
       for (const node of [
         lead,
+        leadPan,
         leadFilter,
         pad,
         padFilter,
