@@ -25,12 +25,29 @@ export function createCameraMotion(camera: PerspectiveCamera) {
   const offset = camera.position.clone().sub(target);
   const radius = offset.length();
   let homeYaw = Math.atan2(offset.x, offset.z);
-  const homeTilt = Math.acos(offset.y / radius);
+  let homeTilt = Math.acos(offset.y / radius);
+  const desktopTilt = homeTilt;
   const homeZoom = camera.zoom;
   let seconds = 0;
   let shimmy = 0,
     dangerZoom = 0;
   return {
+    layout(aspect: number) {
+      // A steeper portrait view spends the narrow screen on playable floor rather than perspective.
+      const tilt =
+        desktopTilt + (0.38 - desktopTilt) * Math.max(0, Math.min(1, (1 - aspect) / 0.4));
+      if (Math.abs(tilt - homeTilt) < 1e-9) return;
+      const current = camera.position.clone().sub(target);
+      const yaw = Math.atan2(current.x, current.z);
+      const nextTilt = Math.acos(current.y / current.length()) + tilt - homeTilt;
+      camera.position.set(
+        target.x + radius * Math.sin(nextTilt) * Math.sin(yaw),
+        target.y + radius * Math.cos(nextTilt),
+        target.z + radius * Math.sin(nextTilt) * Math.cos(yaw),
+      );
+      camera.lookAt(target);
+      homeTilt = tilt;
+    },
     follow(yaw: number) {
       const delta = yaw - homeYaw;
       if (Math.abs(delta) > 1e-9) {

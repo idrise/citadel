@@ -103,23 +103,23 @@ it("keeps the same camera-relative title/control layout through every player cou
 });
 
 it.each(["title", "victory", "defeat"] as const)(
-  "dims the %s background while keeping its foreground visible and restores normal play",
+  "keeps the world title bright, dims settled results and restores normal play (%s)",
   (mode) => {
     const overlay = createMenuOverlay(),
       state = { mode, count: 4, elapsed: 5, reduced: false };
     overlay.update(state, 0, 1280, 900);
-    expect(overlay.backgroundGain).toBe(MENU_BACKGROUND_GAIN);
+    expect(overlay.backgroundGain).toBe(mode === "title" ? 1 : MENU_BACKGROUND_GAIN);
     expect(MENU_BACKGROUND_GAIN).toBeLessThan(0.3);
-    expect(overlay.dimmer.enabled).toBe(true);
+    expect(overlay.dimmer.enabled).toBe(mode !== "title");
     expect(overlay.visible).toBe(true);
     overlay.update({ ...state, mode: "hidden" }, 2, 1280, 900);
     expect(overlay.backgroundGain).toBe(1);
     expect(overlay.dimmer.enabled).toBe(false);
     expect(overlay.visible).toBe(false);
     overlay.update(state, 0.5, 1280, 900);
-    expect(overlay.backgroundGain).toBeLessThan(0.2);
+    expect(overlay.backgroundGain).toBeLessThanOrEqual(mode === "title" ? 1 : 0.2);
     overlay.update({ ...state, reduced: true }, 0, 1280, 900);
-    expect(overlay.backgroundGain).toBe(MENU_BACKGROUND_GAIN);
+    expect(overlay.backgroundGain).toBe(mode === "title" ? 1 : MENU_BACKGROUND_GAIN);
     expect(overlay.visible).toBe(true);
     overlay.dispose();
   },

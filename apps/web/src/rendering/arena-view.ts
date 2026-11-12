@@ -25,6 +25,7 @@ import { createPaddleBlur } from "./paddle-blur";
 import { createVictoryMorph } from "./victory-morph";
 
 export interface ViewOptions {
+  portrait?: boolean;
   preview: boolean;
   slowdown: boolean;
   reducedEffects: boolean;
@@ -37,7 +38,11 @@ export interface ViewOptions {
   actorScales?: readonly number[];
   cameraAnchor?: { x: number; y: number };
 }
-export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA) {
+export function createArenaView(
+  humanSeat = 0,
+  initial: ArenaGeometry = SQUARE_ARENA,
+  mobile = false,
+) {
   const roster = {
     ...initial,
     fortresses: [
@@ -49,7 +54,10 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
   };
   const stage = createStage(humanSeat, roster);
   const intro = createLevelIntro(stage.root);
-  const reflection = createArenaReflections(humanSeat, initial);
+  const titleSign = createLevelIntro(stage.root);
+  titleSign.root.name = "citadel-title";
+  let titleRise = 0;
+  const reflection = createArenaReflections(humanSeat, initial, mobile);
   stage.root.add(...reflection.meshes);
   const balls = createBallView(stage.root);
   const supplies = createSupplyView(stage.root);
@@ -100,12 +108,28 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
           arena: ArenaGeometry,
           seat: number,
           anchor?: { x: number; y: number },
+          dt?: number,
         ) => void
-      )(displayArena, options.humanSeat, options.cameraAnchor);
+      )(displayArena, options.humanSeat, options.cameraAnchor, dt);
       reflection.update(displayArena, options.humanSeat, options.cameraAnchor);
       reflection.setVictory(Boolean(ending));
-      const profile = effectsProfile(options.quality, options.reducedEffects);
+      const profile = effectsProfile(options.quality, options.reducedEffects, 1, 4, mobile);
       reflection.setReduced(!profile.reflections);
+      const titleMode = options.menu?.mode === "title";
+      titleRise = titleMode
+        ? Math.min(1, titleRise + Math.max(0, dt) / 0.55)
+        : Math.max(0, titleRise - Math.max(0, dt) / 0.22);
+      if (options.reducedEffects) titleRise = titleMode ? 1 : 0;
+      titleSign.update(
+        "CITADEL",
+        1,
+        state.arena,
+        options.humanSeat,
+        options.reducedEffects,
+        null,
+        titleRise,
+        options.portrait ? -0.95 : 0,
+      );
       intro.update(
         options.menu?.mode === "level" ? (options.menu.level ?? 1) : null,
         state.countdown,
@@ -113,6 +137,8 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         options.humanSeat,
         options.reducedEffects,
         options.menu?.demotion,
+        undefined,
+        options.portrait ? -0.95 : 0,
       );
       supplies.update(state, dt, options.reducedEffects);
       for (const group of [

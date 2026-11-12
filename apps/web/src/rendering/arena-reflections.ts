@@ -5,9 +5,13 @@ import { createFloorReflection, createFrostedReflection } from "./floor-reflecti
 import { WALL_PANEL_HEIGHT, WALL_PANEL_CENTRE_Y } from "./wall-section";
 
 /** A bounded pool of planar captures follows the same moving boundary as the walls. */
-export function createArenaReflections(humanSeat: number, initial: ArenaGeometry = SQUARE_ARENA) {
-  const floor = createFloorReflection();
-  const walls = Array.from({ length: 12 }, () =>
+export function createArenaReflections(
+  humanSeat: number,
+  initial: ArenaGeometry = SQUARE_ARENA,
+  mobile = false,
+) {
+  const floor = createFloorReflection(mobile ? 256 : 512);
+  const walls = Array.from({ length: mobile ? 0 : 12 }, () =>
     createFrostedReflection(1, WALL_PANEL_HEIGHT, 256, 0.25),
   );
   walls.forEach((reflection) => {
@@ -45,12 +49,16 @@ export function createArenaReflections(humanSeat: number, initial: ArenaGeometry
   ) => {
     if (previous === arena && previousSeat === seat && !cameraAnchor) return;
     previousSeat = seat;
+    if (previous !== arena) {
+      const shape = new Shape();
+      arena.vertices.forEach((p, i) =>
+        i === 0 ? shape.moveTo(p.x, -p.y) : shape.lineTo(p.x, -p.y),
+      );
+      shape.closePath();
+      floor.mesh.geometry.dispose();
+      floor.mesh.geometry = new ShapeGeometry(shape);
+    }
     previous = arena;
-    const shape = new Shape();
-    arena.vertices.forEach((p, i) => (i === 0 ? shape.moveTo(p.x, -p.y) : shape.lineTo(p.x, -p.y)));
-    shape.closePath();
-    floor.mesh.geometry.dispose();
-    floor.mesh.geometry = new ShapeGeometry(shape);
     const anchor = cameraAnchor ?? fortress(seat, arena).anchor,
       edges = polygonEdges(arena.vertices);
     visible = [

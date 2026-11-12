@@ -58,8 +58,8 @@ export function createFrostedReflection(
   return { mesh: mirror, dispose: () => mirror.getRenderTarget().dispose() };
 }
 
-export function createFloorReflection() {
-  const reflection = createFrostedReflection(ARENA.halfSize * 2, ARENA.halfSize * 2);
+export function createFloorReflection(resolution = 512) {
+  const reflection = createFrostedReflection(ARENA.halfSize * 2, ARENA.halfSize * 2, resolution);
   reflection.mesh.rotation.x = -Math.PI / 2;
   reflection.mesh.position.y = 0.025;
   return reflection;

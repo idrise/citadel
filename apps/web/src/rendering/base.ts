@@ -31,6 +31,7 @@ export function createArenaBase(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
     arena: ArenaGeometry,
     seat = humanSeat,
     anchor?: { x: number; y: number },
+    dt = 0,
   ) => {
     if (previous !== arena) {
       previous = arena;
@@ -44,8 +45,9 @@ export function createArenaBase(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         arena: ArenaGeometry,
         seat: number,
         anchor?: { x: number; y: number },
+        dt?: number,
       ) => void
-    )(arena, seat, anchor);
+    )(arena, seat, anchor, dt);
   };
   return root;
 }

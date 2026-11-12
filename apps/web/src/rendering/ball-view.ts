@@ -1,5 +1,15 @@
-import { GreaterDepth, Group, Mesh, MeshBasicMaterial, SphereGeometry, Vector3 } from "three";
-import { ARENA, FIXED_DT } from "../simulation/arena";
+import {
+  GreaterDepth,
+  Group,
+  Mesh,
+  MeshBasicMaterial,
+  SphereGeometry,
+  Vector3,
+  InstancedMesh,
+  Matrix4,
+  Quaternion,
+} from "three";
+import { ARENA, FIXED_DT, MAX_BALLS } from "../simulation/arena";
 import type { MatchState } from "../simulation/types";
 import { createSpinView, spinStrength } from "./spin-view";
 import { SEATS } from "./palette";
@@ -26,7 +36,7 @@ export function createBallView(root: Group) {
     depthWrite: false,
     toneMapped: false,
   });
-  const balls = Array.from({ length: 8 }, () => {
+  const balls = Array.from({ length: MAX_BALLS }, () => {
     const material = createBallMaterial();
     const mesh = new Mesh(sphere, material);
     mesh.name = "game-ball";
@@ -39,12 +49,11 @@ export function createBallView(root: Group) {
     occluded.renderOrder = 10;
     root.add(occluded);
     const tailMaterial = trailMaterial.clone();
-    const trail = Array.from({ length: 20 }, () => {
-      const particle = new Mesh(sphere, tailMaterial);
-      particle.name = "ball-trail";
-      root.add(particle);
-      return particle;
-    });
+    const trail = new InstancedMesh(new SphereGeometry(BALL_VISUAL_RADIUS, 8, 6), tailMaterial, 20);
+    trail.name = "ball-trail";
+    trail.count = 0;
+    trail.frustumCulled = false;
+    root.add(trail);
     return {
       mesh,
       material,
@@ -60,6 +69,9 @@ export function createBallView(root: Group) {
   });
   occludedMaterial.dispose();
   trailMaterial.dispose();
+  const matrix = new Matrix4(),
+    rotation = new Quaternion(),
+    scale = new Vector3();
   let lastTick = -1;
   return {
     update(
@@ -108,17 +120,20 @@ export function createBallView(root: Group) {
               view.positions.unshift(
                 head.clone().lerp(view.mesh.position, (step * 0.12) / distance),
               );
-            view.positions.length = Math.min(view.positions.length, view.trail.length);
+            view.positions.length = Math.min(view.positions.length, 20);
           }
         }
-        view.trail.forEach((particle, part) => {
-          const count = Math.min(trailLimit, strength > 0.025 ? 20 : 8);
-          particle.visible = !reduced && part < count && Boolean(view.positions[part]);
-          particle.scale.setScalar(
-            Math.max(0, 1 - part / Math.max(1, count)) * (0.8 + strength * 0.15),
-          );
-          if (view.positions[part]) particle.position.copy(view.positions[part]);
-        });
+        const count = reduced
+          ? 0
+          : Math.min(trailLimit, strength > 0.025 ? 20 : 8, view.positions.length);
+        view.trail.count = count;
+        view.trail.visible = count > 0;
+        for (let part = 0; part < count; part++) {
+          scale.setScalar(Math.max(0, 1 - part / Math.max(1, count)) * (0.8 + strength * 0.15));
+          matrix.compose(view.positions[part]!, rotation, scale);
+          view.trail.setMatrixAt(part, matrix);
+        }
+        view.trail.instanceMatrix.needsUpdate = count > 0;
       });
       lastTick = state.tick;
     },

@@ -1,3 +1,4 @@
+import { createCornerMotion } from "./corner-motion";
 import { BoxGeometry, Group, Mesh } from "three";
 import { fortress, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
 import { clamp, dot } from "../simulation/vector";
@@ -87,14 +88,17 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
     posts.push(post);
     root.add(post);
   }
+  const cornerMotion = createCornerMotion();
+  let settled = true;
   let previous: ArenaGeometry | undefined;
   let previousSeat = humanSeat;
   const update = (
     arena: ArenaGeometry,
     seat = humanSeat,
     cameraAnchor?: { x: number; y: number },
+    dt = 0,
   ) => {
-    if (previous === arena && previousSeat === seat && !cameraAnchor) return;
+    if (previous === arena && previousSeat === seat && !cameraAnchor && settled) return;
     previousSeat = seat;
     previous = arena;
     const anchor = cameraAnchor ?? fortress(seat, arena).anchor;
@@ -113,6 +117,8 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
       const dx = edge.end.x - edge.start.x,
         dz = edge.end.y - edge.start.y;
       const length = Math.hypot(dx, dz);
+      wall.visible = length > 0.02;
+      if (!wall.visible) return;
       wall.position.set((edge.start.x + edge.end.x) / 2, 0, (edge.start.y + edge.end.y) / 2);
       wall.rotation.y = Math.atan2(-dz, dx);
       wall.scale.x = length;
@@ -136,30 +142,35 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
         }
       });
     });
+    const corners = arena.vertices.map((p, index) => {
+      const strength = clamp((turns[index]! - 0.08) / 0.45, 0, 1);
+      const before = edges[(index + edges.length - 1) % edges.length]!.normal;
+      const next = edges[index]!.normal;
+      const yaw = Math.PI / 4 - Math.atan2(before.y + next.y, before.x + next.x);
+      const c = Math.cos(yaw),
+        s = Math.sin(yaw);
+      const reach =
+        0.49 * (Math.abs(before.x * c - before.y * s) + Math.abs(before.x * s + before.y * c));
+      const inset = reach / Math.max(0.15, 1 + dot(before, next));
+      return {
+        point: p,
+        index,
+        strength,
+        yaw,
+        x: p.x - (before.x + next.x) * inset,
+        z: p.y - (before.y + next.y) * inset,
+      };
+    });
+    const poses = cornerMotion.update(corners, dt);
+    settled = poses.every((pose) => Math.abs(pose.growth - pose.target) < 0.001);
     posts.forEach((post, index) => {
-      const p = arena.vertices[index];
-      const strength = p ? clamp((turns[index]! - 0.08) / 0.45, 0, 1) : 0;
-      post.visible = strength > 0.001;
-      if (p) {
-        const previous = edges[(index + edges.length - 1) % edges.length]!.normal,
-          next = edges[index]!.normal;
-        // The square post's diagonal follows the corner bisector. Its faces then
-        // align exactly at right angles and symmetrically at other polygon turns.
-        post.rotation.y = Math.PI / 4 - Math.atan2(previous.y + next.y, previous.x + next.x);
-        const c = Math.cos(post.rotation.y),
-          s = Math.sin(post.rotation.y);
-        const reach =
-          0.49 *
-          strength *
-          (Math.abs(previous.x * c - previous.y * s) + Math.abs(previous.x * s + previous.y * c));
-        const inset = reach / (1 + dot(previous, next));
-        post.position.set(
-          p.x - (previous.x + next.x) * inset,
-          ((WALL_HEIGHT + 0.12) * strength) / 2,
-          p.y - (previous.y + next.y) * inset,
-        );
-        post.scale.setScalar(strength);
-      }
+      const pose = poses[index];
+      post.visible = Boolean(pose && pose.growth > 0.001);
+      if (!pose) return;
+      post.userData.corner = pose.index;
+      post.rotation.y = pose.yaw;
+      post.position.set(pose.x, ((WALL_HEIGHT + 0.12) * pose.growth) / 2, pose.z);
+      post.scale.set(pose.growth, pose.growth, pose.growth);
     });
   };
   root.userData.update = update;

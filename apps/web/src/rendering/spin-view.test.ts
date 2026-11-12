@@ -1,4 +1,4 @@
-import { Group, Mesh, MeshBasicMaterial } from "three";
+import { Group, Mesh, MeshBasicMaterial, InstancedMesh, Matrix4, Vector3 } from "three";
 import { expect, it } from "vite-plus/test";
 import { createMatch } from "../simulation/match";
 import { MAX_SWIPE_CURVE } from "../simulation/flight";
@@ -64,7 +64,17 @@ it("keeps a distance-spaced curved trail, freezes on pause, and clears it on bal
   state.tick++;
   ball.position = { x: 4, y: 0 };
   view.update(state, false);
-  const trail = () => root.children.filter((child) => child.name === "ball-trail" && child.visible);
+  const trail = () =>
+    root.children
+      .filter((child) => child.name === "ball-trail" && child.visible)
+      .flatMap((child) => {
+        const instances = child as InstancedMesh;
+        return Array.from({ length: instances.count }, (_, i) => {
+          const matrix = new Matrix4();
+          instances.getMatrixAt(i, matrix);
+          return { position: new Vector3().setFromMatrixPosition(matrix) };
+        });
+      });
   expect(trail().length).toBeGreaterThan(15);
   const before = trail().map((child) => child.position.clone());
   view.update(state, false);
@@ -124,5 +134,35 @@ it("rotates the marked ball surface with signed spin, holds it paused/reduced an
   ball.phase = "ready";
   view.update(state, false);
   expect(mesh.rotation.y).toBeCloseTo(0);
+  disposeScene(root);
+});
+it("renders all sixteen hero balls and batches their history without changing authoritative state", () => {
+  const root = new Group(),
+    view = createBallView(root),
+    state = createMatch();
+  state.phase = "playing";
+  state.balls = Array.from({ length: 16 }, (_, id) => ({
+    ...state.balls[0]!,
+    id,
+    phase: "active" as const,
+    position: { x: id % 4, y: Math.floor(id / 4) },
+    velocity: { x: 1, y: 0 },
+    spin: 1,
+  }));
+  const owners = new Map(state.balls.map((ball) => [ball.id, ball.id % 4]));
+  view.update(state, false, 20, owners);
+  state.tick++;
+  state.balls.forEach((ball) => {
+    ball.position.x += 1;
+  });
+  const saved = structuredClone(state);
+  view.update(state, false, 20, owners);
+  expect(root.children.filter((c) => c.name === "game-ball" && c.visible)).toHaveLength(16);
+  const trails = root.children.filter(
+    (c) => c.name === "ball-trail" && c.visible,
+  ) as InstancedMesh[];
+  expect(trails).toHaveLength(16);
+  expect(trails.reduce((sum, trail) => sum + trail.count, 0)).toBeGreaterThan(100);
+  expect(state).toEqual(saved);
   disposeScene(root);
 });

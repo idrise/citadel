@@ -24,19 +24,22 @@ export function createLevelIntro(parent: Object3D) {
   let key = "",
     body = new Group(),
     textWidth = 1,
-    bodyHeight = 1;
+    bodyHeight = 1,
+    bodyDepth = 0.1;
   root.add(body);
   return {
     root,
     update(
-      value: number | null,
+      value: number | string | null,
       countdown: number,
       arena: ArenaGeometry,
       seat: number,
       reduced: boolean,
       demotion: Demotion | null = null,
+      rise?: number,
+      tilt = 0,
     ) {
-      root.visible = value !== null && countdown > 0;
+      root.visible = value !== null && countdown > 0 && rise !== 0;
       if (!root.visible || value === null) return;
       const demoted = demotion?.to === value && demotion.count === arena.count;
       const nextKey = `${value}:${demoted}`;
@@ -44,7 +47,11 @@ export function createLevelIntro(parent: Object3D) {
         root.remove(body);
         disposeScene(body);
         body = new Group();
-        const text = createNeonLettering(`LEVEL ${String(value).padStart(2, "0")}`, 1.4, 0xffcf79);
+        const text = createNeonLettering(
+          typeof value === "string" ? value : `LEVEL ${String(value).padStart(2, "0")}`,
+          1.4,
+          typeof value === "string" ? 0x9ceaff : 0xffcf79,
+        );
         body.add(text);
         textWidth = new Box3().setFromObject(text).getSize(new Vector3()).x;
         if (demoted) {
@@ -68,6 +75,7 @@ export function createLevelIntro(parent: Object3D) {
         });
         const box = new Box3().setFromObject(body);
         bodyHeight = box.getSize(new Vector3()).y;
+        bodyDepth = box.getSize(new Vector3()).z;
         body.position.y = -(box.min.y + box.max.y) / 2;
         root.add(body);
         key = nextKey;
@@ -75,14 +83,17 @@ export function createLevelIntro(parent: Object3D) {
       const anchor = fortress(seat, arena).anchor;
       const yaw = Math.atan2(anchor.x, anchor.y);
       const side = arena.vertices.map((p) => p.x * Math.cos(yaw) - p.y * Math.sin(yaw));
-      const width = Math.min(14, (Math.max(...side) - Math.min(...side)) * 0.7);
+      const width = Math.min(
+        typeof value === "string" ? 18 : 14,
+        (Math.max(...side) - Math.min(...side)) * 0.75,
+      );
       const size = width / textWidth;
       root.scale.setScalar(size);
-      root.rotation.y = yaw;
-      const height = bodyHeight * size;
+      root.rotation.set(tilt, yaw, 0, "YXZ");
+      const height = (bodyHeight * Math.cos(tilt) + bodyDepth * Math.abs(Math.sin(tilt))) * size;
       root.position.set(
         0,
-        height / 2 + 0.07 - (1 - levelIntroRise(countdown, reduced)) * (height + 0.18),
+        height / 2 + 0.07 - (1 - (rise ?? levelIntroRise(countdown, reduced))) * (height + 0.18),
         0,
       );
       root.updateMatrixWorld(true);

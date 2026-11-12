@@ -12,7 +12,8 @@ function assertPosts(root: Group, arena: ArenaGeometry) {
   (root.userData.update as (arena: ArenaGeometry) => void)(arena);
   root.updateMatrixWorld(true);
   const posts = root.children.filter((object) => object.name === "corner-post");
-  posts.forEach((post, index) => {
+  posts.forEach((post) => {
+    const index = post.userData.corner as number;
     if (!post.visible) return;
     const edge = edges[index]!,
       previous = edges[(index + edges.length - 1) % edges.length]!;

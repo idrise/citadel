@@ -77,3 +77,16 @@ it("adds reflected demotion lettering and leaves the world bright with no foregr
   overlay.dispose();
   disposeScene(root);
 });
+it("raises the Citadel title with the same reflected world geometry and retires it below the floor", () => {
+  const root = new Group(),
+    intro = createLevelIntro(root),
+    arena = createArena(4);
+  intro.update("CITADEL", 1, arena, 0, false, null, 1);
+  expect(intro.root.getObjectByName("neon-text:CITADEL")).toBeDefined();
+  expect(new Box3().setFromObject(intro.root).min.y).toBeGreaterThan(0.02);
+  intro.update("CITADEL", 1, arena, 0, false, null, 0.01);
+  expect(new Box3().setFromObject(intro.root).max.y).toBeLessThan(0);
+  intro.update("CITADEL", 1, arena, 0, false, null, 0);
+  expect(intro.root.visible).toBe(false);
+  disposeScene(root);
+});

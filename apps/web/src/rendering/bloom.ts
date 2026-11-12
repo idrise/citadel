@@ -18,10 +18,11 @@ export function createBloom(
   scene: Scene,
   camera: Camera,
   overlay?: MenuOverlay,
+  mobile = false,
 ) {
   const target = new WebGLRenderTarget(1, 1, {
     type: HalfFloatType,
-    samples: Math.min(4, renderer.capabilities.maxSamples),
+    samples: mobile ? 0 : Math.min(4, renderer.capabilities.maxSamples),
   });
   const composer = new EffectComposer(renderer, target);
   let samples = target.samples;
@@ -49,6 +50,7 @@ export function createBloom(
         reduced,
         renderer.getPixelRatio(),
         renderer.capabilities.maxSamples,
+        mobile,
       );
       if (samples !== profile.samples) {
         samples = profile.samples;

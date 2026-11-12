@@ -126,7 +126,7 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       const compact = state.touch || width < 700 || height < 500;
       const result = state.mode !== "title",
         reveal = state.reduced ? 1 : Math.max(0, Math.min(1, (state.elapsed - 0.15) / 0.6));
-      title.visible = !result;
+      title.visible = false;
       victory.visible = state.mode === "victory" && reveal > 0;
       defeat.visible = state.mode === "defeat" && reveal > 0;
       heading.scale.setScalar(result ? 0.85 + 0.15 * reveal : 1);
@@ -189,8 +189,12 @@ export function createSceneMenu(camera: PerspectiveCamera) {
             ? 1
             : 0.7;
       }
-      if (compact) {
-        const layout = mobileMenuLayout(width, height, result);
+      if (compact || !result) {
+        const layout = mobileMenuLayout(
+          compact ? width : Math.min(width, height * 0.7),
+          height,
+          result,
+        );
         demotionText.position.set(
           layout.controls.rematch.x,
           height / 2 - (layout.controls.rematch.y - 61),

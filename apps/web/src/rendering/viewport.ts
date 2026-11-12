@@ -35,20 +35,21 @@ export function createViewport(
   initial: ArenaGeometry = SQUARE_ARENA,
   onSceneAction: (action: SceneAction) => void = () => {},
 ) {
-  const renderer = new WebGLRenderer({ antialias: true });
+  const mobile = navigator.maxTouchPoints > 0 || matchMedia("(pointer: coarse)").matches;
+  const renderer = new WebGLRenderer({ antialias: !mobile, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
-  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.enabled = !mobile;
   renderer.shadowMap.type = PCFSoftShadowMap;
   const canvas = renderer.domElement;
   canvas.tabIndex = 0;
-  canvas.setAttribute("aria-label", "Neon Citadel arena");
+  canvas.setAttribute("aria-label", "Citadel arena");
   canvas.setAttribute("aria-describedby", "game-controls");
   canvas.setAttribute("role", "application");
   const scene = new Scene();
   scene.background = new Color(0x080f1c);
-  const arena = createArenaView(humanSeat, initial);
+  const arena = createArenaView(humanSeat, initial, mobile);
   const worldGrid = createWorldGrid();
   scene.add(arena.root, worldGrid);
   const menu = createMenuOverlay();
@@ -61,6 +62,7 @@ export function createViewport(
   const title = createTitleTransition();
   let titleMoving = false;
   let aspect = 1;
+  let menuLift = 0;
   const bounds = new Box3().setFromObject(arena.root);
   // Frame the playing surface and wall tops; the structural plinth may extend below the view.
   bounds.min.y = 0;
@@ -69,12 +71,13 @@ export function createViewport(
     new Vector3(p.x * 1.09, 0, p.y * 1.09),
     new Vector3(p.x * 1.09, 2.34, p.y * 1.09),
   ]);
-  const bloom = createBloom(renderer, scene, camera, menu);
+  const bloom = createBloom(renderer, scene, camera, menu, mobile);
   container.append(canvas);
   const resize = () => {
     const width = Math.max(container.clientWidth, 1);
     const height = Math.max(container.clientHeight, 1);
     aspect = width / height;
+    motion.layout(aspect);
     fitArenaCamera(camera, bounds, aspect, framingPoints);
     renderer.setSize(width, height);
     bloom.resize(width, height);
@@ -104,6 +107,7 @@ export function createViewport(
         options.reducedEffects,
         window.devicePixelRatio,
         renderer.capabilities.maxSamples,
+        mobile,
       ).pixelRatio;
       if (renderer.getPixelRatio() !== pixelRatio) {
         renderer.setPixelRatio(pixelRatio);
@@ -114,6 +118,7 @@ export function createViewport(
       const displayed = presentation.state;
       arena.update(displayed, dt, {
         ...options,
+        portrait: aspect < 0.85,
         actorScales: presentation.scales,
         ...(presentation.moving
           ? { cameraAnchor: { x: Math.sin(presentation.yaw), y: Math.cos(presentation.yaw) } }
@@ -124,8 +129,10 @@ export function createViewport(
         if (light instanceof PointLight) {
           const id = light.userData.seat as number;
           const player = displayed.players.find((p) => p.id === id);
-          light.visible = Boolean(player?.health.some(Boolean));
-          if (!light.visible) continue;
+          // Keep the light count stable: changing it recompiles every lit material on Safari.
+          light.visible = true;
+          light.intensity = 0;
+          if (!player?.health.some(Boolean)) continue;
           const seat = fortress(id, displayed.arena);
           light.intensity = 10 * (presentation.scales[id] ?? 1);
           light.position.set(
@@ -149,7 +156,7 @@ export function createViewport(
         cameraDanger(state, options.humanSeat),
       );
       // Acute star tips have longer wall miters; include the plinth during the reveal.
-      const border = 1.09 + arena.victoryProgress * 0.2;
+      const border = (aspect < 0.85 ? 1.03 : 1.09) + arena.victoryProgress * 0.2;
       framingPoints = displayArena.vertices.flatMap((p) => [
         new Vector3(p.x * border, -2.73 * arena.victoryProgress, p.y * border),
         new Vector3(p.x * border, 2.34, p.y * border),
@@ -171,6 +178,14 @@ export function createViewport(
         bounds.expandByPoint(new Vector3(p.x * 1.09, 2.34, p.y * 1.09));
       }
       fitArenaCamera(camera, bounds, aspect, framingPoints);
+      const lift = aspect < 0.85 && menuState.mode === "title" ? 1 : 0;
+      menuLift = options.reducedEffects
+        ? lift
+        : menuLift + (lift - menuLift) * (1 - Math.exp(-Math.max(0, dt) * 7));
+      if (camera.view) {
+        camera.view.offsetY += 0.28 * menuLift;
+        camera.updateProjectionMatrix();
+      }
       fireworks.update(
         dt,
         state.phase === "finished" && state.winner === options.humanSeat,

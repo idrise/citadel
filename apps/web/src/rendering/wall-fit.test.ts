@@ -27,3 +27,20 @@ it("mitres adjoining outer edges at exactly the same corner, with no collider-fa
   expect(mesh.geometry.boundingBox!.max.x).toBeCloseTo(0.5);
   disposeScene(mesh);
 });
+it("retains GPU crease buffers and finite bounded mitres on disappearing short walls", async () => {
+  const { createFeatureEdges } = await import("./feature-edges");
+  const mesh = new Mesh(new BoxGeometry(1, 0.3, 0.96), new MeshBasicMaterial());
+  const edge = createFeatureEdges(mesh.geometry, 0x00cfff);
+  mesh.add(edge);
+  const geometry = edge.geometry,
+    starts = geometry.getAttribute("edgeStart");
+  const fit = createWallFit(mesh, 0.48);
+  for (const length of [18, 4, 0.01, 0, 10]) {
+    fit(length, 1000, -1000);
+    expect(edge.geometry).toBe(geometry);
+    expect(edge.geometry.getAttribute("edgeStart")).toBe(starts);
+    expect([...mesh.geometry.getAttribute("position").array].every(Number.isFinite)).toBe(true);
+    expect(mesh.geometry.boundingSphere!.radius).toBeLessThan(3);
+  }
+  disposeScene(mesh);
+});

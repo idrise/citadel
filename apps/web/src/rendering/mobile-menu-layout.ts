@@ -2,7 +2,7 @@
 export function mobileMenuLayout(width: number, height: number, result: boolean) {
   const landscape = width > height;
   const x = landscape ? width * 0.24 : 0;
-  const row = landscape ? height * 0.35 : height * 0.46;
+  const row = landscape ? height * 0.35 : Math.min(height * 0.72, height - 192);
   return {
     title: {
       x: landscape ? -width * 0.24 : 0,

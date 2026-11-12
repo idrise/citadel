@@ -118,3 +118,36 @@ it("keeps the arena in frame at maximum danger and paddle movement on phone and 
         }
   }
 });
+it("uses more portrait floor area while retaining all wall tops and containers through rotation", async () => {
+  const { createArena } = await import("../simulation/arena");
+  for (const count of [2, 4, 6] as const) {
+    const arena = createArena(count),
+      camera = createArenaCamera(0, arena),
+      motion = createCameraMotion(camera);
+    const points = arena.vertices.flatMap((p) => [
+      new Vector3(p.x * 1.03, 0, p.y * 1.03),
+      new Vector3(p.x * 1.03, 2.34, p.y * 1.03),
+    ]);
+    const bounds = new Box3().setFromPoints(points);
+    fitArenaCamera(camera, bounds, 390 / 844, points);
+    const projectedHeight = () => {
+      const ys = points.map((p) => p.clone().project(camera).y);
+      return Math.max(...ys) - Math.min(...ys);
+    };
+    const original = projectedHeight();
+    motion.layout(390 / 844);
+    fitArenaCamera(camera, bounds, 390 / 844, points);
+    expect(projectedHeight()).toBeGreaterThan(original * 1.15);
+    for (const point of points) {
+      const p = point.clone().project(camera);
+      expect(Math.abs(p.x)).toBeLessThan(0.97);
+      expect(Math.abs(p.y)).toBeLessThan(0.97);
+    }
+    const portrait = camera.position.clone();
+    motion.update(0, true);
+    expect(camera.position).toEqual(portrait);
+    motion.layout(844 / 390);
+    motion.layout(390 / 844);
+    expect(camera.position.distanceTo(portrait)).toBeLessThan(1e-8);
+  }
+});
