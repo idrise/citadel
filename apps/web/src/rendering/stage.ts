@@ -1,5 +1,5 @@
 import { CylinderGeometry, Group, Mesh, MeshStandardMaterial } from "three";
-import { ARENA, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
+import { ARENA, batHalfAngle, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
 import { createFeatureEdges } from "./feature-edges";
 import { arcMesh } from "./arc";
 import { createArenaBase } from "./base";
@@ -34,14 +34,15 @@ export function createStage(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA
     root.add(rail);
     const paddle = arcMesh(
       ARENA.batRadius,
-      -ARENA.batHalfAngle,
-      ARENA.batHalfAngle,
+      -batHalfAngle(initial),
+      batHalfAngle(initial),
       ARENA.paddleThickness,
       colour,
       0.85,
       1.5,
     );
     paddle.name = `paddle-${seat.id}`;
+    paddle.userData.batHalfAngle = batHalfAngle(initial);
     paddle.geometry.translate(ARENA.railRadius - ARENA.batRadius, 0, 0);
     paddle.add(createFeatureEdges(paddle.geometry, colour, { width: 4.5, power: 2 }));
     paddle.position.set(seat.anchor.x, 0.95, seat.anchor.y);

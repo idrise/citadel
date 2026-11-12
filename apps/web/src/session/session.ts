@@ -1,3 +1,4 @@
+import { levelDifficulty } from "../simulation/difficulty";
 import { roundSeed } from "./round-seed";
 import { createProgressRecorder, type Demotion, type LevelResult } from "./progression";
 import { createRoundObserver, type RoundTotals } from "./round-observer";
@@ -42,7 +43,7 @@ export function createSession(
   onComplete: (result: LevelResult) => void = () => {},
 ) {
   let supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
-  let state = createMatch(seed, count, ARENA.startingPieces, supplySeed);
+  let state = createMatch(seed, count, ARENA.startingPieces, supplySeed, levelDifficulty(level));
   let demotion: Demotion | null = null;
   let resultFor = createProgressRecorder(humanSeat, level);
   const viewport = createViewport(container, humanSeat, state.arena, (action) => {
@@ -239,7 +240,13 @@ export function createSession(
     animate: boolean,
   ) {
     supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
-    const nextState = createMatch(seed, nextCount, ARENA.startingPieces, supplySeed);
+    const nextState = createMatch(
+      seed,
+      nextCount,
+      ARENA.startingPieces,
+      supplySeed,
+      levelDifficulty(nextLevel),
+    );
     viewport.transitionTitle(nextState, nextSeat, animate);
     input.dispose();
     touch.dispose();

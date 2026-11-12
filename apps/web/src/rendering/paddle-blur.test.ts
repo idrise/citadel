@@ -1,3 +1,6 @@
+import { resizePaddle } from "./paddle-shape";
+import { ARENA } from "../simulation/arena";
+import { SEATS } from "./palette";
 import { Mesh, MeshStandardMaterial, ShaderMaterial } from "three";
 import { expect, it } from "vite-plus/test";
 import { fortress } from "../simulation/arena";
@@ -76,5 +79,30 @@ it("does not stack the same historical frame when a slow render has only one old
   f.move(0, 0);
   f.move(16, 0.4);
   expect(f.ghosts()).toHaveLength(1);
+  disposeScene(f.stage.root);
+});
+
+it("refreshes the visible body and every ghost after a difficulty width change", () => {
+  const f = fixture();
+  f.sweep();
+  const paddle = f.stage.paddles[0]!;
+  paddle.geometry.computeBoundingBox();
+  const before = paddle.geometry.boundingBox!.max.z - paddle.geometry.boundingBox!.min.z;
+  const material = paddle.material;
+  resizePaddle(paddle, ARENA.batHalfAngle * 0.7, SEATS[0]!.colour);
+  f.move(20, 0.5);
+  paddle.geometry.computeBoundingBox();
+  expect(paddle.geometry.boundingBox!.max.z - paddle.geometry.boundingBox!.min.z).toBeLessThan(
+    before * 0.8,
+  );
+  expect(paddle.material).toBe(material);
+  for (const ghost of f.ghosts()) {
+    expect(ghost.geometry).toBe(paddle.geometry);
+    expect(ghost.children).toHaveLength(1);
+    expect(ghost.children[0]!.renderOrder).toBe(-1);
+  }
+  const geometry = paddle.geometry;
+  resizePaddle(paddle, ARENA.batHalfAngle * 0.7, SEATS[0]!.colour);
+  expect(paddle.geometry).toBe(geometry);
   disposeScene(f.stage.root);
 });

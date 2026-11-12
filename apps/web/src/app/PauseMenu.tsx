@@ -94,6 +94,16 @@ export function PauseMenu({
             </select>
           </label>
           <p>Level {level} of 100 · Difficulty adjusts between rounds.</p>
+          {state.difficulty && (
+            <p>
+              Up to {state.difficulty.maxBalls} {state.difficulty.maxBalls === 1 ? "ball" : "balls"}{" "}
+              ·{" "}
+              {state.difficulty.pickupCount === 0
+                ? "Pickups unlock at level 5"
+                : `${state.difficulty.pickupCount} supply containers`}{" "}
+              · {Math.round(state.difficulty.batScale * 100)}% bat size
+            </p>
+          )}
           <label>
             Your fortress{" "}
             <select

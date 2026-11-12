@@ -7,6 +7,7 @@ import { add, angleDifference, angleOf, dot, scale, sub, unit } from "./vector";
  * A small physical gap prevents clipping; ball radius never shortens player reach. */
 export function fitDefenceLimits(arena: ArenaGeometry): ArenaGeometry {
   const edges = polygonEdges(arena.vertices);
+  const halfAngle = arena.batHalfAngle ?? ARENA.batHalfAngle;
   return {
     ...arena,
     fortresses: arena.fortresses.map((home) => {
@@ -15,8 +16,8 @@ export function fitDefenceLimits(arena: ArenaGeometry): ArenaGeometry {
           centre = add(home.anchor, scale(unit(angle), ARENA.railRadius - ARENA.batRadius));
         return edges.every((edge) => {
           const opposite = angleDifference(angleOf(scale(edge.normal, -1)), angle);
-          const samples = [-ARENA.batHalfAngle, ARENA.batHalfAngle];
-          if (Math.abs(opposite) <= ARENA.batHalfAngle) samples.push(opposite);
+          const samples = [-halfAngle, halfAngle];
+          if (Math.abs(opposite) <= halfAngle) samples.push(opposite);
           const distance =
             dot(sub(centre, edge.start), edge.normal) +
             ARENA.batRadius *
@@ -26,7 +27,7 @@ export function fitDefenceLimits(arena: ArenaGeometry): ArenaGeometry {
       };
       const extent = (side: number) => {
         let low = 0,
-          high = Math.max(0, home.halfAngle - ARENA.paddleHalfAngle);
+          high = Math.max(0, home.halfAngle - halfAngle / 2);
         for (let i = 0; i < 18; i++) {
           const mid = (low + high) / 2;
           if (safe(mid * side)) low = mid;

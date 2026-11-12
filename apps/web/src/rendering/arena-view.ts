@@ -1,7 +1,9 @@
+import { resizePaddle } from "./paddle-shape";
 import { createLevelIntro } from "./level-intro";
 import { createSupplyView } from "./supply-view";
 import {
   ARENA,
+  batHalfAngle,
   SQUARE_ARENA,
   createArena,
   fortress,
@@ -157,6 +159,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         );
         if (ending?.winner === player.id) mark.position.set(ending.centre.x, 0.15, ending.centre.y);
         const paddle = stage.paddles[player.id]!;
+        resizePaddle(paddle, batHalfAngle(state.arena), SEATS[player.id]!.colour);
         paddle.position.set(home.anchor.x, 0.95, home.anchor.y);
         paddle.rotation.y = -player.angle;
         paddle.visible = alive(player);

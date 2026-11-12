@@ -28,33 +28,6 @@ export function Experiments({
       </label>
       <ControlSettings value={value} onChange={onChange} />
       <label>
-        Add a ball every{" "}
-        <input
-          aria-label="Ball addition interval"
-          type="range"
-          min="5"
-          max="30"
-          step="1"
-          value={value.ballInterval}
-          onChange={(event) => onChange({ ...value, ballInterval: Number(event.target.value) })}
-        />{" "}
-        {value.ballInterval}s
-      </label>
-      <label>
-        Ball limit{" "}
-        <select
-          aria-label="Ball limit"
-          value={value.maxBalls}
-          onChange={(event) => onChange({ ...value, maxBalls: Number(event.target.value) })}
-        >
-          {[1, 2, 3, 4, 6, 8].map((count) => (
-            <option key={count} value={count}>
-              {count}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label>
         <input
           type="checkbox"
           checked={value.reducedEffects}

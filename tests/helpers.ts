@@ -41,3 +41,27 @@ export async function pause(page: Page) {
   await expect(page.getByRole("heading", { name: "Paused", exact: true })).toBeVisible();
   await expect.poll(() => page.evaluate(() => document.pointerLockElement === null)).toBe(true);
 }
+
+/** Start a normal saved challenge; never alter a live match or its outcome. */
+export async function saveLevel(page: Page, level: number, count = 4) {
+  await page.addInitScript(
+    ({ level, count }) => {
+      const key = "citadel.progress.v1";
+      if (!localStorage.getItem(key))
+        localStorage.setItem(
+          key,
+          JSON.stringify({
+            version: 2,
+            level,
+            count,
+            best: Math.max(1, level - 1),
+            rounds: 1,
+            losses: 0,
+            demotion: null,
+            recent: [{ level: Math.max(1, level - 1), count, place: 1, at: Date.now() }],
+          }),
+        );
+    },
+    { level, count },
+  );
+}

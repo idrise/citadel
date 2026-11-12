@@ -112,14 +112,16 @@ test("two-player captured mouse reaches both end walls without the old travel ga
   await page.clock.runFor(1800);
   await page.mouse.move(1500, 300);
   await page.clock.runFor(600);
-  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeGreaterThan(
-    -20,
+  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeCloseTo(
+    Number(await page.getByLabel("Bat maximum angle", { exact: true }).textContent()),
+    1,
   );
   await page.screenshot({ path: testInfo.outputPath("reach-right.png") });
   await page.mouse.move(-500, 300);
   await page.clock.runFor(1000);
-  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeLessThan(
-    -160,
+  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeCloseTo(
+    Number(await page.getByLabel("Bat minimum angle", { exact: true }).textContent()),
+    1,
   );
   await page.screenshot({ path: testInfo.outputPath("reach-left.png") });
   expect(errors).toEqual([]);

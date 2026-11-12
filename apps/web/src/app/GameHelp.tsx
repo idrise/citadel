@@ -4,9 +4,9 @@ export function GameHelp() {
     <details className="game-help">
       <summary>How to play</summary>
       <p>
-        Start with three containers. Hit falling supply containers with your ball to add one to your
-        fortress. Supplies stop arriving after the opening minute. The last fortress standing wins.
-        Your rivals are bots.
+        Start with three containers. From level 5, hit falling supply containers with your ball to
+        add one to your fortress. Supplies stop arriving after the opening minute. The last fortress
+        standing wins. Your rivals are bots.
       </p>
       <p>
         Move the mouse left/right to steer. Click or press Space to serve; held serves launch
@@ -23,7 +23,8 @@ export function GameHelp() {
       </p>
       <p>
         Win to advance. Three consecutive losses move you back one level; a win resets the loss
-        count. Bots become more precise as levels rise. Time away does not change your level.
+        count. Bots become more precise as levels rise. Later levels add more balls and supplies,
+        faster balls and smaller bats. Time away does not change your level.
       </p>
       <small>
         Desktop preview · v{BUILD_INFO.version} · {BUILD_INFO.revision}. Choices are saved on this

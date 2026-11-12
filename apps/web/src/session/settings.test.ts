@@ -12,16 +12,12 @@ it("compares all four aid modes without changing control or pacing choices", () 
   const settings = {
     ...createSettings(true),
     mouseSensitivity: 1.6,
-    ballInterval: 10,
-    maxBalls: 6,
   };
   for (const mode of ASSISTANCE) {
     const next = withAssistance(settings, mode.id);
     expect(assistanceMode(next)).toBe(mode.id);
     expect(next.mouseSensitivity).toBe(1.6);
     expect(next.reducedEffects).toBe(true);
-    expect(next.ballInterval).toBe(10);
-    expect(next.maxBalls).toBe(6);
   }
   expect(settings.preview).toBe(true);
 });
@@ -51,4 +47,14 @@ it("uses the actual announced round level for authoritative bot difficulty", () 
       botLevel: level,
     });
   }
+});
+
+it("takes pacing from the level and ignores obsolete saved ball overrides", () => {
+  const legacy = { ...createSettings(), maxBalls: 8, ballInterval: 1 };
+  expect(matchOptions(legacy, 0, 1)).toMatchObject({ maxBalls: 1, ballSpeed: 14 });
+  expect(matchOptions(legacy, 0, 100)).toMatchObject({
+    maxBalls: 8,
+    ballSpeed: 34,
+    ballInterval: 5,
+  });
 });

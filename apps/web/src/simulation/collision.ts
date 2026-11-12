@@ -1,4 +1,4 @@
-import { ARENA, batCentre, SQUARE_ARENA, type ArenaGeometry } from "./arena";
+import { ARENA, batCentre, batHalfAngle, SQUARE_ARENA, type ArenaGeometry } from "./arena";
 import { polygonEdges } from "./polygon";
 import {
   add,
@@ -75,6 +75,7 @@ export function sweepPaddle(
   duration: number,
   arena: ArenaGeometry = SQUARE_ARENA,
 ): PaddleContact | null {
+  const halfAngle = batHalfAngle(arena);
   const anchor = batCentre(seat, angle, arena);
   const finishCentre = batCentre(seat, angle + angularVelocity * duration, arena);
   const centreVelocity =
@@ -95,18 +96,17 @@ export function sweepPaddle(
         const time = Math.max(0, root);
         const point = add(relative, scale(relativeVelocity, time));
         const normal = scale(normalise(point), side);
-        const offset =
-          angleDifference(angleOf(point), angle + angularVelocity * time) / ARENA.batHalfAngle;
+        const offset = angleDifference(angleOf(point), angle + angularVelocity * time) / halfAngle;
         if (Math.abs(offset) <= 1 && dot(relativeVelocity, normal) < -EPS)
           candidates.push({ time, normal, offset });
       }
     }
   }
   for (const end of [-1, 1]) {
-    const start = add(anchor, scale(unit(angle + end * ARENA.batHalfAngle), ARENA.batRadius));
+    const start = add(anchor, scale(unit(angle + end * halfAngle), ARENA.batRadius));
     const finish = add(
       finishCentre,
-      scale(unit(angle + angularVelocity * duration + end * ARENA.batHalfAngle), ARENA.batRadius),
+      scale(unit(angle + angularVelocity * duration + end * halfAngle), ARENA.batRadius),
     );
     const capVelocity = duration > 0 ? scale(sub(finish, start), 1 / duration) : { x: 0, y: 0 };
     const hit = sweepCircle(position, sub(velocity, capVelocity), start, inflation, duration);

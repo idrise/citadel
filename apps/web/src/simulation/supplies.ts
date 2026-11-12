@@ -23,7 +23,12 @@ export function stepSupplies(state: MatchState, dt: number) {
     .map((drop) => ({ ...drop, age: drop.age + dt }))
     .filter((drop) => drop.age < SUPPLIES.lifetime);
   if (state.elapsed >= SUPPLIES.cutoff) return;
-  const scheduled = SUPPLIES.first + state.nextSupplyId * SUPPLIES.interval;
+  const count = state.difficulty?.pickupCount ?? 7;
+  if (state.nextSupplyId >= count || count === 0) return;
+  const interval = state.difficulty
+    ? (SUPPLIES.cutoff - SUPPLIES.first) / count
+    : SUPPLIES.interval;
+  const scheduled = SUPPLIES.first + state.nextSupplyId * interval;
   if (scheduled >= SUPPLIES.cutoff || state.elapsed + 1e-8 < scheduled) return;
   const stream = { rng: state.supplyRng };
   let position = { x: 0, y: 0 };

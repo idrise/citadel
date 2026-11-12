@@ -25,6 +25,7 @@ export function createRoundExport(
     supplySeed: state.supplySeed,
     supplies: state.supplies.map((drop) => ({ ...drop, position: { ...drop.position } })),
     level: context.level ?? null,
+    difficulty: state.difficulty ? { ...state.difficulty } : null,
     initialPlayers: state.players.length,
     humanSeat: context.humanSeat,
     phase: state.phase,

@@ -70,6 +70,25 @@ export function createPaddleBlur(root: Group, paddles: readonly Mesh[]) {
           home = fortress(player.id, state.arena);
         ghosts[player.id]!.forEach((mesh) => {
           mesh.visible = false;
+          const geometry = paddles[player.id]!.geometry;
+          if (mesh.geometry !== geometry) {
+            mesh.geometry = geometry;
+            for (const child of mesh.children.slice())
+              if (child instanceof Mesh) {
+                mesh.remove(child);
+                child.geometry.dispose();
+                (Array.isArray(child.material) ? child.material : [child.material]).forEach(
+                  (material) => material.dispose(),
+                );
+              }
+            const edges = createFeatureEdges(geometry, SEATS[player.id]!.colour, {
+              width: 4.5,
+              power: 1.5,
+              opacity: [0.2, 0.14, 0.09, 0.05][ghosts[player.id]!.indexOf(mesh)]!,
+            });
+            edges.renderOrder = -1;
+            mesh.add(edges);
+          }
         });
         if (!budget || !alive(player) || state.phase === "finished") {
           poses.length = 0;

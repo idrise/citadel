@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { choosePlayers, openGame, openSettings, play } from "./helpers";
+import { choosePlayers, openGame, openSettings, play, saveLevel } from "./helpers";
 import { readFile } from "node:fs/promises";
 
 test("player-count previews morph on the same canvas with fixed menu controls and rapid retargeting", async ({
@@ -59,6 +59,7 @@ test("clamping a selected fortress during the preview keeps the menu fixed and S
 test("ordinary restarted attempts keep their opening seed but vary pickup seeds and positions", async ({
   page,
 }) => {
+  await saveLevel(page, 5);
   await page.clock.install();
   await page.goto("./");
   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 60000));

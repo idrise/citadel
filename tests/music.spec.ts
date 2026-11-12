@@ -1,4 +1,4 @@
-import { openSettings, play } from "./helpers";
+import { saveLevel, choosePlayers, openSettings, play } from "./helpers";
 import { expect, test, type Page } from "@playwright/test";
 
 test.use({ viewport: { width: 480, height: 360 } });
@@ -122,9 +122,10 @@ test("an arriving second ball introduces the second musical layer in the real au
   page,
 }) => {
   test.setTimeout(30000);
-  await page.goto("./");
+  await saveLevel(page, 100, 6);
+  await page.goto("./?seed=2026");
+  await choosePlayers(page, 6);
   await openSettings(page);
-  await page.getByLabel("Ball addition interval", { exact: true }).fill("5");
   await openSettings(page);
   await play(page);
   await expect(page.getByLabel("Music layers", { exact: true })).toHaveText("1");

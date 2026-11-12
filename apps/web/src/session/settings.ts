@@ -1,3 +1,4 @@
+import { levelDifficulty } from "../simulation/difficulty";
 import { DEFAULT_OPTIONS, type MatchOptions } from "../simulation/types";
 
 export interface GameSettings {
@@ -7,8 +8,6 @@ export interface GameSettings {
   reducedEffects: boolean;
   mouseSensitivity: number;
   serveTimeout: number;
-  ballInterval: number;
-  maxBalls: number;
   music: boolean;
   musicVolume: number;
   musicLights: boolean;
@@ -37,8 +36,6 @@ export function createSettings(reducedEffects = false): GameSettings {
     reducedEffects,
     mouseSensitivity: 1,
     serveTimeout: 1.8,
-    ballInterval: 15,
-    maxBalls: 4,
     music: true,
     musicVolume: 0.45,
     musicLights: true,
@@ -49,13 +46,19 @@ export function matchOptions(
   humanSeat: number,
   level?: number,
 ): MatchOptions {
+  const difficulty = level === undefined ? null : levelDifficulty(level);
   return {
     ...DEFAULT_OPTIONS,
     humanSeat,
-    ...(level === undefined ? {} : { botLevel: level }),
+    ...(difficulty
+      ? {
+          botLevel: difficulty.level,
+          ballSpeed: difficulty.ballSpeed,
+          ballInterval: difficulty.ballInterval,
+          maxBalls: difficulty.maxBalls,
+        }
+      : {}),
     slowdown: settings.slowdown,
     serveTimeout: settings.serveTimeout,
-    ballInterval: settings.ballInterval,
-    maxBalls: settings.maxBalls,
   };
 }

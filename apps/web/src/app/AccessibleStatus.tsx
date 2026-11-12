@@ -1,3 +1,4 @@
+import { clampPaddleAngle, fortress } from "../simulation/arena";
 import { SUPPLIES } from "../simulation/supplies";
 import { VICTORY_HOLD_SECONDS } from "../rendering/victory-morph";
 import type { SessionSnapshot } from "../session/session";
@@ -12,6 +13,7 @@ export function AccessibleStatus({
   humanSeat: number;
 }) {
   const { state } = snapshot;
+  const home = fortress(humanSeat, state.arena);
   return (
     <div className="sr-only" aria-live="off">
       <p id="game-controls">
@@ -23,6 +25,12 @@ export function AccessibleStatus({
           ? `Demoted to level ${snapshot.demotion.to} after three consecutive losses.`
           : ""}
       </output>
+      <output aria-label="Round ball limit">{state.difficulty?.maxBalls ?? 4}</output>
+      <output aria-label="Round ball speed">
+        {(state.difficulty?.ballSpeed ?? 24).toFixed(2)}
+      </output>
+      <output aria-label="Round pickup budget">{state.difficulty?.pickupCount ?? 7}</output>
+      <output aria-label="Round bat scale">{(state.difficulty?.batScale ?? 1).toFixed(2)}</output>
       <output aria-label="Round level">{snapshot.level}</output>
       {snapshot.started && snapshot.state.phase === "countdown" && (
         <output aria-label="Level introduction" aria-live="polite">
@@ -69,13 +77,29 @@ export function AccessibleStatus({
       <output aria-label="Your returns">{snapshot.totals.players[humanSeat]!.returns}</output>
       <output aria-label="Supply containers">{state.supplies.length}</output>
       <output aria-label="Supply phase">
-        {state.elapsed < SUPPLIES.cutoff ? "supplying" : "final stretch"}
+        {state.difficulty?.pickupCount === 0
+          ? "unavailable"
+          : state.elapsed < SUPPLIES.cutoff
+            ? "supplying"
+            : "final stretch"}
       </output>
       <output aria-label="Balls in play">{state.balls.length}</output>
       <output aria-label="Music status">{snapshot.music.status}</output>
       <output aria-label="Music section">{snapshot.music.section}</output>
       <output aria-label="Music layers">{snapshot.music.layers}</output>
       <output aria-label="Melody notes">{snapshot.music.notes}</output>
+      <output aria-label="Bat minimum angle">
+        {(
+          (clampPaddleAngle(humanSeat, home.direction - Math.PI / 2, state.arena) * 180) /
+          Math.PI
+        ).toFixed(1)}
+      </output>
+      <output aria-label="Bat maximum angle">
+        {(
+          (clampPaddleAngle(humanSeat, home.direction + Math.PI / 2, state.arena) * 180) /
+          Math.PI
+        ).toFixed(1)}
+      </output>
       <output aria-label="Bat angle">
         {((state.players[humanSeat]!.angle * 180) / Math.PI).toFixed(1)}
       </output>

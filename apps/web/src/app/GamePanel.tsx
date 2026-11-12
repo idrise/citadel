@@ -1,3 +1,5 @@
+import { levelDifficulty } from "../simulation/difficulty";
+import { ARENA } from "../simulation/arena";
 import type { Demotion, LevelResult } from "../session/progression";
 import { createRoundObserver } from "../session/round-observer";
 import type { PlayerCount } from "../simulation/arena";
@@ -40,7 +42,7 @@ export function GamePanel({
   callbacks.current = { count, onCount, level, onComplete };
   const initialConfig = useRef({ seed, humanSeat, count, level });
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => ({
-    state: createMatch(seed, count),
+    state: createMatch(seed, count, ARENA.startingPieces, undefined, levelDifficulty(level)),
     seed,
     humanSeat,
     level,

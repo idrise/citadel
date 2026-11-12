@@ -49,6 +49,7 @@ test("a first win advances 1 to 2 and one click starts the next round without re
   expect(progress.rounds).toBe(1);
   expect(progress.level).toBe(2);
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText("1");
+  await expect(page.getByLabel("Round ball speed", { exact: true })).toHaveText("14.00");
   await page.clock.runFor(6000);
   expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).rounds, key)).toBe(1);
   await page.screenshot({ path: testInfo.outputPath("level-1-win.png") });
@@ -57,6 +58,7 @@ test("a first win advances 1 to 2 and one click starts the next round without re
   await expect(page.getByRole("button", { name: "Start", exact: true })).toBeHidden();
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("countdown");
   await expect(page.getByLabel("Level introduction", { exact: true })).toHaveText("Level 2");
+  await expect(page.getByLabel("Round ball speed", { exact: true })).toHaveText("14.20");
   await expect(page.locator("canvas")).toHaveAttribute("data-continued", "same");
   await page.screenshot({ path: testInfo.outputPath("level-2-start.png") });
   await expect.poll(() => page.evaluate(() => Boolean(document.pointerLockElement))).toBe(true);
@@ -120,7 +122,7 @@ test("a loss retries the played level directly and preserves it after reload", a
     },
     { key, now: Date.now() },
   );
-  await openGame(page, true, 1);
+  await openGame(page, true, 8);
   await choosePlayers(page, 2);
   await openSettings(page);
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
@@ -201,7 +203,7 @@ test("the third consecutive loss demotes one level, announces it and persists th
     },
     { key, now: Date.now() },
   );
-  await openGame(page, true, 1);
+  await openGame(page, true, 8);
   await choosePlayers(page, 2);
   await openSettings(page);
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();

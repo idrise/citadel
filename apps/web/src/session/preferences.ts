@@ -26,15 +26,12 @@ export function parsePreferences(raw: string | null, reduced = false): SoloPrefe
     for (const [key, low, high] of [
       ["mouseSensitivity", 0.5, 2],
       ["serveTimeout", 1, 4],
-      ["ballInterval", 5, 30],
       ["musicVolume", 0, 1],
     ] as const) {
       const value = saved[key];
       if (typeof value === "number" && Number.isFinite(value))
         settings[key] = Math.max(low, Math.min(high, value));
     }
-    if ([1, 2, 3, 4, 6, 8].includes(Number(saved.maxBalls)))
-      settings.maxBalls = Number(saved.maxBalls);
     if (["low", "medium", "high"].includes(String(saved.effectsQuality)))
       settings.effectsQuality = saved.effectsQuality as GameSettings["effectsQuality"];
     return { count, humanSeat: seat, settings };

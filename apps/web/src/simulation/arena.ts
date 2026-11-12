@@ -7,6 +7,7 @@ export { ARENA, FIXED_DT } from "./arena-tuning";
 export type PlayerCount = 2 | 3 | 4 | 5 | 6;
 export interface ArenaGeometry {
   count: PlayerCount;
+  batHalfAngle?: number;
   vertices: Vec2[];
   fortresses: Fortress[];
 }
@@ -24,6 +25,7 @@ export function createArena(
   count: PlayerCount = 4,
   ids: number[] = Array.from({ length: count }, (_, i) => i),
   rotation = 0,
+  batScale = 1,
 ): ArenaGeometry {
   if (![2, 3, 4, 5, 6].includes(count) || ids.length !== count || new Set(ids).size !== count)
     throw new Error("Arena needs 2–6 distinct seats");
@@ -77,7 +79,12 @@ export function createArena(
       ),
     };
   });
-  return fitDefenceLimits({ count, vertices, fortresses });
+  return fitDefenceLimits({
+    count,
+    vertices,
+    fortresses,
+    ...(batScale === 1 ? {} : { batHalfAngle: ARENA.batHalfAngle * batScale }),
+  });
 }
 export const SQUARE_ARENA = createArena();
 export const FORTRESSES: readonly Fortress[] = SQUARE_ARENA.fortresses;
@@ -94,7 +101,7 @@ export function clampPaddleAngle(
 ): number {
   const home = fortress(seat, arena);
   const base = home.direction;
-  const limit = home.halfAngle - ARENA.paddleHalfAngle;
+  const limit = home.halfAngle - batHalfAngle(arena) / 2;
   return (
     base +
     clamp(
@@ -116,4 +123,9 @@ export function railPosition(
 /** Bat curvature is independent of the arc along which its midpoint travels. */
 export function batCentre(seat: number, angle: number, arena: ArenaGeometry = SQUARE_ARENA): Vec2 {
   return railPosition(seat, angle, ARENA.railRadius - ARENA.batRadius, arena);
+}
+
+/** Physical arc extent shared by collision, rail limits, previews and rendering. */
+export function batHalfAngle(arena: ArenaGeometry = SQUARE_ARENA): number {
+  return arena.batHalfAngle ?? ARENA.batHalfAngle;
 }

@@ -1,3 +1,4 @@
+import type { RoundDifficulty } from "./difficulty";
 import { stepSupplies } from "./supplies";
 import {
   ARENA,
@@ -31,11 +32,13 @@ export function createMatch(
   count: PlayerCount = 4,
   initialPieces: number = ARENA.startingPieces,
   supplySeed = seed,
+  difficulty?: RoundDifficulty,
 ): MatchState {
   if (!Number.isInteger(initialPieces) || initialPieces < 1 || initialPieces > 12)
     throw new Error("Invalid initial containers");
-  const arena = createArena(count);
+  const arena = createArena(count, undefined, 0, difficulty?.batScale ?? 1);
   const state: MatchState = {
+    ...(difficulty ? { difficulty: Object.freeze({ ...difficulty }) } : {}),
     arena,
     morph: null,
     eliminations: [],
@@ -79,10 +82,20 @@ export function createMatch(
 export function stepMatch(
   previous: MatchState,
   human: PlayerIntent = IDLE_INTENT,
-  options: MatchOptions = DEFAULT_OPTIONS,
+  requestedOptions: MatchOptions = DEFAULT_OPTIONS,
   dt = FIXED_DT,
 ): MatchState {
   if (previous.phase === "finished") return previous;
+  const difficulty = previous.difficulty;
+  const options = difficulty
+    ? {
+        ...requestedOptions,
+        botLevel: difficulty.level,
+        ballSpeed: difficulty.ballSpeed,
+        ballInterval: difficulty.ballInterval,
+        maxBalls: difficulty.maxBalls,
+      }
+    : requestedOptions;
   const state: MatchState = {
     ...previous,
     tick: previous.tick + 1,

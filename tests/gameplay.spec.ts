@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { openGame, play, pause } from "./helpers";
+import { openGame, play, pause, saveLevel, choosePlayers } from "./helpers";
 
 test("captured controls, focus pause, timed balls and restart work", async ({ page }) => {
   test.setTimeout(180000);
   await page.setViewportSize({ width: 480, height: 360 });
+  await saveLevel(page, 40);
   await openGame(page);
   await play(page);
   await page.clock.runFor(1800);
@@ -40,7 +41,9 @@ test("a complete seeded round reaches results and rematches without state edits"
   await page.setViewportSize({ width: 480, height: 360 });
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
+  await saveLevel(page, 40, 6);
   await openGame(page);
+  await choosePlayers(page, 6);
   await play(page);
   await page.clock.runFor(33000);
   await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("3");
@@ -68,18 +71,21 @@ test("relative mouse reaches both banks without depending on screen position", a
   await page.clock.runFor(1800);
   await page.mouse.move(900, 360);
   await page.clock.runFor(500);
-  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeGreaterThan(
-    -20,
+  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeCloseTo(
+    Number(await page.getByLabel("Bat maximum angle", { exact: true }).textContent()),
+    1,
   );
   await page.mouse.move(350, 360);
   await page.clock.runFor(500);
-  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeLessThan(
-    -70,
+  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeCloseTo(
+    Number(await page.getByLabel("Bat minimum angle", { exact: true }).textContent()),
+    1,
   );
   await page.mouse.move(900, 360);
   await page.clock.runFor(500);
-  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeGreaterThan(
-    -20,
+  expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeCloseTo(
+    Number(await page.getByLabel("Bat maximum angle", { exact: true }).textContent()),
+    1,
   );
   await pause(page);
 });

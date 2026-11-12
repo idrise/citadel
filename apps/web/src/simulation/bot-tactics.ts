@@ -42,7 +42,7 @@ export function tacticalBotIntent(state: MatchState, seat: number, level: number
       const along = dot(travel, direction);
       return (
         along > 0 &&
-        along / 24 < target.expires &&
+        along / (state.difficulty?.ballSpeed ?? 24) < target.expires &&
         length(sub(travel, scale(direction, along))) < target.radius + ARENA.ballRadius
       );
     });

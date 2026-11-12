@@ -1,3 +1,4 @@
+import type { RoundDifficulty } from "./difficulty";
 import type { OutlineTransition } from "./outline-transition";
 import type { ArenaGeometry } from "./arena";
 import type { Vec2 } from "./vector";
@@ -105,6 +106,7 @@ export interface ArenaMorph {
   duration: number;
 }
 export interface MatchState {
+  difficulty?: RoundDifficulty;
   arena: ArenaGeometry;
   morph: ArenaMorph | null;
   eliminations: { seat: number; elapsed: number }[];
