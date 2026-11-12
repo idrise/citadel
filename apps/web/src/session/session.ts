@@ -1,5 +1,6 @@
 import { createRoundObserver, type RoundTotals } from "./round-observer";
 import { createDesktopInput } from "../input/desktop";
+import { createTouchInput } from "../input/touch";
 import { createViewport } from "../rendering/viewport";
 import type { ViewOptions } from "../rendering/arena-view";
 import { SEATS } from "../rendering/palette";
@@ -54,6 +55,7 @@ export function createSession(
   let lastReport = 0;
   let frame = 0;
   const music = createGameMusic(seed, humanSeat);
+  let touchMode = window.matchMedia("(pointer: coarse)").matches;
   const report = () =>
     onSnapshot({
       state,
@@ -72,7 +74,9 @@ export function createSession(
     if (value) music.silence();
     else music.setPlaying(started && state.phase !== "finished");
     input.clear();
+    touch.clear();
     if (value) input.release();
+    if (value) touch.release();
     clock.reset();
     present([], 0);
     report();
@@ -88,7 +92,23 @@ export function createSession(
     () => settings.mouseSensitivity,
     () => state.arena,
   );
+  const touch = createTouchInput(
+    viewport.canvas,
+    humanSeat,
+    () => state.players[humanSeat]!.angle,
+    () => state.arena,
+  );
   const abort = new AbortController();
+  window.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (!started || paused) {
+        if (event.pointerType === "touch") touchMode = true;
+        else if (event.pointerType === "mouse") touchMode = false;
+      }
+    },
+    { capture: true, signal: abort.signal },
+  );
   window.addEventListener("blur", () => setPaused(true), { signal: abort.signal });
   document.addEventListener(
     "visibilitychange",
@@ -103,7 +123,11 @@ export function createSession(
     const events: GameEvent[] = [];
     if (!paused && state.phase !== "finished")
       clock.advance(delta, () => {
-        state = stepMatch(state, input.read(), matchOptions(settings, humanSeat));
+        state = stepMatch(
+          state,
+          touchMode ? touch.read() : input.read(),
+          matchOptions(settings, humanSeat),
+        );
         events.push(...state.events);
         for (const event of state.events) {
           if (event.type === "arrival")
@@ -120,7 +144,10 @@ export function createSession(
     music.setPlaying(started && !paused && state.phase !== "finished");
     if (started && state.phase === "finished" && !paused) endingTime += delta;
     present(observed, paused && started ? 0 : delta);
-    if (state.phase === "finished") input.release();
+    if (state.phase === "finished") {
+      input.release();
+      touch.release();
+    }
     if (timestamp - lastReport > 80 || events.some((event) => event.type === "victory")) {
       lastReport = timestamp;
       report();
@@ -164,7 +191,8 @@ export function createSession(
     menuSuppressed = false;
     music.unlock();
     setPaused(false);
-    input.capture();
+    if (touchMode) touch.capture();
+    else input.capture();
   };
   return {
     start,
@@ -178,7 +206,10 @@ export function createSession(
       }
       music.unlock();
       setPaused(false);
-      if (state.phase !== "finished") input.capture();
+      if (state.phase !== "finished") {
+        if (touchMode) touch.capture();
+        else input.capture();
+      }
     },
     configure(next: GameSettings) {
       settings = next;
@@ -189,6 +220,7 @@ export function createSession(
       cancelAnimationFrame(frame);
       abort.abort();
       input.dispose();
+      touch.dispose();
       music.dispose();
       viewport.dispose();
     },

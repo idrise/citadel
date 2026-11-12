@@ -14,7 +14,7 @@ export function AccessibleStatus({
     <div className="sr-only" aria-live="off">
       <p id="game-controls">
         Relative mouse steers. Click or Space serves. A/D or arrows also steer. Escape releases the
-        mouse and pauses.
+        mouse and pauses. On touch screens, drag left or right to steer and tap to serve.
       </p>
       <output aria-label="Round phase">{state.phase}</output>
       <output aria-label="Round winner" aria-live="polite">

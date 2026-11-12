@@ -283,7 +283,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 
 ### Milestone checklist and resume rules
 
-**Current position:** On 11 November 2026 the user said “I think 7 and 8 are good.” M07 is Approved; the delivered local M08 build is approved, with M08 In progress only for publication and public-site verification. The procedural CITADEL title, −/+ controls, Start, floating result/rematch and neon victory fireworks replace landing/result popups; advanced settings remain in Pause by explicit user choice. Menus are camera-relative, remain fixed when player count changes, and darken the arena behind title, win and loss text. Ball colours show last-striker credit and the default human is coral. Independent enemy capsule audio and a finite victory coda are verified. The user requested GitHub Pages setup instructions before the first push; no push is authorised. M06 pacing comparisons and external tester feedback remain outstanding; M09 is not authorised.
+**Current position:** On 12 November 2026 the user requested early touch controls and camera responses for a mobile tester, ahead of the normal milestone order. This focused M09 work is **In progress** and ready for tester review; it is not a full mobile acceptance or M10 performance gate. David Brown requested camera movement, a danger zoom and paddle-following shimmy. M07 is Approved; the delivered local M08 build is approved, with public verification still outstanding. M06 pacing comparisons remain outstanding. No push or manual deployment is authorised by this request.
 
 Check a milestone only when implemented, validated and approved. A delivered milestone awaiting review remains unchecked; the ledger records that distinction.
 
@@ -467,8 +467,8 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 | M05 | **Solo expansion** | All 2–6-seat layouts, tuned bot difficulties, full solo validation | Approved | 11 Nov 2026: brilliant; user requested M08 | 67ddd15, b63db58, 7618c47, 80e95b8; docs/M05_REVIEW.md |
 | M06 | Solo proof | Spin/ball tuning and evidence-based 2-minute escalation | Not started | — | — |
 | M07 | Solo proof | Geometry-first effects, audio, readable visual cues and feel | Approved | 11 Nov 2026: “I think 7 and 8 are good.” | f729bd1, 0c84d6b, 551f559; docs/M07_REVIEW.md and docs/SCENE_PRESENTATION_REVIEW.md |
-| M08 | **Desktop validation gate** | Public-ready static solo build, playtests and decision | In progress | 11 Nov 2026: local build approved; public verification outstanding | 643f704, 6727aac, 2318be7, df309ef; docs/SCENE_PRESENTATION_REVIEW.md; Pages setup/first push/public verification pending, external feedback uncollected |
-| M09 | Mobile | Touch steering, tap launch and responsive layouts | Not started | — | — |
+| M08 | **Desktop validation gate** | Public-ready static solo build, playtests and decision | In progress | 11 Nov 2026: local build approved; public verification outstanding | 643f704, 6727aac, 2318be7, df309ef; docs/SCENE_PRESENTATION_REVIEW.md; public verification pending; initial tester feedback recorded |
+| M09 | Mobile | Touch steering, tap launch and responsive layouts | In progress | 12 Nov 2026: early tester request; review pending | docs/M09_TOUCH_REVIEW.md; real-device and full match validation outstanding |
 | M10 | **Mobile validation gate** | Mobile GPU/performance/accessibility and real-device tests | Not started | — | — |
 | M11 | Multiplayer | WebRTC host/client prototype with local/manual signalling | Not started | — | — |
 | M12 | Multiplayer | Cloudflare private-room signalling, invitations and reconnect | Not started | — | — |
@@ -642,4 +642,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Prepare the first desktop publication; M07 is Approved and the local M08 build is approved.** Follow the first-publish checklist above: the owner selects GitHub Actions as the Pages source, then explicitly authorises a push when ready. The existing workflow builds, checks and publishes on `main`. After an authorised publication, verify the actual public build and record its URL/commit; finish M08's release record rather than starting M09. External feedback remains uncollected. See `docs/SCENE_PRESENTATION_REVIEW.md` for the delivered scene, audio and legibility evidence. Preserve current pacing; M06/M09 remain unstarted. The approval does not authorise pushing, manually deploying or using `gh`.
+**Review the early mobile tester build** in `docs/M09_TOUCH_REVIEW.md`. M09 remains in progress pending real-device play, complete mobile round checks and review. M08 still needs public-site verification; M06 remains unstarted. The tester request does not authorise pushing, manually deploying or using `gh`.

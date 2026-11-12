@@ -6,6 +6,12 @@ tester sessions and a public Pages URL are **not yet collected**.
 
 ## Feedback already received
 
+12 November: David Brown requested more camera movement, a zoom as danger
+approaches, and a left/right camera shimmy following the bat. He needs touch
+controls on mobile. An early implementation and emulated-device evidence are
+recorded in [M09 touch review](M09_TOUCH_REVIEW.md); his hands-on response to it
+has not yet been collected.
+
 | Source                  | Observation                                                                  | Response / next check                                                                                                 |
 | ----------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | Project owner, hands-on | Early ball felt dull; wanted speed and accumulating pressure.                | Approved size/speed increase and timed additions retained. M06 still needs comparative pacing evidence.               |

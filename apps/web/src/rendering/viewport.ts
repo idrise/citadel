@@ -14,7 +14,7 @@ import type { MatchState } from "../simulation/types";
 import { disposeScene } from "./dispose-scene";
 import { createArenaView, type ViewOptions } from "./arena-view";
 import { createArenaCamera, fitArenaCamera, screenToArena } from "./camera";
-import { createCameraMotion } from "./camera-motion";
+import { cameraDanger, createCameraMotion } from "./camera-motion";
 import { createBloom } from "./bloom";
 import { createNeonEnvironment } from "./neon-environment";
 import { lightArena } from "./lighting";
@@ -111,7 +111,11 @@ export function createViewport(
         }
       const home = fortress(humanSeat, state.arena);
       motion.follow(Math.atan2(home.anchor.x, home.anchor.y));
-      motion.update(dt, options.reducedEffects);
+      const paddleOffset =
+        state.phase === "playing"
+          ? (state.players[humanSeat]!.angle - home.direction) / home.halfAngle
+          : 0;
+      motion.update(dt, options.reducedEffects, paddleOffset, cameraDanger(state, humanSeat));
       framingPoints = state.arena.vertices.flatMap((p) => [
         new Vector3(p.x * 1.09, 0, p.y * 1.09),
         new Vector3(p.x * 1.09, 2.34, p.y * 1.09),

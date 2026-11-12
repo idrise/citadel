@@ -5,8 +5,10 @@ Choose 2–6 fortresses: one human versus 1–5 bots, with physical health piece
 revenge serves, timed ball additions and rematch. The arena gradually changes
 shape as players fall, normally over 2.8 seconds. M01–M05 are approved.
 The [M07 effects/edge review](docs/M07_REVIEW.md) and
-[M08 desktop preview 0.1.0](docs/M08_REVIEW.md) await review. External playtests and
-public deployment remain pending; M06's pacing comparison is still unstarted.
+[M08 desktop preview 0.1.0](docs/M08_REVIEW.md) record the release work. Further
+external playtesting and public deployment verification remain pending; M06's pacing comparison is still unstarted.
+An early touch-and-camera build for mobile tester feedback is documented in
+[M09 touch review](docs/M09_TOUCH_REVIEW.md); real-device validation is pending.
 The latest [scene title, victory fireworks and shot feedback](docs/SCENE_PRESENTATION_REVIEW.md)
 replace the former landing/result popups.
 
@@ -21,6 +23,10 @@ pnpm dev
 ```
 
 ## Play locally
+
+On a touchscreen, drag left or right to move the bat, tap to serve, and use the
+pause button in the top corner. Dragging is relative, so you can reposition your
+finger without moving the bat. Camera motion pauses with reduced effects.
 
 Use the floating title's **− / +** buttons to choose 2–6 players, then **START**.
 The lettering and buttons are procedural 3D meshes.

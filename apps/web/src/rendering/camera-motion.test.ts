@@ -8,7 +8,8 @@ import {
   fitArenaCamera,
   screenToArena,
 } from "./camera";
-import { createCameraMotion } from "./camera-motion";
+import { cameraDanger, createCameraMotion } from "./camera-motion";
+import { createMatch } from "../simulation/match";
 
 it("moves gently within a bounded orbit and keeps the full arena framed", () => {
   const camera = createArenaCamera();
@@ -68,5 +69,52 @@ it("inverse projection remains correct at every fortress throughout the live cam
         expect(result!.x).toBeCloseTo(world.x, 8);
         expect(result!.y).toBeCloseTo(world.y, 8);
       }
+  }
+});
+
+it("zooms for approaching nearby balls, not receding or ready balls", () => {
+  const state = createMatch(2026, 4);
+  const home = FORTRESSES[0]!;
+  state.phase = "playing";
+  const ball = state.balls[0]!;
+  ball.phase = "active";
+  ball.position = { x: home.anchor.x - 4, y: home.anchor.y };
+  ball.velocity = { x: 10, y: 0 };
+  expect(cameraDanger(state, 0)).toBe(1);
+  ball.velocity.x = -10;
+  expect(cameraDanger(state, 0)).toBe(0);
+  ball.phase = "ready";
+  expect(cameraDanger(state, 0)).toBe(0);
+});
+
+it("smoothly follows the bat and danger while freezing all cues in reduced motion", () => {
+  const camera = createArenaCamera();
+  const motion = createCameraMotion(camera);
+  for (let i = 0; i < 20; i++) motion.update(0.05, false, 1, 1);
+  expect(camera.zoom).toBeGreaterThan(1.015);
+  const position = camera.position.clone(),
+    zoom = camera.zoom;
+  for (let i = 0; i < 20; i++) motion.update(0.1, true, -1, 0);
+  expect(camera.position).toEqual(position);
+  expect(camera.zoom).toBe(zoom);
+  motion.update(0.016, false, -1, 0);
+  expect(camera.position.distanceTo(position)).toBeLessThan(0.1);
+  expect(camera.zoom).toBeLessThan(zoom);
+});
+
+it("keeps the arena in frame at maximum danger and paddle movement on phone and desktop", () => {
+  const camera = createArenaCamera();
+  const motion = createCameraMotion(camera);
+  const bounds = new Box3(new Vector3(-10, 0, -10), new Vector3(10, 2.25, 10));
+  for (let step = 0; step < 300; step++) {
+    motion.update(0.1, false, step % 100 < 50 ? 1 : -1, 1);
+    fitArenaCamera(camera, bounds, [0.46, 1.8, 2.16][step % 3]!);
+    for (const x of [-10, 10])
+      for (const y of [0, 2.25])
+        for (const z of [-10, 10]) {
+          const point = new Vector3(x, y, z).project(camera);
+          expect(Math.abs(point.x)).toBeLessThan(1);
+          expect(Math.abs(point.y)).toBeLessThan(1);
+        }
   }
 });

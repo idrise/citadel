@@ -6,7 +6,8 @@ export function GameHelp() {
       <p>Protect your eight pieces. The last fortress standing wins. Your rivals are bots.</p>
       <p>
         Move the mouse left/right to steer. Click or press Space to serve; held serves launch
-        automatically. A/D or the arrow keys also move the bat.
+        automatically. A/D or the arrow keys also move the bat. On a touchscreen, drag left or right
+        to steer and tap to serve.
       </p>
       <p>
         Catch near the bat's edges to aim. Brush sideways into a hit for curve. Dots show a possible

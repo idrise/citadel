@@ -91,6 +91,11 @@ export function GamePanel({
   return (
     <>
       <div className="viewport" ref={container} />
+      {snapshot.started && !snapshot.paused && snapshot.state.phase !== "finished" && (
+        <button className="touch-pause" onClick={() => session.current?.pause()} aria-label="Pause">
+          Ⅱ
+        </button>
+      )}
       <AccessibleStatus snapshot={snapshot} humanSeat={humanSeat} />
       {unavailable ? (
         <div className="game-overlay">
