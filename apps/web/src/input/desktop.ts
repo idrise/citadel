@@ -19,6 +19,7 @@ export function createDesktopInput(
   let disposed = false;
   let captureWanted = false;
   let captureEpoch = 0;
+  let capturePending = false;
   let base = fortress(seat, geometry()).direction;
   function rebase() {
     const next = fortress(seat, geometry()).direction;
@@ -39,14 +40,15 @@ export function createDesktopInput(
       rebase();
       const configured = sensitivity();
       const multiplier = Number.isFinite(configured) ? Math.max(0.5, Math.min(2, configured)) : 1;
+      const delta = event.movementX * MOUSE_RADIANS_PER_PIXEL * multiplier;
+      const actual = currentAngle();
+      // Reverse from the bat, rather than unwinding an earlier target it has not reached.
+      if (angle !== null && (angle - actual) * delta < 0) angle = actual;
       angle = clampPaddleAngle(
         seat,
         Math.max(
           clampPaddleAngle(seat, base - 2, geometry()),
-          Math.min(
-            clampPaddleAngle(seat, base + 2, geometry()),
-            (angle ?? currentAngle()) + event.movementX * MOUSE_RADIANS_PER_PIXEL * multiplier,
-          ),
+          Math.min(clampPaddleAngle(seat, base + 2, geometry()), (angle ?? actual) + delta),
         ),
         geometry(),
       );
@@ -80,7 +82,13 @@ export function createDesktopInput(
     clear();
     lostCapture();
   };
-  document.addEventListener("pointerlockerror", captureFailed, options);
+  document.addEventListener(
+    "pointerlockerror",
+    () => {
+      if (!capturePending) captureFailed();
+    },
+    options,
+  );
   window.addEventListener(
     "keydown",
     (event) => {
@@ -113,25 +121,38 @@ export function createDesktopInput(
       if (disposed) return;
       captureWanted = true;
       const epoch = ++captureEpoch;
+      capturePending = false;
       canvas.focus({ preventScroll: true });
-      try {
-        if (!canvas.requestPointerLock) {
-          captureFailed();
-          return;
+      const failed = (error: unknown, raw: boolean) => {
+        if (epoch !== captureEpoch || !captureWanted || disposed) return;
+        if (raw && error instanceof Error && error.name === "NotSupportedError") request(false);
+        else captureFailed();
+      };
+      const request = (raw: boolean) => {
+        try {
+          if (!canvas.requestPointerLock) {
+            captureFailed();
+            return;
+          }
+          const pending = canvas.requestPointerLock(raw ? { unadjustedMovement: true } : undefined);
+          if (pending) {
+            capturePending = true;
+            void pending
+              .then(() => {
+                if (epoch === captureEpoch) capturePending = false;
+                if ((disposed || !captureWanted) && document.pointerLockElement === canvas)
+                  document.exitPointerLock();
+              })
+              .catch((error: unknown) => {
+                if (epoch === captureEpoch) capturePending = false;
+                failed(error, raw);
+              });
+          }
+        } catch (error) {
+          failed(error, raw);
         }
-        const request = canvas.requestPointerLock();
-        if (request)
-          void request
-            .then(() => {
-              if ((disposed || !captureWanted) && document.pointerLockElement === canvas)
-                document.exitPointerLock();
-            })
-            .catch(() => {
-              if (epoch === captureEpoch) captureFailed();
-            });
-      } catch {
-        captureFailed();
-      }
+      };
+      request(true);
     },
     release() {
       captureWanted = false;

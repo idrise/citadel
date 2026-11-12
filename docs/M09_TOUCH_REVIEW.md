@@ -5,6 +5,9 @@ looms and a sideways shimmy when the bat moves. The owner also requested touch
 steering early to enable testing. This is a focused M09 experiment, not completion
 of the mobile milestone.
 
+The owner's follow-up requests for paddle blur and consistent mouse movement
+are recorded in [paddle motion review](PADDLE_MOTION_REVIEW.md).
+
 Drag anywhere on the arena to steer relatively; lift and reposition without a
 bat jump. Tap to serve, and use the top-right pause button to pause or change
 settings. A drag or cancelled gesture does not serve. The camera gently follows

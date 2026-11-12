@@ -11,6 +11,7 @@ import { SEATS } from "./palette";
 import { effectsProfile, type EffectsQuality } from "./quality";
 import { createAimGuide } from "./aim-guide";
 import type { SceneMenuState } from "./scene-menu";
+import { createPaddleBlur } from "./paddle-blur";
 
 export interface ViewOptions {
   preview: boolean;
@@ -30,6 +31,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
   const balls = createBallView(stage.root);
   const guide = createAimGuide(stage.root);
   const effects = createEffects(stage.root);
+  const paddleBlur = createPaddleBlur(stage.root, stage.paddles);
   let lastEvent = -1;
   let geometry = initial;
   return {
@@ -86,6 +88,14 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         });
       });
       geometry = state.arena;
+      paddleBlur.update(
+        state,
+        options.reducedEffects || options.quality === "low"
+          ? 0
+          : options.quality === "medium"
+            ? 3
+            : 5,
+      );
       for (const event of state.events) {
         if (event.id <= lastEvent) continue;
         effects.emit(event, options.reducedEffects, profile.shards, profile.sparks, state);

@@ -103,8 +103,36 @@ it("uses captured relative movement and holds a world target without any screen 
   expect(input.controls.read().targetAngle).toBeCloseTo(target);
   for (let tick = 0; tick < 120; tick++)
     expect(input.controls.read().targetAngle).toBeCloseTo(target);
+  input.setAngle(target);
   input.move(-10);
   expect(input.controls.read().targetAngle).toBeCloseTo(target - 10 * MOUSE_RADIANS_PER_PIXEL);
+  input.controls.dispose();
+});
+
+it("reverses immediately from the actual bat instead of unwinding an unreached mouse target", async () => {
+  const input = inputFixture();
+  input.controls.capture();
+  await Promise.resolve();
+  input.move(100);
+  const actual = fortress(0).direction + 0.05;
+  input.setAngle(actual);
+  input.move(-5);
+  expect(input.controls.read().targetAngle).toBeCloseTo(actual - 5 * MOUSE_RADIANS_PER_PIXEL);
+  input.controls.dispose();
+});
+
+it("requests raw mouse movement and falls back when the browser cannot provide it", async () => {
+  const input = inputFixture();
+  const request = vi
+    .fn()
+    .mockRejectedValueOnce(new DOMException("Raw input unavailable", "NotSupportedError"))
+    .mockResolvedValueOnce(undefined);
+  input.canvas.requestPointerLock = request;
+  input.controls.capture();
+  input.documentEvents.dispatchEvent(new Event("pointerlockerror"));
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  expect(request.mock.calls).toEqual([[{ unadjustedMovement: true }], [undefined]]);
+  expect(input.lost).not.toHaveBeenCalled();
   input.controls.dispose();
 });
 
@@ -186,10 +214,12 @@ it.each([0, 1, 2, 3])(
     expect(input.controls.read().targetAngle).toBeCloseTo(fortress(seat).direction + 0.1);
     input.move(1e6);
     const upper = input.controls.read().targetAngle!;
+    input.setAngle(upper);
     input.move(-1);
     expect(input.controls.read().targetAngle).toBeCloseTo(upper - 0.008);
     input.move(-1e6);
     const lower = input.controls.read().targetAngle!;
+    input.setAngle(lower);
     input.move(1);
     expect(input.controls.read().targetAngle).toBeCloseTo(lower + 0.008);
     input.setSensitivity(NaN);

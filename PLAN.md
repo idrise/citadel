@@ -458,6 +458,12 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November follow-up: the owner requested paddle motion blur and reported
+inconsistent mouse control. Short arc-following exposure samples and immediate
+mouse reversal from the actual bat angle are delivered for review. Raw mouse
+deltas are requested with browser fallback. See `docs/PADDLE_MOTION_REVIEW.md`
+for 2/4/6 renders and checks; M09 remains In progress and no push is authorised.
+
 | ID | Stage | Reviewable deliverable | Status | Approval | Commit |
 |---|---|---|---|---|---|
 | M01 | **First playable** | Four-seat prototype: human + bots, physical damage, revenge serve, rematch | Approved | 11 Nov 2026: user requested continuation | 415b2df; earlier checkpoints in Git |

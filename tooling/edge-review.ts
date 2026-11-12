@@ -34,6 +34,7 @@ export function renderEdgeReview(
   reduced = false,
   dense = false,
   legacyBloom = false,
+  paddleMotion: "none" | "before" | "after" = "none",
 ) {
   const state = createMatch(2026, count);
   const ball = state.balls[0]!;
@@ -101,13 +102,24 @@ export function renderEdgeReview(
   old.addPass(output);
   old.setSize(1280, 900);
   current.resize(1280, 900);
-  arena.update(state, 0, {
+  const reviewOptions = {
     humanSeat: 0,
     preview: false,
     slowdown: false,
     reducedEffects: reduced,
-    quality: "high",
-  });
+    quality: "high" as const,
+  };
+  if (paddleMotion !== "none") {
+    state.phase = "playing";
+    for (let tick = 0; tick <= 12; tick++) {
+      state.tick = tick;
+      state.players.forEach((player) => {
+        player.angle = state.arena.fortresses[player.id]!.direction + ((tick - 6) * 3.2) / 120;
+      });
+      arena.update(state, 1 / 120, { ...reviewOptions, reducedEffects: paddleMotion === "before" });
+    }
+  }
+  arena.update(state, 0, reviewOptions);
   for (let i = 0; i < 3; i++)
     if ((legacy || legacyBloom) && !reduced) old.render(0);
     else current.render(0, reduced, 0, "high");
