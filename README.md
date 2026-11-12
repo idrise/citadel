@@ -47,7 +47,9 @@ Two seats use a rectangle, then triangle, square, pentagon and hexagon.
 Eliminations gradually move walls and surviving fortresses to the new layout,
 preserving health and relative steering. Wins celebrate in the arena with neon
 fireworks, a musical closing phrase and a **NEXT** button. Eliminated players can
-choose **Watch** or **Retry** immediately while bots continue playing.
+choose scene-rendered **Watch** or **Retry** immediately while bots continue playing.
+Triangle defences sit forward of their corners and retain a ball-sized passage
+beside the bats, including at their travel limits.
 Other results show **ROUND OVER** in the scene.
 Settled result screens dim the arena while the foreground
 lettering stays bright. Pause has optional Round statistics

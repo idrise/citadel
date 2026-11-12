@@ -116,3 +116,19 @@ it("interpolates the requested gap through a four-to-three morph rather than sna
   }
   expect(previous).toBeCloseTo(TRIANGLE_BAT_WALL_GAP);
 });
+it("releases the special triangle gap smoothly when the last two defenders reach the rectangle", () => {
+  const state = createMatch(7, 3);
+  state.players[1]!.health.fill(false);
+  state.eliminations.push({ seat: 1, elapsed: 0 });
+  beginArenaMorph(state);
+  let previous = TRIANGLE_BAT_WALL_GAP;
+  while (state.morph) {
+    stepArenaMorph(state, 1 / 120);
+    const gap = state.arena.batWallGap ?? 0.015;
+    expect(gap).toBeLessThanOrEqual(previous + 1e-9);
+    previous = gap;
+  }
+  expect(state.arena.count).toBe(2);
+  expect(state.arena.batWallGap).toBeUndefined();
+  expect(previous).toBeCloseTo(0.015);
+});

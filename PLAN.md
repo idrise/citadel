@@ -464,6 +464,33 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November scene-Retry / triangle-gap correction: the owner rejected the visible
+React retry card and clarified that the triangle bats still almost sealed the
+walls. The earlier inset widened travel but its 0.015-unit fitting margin let the
+bat close the gap again. Current triangle anchors are 2.6 units inward, with a
+0.7-unit skin-to-wall passage at every legal bat pose. The ball diameter is 0.374;
+swept-circle tests prove the lane remains passable at both travel limits for all
+three seats and levels 1/50/100. The requested gap interpolates through elimination
+morphs; other layouts keep their existing wall reach. The owner permitted a larger
+triangle if needed. The present geometry has sufficient room with these lanes, so
+the wall outline remains unchanged; matched bot samples inform the pacing review.
+Watch/Retry and loss/demotion lettering now use scene meshes and neon edge shaders.
+The visible React card and its CSS are removed; invisible semantic hit targets
+remain consistent with the existing scene controls. Choosing Watch leaves a small
+scene Retry control while simulation continues. See `docs/SCENE_RETRY_GAP_REVIEW.md`
+and `docs/reviews/m09/scene-retry-gap/` for rendered comparisons, pacing samples
+and validation. Local checkpoints: `2c79309` gap geometry; `779a37c` scene UI.
+Validation: clean `vp check --fix`, 445 unit tests / 71 files and 21/21 native root
+browser checks. Fourteen Pages scenarios have passing coverage: 13/14 on the
+selection run, then the new touch Retry check passes after correcting a test-only
+assumption that changing fortress leaves Settings open. Both production build
+bases pass with the existing ~966kB main-chunk advisory. Twelve authored
+2/3/4/6 desktop/phone captures have no browser errors; eighteen matched bot samples
+finish within 120 seconds with zero collision caps. Level-one median time moves
+from 91.5s to 62.9s; this is a small bot-only sample, not a human pacing verdict.
+Physical iPad/iPhone validation remains open. M09 awaits review.
+
+
 12 November triangle / rally follow-up: the owner added two further TODO items.
 Three-seat fortress anchors now sit 1.2 units inward from the unchanged wall tips;
 physical wall fitting permits roughly 40–90% more bat travel depending on level
@@ -846,4 +873,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

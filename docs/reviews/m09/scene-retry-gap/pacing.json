@@ -1,0 +1,167 @@
+{
+  "kind": "Node bot-only comparison; identical seeds and rules, previous 1.2-unit/.015-gap triangle versus current geometry; 120-second censoring",
+  "samples": [
+    {
+      "level": 1,
+      "seed": 1,
+      "previous": true,
+      "phase": "finished",
+      "seconds": 91.47500000001887,
+      "damage": 8,
+      "collisionCaps": 0
+    },
+    {
+      "level": 1,
+      "seed": 1,
+      "previous": false,
+      "phase": "finished",
+      "seconds": 43.941666666664815,
+      "damage": 6,
+      "collisionCaps": 0
+    },
+    {
+      "level": 1,
+      "seed": 7,
+      "previous": true,
+      "phase": "finished",
+      "seconds": 98.86666666669142,
+      "damage": 8,
+      "collisionCaps": 0
+    },
+    {
+      "level": 1,
+      "seed": 7,
+      "previous": false,
+      "phase": "finished",
+      "seconds": 86.42500000001485,
+      "damage": 8,
+      "collisionCaps": 0
+    },
+    {
+      "level": 1,
+      "seed": 2026,
+      "previous": true,
+      "phase": "finished",
+      "seconds": 59.65833333333059,
+      "damage": 8,
+      "collisionCaps": 0
+    },
+    {
+      "level": 1,
+      "seed": 2026,
+      "previous": false,
+      "phase": "finished",
+      "seconds": 62.92499999999707,
+      "damage": 8,
+      "collisionCaps": 0
+    },
+    {
+      "level": 50,
+      "seed": 1,
+      "previous": true,
+      "phase": "finished",
+      "seconds": 23.374999999999314,
+      "damage": 9,
+      "collisionCaps": 0
+    },
+    {
+      "level": 50,
+      "seed": 1,
+      "previous": false,
+      "phase": "finished",
+      "seconds": 16.71666666666636,
+      "damage": 8,
+      "collisionCaps": 0
+    },
+    {
+      "level": 50,
+      "seed": 7,
+      "previous": true,
+      "phase": "finished",
+      "seconds": 17.233333333332997,
+      "damage": 9,
+      "collisionCaps": 0
+    },
+    {
+      "level": 50,
+      "seed": 7,
+      "previous": false,
+      "phase": "finished",
+      "seconds": 23.30833333333265,
+      "damage": 10,
+      "collisionCaps": 0
+    },
+    {
+      "level": 50,
+      "seed": 2026,
+      "previous": true,
+      "phase": "finished",
+      "seconds": 18.008333333332953,
+      "damage": 6,
+      "collisionCaps": 0
+    },
+    {
+      "level": 50,
+      "seed": 2026,
+      "previous": false,
+      "phase": "finished",
+      "seconds": 18.541666666666256,
+      "damage": 8,
+      "collisionCaps": 0
+    },
+    {
+      "level": 100,
+      "seed": 1,
+      "previous": true,
+      "phase": "finished",
+      "seconds": 20.291666666666156,
+      "damage": 10,
+      "collisionCaps": 0
+    },
+    {
+      "level": 100,
+      "seed": 1,
+      "previous": false,
+      "phase": "finished",
+      "seconds": 15.79166666666641,
+      "damage": 9,
+      "collisionCaps": 0
+    },
+    {
+      "level": 100,
+      "seed": 7,
+      "previous": true,
+      "phase": "finished",
+      "seconds": 21.05833333333278,
+      "damage": 9,
+      "collisionCaps": 0
+    },
+    {
+      "level": 100,
+      "seed": 7,
+      "previous": false,
+      "phase": "finished",
+      "seconds": 14.516666666666483,
+      "damage": 10,
+      "collisionCaps": 0
+    },
+    {
+      "level": 100,
+      "seed": 2026,
+      "previous": true,
+      "phase": "finished",
+      "seconds": 22.466666666666033,
+      "damage": 9,
+      "collisionCaps": 0
+    },
+    {
+      "level": 100,
+      "seed": 2026,
+      "previous": false,
+      "phase": "finished",
+      "seconds": 13.80833333333319,
+      "damage": 10,
+      "collisionCaps": 0
+    }
+  ]
+}

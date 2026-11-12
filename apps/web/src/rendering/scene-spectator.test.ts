@@ -23,6 +23,13 @@ it("renders early Watch/Retry as neon scene geometry and keeps the live board br
   const edges = retry.getObjectByName("feature-edges") as Mesh;
   expect((edges.material as ShaderMaterial).name).toBe("NeonFeatureEdges");
   expect(retry.getObjectByName("neon-text:RETRY")).toBeDefined();
+  overlay.update(
+    { ...state, spectator: { level: 2, watching: false, demotion: { from: 3, to: 2, count: 6 } } },
+    0,
+    1280,
+    900,
+  );
+  expect(overlay.scene.getObjectByName("neon-text:DEMOTED TO LEVEL 02")).toBeDefined();
   const compact = overlay.update(
     { ...state, spectator: { level: 2, watching: true } },
     0,

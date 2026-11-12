@@ -1,5 +1,7 @@
 # Triangle clearance and scoreless rallies
 
+> The [scene Retry and triangle-gap correction](SCENE_RETRY_GAP_REVIEW.md) supersedes the 1.2-unit inset described below: the current inset is 2.6 with a guaranteed 0.7-unit lane. Rally rules are unchanged.
+
 The two additional TODO items are implemented locally as M09 feedback follow-ups. Review tuning in play before approval.
 
 ## Triangle layout

@@ -1,0 +1,78 @@
+{
+  "kind": "Authored previous/current triangle poses and scene spectator controls",
+  "samples": [
+    {
+      "count": 2,
+      "mode": "gap",
+      "inset": 2,
+      "gap": 0.015
+    },
+    {
+      "count": 3,
+      "mode": "previous",
+      "inset": 1.1999999999999975,
+      "gap": 0.015
+    },
+    {
+      "count": 3,
+      "mode": "gap",
+      "inset": 2.5999999999999996,
+      "gap": 0.7
+    },
+    {
+      "count": 4,
+      "mode": "spectator",
+      "inset": 0.272077938642143,
+      "gap": 0.015
+    },
+    {
+      "count": 6,
+      "mode": "spectator",
+      "inset": -2,
+      "gap": 0.015
+    },
+    {
+      "count": 6,
+      "mode": "watching",
+      "inset": -2,
+      "gap": 0.015
+    },
+    {
+      "count": 2,
+      "mode": "gap",
+      "inset": 2,
+      "gap": 0.015
+    },
+    {
+      "count": 3,
+      "mode": "previous",
+      "inset": 1.1999999999999975,
+      "gap": 0.015
+    },
+    {
+      "count": 3,
+      "mode": "gap",
+      "inset": 2.5999999999999996,
+      "gap": 0.7
+    },
+    {
+      "count": 4,
+      "mode": "spectator",
+      "inset": 0.272077938642143,
+      "gap": 0.015
+    },
+    {
+      "count": 6,
+      "mode": "spectator",
+      "inset": -2,
+      "gap": 0.015
+    },
+    {
+      "count": 6,
+      "mode": "watching",
+      "inset": -2,
+      "gap": 0.015
+    }
+  ],
+  "errors": []
+}
