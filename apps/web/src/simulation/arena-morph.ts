@@ -53,6 +53,13 @@ function interpolate(morph: ArenaMorph, amount: number): ArenaGeometry {
   return fitDefenceLimits({
     ...from,
     count: to.count,
+    ...(from.batWallGap !== undefined || to.batWallGap !== undefined
+      ? {
+          batWallGap:
+            (from.batWallGap ?? 0.015) +
+            ((to.batWallGap ?? 0.015) - (from.batWallGap ?? 0.015)) * amount,
+        }
+      : {}),
     vertices: blendOutline(morph.outline, amount),
     fortresses: from.fortresses.map((before) => {
       const after = fortress(before.id, to);

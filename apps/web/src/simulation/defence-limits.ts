@@ -22,7 +22,7 @@ export function fitDefenceLimits(arena: ArenaGeometry): ArenaGeometry {
             dot(sub(centre, edge.start), edge.normal) +
             ARENA.batRadius *
               Math.min(...samples.map((delta) => dot(unit(angle + delta), edge.normal)));
-          return distance >= ARENA.paddleThickness / 2 + 0.015;
+          return distance >= ARENA.paddleThickness / 2 + (arena.batWallGap ?? 0.015);
         });
       };
       const extent = (side: number) => {

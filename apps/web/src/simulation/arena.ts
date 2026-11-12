@@ -4,11 +4,14 @@ import { add, angleDifference, clamp, scale, unit, type Vec2 } from "./vector";
 import { ARENA } from "./arena-tuning";
 import { fitDefenceLimits } from "./defence-limits";
 export { ARENA, FIXED_DT, MAX_BALLS } from "./arena-tuning";
-export const TRIANGLE_FORTRESS_INSET = 1.2;
+export const TRIANGLE_FORTRESS_INSET = 2.6;
+export const TRIANGLE_BAT_WALL_GAP = 0.7;
 export type PlayerCount = 2 | 3 | 4 | 5 | 6;
 export interface ArenaGeometry {
   count: PlayerCount;
   batHalfAngle?: number;
+  /** Skin clearance at every legal bat pose; triangle lanes must admit a whole ball. */
+  batWallGap?: number;
   vertices: Vec2[];
   fortresses: Fortress[];
 }
@@ -87,6 +90,7 @@ export function createArena(
     count,
     vertices,
     fortresses,
+    ...(count === 3 ? { batWallGap: TRIANGLE_BAT_WALL_GAP } : {}),
     ...(batScale === 1 ? {} : { batHalfAngle: ARENA.batHalfAngle * batScale }),
   });
 }

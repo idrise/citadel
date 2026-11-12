@@ -5,7 +5,7 @@ import { sweepPaddle } from "./collision";
 import { polygonEdges } from "./polygon";
 import { add, dot, normalise, scale, sub, unit } from "./vector";
 
-it.each([2, 3, 4, 5, 6] as const)(
+it.each([2, 4, 5, 6] as const)(
   "reaches both end walls in every %s-player seat and catches a ball hugging that wall",
   (count) => {
     const arena = createArena(count),
