@@ -23,6 +23,7 @@ export function renderProgressionReview(
   const advance = (target: number) => {
     while (time + 1 / 120 <= target + 1e-8) {
       time += 1 / 120;
+      if (!delivered) state.countdown = Math.max(0, 1.5 - time);
       if (time >= 1.5 && !delivered) {
         state.phase = "playing";
         state.elapsed = 5;

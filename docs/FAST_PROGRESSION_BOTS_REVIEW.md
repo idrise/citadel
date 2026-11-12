@@ -1,5 +1,9 @@
 # Fast progression and tactical bots — M09 follow-up
 
+Current progression and introduction behavior is superseded by
+[the three-loss ladder review](LEVEL_LADDER_REVIEW.md): no inactivity judgment,
+one-level demotion after three consecutive losses, and a reflected floor sign.
+
 12 November 2026. The owner requested a guaranteed level 1 → 2 win, fewer steps
 between rounds, and bots that aim at pickup containers and use curves. M09 remains
 **Awaiting review**. No push or deployment was requested or performed.

@@ -1,0 +1,5 @@
+{
+  "kind": "Native GPU pose fixture; actual arena, world lettering, countdown and planar reflections",
+  "cases": [2, 4, 6, "demotion", "phone-100", "reduced-01"],
+  "errors": []
+}

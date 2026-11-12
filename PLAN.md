@@ -143,7 +143,7 @@ Bots arrive **before** advanced polish and before mobile/networking:
 
 - One human can fill any seat in a 2–6 player local game; all other seats are bots.
 - Bots use the **same public game state and intent interface as a human**, with no wallhack/future-state privilege beyond a limited, explicit prediction horizon.
-- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. The owner now requests **100 adaptive levels**, replacing configurable Beginner/Standard/Expert choices. Start at level 1; learn between resolved player attempts from a bounded recent sample, move both up and down, soften return rounds after a week away, and persist progress locally. Level 100 uses the strongest legal visible-state bot controller. Show the level before the opening ball.
+- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. The owner now requests **100 adaptive levels**, replacing configurable Beginner/Standard/Expert choices. Start at level 1 and persist progress locally. Wins advance at least one level, with calibrated streak jumps capped at five; three consecutive losses at a challenge demote one level and reset the streak. Wins reset losses; level 1 is the floor and 100 the ceiling. Time away never changes the level or skill weighting. Announce demotions on results and at the next introduction. Level 100 uses the strongest legal visible-state controller with no deliberate error; earlier levels use slower, less accurate prediction, serve aim and shot/curve planning. Show LEVEL 01 as reflected world geometry rising from and sinking into the floor during the existing opening countdown.
 - Bot randomness is seeded for repeatable test runs. Instrument who takes damage, causes deflections, survives and wins, plus mean/median duration. Bots must not all make exactly the same decisions.
 - Use separate match test seeds, not hand-scripted victories. One human vs five bots must be playable locally with **no network or account**.
 - The same bots can later fill unoccupied multiplayer seats, take over a disconnect or support practice. Their behaviour belongs in the pure simulation module (`apps/web/src/simulation` initially; extract `packages/simulation` when useful), not networking/UI.
@@ -464,6 +464,21 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November three-loss ladder / floor-sign amendment: the owner removed inactivity
+judgment and requested one-level demotion after three losses, clear demotion feedback,
+progressive bot skill and reflected level lettering rising from the arena floor.
+Three consecutive losses now demote and reset; wins clear the loss streak. Version-two
+progress preserves intentional demotions across reloads, with legacy migration.
+Calendar weighting is removed. Accelerated wins are capped at five levels to avoid
+large overshoots. Serve aim and shot/curve planning now scale alongside existing
+reaction, error, forecast and speed tuning. LEVEL 01 rises, reflects and sinks on
+the existing 1.5-second countdown; reduced motion remains static. See
+`docs/LEVEL_LADDER_REVIEW.md` for 2/4/6/mobile frames, video, 385 unit tests,
+52 native root browser checks, six Pages progression checks and bounded bot samples.
+Implementation checkpoint: `72735a8`. M09 awaits review. Physical Safari and M06 human pacing/calibration remain open;
+no push, deployment or later milestone is authorised.
+
+
 12 November retry-level correction: the owner clarified that losing must retry the
 same level played. Losses now retain that level for direct Retry and early Play
 again; recorded finishing places only temper future upward calibration. Older
@@ -757,4 +772,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/M09_TOUCH_REVIEW.md`, `docs/PROGRESSION_AND_SUPPLIES_REVIEW.md` and `docs/FAST_PROGRESSION_BOTS_REVIEW.md`, especially phone readability, pointer response, direct next-level flow and tactical pickup/curve play. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/M09_TOUCH_REVIEW.md`, `docs/PROGRESSION_AND_SUPPLIES_REVIEW.md` and `docs/LEVEL_LADDER_REVIEW.md`, especially phone readability, the three-loss ladder, difficulty ramp and reflected floor introduction. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

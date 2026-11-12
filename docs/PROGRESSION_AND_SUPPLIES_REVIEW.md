@@ -1,5 +1,9 @@
 # Adaptive levels and container supplies — M09 amendment
 
+Current progression and introduction behavior is superseded by
+[the three-loss ladder review](LEVEL_LADDER_REVIEW.md): no inactivity judgment,
+one-level demotion after three consecutive losses, and a reflected floor sign.
+
 12 November 2026. The owner explicitly requested saved adaptive progression instead
 of configurable bots, backwards movement after losses or time away, three starting
 containers, and collectible falling containers that stop arriving before the finish.

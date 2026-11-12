@@ -1,0 +1,229 @@
+{
+  "profiles": [
+    {
+      "level": 1,
+      "reaction": 0.65,
+      "jitter": 0.3,
+      "error": 2.8,
+      "horizon": 0.1,
+      "serveScale": 1.7,
+      "speed": 2,
+      "tactics": 0
+    },
+    {
+      "level": 25,
+      "reaction": 0.45941176470588235,
+      "jitter": 0.2858823529411765,
+      "error": 2.235294117647059,
+      "horizon": 0.12823529411764706,
+      "serveScale": 1.4529411764705882,
+      "speed": 2.847058823529412,
+      "tactics": 0.24242424242424243
+    },
+    {
+      "level": 50,
+      "reaction": 0.28400000000000003,
+      "jitter": 0.22,
+      "error": 1.7,
+      "horizon": 0.188,
+      "serveScale": 1.1400000000000001,
+      "speed": 3.2,
+      "tactics": 0.494949494949495
+    },
+    {
+      "level": 75,
+      "reaction": 0.13,
+      "jitter": 0.105,
+      "error": 0.6599999999999999,
+      "horizon": 0.37,
+      "serveScale": 0.8500000000000001,
+      "speed": 3.2,
+      "tactics": 0.7474747474747475
+    },
+    {
+      "level": 100,
+      "reaction": 0.008333333333333333,
+      "jitter": 0,
+      "error": 0,
+      "horizon": 1,
+      "serveScale": 0.45,
+      "speed": 16,
+      "tactics": 1
+    }
+  ],
+  "calibrations": [
+    {
+      "kind": "deterministic synthetic threshold player",
+      "capacity": 25,
+      "levels": [
+        1, 2, 7, 12, 17, 22, 27, 27, 27, 26, 26, 26, 25, 26, 26, 26, 25, 26, 26, 26, 25, 26, 26, 26,
+        25, 26, 26, 26, 25, 26
+      ],
+      "returningLevel": 26
+    },
+    {
+      "kind": "deterministic synthetic threshold player",
+      "capacity": 60,
+      "levels": [
+        1, 2, 7, 12, 17, 22, 27, 32, 37, 42, 47, 52, 57, 62, 62, 62, 61, 61, 61, 60, 61, 61, 61, 60,
+        61, 61, 61, 60, 61, 61
+      ],
+      "returningLevel": 61
+    },
+    {
+      "kind": "deterministic synthetic threshold player",
+      "capacity": 100,
+      "levels": [
+        1, 2, 7, 12, 17, 22, 27, 32, 37, 42, 47, 52, 57, 62, 67, 72, 77, 82, 87, 92, 97, 100, 100,
+        100, 100, 100, 100, 100, 100, 100
+      ],
+      "returningLevel": 100
+    }
+  ],
+  "botOnlyProxyMatches": [
+    {
+      "count": 2,
+      "opponentsLevel": 1,
+      "seed": 7,
+      "phase": "finished",
+      "winner": 1,
+      "humanAlive": false,
+      "seconds": 19.583333333332863,
+      "collisionCaps": 0,
+      "collections": 2,
+      "computeMs": 52.992917000000006
+    },
+    {
+      "count": 2,
+      "opponentsLevel": 1,
+      "seed": 21,
+      "phase": "finished",
+      "winner": 0,
+      "humanAlive": true,
+      "seconds": 23.041666666666,
+      "collisionCaps": 0,
+      "collections": 2,
+      "computeMs": 38.89775
+    },
+    {
+      "count": 2,
+      "opponentsLevel": 1,
+      "seed": 2026,
+      "phase": "finished",
+      "winner": 0,
+      "humanAlive": true,
+      "seconds": 35.23333333333198,
+      "collisionCaps": 0,
+      "collections": 3,
+      "computeMs": 55.33883300000002
+    },
+    {
+      "count": 2,
+      "opponentsLevel": 100,
+      "seed": 7,
+      "phase": "finished",
+      "winner": 1,
+      "humanAlive": false,
+      "seconds": 18.041666666666284,
+      "collisionCaps": 0,
+      "collections": 2,
+      "computeMs": 39.27125000000001
+    },
+    {
+      "count": 2,
+      "opponentsLevel": 100,
+      "seed": 21,
+      "phase": "finished",
+      "winner": 1,
+      "humanAlive": false,
+      "seconds": 9.800000000000084,
+      "collisionCaps": 0,
+      "collections": 1,
+      "computeMs": 15.741208000000029
+    },
+    {
+      "count": 2,
+      "opponentsLevel": 100,
+      "seed": 2026,
+      "phase": "finished",
+      "winner": 1,
+      "humanAlive": false,
+      "seconds": 12.199999999999948,
+      "collisionCaps": 0,
+      "collections": 1,
+      "computeMs": 19.14737500000001
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 1,
+      "seed": 7,
+      "phase": "finished",
+      "winner": 3,
+      "humanAlive": false,
+      "seconds": 63.374999999997044,
+      "collisionCaps": 0,
+      "collections": 7,
+      "computeMs": 416.00291599999997
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 1,
+      "seed": 21,
+      "phase": "finished",
+      "winner": 2,
+      "humanAlive": false,
+      "seconds": 53.558333333330935,
+      "collisionCaps": 0,
+      "collections": 6,
+      "computeMs": 420.71854199999984
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 1,
+      "seed": 2026,
+      "phase": "finished",
+      "winner": 0,
+      "humanAlive": true,
+      "seconds": 59.16666666666395,
+      "collisionCaps": 0,
+      "collections": 6,
+      "computeMs": 371.460333
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 100,
+      "seed": 7,
+      "phase": "playing",
+      "winner": null,
+      "humanAlive": false,
+      "seconds": 118.49166666670703,
+      "collisionCaps": 0,
+      "collections": 7,
+      "computeMs": 1699.3759579999999
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 100,
+      "seed": 21,
+      "phase": "playing",
+      "winner": null,
+      "humanAlive": false,
+      "seconds": 118.49166666670703,
+      "collisionCaps": 0,
+      "collections": 7,
+      "computeMs": 1637.4138750000002
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 100,
+      "seed": 2026,
+      "phase": "playing",
+      "winner": null,
+      "humanAlive": false,
+      "seconds": 118.49166666670703,
+      "collisionCaps": 0,
+      "collections": 7,
+      "computeMs": 1655.555375
+    }
+  ]
+}

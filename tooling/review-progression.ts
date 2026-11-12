@@ -1,20 +1,16 @@
+import { botLevelProfile } from "../apps/web/src/simulation/bot-level";
 import { writeFile } from "node:fs/promises";
 import { createMatch, stepMatch } from "../apps/web/src/simulation/match";
 import { botIntent } from "../apps/web/src/simulation/bots";
 import { DEFAULT_OPTIONS } from "../apps/web/src/simulation/types";
-import {
-  freshProgress,
-  levelFor,
-  recordResult,
-  WEEK_MS,
-} from "../apps/web/src/session/progression";
+import { freshProgress, levelFor, recordResult } from "../apps/web/src/session/progression";
 
 const calibrations = [];
 for (const capacity of [25, 60, 100]) {
   let progress = freshProgress();
   const levels = [];
-  for (let round = 0; round < 16; round++) {
-    const level = levelFor(progress, 4, round);
+  for (let round = 0; round < 30; round++) {
+    const level = levelFor(progress, 4);
     levels.push(level);
     progress = recordResult(progress, {
       level,
@@ -27,7 +23,7 @@ for (const capacity of [25, 60, 100]) {
     kind: "deterministic synthetic threshold player",
     capacity,
     levels,
-    returningAfterWeek: levelFor(progress, 4, WEEK_MS + 15),
+    returningLevel: levelFor(progress, 4),
   });
 }
 const matches = [];
@@ -59,5 +55,13 @@ for (const count of [2, 6] as const)
     }
 await writeFile(
   process.argv[2] ?? "/tmp/citadel-progression.json",
-  JSON.stringify({ calibrations, botOnlyProxyMatches: matches }, null, 2) + "\n",
+  JSON.stringify(
+    {
+      profiles: [1, 25, 50, 75, 100].map((level) => ({ level, ...botLevelProfile(level) })),
+      calibrations,
+      botOnlyProxyMatches: matches,
+    },
+    null,
+    2,
+  ) + "\n",
 );
