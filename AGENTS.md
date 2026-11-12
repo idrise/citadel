@@ -8,3 +8,4 @@
 - Keep modules focused on one responsibility. Split rendering, UI, input and simulation by ownership; extract packages only when they reduce real coupling.
 - Prefer strict TypeScript and Vite+ (`vp check`, `vp test`, `vp build`). Keep simulation independent from Three.js rendering and input adapters. Follow the plan's local-first scope and procedural-art rules.
 - Report checks actually run, failures and remaining limits. For gameplay or visual changes, provide a usable local demo and rendered evidence as required by the milestone. End milestone handoffs with `REVIEW REQUIRED — Mxx`.
+Always unit test code writing useful and thorough tests.
