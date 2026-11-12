@@ -28,6 +28,7 @@ export interface BotState {
   reactionAt: number;
   serveDelay: number;
   serveTarget: Vec2 | null;
+  serveError?: number;
   stroke?: {
     ballId: number;
     angle: number;

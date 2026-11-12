@@ -57,5 +57,6 @@ export function botLevelProfile(level: number) {
     horizon: mix("horizon"),
     serveScale: mix("serveScale"),
     speed: mix("speed"),
+    tactics: (value - 1) / 99,
   };
 }

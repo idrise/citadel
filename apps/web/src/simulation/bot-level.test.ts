@@ -14,6 +14,7 @@ it("ramps all 100 levels continuously up to zero-error physics-tick reaction and
       expect(next[key]).toBeLessThanOrEqual(previous[key] + 1e-9);
     expect(next.speed).toBeGreaterThanOrEqual(previous.speed);
     expect(next.horizon).toBeGreaterThanOrEqual(previous.horizon);
+    expect(next.tactics).toBeGreaterThan(previous.tactics);
     previous = next;
   }
   expect(previous).toMatchObject({
@@ -21,6 +22,7 @@ it("ramps all 100 levels continuously up to zero-error physics-tick reaction and
     jitter: 0,
     error: 0,
     speed: ARENA.pointerPaddleSpeed,
+    tactics: 1,
   });
   expect(botLevelProfile(NaN)).toEqual(botLevelProfile(1));
 });

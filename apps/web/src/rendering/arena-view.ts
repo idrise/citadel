@@ -1,3 +1,4 @@
+import { createLevelIntro } from "./level-intro";
 import { createSupplyView } from "./supply-view";
 import {
   ARENA,
@@ -45,6 +46,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
     ].sort((a, b) => a.id - b.id),
   };
   const stage = createStage(humanSeat, roster);
+  const intro = createLevelIntro(stage.root);
   const reflection = createArenaReflections(humanSeat, initial);
   stage.root.add(...reflection.meshes);
   const balls = createBallView(stage.root);
@@ -102,6 +104,14 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
       reflection.setVictory(Boolean(ending));
       const profile = effectsProfile(options.quality, options.reducedEffects);
       reflection.setReduced(!profile.reflections);
+      intro.update(
+        options.menu?.mode === "level" ? (options.menu.level ?? 1) : null,
+        state.countdown,
+        state.arena,
+        options.humanSeat,
+        options.reducedEffects,
+        options.menu?.demotion,
+      );
       supplies.update(state, dt, options.reducedEffects);
       for (const group of [
         ...stage.rails,

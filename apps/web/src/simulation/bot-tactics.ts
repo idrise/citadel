@@ -59,9 +59,16 @@ export function tacticalBotIntent(state: MatchState, seat: number, level: number
       const enemies = targets.filter((t) => t.reward < 9);
       bot.serveTarget = enemies[Math.floor(sample(state) * enemies.length)]?.position ?? null;
     }
-    if (bot.serveTarget) bot.targetAngle = aimServeAt(seat, bot.serveTarget, state.arena);
+    if (bot.serveError === undefined) bot.serveError = (sample(state) - 0.5) * profile.error * 0.16;
+    if (bot.serveTarget)
+      bot.targetAngle = clampPaddleAngle(
+        seat,
+        aimServeAt(seat, bot.serveTarget, state.arena) + bot.serveError,
+        state.arena,
+      );
   } else if (threat) {
     bot.serveTarget = null;
+    delete bot.serveError;
     const locked =
       bot.stroke &&
       bot.stroke.ballId === threat.id &&
@@ -80,7 +87,7 @@ export function tacticalBotIntent(state: MatchState, seat: number, level: number
               angle: intercept.angle + angleDifference(previous.angle, previous.contactAngle),
               swipe: previous.swipe,
             }
-          : planBotShot(state, seat, intercept, profile.speed);
+          : planBotShot(state, seat, intercept, profile.speed, profile.tactics);
         const angle = clampPaddleAngle(
           seat,
           shot.angle + (reuse ? 0 : (sample(state) - 0.5) * profile.error),
@@ -117,7 +124,10 @@ export function tacticalBotIntent(state: MatchState, seat: number, level: number
       // Motor planning is bounded even at level 100; perception/catching still uses its level profile.
       bot.reactionAt = state.elapsed + profile.reaction + sample(state) * profile.jitter;
     }
-  } else delete bot.stroke;
+  } else {
+    delete bot.stroke;
+    delete bot.serveError;
+  }
   const targetAngle = bot.stroke
     ? clampPaddleAngle(seat, botStrokeAngle(bot.stroke, state.elapsed), state.arena)
     : bot.targetAngle;

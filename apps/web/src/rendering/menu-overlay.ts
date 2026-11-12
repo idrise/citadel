@@ -1,4 +1,3 @@
-import { createLevelIntro } from "./level-intro";
 import { VICTORY_HOLD_SECONDS } from "./victory-morph";
 import {
   AmbientLight,
@@ -25,7 +24,6 @@ export function createMenuOverlay() {
   light.position.set(3, 5, 8);
   scene.add(light);
   const menu = createSceneMenu(camera);
-  const intro = createLevelIntro(camera);
   const dimmer = new ShaderPass({
     uniforms: { tDiffuse: { value: null }, gain: { value: 1 } },
     vertexShader:
@@ -63,23 +61,18 @@ export function createMenuOverlay() {
         (state.mode === "victory" || state.mode === "defeat") &&
         state.elapsed < VICTORY_HOLD_SECONDS;
       const target =
-        state.mode === "level"
-          ? 0.6
-          : state.mode === "hidden" || celebrating
-            ? 1
-            : MENU_BACKGROUND_GAIN;
+        state.mode === "hidden" || state.mode === "level" || celebrating ? 1 : MENU_BACKGROUND_GAIN;
       gain =
         initial || state.reduced
           ? target
           : gain + (target - gain) * (1 - Math.exp(-Math.max(0, dt) * 8));
       if (Math.abs(gain - target) < 0.0005) gain = target;
       initial = false;
-      visible = state.mode !== "hidden";
+      visible = state.mode !== "hidden" && state.mode !== "level";
       dimmer.uniforms.gain!.value = gain;
       dimmer.enabled = gain !== 1;
       veil.opacity = 1 - gain;
       const controls = menu.update(state, width, height);
-      intro.update(state.mode === "level" ? (state.level ?? 1) : null, width, height);
       return controls;
     },
     renderDirect(renderer: WebGLRenderer) {

@@ -12,48 +12,40 @@ import {
   recordResult,
   RESULT_WINDOW,
   saveProgress,
-  WEEK_MS,
 } from "./progression";
 
-it("advances on every win, accelerates consistent wins, reaches the ceiling quickly and holds it on losses", () => {
+it("advances on every win, accelerates consistent wins, reaches the ceiling quickly and demotes once per three losses", () => {
   let progress = freshProgress();
-  expect(levelFor(progress, 6, 0)).toBe(1);
+  expect(levelFor(progress, 6)).toBe(1);
   progress = recordResult(progress, { level: 1, count: 4, place: 1, at: 0 });
   expect(progress.level).toBe(2);
-  for (let i = 0; i < 7; i++)
+  for (let i = 0; i < 21; i++)
     progress = recordResult(progress, { level: progress.level, count: 4, place: 1, at: i + 1 });
   expect(progress.level).toBe(100);
   for (let i = 0; i < 12; i++)
     progress = recordResult(progress, { level: progress.level, count: 4, place: 4, at: i + 20 });
-  expect(progress.level).toBe(100);
+  expect(progress.level).toBe(96);
   expect(progress.best).toBe(100);
   expect(progress.recent).toHaveLength(RESULT_WINDOW);
   for (let i = 0; i < 30; i++)
     progress = recordResult(progress, { level: progress.level, count: 4, place: 4, at: i + 100 });
-  expect(progress.level).toBe(100);
+  expect(progress.level).toBe(86);
 });
 
-it("softens a return after a week without compounding refreshes or erasing the personal best", () => {
+it("ignores time away entirely, while preserving arena-size adjustment and result-order weighting", () => {
   const progress = {
     ...freshProgress(),
     level: 80,
     best: 90,
     rounds: 1,
-    recent: [{ level: 80, count: 4 as const, place: 1, at: 1000 }],
+    recent: [{ level: 80, count: 4 as const, place: 1, at: 0 }],
   };
-  expect(levelFor(progress, 4, WEEK_MS)).toBe(80);
-  const returning = levelFor(progress, 4, WEEK_MS + 1000);
-  expect(returning).toBe(70);
-  expect(levelFor(progress, 4, WEEK_MS + 1000)).toBe(returning);
-  expect(levelFor(progress, 4, 0)).toBe(80);
-  expect(levelFor(progress, 4, WEEK_MS * 100)).toBe(60);
-  expect(progress.level).toBe(80);
-  expect(progress.best).toBe(90);
-  expect(levelFor(progress, 6, 1000)).toBeLessThan(80);
-  expect(levelFor(progress, 2, 1000)).toBeGreaterThan(80);
-  expect(estimateSkill(progress.recent, WEEK_MS * 5).deviation).toBeGreaterThan(
-    estimateSkill(progress.recent, 1000).deviation,
-  );
+  const recent = { ...progress, recent: [{ ...progress.recent[0]!, at: Date.now() }] };
+  expect(levelFor(progress, 4)).toBe(80);
+  expect(levelFor(recent, 4)).toBe(80);
+  expect(estimateSkill(progress.recent)).toEqual(estimateSkill(recent.recent));
+  expect(levelFor(progress, 6)).toBeLessThan(80);
+  expect(levelFor(progress, 2)).toBeGreaterThan(80);
 });
 
 it("uses finishing position and arena size as evidence rather than treating all losses alike", () => {
@@ -62,9 +54,7 @@ it("uses finishing position and arena size as evidence rather than treating all 
   const last = recordResult(previous, { level: 70, count: 6, place: 6, at: 0 });
   expect(second.level).toBe(70);
   expect(last.level).toBe(70);
-  expect(estimateSkill(second.recent, 0).posterior).not.toEqual(
-    estimateSkill(last.recent, 0).posterior,
-  );
+  expect(estimateSkill(second.recent).posterior).not.toEqual(estimateSkill(last.recent).posterior);
   for (const skill of [-30, 50, 160])
     for (const count of [2, 4, 6]) {
       let sum = 0;
@@ -95,8 +85,8 @@ it("retries the actual played level for every losing place and roster, including
           { level, count, place, at: 1000 },
         );
         expect(progress.level).toBe(level);
-        expect(levelFor(progress, count, 1000)).toBe(level);
-        expect(parseProgress(JSON.stringify({ version: 1, ...progress }))).toEqual(progress);
+        expect(levelFor(progress, count)).toBe(level);
+        expect(parseProgress(JSON.stringify({ version: 2, ...progress }))).toEqual(progress);
         expect(progress.recent.at(-1)).toEqual({ level, count, place, at: 1000 });
       }
 });
@@ -183,7 +173,7 @@ it("winning level one always leads to two, including progress saved by an older 
   expect(recordResult(legacy, { level: 1, count: 2, place: 1, at: 1 }).level).toBe(2);
 });
 
-it("repairs an older loss-demoted save while preserving inactivity relief and win advances", () => {
+it("repairs an older loss-demoted save without restoring intentional version-two demotions", () => {
   const old = {
     ...freshProgress(),
     level: 1,
@@ -193,8 +183,68 @@ it("repairs an older loss-demoted save while preserving inactivity relief and wi
   };
   const repaired = parseProgress(JSON.stringify({ version: 1, ...old }));
   expect(repaired.level).toBe(80);
-  expect(levelFor(repaired, 4, WEEK_MS + 1000)).toBe(70);
+  expect(levelFor(repaired, 4)).toBe(80);
   expect(repaired.recent).toEqual(old.recent);
   const won = recordResult(freshProgress(), { level: 1, count: 4, place: 1, at: 1000 });
-  expect(parseProgress(JSON.stringify({ version: 1, ...won })).level).toBe(2);
+  expect(parseProgress(JSON.stringify({ version: 2, ...won })).level).toBe(2);
+});
+
+it.each([1, 2, 35, 100])(
+  "demotes level %i exactly once per three consecutive losses and persists it",
+  (initial) => {
+    let progress = { ...freshProgress(), level: initial };
+    for (let round = 1; round <= 6; round++) {
+      const from = progress.level;
+      progress = recordResult(progress, { level: from, count: 4, place: 4, at: round });
+      expect(progress.level).toBe(Math.max(1, initial - Math.floor(round / 3)));
+      expect(progress.losses).toBe(round % 3);
+      expect(progress.demotion).toEqual(
+        round % 3 === 0 && from > 1 ? { from, to: from - 1, count: 4 } : null,
+      );
+      expect(parseProgress(JSON.stringify({ version: 2, ...progress }))).toEqual(progress);
+    }
+  },
+);
+it("a win or different challenge clears the pending loss streak; legacy losses migrate once", () => {
+  let progress = recordResult(freshProgress(), { level: 35, count: 4, place: 4, at: 0 });
+  progress = recordResult(progress, { level: 35, count: 4, place: 4, at: 1 });
+  expect(progress.losses).toBe(2);
+  const won = recordResult(progress, { level: 35, count: 4, place: 1, at: 2 });
+  expect(won.losses).toBe(0);
+  expect(won.demotion).toBeNull();
+  expect(recordResult(progress, { level: 35, count: 6, place: 6, at: 2 }).losses).toBe(1);
+  expect(recordResult(progress, { level: 20, count: 4, place: 4, at: 2 }).losses).toBe(1);
+  const legacy = parseProgress(JSON.stringify({ version: 1, ...progress }));
+  expect(legacy.losses).toBe(2);
+  const demoted = recordResult(legacy, { level: 35, count: 4, place: 4, at: 2 });
+  expect(demoted.level).toBe(34);
+  expect(parseProgress(JSON.stringify({ version: 2, ...demoted })).level).toBe(34);
+});
+it("rejects malformed version-two counters and demotions", () => {
+  for (const extra of [
+    { losses: 3 },
+    { losses: -1 },
+    { demotion: { from: 10, to: 8, count: 4 } },
+    { demotion: { from: 2, to: 1, count: 6 } },
+  ])
+    expect(parseProgress(JSON.stringify({ version: 2, ...freshProgress(), ...extra }))).toEqual(
+      freshProgress(),
+    );
+});
+
+it.each([25, 60, 100])("finds a synthetic threshold of %i without large overshoots", (capacity) => {
+  let progress = freshProgress();
+  for (let round = 0; round < 30; round++) {
+    const from = progress.level;
+    progress = recordResult(progress, {
+      level: from,
+      count: 4,
+      place: from <= capacity ? 1 : 4,
+      at: round,
+    });
+    expect(progress.level - from).toBeLessThanOrEqual(5);
+    expect(from - progress.level).toBeLessThanOrEqual(1);
+  }
+  expect(progress.level).toBeGreaterThanOrEqual(capacity);
+  expect(progress.level).toBeLessThanOrEqual(Math.min(100, capacity + 1));
 });

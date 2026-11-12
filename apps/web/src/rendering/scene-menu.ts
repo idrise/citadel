@@ -1,3 +1,4 @@
+import type { Demotion } from "../session/progression";
 export const RESULT_ACTION_SECONDS = 0.9;
 import {
   BoxGeometry,
@@ -18,6 +19,7 @@ export interface SceneMenuState {
   touch?: boolean;
   mode: "title" | "victory" | "defeat" | "hidden" | "level";
   level?: number;
+  demotion?: Demotion | null;
   count: number;
   elapsed: number;
   reduced: boolean;
@@ -51,6 +53,10 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       new Box3().setFromObject(text).getSize(new Vector3()).x,
     ]),
   );
+  let demotionText = new Group(),
+    demotionKey = "",
+    demotionWidth = 1;
+  group.add(demotionText);
   const players = createNeonLettering("PLAYERS", 0.32);
   players.position.y = -1.6;
   group.add(players);
@@ -126,6 +132,25 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       heading.scale.setScalar(result ? 0.85 + 0.15 * reveal : 1);
       heading.position.set(0, result ? (1 - reveal) * -0.4 : 0, 0);
       players.visible = countText.visible = !result;
+      const changedLevel = state.demotion;
+      const nextDemotionKey = changedLevel ? String(changedLevel.to) : "";
+      if (nextDemotionKey !== demotionKey) {
+        group.remove(demotionText);
+        disposeScene(demotionText);
+        demotionText = changedLevel
+          ? createNeonLettering(
+              `DEMOTED TO LEVEL ${String(changedLevel.to).padStart(2, "0")}`,
+              0.3,
+              0xffab83,
+            )
+          : new Group();
+        demotionWidth = new Box3().setFromObject(demotionText).getSize(new Vector3()).x || 1;
+        group.add(demotionText);
+        demotionKey = nextDemotionKey;
+      }
+      demotionText.visible = result && Boolean(changedLevel) && reveal > 0;
+      demotionText.position.set(0, -1.9, 0);
+      demotionText.scale.setScalar(1);
       if (count !== state.count) {
         group.remove(countText);
         disposeScene(countText);
@@ -166,6 +191,12 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       }
       if (compact) {
         const layout = mobileMenuLayout(width, height, result);
+        demotionText.position.set(
+          layout.controls.rematch.x,
+          height / 2 - (layout.controls.rematch.y - 61),
+          0,
+        );
+        demotionText.scale.setScalar(Math.min(width - 36, 300) / demotionWidth);
         group.position.set(0, 0, -depth);
         group.rotation.set(0, 0, 0);
         group.scale.setScalar((2 * halfHeight) / height);

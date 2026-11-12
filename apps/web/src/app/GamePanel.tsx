@@ -1,4 +1,4 @@
-import type { LevelResult } from "../session/progression";
+import type { Demotion, LevelResult } from "../session/progression";
 import { createRoundObserver } from "../session/round-observer";
 import type { PlayerCount } from "../simulation/arena";
 import { useEffect, useRef, useState } from "react";
@@ -18,9 +18,11 @@ export function GamePanel({
   settings,
   onSettings,
   level,
+  demotion,
   onComplete,
 }: {
   level: number;
+  demotion: Demotion | null;
   onComplete: (result: LevelResult) => void;
   humanSeat: number;
   count: PlayerCount;
@@ -42,6 +44,7 @@ export function GamePanel({
     seed,
     humanSeat,
     level,
+    demotion,
     paused: true,
     started: false,
     notice: "",
@@ -95,6 +98,9 @@ export function GamePanel({
     session.current?.configureRoster(count, humanSeat, level);
   }, [count, humanSeat, level]);
   useEffect(() => {
+    session.current?.configureProgress(demotion);
+  }, [demotion]);
+  useEffect(() => {
     session.current?.configure(settings);
   }, [settings]);
   const rosterReady = snapshot.humanSeat === humanSeat && snapshot.state.players.length === count;
@@ -138,6 +144,7 @@ export function GamePanel({
             seed={snapshot.seed}
             initialSettings={snapshot.initialSettings ?? settings}
             level={snapshot.level}
+            demotion={snapshot.demotion}
             humanSeat={humanSeat}
             settings={settings}
             musicStatus={snapshot.music.status}

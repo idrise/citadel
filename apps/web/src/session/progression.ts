@@ -5,7 +5,6 @@ import { clamp } from "../simulation/vector";
 
 export const PROGRESS_KEY = "citadel.progress.v1";
 export const RESULT_WINDOW = 16;
-export const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const SKILL_SCALE = 8;
 const TARGET_WIN_RATE = 0.6;
 export interface LevelResult {
@@ -14,7 +13,14 @@ export interface LevelResult {
   place: number;
   at: number;
 }
+export interface Demotion {
+  from: number;
+  to: number;
+  count: PlayerCount;
+}
 export interface PlayerProgress {
+  losses: number;
+  demotion: Demotion | null;
   level: number;
   count: PlayerCount;
   best: number;
@@ -23,6 +29,8 @@ export interface PlayerProgress {
 }
 export const freshProgress = (): PlayerProgress => ({
   level: 1,
+  losses: 0,
+  demotion: null,
   count: 4,
   best: 1,
   rounds: 0,
@@ -39,14 +47,12 @@ export function rankProbability(skill: number, level: number, count: number, pla
   return (probability * strength) / (strength + count - place);
 }
 
-/** Recent, time-weighted evidence allows both improvement and returning-player uncertainty. */
-export function estimateSkill(recent: readonly LevelResult[], now: number) {
+/** Recent attempts matter; time away never changes the judgment. */
+export function estimateSkill(recent: readonly LevelResult[]) {
   const scores = Array.from({ length: 191 }, (_, i) => {
     const skill = i - 30;
     const log = recent.reduce((sum, result, index) => {
-      const weight =
-        Math.pow(0.96, recent.length - 1 - index) *
-        Math.pow(0.5, Math.max(0, now - result.at) / WEEK_MS);
+      const weight = Math.pow(0.96, recent.length - 1 - index);
       return (
         sum +
         weight *
@@ -68,25 +74,20 @@ export function estimateSkill(recent: readonly LevelResult[], now: number) {
   return { posterior, deviation };
 }
 
-/** A single saved progression transfers between arena sizes with a rival-count adjustment.
- * Inactivity is derived from the original result, so refreshes never compound the drop. */
-export function levelFor(progress: PlayerProgress, count: PlayerCount, now = Date.now()) {
+/** Arena-size adjustment only; calendar time does not alter progress. */
+export function levelFor(progress: PlayerProgress, count: PlayerCount) {
   if (!progress.rounds) return 1;
-  const base = clamp(
+  return clamp(
     progress.level + Math.round(SKILL_SCALE * Math.log((progress.count - 1) / (count - 1))),
     1,
     100,
   );
-  const last = progress.recent.at(-1)?.at ?? now;
-  const weeks = Math.floor(Math.max(0, now - last) / WEEK_MS);
-  const relief = Math.min(20, Math.round(base * Math.min(0.3, weeks * 0.12)));
-  return clamp(base - relief, 1, 100);
 }
 
 export function recordResult(progress: PlayerProgress, result: LevelResult): PlayerProgress {
   if (!validResult(result)) throw new Error("Invalid progression result");
   const recent = [...progress.recent, { ...result }].slice(-RESULT_WINDOW);
-  const { posterior, deviation } = estimateSkill(recent, result.at);
+  const { posterior, deviation } = estimateSkill(recent);
   let desired = 1;
   for (let level = 1; level <= 100; level++) {
     const win = posterior.reduce(
@@ -95,8 +96,15 @@ export function recordResult(progress: PlayerProgress, result: LevelResult): Pla
     );
     if (win >= TARGET_WIN_RATE) desired = level;
   }
-  const step = clamp(Math.round(deviation * 0.75), 2, 24);
+  // Keep climbs conservative now that each downward step takes three defeats.
+  const step = clamp(Math.round(deviation * 0.75), 2, 5);
   const consistent = recent.slice(-3).filter((r) => r.place === 1).length >= 2;
+  const sameChallenge = progress.level === result.level && progress.count === result.count;
+  const losses = result.place === 1 ? 0 : (sameChallenge ? progress.losses : 0) + 1;
+  const demotion: Demotion | null =
+    losses >= 3 && result.level > 1
+      ? { from: result.level, to: result.level - 1, count: result.count }
+      : null;
   const level =
     result.place === 1
       ? result.level === 1
@@ -104,9 +112,11 @@ export function recordResult(progress: PlayerProgress, result: LevelResult): Pla
         : consistent
           ? clamp(desired, result.level + 1, result.level + step)
           : result.level + 1
-      : result.level;
+      : (demotion?.to ?? result.level);
   return {
     level: clamp(level, 1, 100),
+    losses: losses % 3,
+    demotion,
     count: result.count,
     best: result.place === 1 ? Math.max(progress.best, result.level) : progress.best,
     rounds: progress.rounds + 1,
@@ -150,7 +160,7 @@ export function parseProgress(raw: string | null): PlayerProgress {
     const value: unknown = JSON.parse(raw);
     if (
       !record(value) ||
-      value.version !== 1 ||
+      (value.version !== 1 && value.version !== 2) ||
       !integer(value.level, 1, 100) ||
       !integer(value.count, 2, 6) ||
       !integer(value.best, 1, 100) ||
@@ -161,15 +171,36 @@ export function parseProgress(raw: string | null): PlayerProgress {
       value.recent.length !== Math.min(value.rounds, RESULT_WINDOW)
     )
       return freshProgress();
-    // Older builds demoted immediately on defeat. Restore that attempt for a fair retry;
-    // levelFor still applies any returning-player relief from the original result date.
     const last = value.recent.at(-1) as LevelResult | undefined;
+    const legacy = value.version === 1;
+    if (
+      !legacy &&
+      (!integer(value.losses, 0, 2) ||
+        (value.demotion !== null &&
+          (!record(value.demotion) ||
+            !integer(value.demotion.from, 2, 100) ||
+            !integer(value.demotion.to, 1, 99) ||
+            value.demotion.to !== value.demotion.from - 1 ||
+            value.demotion.to !== value.level ||
+            value.demotion.count !== value.count)))
+    )
+      return freshProgress();
+    // Repair old immediate demotions once. Version 2 preserves intentional three-loss demotions.
     const retryLevel =
-      last && last.place > 1 && last.count === value.count
+      legacy && last && last.place > 1 && last.count === value.count
         ? Math.max(value.level, last.level)
         : value.level;
+    let legacyLosses = 0;
+    if (legacy)
+      for (const result of [...value.recent].reverse() as LevelResult[]) {
+        if (result.place === 1 || result.level !== retryLevel || result.count !== value.count)
+          break;
+        legacyLosses++;
+      }
     return {
       level: retryLevel,
+      losses: legacy ? Math.min(2, legacyLosses) : (value.losses as number),
+      demotion: legacy ? null : (value.demotion as Demotion | null),
       count: value.count as PlayerCount,
       best: value.best,
       rounds: value.rounds,
@@ -191,7 +222,7 @@ export function saveProgress(
   storage: () => Pick<Storage, "setItem"> = () => window.localStorage,
 ) {
   try {
-    storage().setItem(PROGRESS_KEY, JSON.stringify({ version: 1, ...progress }));
+    storage().setItem(PROGRESS_KEY, JSON.stringify({ version: 2, ...progress }));
     return true;
   } catch {
     return false;

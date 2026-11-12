@@ -43,3 +43,12 @@ it("keeps informational preview and mouse sensitivity outside authoritative simu
     matchOptions({ ...createSettings(), music: false, musicVolume: 1, musicLights: false }, 0),
   ).toEqual(matchOptions(createSettings(), 0));
 });
+
+it("uses the actual announced round level for authoritative bot difficulty", () => {
+  for (const level of [1, 25, 50, 75, 100]) {
+    expect(matchOptions(createSettings(), 3, level)).toMatchObject({
+      humanSeat: 3,
+      botLevel: level,
+    });
+  }
+});

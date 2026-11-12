@@ -60,26 +60,26 @@ export function planBotShot(
   seat: number,
   contact: { point: Vec2; velocity: Vec2; angle: number },
   speed: number,
+  precision = 1,
 ): BotShot {
   const targets = botTargets(state, seat, contact.point);
   let best: BotShot = { angle: contact.angle, swipe: 0, score: -Infinity };
   const approach = 0.035;
-  for (let offset = -4; offset <= 4; offset++) {
+  const stride = precision < 0.3 ? 4 : precision < 0.7 ? 2 : 1;
+  const steps = Math.round(8 + 16 * precision);
+  for (let offset = -4; offset <= 4; offset += stride) {
     const angle = clampPaddleAngle(seat, contact.angle + offset * 0.055, state.arena);
     const start = sub(contact.point, scale(contact.velocity, approach));
     const hit = sweepPaddle(start, contact.velocity, seat, angle, 0, approach * 2, state.arena);
     if (!hit) continue;
-    for (const swipe of [
-      -Math.min(speed, ARENA.paddleSpeed),
-      0,
-      Math.min(speed, ARENA.paddleSpeed),
-    ]) {
+    const brush = Math.min(speed, ARENA.paddleSpeed) * precision;
+    for (const swipe of precision < 0.2 ? [0] : [-brush, 0, brush]) {
       let position = add(add(start, scale(contact.velocity, hit.time)), scale(hit.normal, 0.001));
       let velocity = paddleReturn(contact.velocity, hit.offset, hit.normal);
       let spin = swipeCurve(swipe, contact.velocity, hit.normal);
       let score = -0.005 * Math.abs(swipe) - 0.002 * Math.abs(offset);
-      for (let step = 0; step < 24; step++) {
-        const dt = 1 / 24;
+      for (let step = 0; step < steps; step++) {
+        const dt = 1 / steps;
         const flight = curveFlight(velocity, spin, dt);
         velocity = flight.velocity;
         spin = flight.spin;

@@ -21,6 +21,10 @@ export function GameHelp() {
         Losing a piece gives you a revenge serve. The arena changes shape as fortresses fall. Escape
         or P pauses and releases the mouse; H hides paused controls.
       </p>
+      <p>
+        Win to advance. Three consecutive losses move you back one level; a win resets the loss
+        count. Bots become more precise as levels rise. Time away does not change your level.
+      </p>
       <small>
         Desktop preview · v{BUILD_INFO.version} · {BUILD_INFO.revision}. Choices are saved on this
         device. Round export downloads a local JSON file.

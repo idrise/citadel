@@ -25,6 +25,7 @@ export function App() {
       <h1 className="sr-only">Neon Citadel</h1>
       <GamePanel
         level={levelFor(progress, count)}
+        demotion={progress.demotion?.count === count ? progress.demotion : null}
         onComplete={(result) => setProgress((current) => recordResult(current, result))}
         count={count}
         onCount={(value) => {

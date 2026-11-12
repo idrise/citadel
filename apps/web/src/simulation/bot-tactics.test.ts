@@ -1,5 +1,6 @@
 import { expect, it } from "vite-plus/test";
 import { ARENA, FIXED_DT, fortress, railPosition } from "./arena";
+import { botLevelProfile } from "./bot-level";
 import { botIntent } from "./bots";
 import { botStrokeAngle, botTargets, planBotShot } from "./bot-shot";
 import { aimServeAt } from "./aim";
@@ -26,10 +27,14 @@ it.each([1, 40, 80, 100])(
     });
     state.supplies = [{ id: 0, position: { x: -1, y: 1 }, age: SUPPLIES.fall }];
     const intent = botIntent(state, 0, level);
-    expect(intent.targetAngle).toBeCloseTo(
-      aimServeAt(0, state.supplies[0]!.position, state.arena),
-      8,
-    );
+    expect(
+      Math.abs(
+        angleDifference(
+          intent.targetAngle!,
+          aimServeAt(0, state.supplies[0]!.position, state.arena),
+        ),
+      ),
+    ).toBeLessThanOrEqual(botLevelProfile(level).error * 0.08 + 1e-8);
     expect(state.bots[0]!.serveTarget).toEqual(state.supplies[0]!.position);
     state.supplies = [];
     botIntent(state, 0, level);
@@ -160,3 +165,36 @@ it.each([-0.6, 0.6])(
     expect(state.players[0]!.health.filter(Boolean).length).toBe(initialHealth + 1);
   },
 );
+
+it("early serves have imperfect stable aim; level 100 serves have no intentional error", () => {
+  const misses = [1, 50, 100].map((level) => {
+    const state = createMatch(2026, 4);
+    state.phase = "playing";
+    Object.assign(state.balls[0]!, { seat: 0, phase: "ready" });
+    const first = botIntent(state, 0, level);
+    const aim = aimServeAt(0, state.bots[0]!.serveTarget!, state.arena);
+    expect(botIntent(state, 0, level).targetAngle).toBe(first.targetAngle);
+    return Math.abs(angleDifference(first.targetAngle!, aim));
+  });
+  expect(misses[0]).toBeGreaterThan(misses[1]!);
+  expect(misses[1]).toBeGreaterThan(misses[2]!);
+  expect(misses[2]).toBe(0);
+});
+
+it("unlocks accurate signed shot planning as the bot tactics budget reaches level 100", () => {
+  const state = createMatch(4, 4),
+    home = fortress(0, state.arena);
+  const point = railPosition(
+    0,
+    home.direction,
+    ARENA.railRadius + ARENA.ballRadius + ARENA.paddleThickness / 2,
+    state.arena,
+  );
+  state.supplies = [{ id: 0, age: 2, position: add(point, scale(unit(home.direction + 0.6), 8)) }];
+  const contact = { point, velocity: scale(unit(home.direction), -24), angle: home.direction };
+  const easy = planBotShot(state, 0, contact, 2, botLevelProfile(1).tactics);
+  const hard = planBotShot(state, 0, contact, 16, botLevelProfile(100).tactics);
+  expect(easy.swipe).toBe(0);
+  expect(hard.swipe).toBeGreaterThan(0);
+  expect(hard.score).toBeGreaterThan(easy.score);
+});

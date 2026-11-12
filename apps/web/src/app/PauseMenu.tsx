@@ -1,3 +1,4 @@
+import type { Demotion } from "../session/progression";
 import { useEffect, useState } from "react";
 import { GameHelp } from "./GameHelp";
 import { MobileDisplay } from "./MobileDisplay";
@@ -21,6 +22,7 @@ export function PauseMenu({
   seed,
   initialSettings,
   level,
+  demotion,
   humanSeat,
   settings,
   onSettings,
@@ -36,6 +38,7 @@ export function PauseMenu({
   seed: number;
   initialSettings: GameSettings;
   level: number;
+  demotion: Demotion | null;
   humanSeat: number;
   settings: GameSettings;
   onSettings: (settings: GameSettings) => void;
@@ -67,7 +70,10 @@ export function PauseMenu({
           {state.players[humanSeat]!.health.some(Boolean) ? "Restart" : "Play again"}
         </button>
         {!state.players[humanSeat]!.health.some(Boolean) && (
-          <p>Your result is saved. Play again at your adjusted level, or resume to watch.</p>
+          <p>Your result is saved. Play again, or resume to watch.</p>
+        )}
+        {demotion && (
+          <p role="status">Demoted to level {demotion.to} after three consecutive losses.</p>
         )}
         <MobileDisplay />
         <details className="settings-menu">

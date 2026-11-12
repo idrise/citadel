@@ -1,5 +1,5 @@
 import { roundSeed } from "./round-seed";
-import { createProgressRecorder, type LevelResult } from "./progression";
+import { createProgressRecorder, type Demotion, type LevelResult } from "./progression";
 import { createRoundObserver, type RoundTotals } from "./round-observer";
 import { createDesktopInput } from "../input/desktop";
 import { createTouchInput } from "../input/touch";
@@ -20,6 +20,7 @@ export interface SessionSnapshot {
   seed: number;
   humanSeat: number;
   level: number;
+  demotion: Demotion | null;
   paused: boolean;
   started: boolean;
   notice: string;
@@ -42,6 +43,7 @@ export function createSession(
 ) {
   let supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
   let state = createMatch(seed, count, ARENA.startingPieces, supplySeed);
+  let demotion: Demotion | null = null;
   let resultFor = createProgressRecorder(humanSeat, level);
   const viewport = createViewport(container, humanSeat, state.arena, (action) => {
     if (action === "start") start();
@@ -73,6 +75,7 @@ export function createSession(
       seed,
       humanSeat,
       level,
+      demotion,
       paused,
       started,
       notice,
@@ -202,6 +205,7 @@ export function createSession(
                 ? "level"
                 : "hidden",
         level,
+        demotion,
         count,
         elapsed: endingTime,
         reduced: settings.reducedEffects,
@@ -290,6 +294,11 @@ export function createSession(
       if (nextCount === count && nextSeat === humanSeat) return false;
       resetRound(nextCount, nextSeat, nextLevel, !started);
       return true;
+    },
+    configureProgress(next: Demotion | null) {
+      demotion = next;
+      present([], 0);
+      report();
     },
     configure(next: GameSettings) {
       settings = next;
