@@ -9,6 +9,10 @@ text, scroll within the safe area, and keep Resume reachable. Touch instructions
 appear in the title menu. The keyboard-only hide-controls action is hidden on
 touch screens to avoid trapping the user without a resume button.
 
+The later mouse sensitivity and inner-bat trail correction is recorded in
+[paddle motion review](PADDLE_MOTION_REVIEW.md): baseline mouse travel is 25%
+faster and the instanced blur excludes the solid bat footprint.
+
 Touch drag steers, a short tap serves, and drags/long presses/cancelled gestures
 never serve. Lifting a finger permits repositioning without a jump. Rotation
 discards the held gesture; backgrounding pauses the game and foregrounding waits

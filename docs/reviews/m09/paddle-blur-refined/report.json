@@ -1,0 +1,15 @@
+{
+  "counts": [2, 4, 6],
+  "modes": ["before", "after"],
+  "mask": {
+    "before": {
+      "inside": 1039,
+      "outside": 1515
+    },
+    "after": {
+      "inside": 0,
+      "outside": 1152
+    }
+  },
+  "errors": []
+}

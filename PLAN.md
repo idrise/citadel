@@ -464,6 +464,12 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November follow-up: the owner requested less mouse travel and reported an
+inner-bat bloom flash without readable motion blur. Baseline mouse gain is now
+25% higher. The trail uses instanced samples and masks the live bat footprint;
+GPU checks confirm zero trail pixels inside it. See `docs/PADDLE_MOTION_REVIEW.md`
+for 2/4/6 renders, tests and remaining visual-review limits. M09 awaits review.
+
 12 November follow-up: the owner requested paddle motion blur and reported
 inconsistent mouse control. Short arc-following exposure samples and immediate
 mouse reversal from the actual bat angle are delivered for review. Raw mouse

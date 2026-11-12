@@ -208,25 +208,31 @@ it.each([0, 1, 2, 3])(
     await Promise.resolve();
     input.setSensitivity(0.5);
     input.move(10);
-    expect(input.controls.read().targetAngle).toBeCloseTo(fortress(seat).direction + 0.02);
+    expect(input.controls.read().targetAngle).toBeCloseTo(
+      fortress(seat).direction + 5 * MOUSE_RADIANS_PER_PIXEL,
+    );
     input.setSensitivity(2);
     input.move(10);
-    expect(input.controls.read().targetAngle).toBeCloseTo(fortress(seat).direction + 0.1);
+    expect(input.controls.read().targetAngle).toBeCloseTo(
+      fortress(seat).direction + 25 * MOUSE_RADIANS_PER_PIXEL,
+    );
     input.move(1e6);
     const upper = input.controls.read().targetAngle!;
     input.setAngle(upper);
     input.move(-1);
-    expect(input.controls.read().targetAngle).toBeCloseTo(upper - 0.008);
+    expect(input.controls.read().targetAngle).toBeCloseTo(upper - 2 * MOUSE_RADIANS_PER_PIXEL);
     input.move(-1e6);
     const lower = input.controls.read().targetAngle!;
     input.setAngle(lower);
     input.move(1);
-    expect(input.controls.read().targetAngle).toBeCloseTo(lower + 0.008);
+    expect(input.controls.read().targetAngle).toBeCloseTo(lower + 2 * MOUSE_RADIANS_PER_PIXEL);
     input.setSensitivity(NaN);
     input.setAngle(fortress(seat).direction);
     input.controls.clear();
     input.move(1);
-    expect(input.controls.read().targetAngle).toBeCloseTo(fortress(seat).direction + 0.004);
+    expect(input.controls.read().targetAngle).toBeCloseTo(
+      fortress(seat).direction + MOUSE_RADIANS_PER_PIXEL,
+    );
     input.move(NaN);
     expect(Number.isFinite(input.controls.read().targetAngle)).toBe(true);
     input.controls.dispose();

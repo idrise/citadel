@@ -15,8 +15,8 @@ test("a mouse flick reaches the requested bat position within 50ms", async ({ pa
   await page.mouse.move(100, 300);
   await page.clock.runFor(50);
   const after = Number(await page.getByLabel("Bat angle", { exact: true }).textContent());
-  expect(after - before).toBeGreaterThan(22);
-  expect(after - before).toBeLessThan(24);
+  expect(after - before).toBeGreaterThan(28);
+  expect(after - before).toBeLessThan(30);
 });
 
 test("aid modes and sensitivity survive restart and every human fortress", async ({ page }) => {

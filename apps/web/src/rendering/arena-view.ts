@@ -93,8 +93,8 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         options.reducedEffects || options.quality === "low"
           ? 0
           : options.quality === "medium"
-            ? 3
-            : 5,
+            ? 6
+            : 12,
       );
       for (const event of state.events) {
         if (event.id <= lastEvent) continue;

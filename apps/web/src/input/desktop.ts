@@ -1,7 +1,7 @@
 import { clampPaddleAngle, fortress, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
 import { IDLE_INTENT, type PlayerIntent } from "../simulation/types";
 
-export const MOUSE_RADIANS_PER_PIXEL = 0.004;
+export const MOUSE_RADIANS_PER_PIXEL = 0.005;
 
 /** Relative deltas are independent of the camera and never depend on pointer screen edges. */
 export function createDesktopInput(
