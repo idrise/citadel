@@ -45,6 +45,15 @@ export function createPaddleBlur(root: Group, paddles: readonly Mesh[]) {
   );
   let lastTick = -1;
   return {
+    reset() {
+      lastTick = -1;
+      history.forEach((poses) => {
+        poses.length = 0;
+      });
+      ghosts.flat().forEach((mesh) => {
+        mesh.visible = false;
+      });
+    },
     update(state: MatchState, budget = COPIES) {
       if (state.tick < lastTick)
         history.forEach((poses) => {
@@ -53,6 +62,9 @@ export function createPaddleBlur(root: Group, paddles: readonly Mesh[]) {
       const advanced = state.tick !== lastTick;
       lastTick = state.tick;
       const now = state.tick * FIXED_DT;
+      ghosts.flat().forEach((mesh) => {
+        mesh.visible = false;
+      });
       for (const player of state.players) {
         const poses = history[player.id]!,
           home = fortress(player.id, state.arena);

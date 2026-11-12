@@ -49,6 +49,12 @@ export function createFractureBursts(root: Group) {
     return { group, material, ring, ringMaterial, shards, age: LIFE, size: 1 };
   });
   return {
+    reset() {
+      for (const item of bursts) {
+        item.age = LIFE;
+        item.group.visible = false;
+      }
+    },
     emit(event: GameEvent, reduced: boolean, parts = PARTS) {
       if (event.type !== "damage") return;
       const burst =

@@ -36,6 +36,7 @@ export function advanceBall(
   let elapsed = 0;
   let impacts = 0;
   const struckPaddles = new Set<number>();
+  const passedSupplies = new Set<number>();
   while (remaining > 1e-7 && impacts < 8 && ball.phase === "active" && state.phase === "playing") {
     const { seat, factor } = approachSlowdown(state, ball, options.slowdown);
     ball.slowSeat = seat;
@@ -89,7 +90,7 @@ export function advanceBall(
       collector.health.filter(Boolean).length < SUPPLIES.maxPieces
     )
       for (const drop of state.supplies) {
-        if (drop.age < SUPPLIES.fall) continue;
+        if (drop.age < SUPPLIES.fall || passedSupplies.has(drop.id)) continue;
         const contact = sweepCircle(
           ball.position,
           velocity,
@@ -121,6 +122,7 @@ export function advanceBall(
     const incoming = { ...ball.velocity };
     if (hit.type === "pickup") {
       if (stopAtFirstImpact) return report;
+      passedSupplies.add(hit.piece);
       const collection = collectSupply(state, ball, hit.piece);
       if (collection && collection.piece !== null)
         previousPieces[collection.seat]![collection.piece] = { ...collection.returnTo! };

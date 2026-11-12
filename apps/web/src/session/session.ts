@@ -1,3 +1,4 @@
+import { roundSeed } from "./round-seed";
 import { createProgressRecorder, type LevelResult } from "./progression";
 import { createRoundObserver, type RoundTotals } from "./round-observer";
 import { createDesktopInput } from "../input/desktop";
@@ -6,7 +7,7 @@ import { enterMobileFullscreen, fullscreenActive } from "../input/fullscreen";
 import { createViewport } from "../rendering/viewport";
 import type { ViewOptions } from "../rendering/arena-view";
 import { SEATS } from "../rendering/palette";
-import type { PlayerCount } from "../simulation/arena";
+import { ARENA, type PlayerCount } from "../simulation/arena";
 import { createMatch, stepMatch } from "../simulation/match";
 import { alive, type GameEvent, type MatchState } from "../simulation/types";
 import { createFixedClock } from "./fixed-clock";
@@ -24,6 +25,7 @@ export interface SessionSnapshot {
   totals: RoundTotals;
   initialSettings: GameSettings | null;
   endingTime: number;
+  titleMoving: boolean;
   ballOwners: ReadonlyMap<number, number>;
 }
 export function createSession(
@@ -36,8 +38,9 @@ export function createSession(
   level = 1,
   onComplete: (result: LevelResult) => void = () => {},
 ) {
-  let state = createMatch(seed, count);
-  const resultFor = createProgressRecorder(humanSeat, level);
+  const supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
+  let state = createMatch(seed, count, ARENA.startingPieces, supplySeed);
+  let resultFor = createProgressRecorder(humanSeat, level);
   const viewport = createViewport(container, humanSeat, state.arena, (action) => {
     if (action === "start") start();
     else {
@@ -49,7 +52,7 @@ export function createSession(
     }
   });
   const clock = createFixedClock();
-  const observer = createRoundObserver(count);
+  let observer = createRoundObserver(count);
   let paused = true;
   let started = false;
   let endingTime = 0;
@@ -60,7 +63,7 @@ export function createSession(
   let lastTimestamp = 0;
   let lastReport = 0;
   let frame = 0;
-  const music = createGameMusic(seed, humanSeat);
+  let music = createGameMusic(seed, humanSeat);
   let touchMode = window.matchMedia("(pointer: coarse)").matches;
   const report = () =>
     onSnapshot({
@@ -72,6 +75,7 @@ export function createSession(
       totals: observer.snapshot(),
       initialSettings,
       endingTime,
+      titleMoving: viewport.titleMoving,
       ballOwners: observer.owners(),
       music: music.snapshot(),
     });
@@ -88,23 +92,27 @@ export function createSession(
     present([], 0);
     report();
   };
-  const input = createDesktopInput(
-    viewport.canvas,
-    humanSeat,
-    () => state.players[humanSeat]!.angle,
-    () => setPaused(true),
-    () => {
-      if (started && state.phase !== "finished") setPaused(true);
-    },
-    () => settings.mouseSensitivity,
-    () => state.arena,
-  );
-  const touch = createTouchInput(
-    viewport.canvas,
-    humanSeat,
-    () => state.players[humanSeat]!.angle,
-    () => state.arena,
-  );
+  const makeInput = () =>
+    createDesktopInput(
+      viewport.canvas,
+      humanSeat,
+      () => state.players[humanSeat]!.angle,
+      () => setPaused(true),
+      () => {
+        if (started && state.phase !== "finished") setPaused(true);
+      },
+      () => settings.mouseSensitivity,
+      () => state.arena,
+    );
+  let input = makeInput();
+  const makeTouch = () =>
+    createTouchInput(
+      viewport.canvas,
+      humanSeat,
+      () => state.players[humanSeat]!.angle,
+      () => state.arena,
+    );
+  let touch = makeTouch();
   const abort = new AbortController();
   let hadFullscreen = fullscreenActive();
   const fullscreenChanged = () => {
@@ -233,6 +241,33 @@ export function createSession(
         if (touchMode) touch.capture();
         else input.capture();
       }
+    },
+    configureRoster(nextCount: PlayerCount, nextSeat: number, nextLevel: number) {
+      if (nextCount === count && nextSeat === humanSeat) return;
+      const animate = !started;
+      const nextState = createMatch(seed, nextCount, ARENA.startingPieces, supplySeed);
+      viewport.transitionTitle(nextState, nextSeat, animate);
+      input.dispose();
+      touch.dispose();
+      music.dispose();
+      count = nextCount;
+      humanSeat = nextSeat;
+      level = nextLevel;
+      state = nextState;
+      started = false;
+      paused = true;
+      menuSuppressed = false;
+      endingTime = 0;
+      initialSettings = null;
+      observer = createRoundObserver(count);
+      resultFor = createProgressRecorder(humanSeat, level);
+      input = makeInput();
+      touch = makeTouch();
+      music = createGameMusic(seed, humanSeat);
+      music.configure(settings);
+      clock.reset();
+      present([], 0);
+      report();
     },
     configure(next: GameSettings) {
       settings = next;

@@ -1,3 +1,4 @@
+import { createTitleTransition } from "./title-transition";
 import {
   ACESFilmicToneMapping,
   Box3,
@@ -9,7 +10,7 @@ import {
   Vector3,
   WebGLRenderer,
 } from "three";
-import { fortress, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
+import { createArena, fortress, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
 import type { MatchState } from "../simulation/types";
 import { disposeScene } from "./dispose-scene";
 import { createArenaView, type ViewOptions } from "./arena-view";
@@ -53,10 +54,12 @@ export function createViewport(
   const menu = createMenuOverlay();
   const fireworks = createVictoryFireworks(scene);
   const controls = createSceneControls(container, onSceneAction, (action) => menu.hover(action));
-  const disposeLighting = lightArena(scene, initial);
+  const disposeLighting = lightArena(scene, createArena(6));
   const disposeEnvironment = createNeonEnvironment(renderer, scene, initial);
   const camera = createArenaCamera(humanSeat, initial);
   const motion = createCameraMotion(camera);
+  const title = createTitleTransition();
+  let titleMoving = false;
   let aspect = 1;
   const bounds = new Box3().setFromObject(arena.root);
   // Frame the playing surface and wall tops; the structural plinth may extend below the view.
@@ -81,6 +84,13 @@ export function createViewport(
   resize();
   return {
     canvas,
+    get titleMoving() {
+      return titleMoving;
+    },
+    transitionTitle(state: MatchState, seat: number, animate: boolean) {
+      title.begin(state, seat, animate);
+      if (!animate) arena.reset();
+    },
     pointFromClient(x: number, y: number) {
       const rect = canvas.getBoundingClientRect();
       return screenToArena(
@@ -99,11 +109,25 @@ export function createViewport(
         renderer.setPixelRatio(pixelRatio);
         bloom.resize(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1));
       }
-      arena.update(state, dt, options);
+      const presentation = title.update(state, options.humanSeat, dt, options.reducedEffects);
+      titleMoving = presentation.moving;
+      const displayed = presentation.state;
+      arena.update(displayed, dt, {
+        ...options,
+        actorScales: presentation.scales,
+        ...(presentation.moving
+          ? { cameraAnchor: { x: Math.sin(presentation.yaw), y: Math.cos(presentation.yaw) } }
+          : {}),
+      });
       const displayArena = arena.displayArena;
       for (const light of scene.children)
         if (light instanceof PointLight) {
-          const seat = fortress(light.userData.seat as number, state.arena);
+          const id = light.userData.seat as number;
+          const player = displayed.players.find((p) => p.id === id);
+          light.visible = Boolean(player?.health.some(Boolean));
+          if (!light.visible) continue;
+          const seat = fortress(id, displayed.arena);
+          light.intensity = 10 * (presentation.scales[id] ?? 1);
           light.position.set(
             seat.anchor.x + Math.cos(seat.direction) * 2.7,
             1.8,
@@ -111,15 +135,19 @@ export function createViewport(
           );
           if (arena.victoryLight && state.winner === seat.id)
             light.position.set(arena.victoryLight.x, 2.5, arena.victoryLight.y);
-          light.visible = state.players[seat.id]!.health.some(Boolean);
         }
-      const home = fortress(humanSeat, state.arena);
-      motion.follow(Math.atan2(home.anchor.x, home.anchor.y));
+      const home = fortress(options.humanSeat, state.arena);
+      motion.follow(presentation.yaw);
       const paddleOffset =
         state.phase === "playing"
-          ? (state.players[humanSeat]!.angle - home.direction) / home.halfAngle
+          ? (state.players[options.humanSeat]!.angle - home.direction) / home.halfAngle
           : 0;
-      motion.update(dt, options.reducedEffects, paddleOffset, cameraDanger(state, humanSeat));
+      motion.update(
+        dt,
+        options.reducedEffects,
+        paddleOffset,
+        cameraDanger(state, options.humanSeat),
+      );
       // Acute star tips have longer wall miters; include the plinth during the reveal.
       const border = 1.09 + arena.victoryProgress * 0.2;
       framingPoints = displayArena.vertices.flatMap((p) => [
@@ -145,9 +173,9 @@ export function createViewport(
       fitArenaCamera(camera, bounds, aspect, framingPoints);
       fireworks.update(
         dt,
-        state.phase === "finished" && state.winner === humanSeat,
+        state.phase === "finished" && state.winner === options.humanSeat,
         options.reducedEffects,
-        SEATS[humanSeat]!.colour,
+        SEATS[options.humanSeat]!.colour,
         options.quality,
       );
       controls.update(

@@ -88,10 +88,16 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
     root.add(post);
   }
   let previous: ArenaGeometry | undefined;
-  const update = (arena: ArenaGeometry) => {
-    if (previous === arena) return;
+  let previousSeat = humanSeat;
+  const update = (
+    arena: ArenaGeometry,
+    seat = humanSeat,
+    cameraAnchor?: { x: number; y: number },
+  ) => {
+    if (previous === arena && previousSeat === seat && !cameraAnchor) return;
+    previousSeat = seat;
     previous = arena;
-    const anchor = fortress(humanSeat, arena).anchor;
+    const anchor = cameraAnchor ?? fortress(seat, arena).anchor;
     const edges = polygonEdges(arena.vertices);
     const turns = edges.map((edge, index) => {
       const previous = edges[(index + edges.length - 1) % edges.length]!.normal;

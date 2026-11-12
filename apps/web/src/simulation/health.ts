@@ -1,3 +1,4 @@
+import { healthAnchor, separateCollectedHealth } from "./health-placement";
 import { ARENA, fortress, SQUARE_ARENA, type ArenaGeometry } from "./arena";
 import { HEALTH_GROWTH_PER_LOSS, healthFormation } from "./health-layout";
 import type { PieceBody, PlayerState } from "./types";
@@ -10,11 +11,7 @@ export function createPieceBodies(
   count?: number,
 ): PieceBody[] {
   const home = fortress(seat, arena);
-  const inset = Math.max(0, (Math.PI / 4 - home.halfAngle) / (Math.PI / 12)) * 0.6;
-  const anchor = add(
-    home.anchor,
-    scale({ x: Math.cos(home.direction), y: Math.sin(home.direction) }, inset),
-  );
+  const anchor = healthAnchor(seat, arena);
   const positions =
     count === undefined
       ? home.pieces
@@ -38,11 +35,7 @@ export function stepHealth(
     ARENA.pieceRadius *
     (1 + clamp(player.pieces.length - indices.length, 0, 7) * HEALTH_GROWTH_PER_LOSS);
   const seat = fortress(player.id, arena);
-  const inset = Math.max(0, (Math.PI / 4 - seat.halfAngle) / (Math.PI / 12)) * 0.6;
-  const anchor = add(
-    seat.anchor,
-    scale({ x: Math.cos(seat.direction), y: Math.sin(seat.direction) }, inset),
-  );
+  const anchor = healthAnchor(player.id, arena);
   const targets = healthFormation(anchor, seat.direction, indices.length, radius);
   const forces = indices.map((index, rank) => {
     const body = player.pieces[index]!;
@@ -71,6 +64,7 @@ export function stepHealth(
     if (Math.abs(contained.y - body.position.y) > 1e-9) body.velocity.y = 0;
     body.position = contained;
   });
+  if (player.collectedFormation) separateCollectedHealth(player, arena);
 }
 
 export function visibleTargets(players: readonly PlayerState[]) {

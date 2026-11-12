@@ -37,15 +37,21 @@ export function createArenaReflections(humanSeat: number, initial: ArenaGeometry
     meshes.forEach((mesh, index) => {
       mesh.visible = !reduced && visible[index]! && (!victory || index === 0);
     });
-  const update = (arena: ArenaGeometry) => {
-    if (previous === arena) return;
+  let previousSeat = humanSeat;
+  const update = (
+    arena: ArenaGeometry,
+    seat = humanSeat,
+    cameraAnchor?: { x: number; y: number },
+  ) => {
+    if (previous === arena && previousSeat === seat && !cameraAnchor) return;
+    previousSeat = seat;
     previous = arena;
     const shape = new Shape();
     arena.vertices.forEach((p, i) => (i === 0 ? shape.moveTo(p.x, -p.y) : shape.lineTo(p.x, -p.y)));
     shape.closePath();
     floor.mesh.geometry.dispose();
     floor.mesh.geometry = new ShapeGeometry(shape);
-    const anchor = fortress(humanSeat, arena).anchor,
+    const anchor = cameraAnchor ?? fortress(seat, arena).anchor,
       edges = polygonEdges(arena.vertices);
     visible = [
       true,

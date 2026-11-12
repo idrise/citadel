@@ -10,6 +10,11 @@ export function createEffects(root: Group) {
   const bursts = createFractureBursts(root),
     returns = createReturnFlourishes(root);
   return {
+    reset() {
+      impacts.reset();
+      bursts.reset();
+      returns.reset();
+    },
     emit(event: GameEvent, reduced: boolean, shards = 10, sparks = 6, state?: MatchState) {
       impacts.emit(event, reduced, sparks, state);
       bursts.emit(event, reduced, shards);

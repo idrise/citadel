@@ -464,6 +464,14 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November pickup/title follow-up (in progress): the owner reported repeated
+pickup sites and collected containers intersecting existing health, and requested
+smooth player-count previews with stationary UI. Independent attempt seeds,
+collision-free placement/settling and a persistent title renderer with retargetable
+geometry/actor interpolation are implemented. Unit and focused browser checks pass;
+rendered review and final regression checks are ongoing. M09 awaits review; no push
+or deployment is authorised.
+
 12 November adaptive progression and supply amendment: the owner explicitly
 authorised 100 saved adaptive levels, rapid calibration from recent performance,
 levels moving backwards after losses/inactivity, and a level introduction before

@@ -29,6 +29,12 @@ export function createImpactFeedback(root: Group) {
     return { group, material, ring, sparks, age: 10, life: 0.2, outcome: false, victory: false };
   });
   return {
+    reset() {
+      for (const item of pool) {
+        item.age = item.life;
+        item.group.visible = false;
+      }
+    },
     emit(event: GameEvent, reduced: boolean, budget: number, state?: MatchState) {
       if (!["paddle", "wall", "elimination", "victory"].includes(event.type)) return;
       const outcome = event.type === "elimination" || event.type === "victory";

@@ -1,5 +1,11 @@
 import { createSupplyView } from "./supply-view";
-import { ARENA, SQUARE_ARENA, fortress, type ArenaGeometry } from "../simulation/arena";
+import {
+  ARENA,
+  SQUARE_ARENA,
+  createArena,
+  fortress,
+  type ArenaGeometry,
+} from "../simulation/arena";
 import { serveDirection } from "../simulation/aim";
 import { alive, type MatchState } from "../simulation/types";
 import { predictReturn, traceAimGuide } from "../simulation/return-preview";
@@ -25,9 +31,20 @@ export interface ViewOptions {
   quality?: EffectsQuality;
   musicPulse?: number;
   musicWave?: number;
+  actorScales?: readonly number[];
+  cameraAnchor?: { x: number; y: number };
 }
 export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA) {
-  const stage = createStage(humanSeat, initial);
+  const roster = {
+    ...initial,
+    fortresses: [
+      ...initial.fortresses,
+      ...createArena(6).fortresses.filter(
+        (f) => !initial.fortresses.some((other) => other.id === f.id),
+      ),
+    ].sort((a, b) => a.id - b.id),
+  };
+  const stage = createStage(humanSeat, roster);
   const reflection = createArenaReflections(humanSeat, initial);
   stage.root.add(...reflection.meshes);
   const balls = createBallView(stage.root);
@@ -35,16 +52,22 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
   const guide = createAimGuide(stage.root);
   const effects = createEffects(stage.root);
   const paddleBlur = createPaddleBlur(stage.root, stage.paddles);
-  const victory = createVictoryMorph(humanSeat);
+  let victory = createVictoryMorph(humanSeat);
+  let victorySeat = humanSeat;
   let displayArena = initial;
   let victoryProgress = 0;
   let victoryLight: { x: number; y: number } | undefined;
   let endingTime = 0;
   let lastEvent = -1;
-  let geometry = initial;
   return {
     root: stage.root,
     dispose: () => reflection.dispose(),
+    reset() {
+      lastEvent = -1;
+      supplies.reset();
+      paddleBlur.reset();
+      effects.reset();
+    },
     get displayArena() {
       return displayArena;
     },
@@ -55,6 +78,10 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
       return victoryLight;
     },
     update(state: MatchState, dt: number, options: ViewOptions) {
+      if (victorySeat !== options.humanSeat) {
+        victorySeat = options.humanSeat;
+        victory = createVictoryMorph(victorySeat);
+      }
       endingTime = state.phase === "finished" ? endingTime + Math.max(0, dt) : 0;
       const ending = victory.update(
         state,
@@ -64,22 +91,34 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
       displayArena = ending?.arena ?? state.arena;
       victoryProgress = ending?.progress ?? 0;
       victoryLight = ending?.light;
-      (stage.base.userData.update as (arena: ArenaGeometry) => void)(displayArena);
-      reflection.update(displayArena);
+      (
+        stage.base.userData.update as (
+          arena: ArenaGeometry,
+          seat: number,
+          anchor?: { x: number; y: number },
+        ) => void
+      )(displayArena, options.humanSeat, options.cameraAnchor);
+      reflection.update(displayArena, options.humanSeat, options.cameraAnchor);
       reflection.setVictory(Boolean(ending));
       const profile = effectsProfile(options.quality, options.reducedEffects);
       reflection.setReduced(!profile.reflections);
       supplies.update(state, dt, options.reducedEffects);
+      for (const group of [
+        ...stage.rails,
+        ...stage.paddles,
+        ...stage.marks,
+        ...stage.health.flat(),
+      ])
+        group.visible = false;
       state.players.forEach((player) => {
+        const appearance = options.actorScales?.[player.id] ?? 1;
         const home = fortress(player.id, state.arena);
         const rail = stage.rails[player.id]!;
         rail.position.set(home.anchor.x, 0.02, home.anchor.y);
         rail.rotation.y = -home.direction;
         rail.visible = alive(player) && !ending;
-        if (
-          geometry !== state.arena &&
-          Math.abs(fortress(player.id, geometry).halfAngle - home.halfAngle) > 1e-7
-        ) {
+        rail.scale.setScalar(appearance);
+        if (Math.abs((rail.userData.halfAngle as number) - home.halfAngle) > 1e-7) {
           const replacement = arcMesh(
             ARENA.railRadius,
             -home.halfAngle,
@@ -91,6 +130,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
           );
           rail.geometry.dispose();
           rail.geometry = replacement.geometry;
+          rail.userData.halfAngle = home.halfAngle;
           // The temporary mesh contributes only its geometry.
           const materials = Array.isArray(replacement.material)
             ? replacement.material
@@ -99,6 +139,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         }
         const mark = stage.marks[player.id]!;
         mark.visible = alive(player);
+        mark.scale.setScalar(appearance);
         mark.position.set(
           home.anchor.x + Math.cos(home.direction) * 0.9,
           0.15,
@@ -109,6 +150,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         paddle.position.set(home.anchor.x, 0.95, home.anchor.y);
         paddle.rotation.y = -player.angle;
         paddle.visible = alive(player);
+        paddle.scale.setScalar(appearance);
         if (ending?.winner === player.id) {
           paddle.position.set(ending.paddle.position.x, 0.95, ending.paddle.position.y);
           paddle.rotation.y = -ending.paddle.angle;
@@ -119,10 +161,9 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
           if (!body) return;
           const position = ending?.winner === player.id ? ending.pieces[index]! : body.position;
           piece.position.set(position.x, 0, position.y);
-          piece.scale.setScalar(body.radius / ARENA.pieceRadius);
+          piece.scale.setScalar((appearance * body.radius) / ARENA.pieceRadius);
         });
       });
-      geometry = state.arena;
       paddleBlur.update(
         state,
         options.reducedEffects
@@ -144,11 +185,12 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         options.reducedEffects,
         profile.trails,
         options.ballOwners,
-        options.menu?.mode === "level",
+        options.menu?.mode === "title" || options.menu?.mode === "level",
       );
       guide.hide();
       const defender = state.players[options.humanSeat];
       if (
+        options.menu?.mode === "title" ||
         options.menu?.mode === "level" ||
         state.phase === "finished" ||
         !defender ||

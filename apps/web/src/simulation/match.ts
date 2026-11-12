@@ -30,6 +30,7 @@ export function createMatch(
   seed = 1,
   count: PlayerCount = 4,
   initialPieces: number = ARENA.startingPieces,
+  supplySeed = seed,
 ): MatchState {
   if (!Number.isInteger(initialPieces) || initialPieces < 1 || initialPieces > 12)
     throw new Error("Invalid initial containers");
@@ -59,6 +60,9 @@ export function createMatch(
     balls: [],
     supplies: [],
     nextSupplyId: 0,
+    supplySeed: supplySeed >>> 0,
+    supplyRng: supplySeed >>> 0,
+    lastSupplyPosition: null,
     winner: null,
     events: [],
     nextEventId: 0,

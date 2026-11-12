@@ -27,14 +27,25 @@ export function createArenaBase(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
   const walls = createArenaWalls(humanSeat, initial);
   root.add(walls);
   let previous = initial;
-  root.userData.update = (arena: ArenaGeometry) => {
-    if (previous === arena) return;
-    previous = arena;
-    slabs.forEach((mesh, i) => {
-      const spec = specs[i]!;
-      replaceHull(mesh, hullGeometry(arena.vertices, spec.margin, spec.top, spec.depth));
-    });
-    (walls.userData.update as (arena: ArenaGeometry) => void)(arena);
+  root.userData.update = (
+    arena: ArenaGeometry,
+    seat = humanSeat,
+    anchor?: { x: number; y: number },
+  ) => {
+    if (previous !== arena) {
+      previous = arena;
+      slabs.forEach((mesh, i) => {
+        const spec = specs[i]!;
+        replaceHull(mesh, hullGeometry(arena.vertices, spec.margin, spec.top, spec.depth));
+      });
+    }
+    (
+      walls.userData.update as (
+        arena: ArenaGeometry,
+        seat: number,
+        anchor?: { x: number; y: number },
+      ) => void
+    )(arena, seat, anchor);
   };
   return root;
 }

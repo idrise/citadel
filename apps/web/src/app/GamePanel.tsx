@@ -38,18 +38,19 @@ export function GamePanel({
   const session = useRef<GameSession | null>(null);
   const [unavailable, setUnavailable] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const callbacks = useRef({ onCount, onRematch, onComplete });
-  callbacks.current = { onCount, onRematch, onComplete };
-  const [roundLevel] = useState(level);
+  const callbacks = useRef({ count, onCount, onRematch, onComplete });
+  callbacks.current = { count, onCount, onRematch, onComplete };
+  const initialConfig = useRef({ seed, humanSeat, count, level });
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => ({
     state: createMatch(seed, count),
-    level: roundLevel,
+    level,
     paused: true,
     started: false,
     notice: "",
     totals: createRoundObserver(count).snapshot(),
     initialSettings: null,
     endingTime: 0,
+    titleMoving: false,
     ballOwners: new Map(),
     music: {
       status: "idle",
@@ -65,6 +66,7 @@ export function GamePanel({
   useEffect(() => {
     if (!container.current) return;
     try {
+      const { seed, humanSeat, count, level } = initialConfig.current;
       const game = createSession(
         container.current,
         seed,
@@ -74,12 +76,12 @@ export function GamePanel({
         (action) => {
           if (action === "options") setSettingsOpen(true);
           if (action === "decrease")
-            callbacks.current.onCount(Math.max(2, count - 1) as PlayerCount);
+            callbacks.current.onCount(Math.max(2, callbacks.current.count - 1) as PlayerCount);
           if (action === "increase")
-            callbacks.current.onCount(Math.min(6, count + 1) as PlayerCount);
+            callbacks.current.onCount(Math.min(6, callbacks.current.count + 1) as PlayerCount);
           if (action === "rematch") callbacks.current.onRematch();
         },
-        roundLevel,
+        level,
         (result) => callbacks.current.onComplete(result),
       );
       session.current = game;
@@ -90,7 +92,10 @@ export function GamePanel({
     } catch {
       setUnavailable(true);
     }
-  }, [seed, humanSeat, count, roundLevel]);
+  }, []);
+  useEffect(() => {
+    session.current?.configureRoster(count, humanSeat, level);
+  }, [count, humanSeat, level]);
   useEffect(() => {
     session.current?.configure(settings);
   }, [settings]);

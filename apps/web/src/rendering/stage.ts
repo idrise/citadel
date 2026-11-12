@@ -26,6 +26,7 @@ export function createStage(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA
       0.035,
       0.15,
     );
+    rail.userData.halfAngle = seat.halfAngle;
     rail.name = `defence-rail-${seat.id}`;
     rail.position.set(seat.anchor.x, 0.02, seat.anchor.y);
     rail.rotation.y = -seat.direction;

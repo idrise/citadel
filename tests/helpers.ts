@@ -2,7 +2,7 @@ import { expect, type Page } from "@playwright/test";
 
 export async function openGame(page: Page, reduced = true) {
   await page.clock.install();
-  await page.goto("./");
+  await page.goto("./?seed=2026");
   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 60000));
   if (reduced) {
     await openSettings(page);

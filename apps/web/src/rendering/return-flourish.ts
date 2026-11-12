@@ -55,6 +55,12 @@ export function createReturnFlourishes(root: Group) {
     return out;
   };
   return {
+    reset() {
+      for (const item of flights) {
+        item.age = DURATION;
+        item.group.visible = false;
+      }
+    },
     emit(event: GameEvent) {
       if (event.type !== "damage" || !event.returnTo || event.ballId === undefined) return;
       const flight =

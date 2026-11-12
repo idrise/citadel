@@ -21,6 +21,7 @@ export interface PlayerState {
   health: boolean[];
   pieces: PieceBody[];
   swipe?: BatSwipe;
+  collectedFormation?: boolean;
 }
 export interface BotState {
   targetAngle: number;
@@ -107,6 +108,9 @@ export interface MatchState {
   balls: BallState[];
   supplies: SupplyDrop[];
   nextSupplyId: number;
+  supplySeed: number;
+  supplyRng: number;
+  lastSupplyPosition: Vec2 | null;
   nextBallId: number;
   rng: number;
   winner: number | null;

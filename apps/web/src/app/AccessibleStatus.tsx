@@ -24,6 +24,7 @@ export function AccessibleStatus({
           Level {snapshot.level}
         </output>
       )}
+      <output aria-label="Arena preview">{snapshot.titleMoving ? "moving" : "settled"}</output>
       <output aria-label="Round phase">{state.phase}</output>
       <output aria-label="Round winner" aria-live="polite">
         {state.phase === "finished"

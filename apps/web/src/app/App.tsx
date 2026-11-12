@@ -1,3 +1,4 @@
+import { roundSeed } from "../session/round-seed";
 import { levelFor, loadProgress, recordResult, saveProgress } from "../session/progression";
 import type { PlayerCount } from "../simulation/arena";
 import { useState, useEffect } from "react";
@@ -9,7 +10,7 @@ export function App() {
     loadPreferences(window.matchMedia("(prefers-reduced-motion: reduce)").matches),
   );
   const [progress, setProgress] = useState(loadProgress);
-  const [seed, setSeed] = useState(2026);
+  const [seed, setSeed] = useState(roundSeed);
   const [count, setCount] = useState<PlayerCount>(initial.count);
   const [humanSeat, setHumanSeat] = useState(initial.humanSeat);
   const [round, setRound] = useState(0);
@@ -24,7 +25,7 @@ export function App() {
     <main className="game-root">
       <h1 className="sr-only">Neon Citadel</h1>
       <GamePanel
-        key={`${seed}-${humanSeat}-${round}-${count}`}
+        key={`${seed}-${round}`}
         level={levelFor(progress, count)}
         onComplete={(result) => setProgress((current) => recordResult(current, result))}
         count={count}
@@ -37,7 +38,7 @@ export function App() {
         settings={settings}
         onSettings={setSettings}
         onRestart={() => setRound((value) => value + 1)}
-        onRematch={() => setSeed((value) => value + 1)}
+        onRematch={() => setSeed((value) => (value + 1) >>> 0)}
         onSeat={setHumanSeat}
       />
     </main>

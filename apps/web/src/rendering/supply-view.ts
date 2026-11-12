@@ -55,6 +55,13 @@ export function createSupplyView(root: Group) {
   });
   let lastEvent = -1;
   return {
+    reset() {
+      lastEvent = -1;
+      for (const flight of flights) {
+        flight.age = TRANSFER_SECONDS;
+        flight.group.visible = false;
+      }
+    },
     inTransit(seat: number, piece: number) {
       return flights.some((f) => f.group.visible && f.seat === seat && f.piece === piece);
     },
