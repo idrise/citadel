@@ -1,0 +1,222 @@
+{
+  "kind": "Natural seeded graded simulation; late frame history warmed for rendering only",
+  "checks": [
+    {
+      "level": 1,
+      "count": 2,
+      "phase": "countdown",
+      "balls": 1,
+      "supplies": 0,
+      "elapsed": 0,
+      "activeBalls": 0,
+      "difficulty": {
+        "level": 1,
+        "maxBalls": 1,
+        "ballInterval": 22,
+        "ballSpeed": 14,
+        "pickupCount": 0,
+        "batScale": 1.35
+      },
+      "collisionCaps": 0
+    },
+    {
+      "level": 50,
+      "count": 2,
+      "phase": "countdown",
+      "balls": 1,
+      "supplies": 0,
+      "elapsed": 0,
+      "activeBalls": 0,
+      "difficulty": {
+        "level": 50,
+        "maxBalls": 4,
+        "ballInterval": 13.585858585858585,
+        "ballSpeed": 23.8989898989899,
+        "pickupCount": 4,
+        "batScale": 1
+      },
+      "collisionCaps": 0
+    },
+    {
+      "level": 100,
+      "count": 2,
+      "phase": "countdown",
+      "balls": 1,
+      "supplies": 0,
+      "elapsed": 0,
+      "activeBalls": 0,
+      "difficulty": {
+        "level": 100,
+        "maxBalls": 8,
+        "ballInterval": 5,
+        "ballSpeed": 34,
+        "pickupCount": 7,
+        "batScale": 0.7
+      },
+      "collisionCaps": 0
+    },
+    {
+      "level": 1,
+      "count": 4,
+      "phase": "countdown",
+      "balls": 1,
+      "supplies": 0,
+      "elapsed": 0,
+      "activeBalls": 0,
+      "difficulty": {
+        "level": 1,
+        "maxBalls": 1,
+        "ballInterval": 22,
+        "ballSpeed": 14,
+        "pickupCount": 0,
+        "batScale": 1.35
+      },
+      "collisionCaps": 0
+    },
+    {
+      "level": 50,
+      "count": 4,
+      "phase": "countdown",
+      "balls": 1,
+      "supplies": 0,
+      "elapsed": 0,
+      "activeBalls": 0,
+      "difficulty": {
+        "level": 50,
+        "maxBalls": 4,
+        "ballInterval": 13.585858585858585,
+        "ballSpeed": 23.8989898989899,
+        "pickupCount": 4,
+        "batScale": 1
+      },
+      "collisionCaps": 0
+    },
+    {
+      "level": 100,
+      "count": 4,
+      "phase": "countdown",
+      "balls": 1,
+      "supplies": 0,
+      "elapsed": 0,
+      "activeBalls": 0,
+      "difficulty": {
+        "level": 100,
+        "maxBalls": 8,
+        "ballInterval": 5,
+        "ballSpeed": 34,
+        "pickupCount": 7,
+        "batScale": 0.7
+      },
+      "collisionCaps": 0
+    },
+    {
+      "level": 1,
+      "count": 6,
+      "phase": "countdown",
+      "balls": 1,
+      "supplies": 0,
+      "elapsed": 0,
+      "activeBalls": 0,
+      "difficulty": {
+        "level": 1,
+        "maxBalls": 1,
+        "ballInterval": 22,
+        "ballSpeed": 14,
+        "pickupCount": 0,
+        "batScale": 1.35
+      },
+      "collisionCaps": 0
+    },
+    {
+      "level": 50,
+      "count": 6,
+      "phase": "countdown",
+      "balls": 1,
+      "supplies": 0,
+      "elapsed": 0,
+      "activeBalls": 0,
+      "difficulty": {
+        "level": 50,
+        "maxBalls": 4,
+        "ballInterval": 13.585858585858585,
+        "ballSpeed": 23.8989898989899,
+        "pickupCount": 4,
+        "batScale": 1
+      },
+      "collisionCaps": 0
+    },
+    {
+      "level": 100,
+      "count": 6,
+      "phase": "countdown",
+      "balls": 1,
+      "supplies": 0,
+      "elapsed": 0,
+      "activeBalls": 0,
+      "difficulty": {
+        "level": 100,
+        "maxBalls": 8,
+        "ballInterval": 5,
+        "ballSpeed": 34,
+        "pickupCount": 7,
+        "batScale": 0.7
+      },
+      "collisionCaps": 0
+    },
+    {
+      "level": 4,
+      "count": 4,
+      "phase": "playing",
+      "balls": 1,
+      "supplies": 0,
+      "elapsed": 4.5916666666666845,
+      "activeBalls": 1,
+      "difficulty": {
+        "level": 4,
+        "maxBalls": 1,
+        "ballInterval": 21.484848484848484,
+        "ballSpeed": 14.606060606060606,
+        "pickupCount": 0,
+        "batScale": 1.3285714285714287
+      },
+      "collisionCaps": 0
+    },
+    {
+      "level": 5,
+      "count": 4,
+      "phase": "playing",
+      "balls": 1,
+      "supplies": 1,
+      "elapsed": 4.5916666666666845,
+      "activeBalls": 1,
+      "difficulty": {
+        "level": 5,
+        "maxBalls": 1,
+        "ballInterval": 21.31313131313131,
+        "ballSpeed": 14.808080808080808,
+        "pickupCount": 1,
+        "batScale": 1.3214285714285716
+      },
+      "collisionCaps": 0
+    },
+    {
+      "level": 100,
+      "count": 6,
+      "phase": "playing",
+      "balls": 8,
+      "supplies": 0,
+      "elapsed": 35.491666666665296,
+      "activeBalls": 6,
+      "difficulty": {
+        "level": 100,
+        "maxBalls": 8,
+        "ballInterval": 5,
+        "ballSpeed": 34,
+        "pickupCount": 7,
+        "batScale": 0.7
+      },
+      "collisionCaps": 0
+    }
+  ],
+  "errors": []
+}

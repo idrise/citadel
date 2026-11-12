@@ -1,5 +1,8 @@
 # Three-loss ladder, bot difficulty and reflected level signs — M09
 
+The bot curve is now combined with level-driven ball count/speed, pickup budgets
+and physical bat width. See [the combined difficulty review](DIFFICULTY_CURVE_REVIEW.md).
+
 12 November 2026. This supersedes the earlier inactivity and immediate-loss policies.
 The owner requested a level drop after three losses, an explicit demotion message,
 increasing bot skill through level 100, and a level sign emerging from the floor.

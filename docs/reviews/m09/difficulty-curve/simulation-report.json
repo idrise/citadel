@@ -1,0 +1,233 @@
+{
+  "kind": "Seeded bot-only bounded samples; actual level rules, three starting containers, 90 seconds including countdown",
+  "games": [
+    {
+      "count": 2,
+      "difficulty": {
+        "level": 1,
+        "maxBalls": 1,
+        "ballInterval": 22,
+        "ballSpeed": 14,
+        "pickupCount": 0,
+        "batScale": 1.35
+      },
+      "seconds": 55.46666666666416,
+      "finished": true,
+      "winner": 1,
+      "peakBalls": 1,
+      "drops": 0,
+      "collections": 0,
+      "collisionCaps": 0,
+      "computeMilliseconds": 84.43787499999999
+    },
+    {
+      "count": 2,
+      "difficulty": {
+        "level": 5,
+        "maxBalls": 1,
+        "ballInterval": 21.31313131313131,
+        "ballSpeed": 14.808080808080808,
+        "pickupCount": 1,
+        "batScale": 1.3214285714285716
+      },
+      "seconds": 61.19999999999717,
+      "finished": true,
+      "winner": 0,
+      "peakBalls": 1,
+      "drops": 1,
+      "collections": 1,
+      "collisionCaps": 0,
+      "computeMilliseconds": 74.679
+    },
+    {
+      "count": 2,
+      "difficulty": {
+        "level": 50,
+        "maxBalls": 4,
+        "ballInterval": 13.585858585858585,
+        "ballSpeed": 23.8989898989899,
+        "pickupCount": 4,
+        "batScale": 1
+      },
+      "seconds": 21.741666666666074,
+      "finished": true,
+      "winner": 0,
+      "peakBalls": 2,
+      "drops": 2,
+      "collections": 1,
+      "collisionCaps": 0,
+      "computeMilliseconds": 39.743082999999984
+    },
+    {
+      "count": 2,
+      "difficulty": {
+        "level": 100,
+        "maxBalls": 8,
+        "ballInterval": 5,
+        "ballSpeed": 34,
+        "pickupCount": 7,
+        "batScale": 0.7
+      },
+      "seconds": 27.449999999999083,
+      "finished": true,
+      "winner": 0,
+      "peakBalls": 6,
+      "drops": 3,
+      "collections": 3,
+      "collisionCaps": 0,
+      "computeMilliseconds": 146.51274999999998
+    },
+    {
+      "count": 4,
+      "difficulty": {
+        "level": 1,
+        "maxBalls": 1,
+        "ballInterval": 22,
+        "ballSpeed": 14,
+        "pickupCount": 0,
+        "batScale": 1.35
+      },
+      "seconds": 73.75000000000476,
+      "finished": true,
+      "winner": 3,
+      "peakBalls": 1,
+      "drops": 0,
+      "collections": 0,
+      "collisionCaps": 0,
+      "computeMilliseconds": 186.963958
+    },
+    {
+      "count": 4,
+      "difficulty": {
+        "level": 5,
+        "maxBalls": 1,
+        "ballInterval": 21.31313131313131,
+        "ballSpeed": 14.808080808080808,
+        "pickupCount": 1,
+        "batScale": 1.3214285714285716
+      },
+      "seconds": 88.49166666668316,
+      "finished": false,
+      "winner": null,
+      "peakBalls": 1,
+      "drops": 1,
+      "collections": 0,
+      "collisionCaps": 0,
+      "computeMilliseconds": 187.237792
+    },
+    {
+      "count": 4,
+      "difficulty": {
+        "level": 50,
+        "maxBalls": 4,
+        "ballInterval": 13.585858585858585,
+        "ballSpeed": 23.8989898989899,
+        "pickupCount": 4,
+        "batScale": 1
+      },
+      "seconds": 34.02499999999871,
+      "finished": true,
+      "winner": 3,
+      "peakBalls": 3,
+      "drops": 3,
+      "collections": 2,
+      "collisionCaps": 0,
+      "computeMilliseconds": 139.792959
+    },
+    {
+      "count": 4,
+      "difficulty": {
+        "level": 100,
+        "maxBalls": 8,
+        "ballInterval": 5,
+        "ballSpeed": 34,
+        "pickupCount": 7,
+        "batScale": 0.7
+      },
+      "seconds": 40.36666666666502,
+      "finished": true,
+      "winner": 1,
+      "peakBalls": 8,
+      "drops": 5,
+      "collections": 5,
+      "collisionCaps": 0,
+      "computeMilliseconds": 597.762458
+    },
+    {
+      "count": 6,
+      "difficulty": {
+        "level": 1,
+        "maxBalls": 1,
+        "ballInterval": 22,
+        "ballSpeed": 14,
+        "pickupCount": 0,
+        "batScale": 1.35
+      },
+      "seconds": 88.49166666668316,
+      "finished": false,
+      "winner": null,
+      "peakBalls": 1,
+      "drops": 0,
+      "collections": 0,
+      "collisionCaps": 0,
+      "computeMilliseconds": 388.9318330000001
+    },
+    {
+      "count": 6,
+      "difficulty": {
+        "level": 5,
+        "maxBalls": 1,
+        "ballInterval": 21.31313131313131,
+        "ballSpeed": 14.808080808080808,
+        "pickupCount": 1,
+        "batScale": 1.3214285714285716
+      },
+      "seconds": 88.49166666668316,
+      "finished": false,
+      "winner": null,
+      "peakBalls": 1,
+      "drops": 1,
+      "collections": 0,
+      "collisionCaps": 0,
+      "computeMilliseconds": 411.6777090000003
+    },
+    {
+      "count": 6,
+      "difficulty": {
+        "level": 50,
+        "maxBalls": 4,
+        "ballInterval": 13.585858585858585,
+        "ballSpeed": 23.8989898989899,
+        "pickupCount": 4,
+        "batScale": 1
+      },
+      "seconds": 47.38333333333129,
+      "finished": true,
+      "winner": 4,
+      "peakBalls": 4,
+      "drops": 4,
+      "collections": 2,
+      "collisionCaps": 0,
+      "computeMilliseconds": 380.554791
+    },
+    {
+      "count": 6,
+      "difficulty": {
+        "level": 100,
+        "maxBalls": 8,
+        "ballInterval": 5,
+        "ballSpeed": 34,
+        "pickupCount": 7,
+        "batScale": 0.7
+      },
+      "seconds": 81.61666666667769,
+      "finished": true,
+      "winner": 3,
+      "peakBalls": 8,
+      "drops": 7,
+      "collections": 7,
+      "collisionCaps": 0,
+      "computeMilliseconds": 1982.9675419999999
+    }
+  ]
+}

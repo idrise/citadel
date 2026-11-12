@@ -143,7 +143,7 @@ Bots arrive **before** advanced polish and before mobile/networking:
 
 - One human can fill any seat in a 2–6 player local game; all other seats are bots.
 - Bots use the **same public game state and intent interface as a human**, with no wallhack/future-state privilege beyond a limited, explicit prediction horizon.
-- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. The owner now requests **100 adaptive levels**, replacing configurable Beginner/Standard/Expert choices. Start at level 1 and persist progress locally. Wins advance at least one level, with calibrated streak jumps capped at five; three consecutive losses at a challenge demote one level and reset the streak. Wins reset losses; level 1 is the floor and 100 the ceiling. Time away never changes the level or skill weighting. Announce demotions on results and at the next introduction. Level 100 uses the strongest legal visible-state controller with no deliberate error; earlier levels use slower, less accurate prediction, serve aim and shot/curve planning. Show LEVEL 01 as reflected world geometry rising from and sinking into the floor during the existing opening countdown.
+- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. The owner now requests **100 adaptive levels**, replacing configurable Beginner/Standard/Expert choices. Start at level 1 and persist progress locally. Wins advance at least one level, with calibrated streak jumps capped at five; three consecutive losses at a challenge demote one level and reset the streak. Wins reset losses; level 1 is the floor and 100 the ceiling. Time away never changes the level or skill weighting. Announce demotions on results and at the next introduction. Level 100 uses the strongest legal visible-state controller with no deliberate error; earlier levels use slower, less accurate prediction, serve aim and shot/curve planning. Show LEVEL 01 as reflected world geometry rising from and sinking into the floor during the existing opening countdown. Each attempt also freezes the level-driven ball cap (1–8), arrival interval (22–5 s), ball speed (14–34), pickup budget (0 until level 5, rising to 7) and physical bat width (135% down to 70% of standard). Ball unlocks at 10/25/40/55/70/85/100 alternate with pickup unlocks at 5/20/35/50/65/80/95. All players share the width, and player settings cannot override this progression.
 - Bot randomness is seeded for repeatable test runs. Instrument who takes damage, causes deflections, survives and wins, plus mean/median duration. Bots must not all make exactly the same decisions.
 - Use separate match test seeds, not hand-scripted victories. One human vs five bots must be playable locally with **no network or account**.
 - The same bots can later fill unoccupied multiplayer seats, take over a disconnect or support practice. Their behaviour belongs in the pure simulation module (`apps/web/src/simulation` initially; extract `packages/simulation` when useful), not networking/UI.
@@ -464,6 +464,21 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November combined-difficulty amendment: the owner added ball count, pickup
+count, ball speed and bat size to the saved 100-level curve, with supplies unlocked
+at level 5. Round-frozen profiles now ramp from one ball, no pickups, speed 14 and
+135% bat width to eight balls, seven pickups, speed 34 and 70% width. Ball and supply
+unlocks alternate; speed/width interpolate and arrival intervals shorten. Physical
+bat arcs, collision, wall limits, previews and blur copies stay aligned, including
+morphs. Obsolete pacing controls are removed. Eight-ball waiting queues are separated
+and contained. See `docs/DIFFICULTY_CURVE_REVIEW.md` for the full curve, natural
+2/4/6/mobile frames, level-five pickup gate, eight-ball video, 406 unit tests,
+58 native root browser checks and 12 Pages checks. Initial implementation checkpoint:
+`88931f9`; queue correction: `82feaea`. M09 awaits review. Early bot-only
+one-ball games can exceed the 90-second sample; human pacing/Safari validation
+remain open. No push, deployment or later milestone is authorised.
+
+
 12 November three-loss ladder / floor-sign amendment: the owner removed inactivity
 judgment and requested one-level demotion after three losses, clear demotion feedback,
 progressive bot skill and reflected level lettering rising from the arena floor.
@@ -772,4 +787,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/M09_TOUCH_REVIEW.md`, `docs/PROGRESSION_AND_SUPPLIES_REVIEW.md` and `docs/LEVEL_LADDER_REVIEW.md`, especially phone readability, the three-loss ladder, difficulty ramp and reflected floor introduction. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/M09_TOUCH_REVIEW.md`, `docs/PROGRESSION_AND_SUPPLIES_REVIEW.md` and `docs/DIFFICULTY_CURVE_REVIEW.md`, especially phone readability, the three-loss ladder, combined pressure ramp and reflected floor introduction. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
