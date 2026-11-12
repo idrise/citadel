@@ -4,6 +4,7 @@ import { openGame, play, pause } from "./helpers";
 test("production game fills the viewport and refreshes under the Pages path", async ({
   page,
 }, testInfo) => {
+  test.setTimeout(120000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("response", (response) => {

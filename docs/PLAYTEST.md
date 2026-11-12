@@ -50,6 +50,9 @@ cheers. Native session and four-ball mix auditions are ready; approval is pendin
   and preferences). The new quality test initially exceeded 60s; cheaper countdown
   setup and bounded preset samples pass with a 180s allowance. This renderer is
   slow here; the complete software suite and CI run have not been verified.
+- CI and Pages run the production startup and refresh smoke test with software
+  WebGL; the full browser suite remains a local hardware-rendered check. The CI
+  smoke test and publication still need verification on GitHub's runners.
 
 ## Repeatable local checks
 

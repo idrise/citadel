@@ -387,6 +387,13 @@ identical control bounds across every count. Updated screenshots and layout data
 
 **First-publish checklist — not yet performed:**
 
+12 November: the owner reported the full software-WebGL browser suite taking
+minutes and a controls test failing on GitHub Actions. CI and Pages now run the
+production startup/refresh browser smoke test instead; the full suite remains a
+local check. The smoke test passed locally at both `/` and `/citadel/` with
+software WebGL (23.4s and 22.4s respectively); `vp check` and 284 unit tests
+passed. The revised workflow still needs a GitHub run and public verification.
+
 - [ ] Owner enables Pages for `idrise/citadel`: Settings → Pages → Build and deployment → Source: **GitHub Actions**. The existing workflow supplies the build; no generated starter workflow is needed.
 - [ ] Confirm repository Actions policy permits the workflow's `actions/*` and `voidzero-dev/setup-vp` actions, and `main` remains the default branch. If configured, the `github-pages` environment must permit `main` deployments.
 - [ ] User explicitly authorises the first push. Local commits and this setup checklist do not authorise pushing or manually running a deployment.

@@ -141,7 +141,7 @@ Open the displayed server URL at `/citadel/`. For a custom domain or user site,
 use `PAGES_BASE_PATH=/` when building and previewing. Browser tests accept the same
 variable. For a local host-GPU run, use
 `PLAYWRIGHT_RENDERER=hardware pnpm test:browser --workers=1`; CI defaults to
-software WebGL. No history router is installed; later room links must remain static-host compatible.
+software WebGL and runs the production startup and refresh smoke test only. No history router is installed; later room links must remain static-host compatible.
 
 ## Module ownership
 

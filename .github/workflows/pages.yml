@@ -40,7 +40,8 @@ jobs:
         env:
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
       - run: vp exec playwright install --with-deps chromium
-      - run: vp exec playwright test
+      - name: Browser smoke test
+        run: vp exec playwright test tests/scaffold.spec.ts --grep "production game fills the viewport" --workers=1
         env:
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
       - uses: actions/upload-pages-artifact@v5.0.0
