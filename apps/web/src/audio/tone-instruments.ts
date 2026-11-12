@@ -5,6 +5,7 @@ import { createCrowd } from "./tone-crowd";
 import { createReactiveVoices } from "./tone-reactive";
 import { createFeedback } from "./tone-feedback";
 import { createDrums } from "./tone-drums";
+import { createImpactFeedback } from "./tone-impacts";
 
 /** Separate live and arranged buses: a build's breath never makes a player hit unresponsive. */
 export function createInstruments(context: Tone.BaseContext, output: Tone.InputNode) {
@@ -17,9 +18,10 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
   }).connect(output);
   const duck = new Tone.Gain({ context, gain: 1 }).connect(compressor);
   const arranged = new Tone.Gain({ context, gain: 1 }).connect(duck);
-  const melodic = createMelodic(context, arranged, compressor);
+  const melodic = createMelodic(context, arranged);
   const drums = createDrums(context, arranged, compressor);
   const feedback = createFeedback(context, compressor);
+  const impacts = createImpactFeedback(context, compressor);
   const crowd = createCrowd(context, compressor);
   const reactive = createReactiveVoices(context, arranged, compressor);
   return {
@@ -38,7 +40,12 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
             duck.gain.linearRampToValueAtTime(1, at + cue.duration + 0.25);
             crowd.play(cue, at);
             if (cue.voice === "damage") drums.play(cue, at);
-          } else if (!feedback.play(cue, at) && !reactive.play(cue, at) && !drums.play(cue, at))
+          } else if (
+            !impacts.play(cue, at) &&
+            !feedback.play(cue, at) &&
+            !reactive.play(cue, at) &&
+            !drums.play(cue, at)
+          )
             melodic.play(cue, at);
         }
       }
@@ -53,6 +60,7 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
     },
     dispose() {
       feedback.dispose();
+      impacts.dispose();
       crowd.dispose();
       reactive.dispose();
       melodic.dispose();

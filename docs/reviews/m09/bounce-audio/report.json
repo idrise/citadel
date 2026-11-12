@@ -1,0 +1,55 @@
+{
+  "samples": [
+    {
+      "peak": 0.0033012728672474623,
+      "rms": 0.00029874746795846053,
+      "channels": 2,
+      "duration": 2.5,
+      "kind": "wall",
+      "legacy": true,
+      "master": 0.45,
+      "gridSeconds": 0.05514705882352941
+    },
+    {
+      "peak": 0.061198800802230835,
+      "rms": 0.003567503473665567,
+      "channels": 2,
+      "duration": 2.5,
+      "kind": "wall",
+      "legacy": false,
+      "master": 0.45,
+      "gridSeconds": 0.05514705882352941
+    },
+    {
+      "peak": 0.029458049684762955,
+      "rms": 0.0019466959960419727,
+      "channels": 2,
+      "duration": 2.5,
+      "kind": "paddle",
+      "legacy": true,
+      "master": 0.45,
+      "gridSeconds": 0.05514705882352941
+    },
+    {
+      "peak": 0.0966162234544754,
+      "rms": 0.007218549402166415,
+      "channels": 2,
+      "duration": 2.5,
+      "kind": "paddle",
+      "legacy": false,
+      "master": 0.45,
+      "gridSeconds": 0.05514705882352941
+    },
+    {
+      "peak": 0.4303956925868988,
+      "rms": 0.04122702750623597,
+      "channels": 2,
+      "duration": 8,
+      "kind": "rally",
+      "legacy": false,
+      "master": 0.45,
+      "gridSeconds": 0.05514705882352941
+    }
+  ],
+  "errors": []
+}

@@ -1,11 +1,7 @@
 import * as Tone from "tone";
 import type { MusicCue } from "./music-types";
 const hz = (midi: number) => 440 * Math.pow(2, (midi - 69) / 12);
-export function createMelodic(
-  context: Tone.BaseContext,
-  output: Tone.InputNode,
-  liveOutput: Tone.InputNode,
-) {
+export function createMelodic(context: Tone.BaseContext, output: Tone.InputNode) {
   const delay = new Tone.PingPongDelay({
     context,
     delayTime: (60 / 136) * 0.75,
@@ -83,17 +79,6 @@ export function createMelodic(
     modulationIndex: 1.8,
     envelope: { attack: 0.003, decay: 0.1, sustain: 0, release: 0.08 },
   }).connect(delay);
-  const hits = new Tone.PolySynth({
-    context,
-    voice: Tone.FMSynth,
-    maxPolyphony: 6,
-    options: {
-      volume: -12,
-      harmonicity: 2,
-      modulationIndex: 2,
-      envelope: { attack: 0.002, decay: 0.09, sustain: 0, release: 0.09 },
-    },
-  }).connect(liveOutput);
   const riseFilter = new Tone.Filter({ context, type: "bandpass", frequency: 700, Q: 0.7 }).connect(
     output,
   );
@@ -123,7 +108,6 @@ export function createMelodic(
       else if (voice === "arp") arp.triggerAttackRelease(hz(cue.note), duration, time, velocity);
       else if (voice === "player")
         player.triggerAttackRelease(hz(cue.note), duration, time, velocity);
-      else if (voice === "hit") hits.triggerAttackRelease(hz(cue.note), duration, time, velocity);
       else if (voice === "riser") {
         riseFilter.frequency.setValueAtTime(500 + brightness * 6500, time);
         rise.triggerAttackRelease(duration, time, velocity);
@@ -142,7 +126,6 @@ export function createMelodic(
         arp,
         arpPan,
         player,
-        hits,
         rise,
         riseFilter,
         delay,

@@ -16,6 +16,14 @@ const event = (id: number, type: GameEvent["type"] = "paddle", seat = 0): GameEv
   position: { x: 0, y: 0 },
 });
 
+it("keeps wall knocks and both human and rival paddle hits audible on distinct cue voices", () => {
+  const director = createMusicDirector(0, 2026);
+  const cues = director.observe(frame, [event(0, "wall"), event(1), event(2, "paddle", 1)]);
+  expect(cues.map((cue) => cue.voice)).toEqual(["ricochet", "hit", "hit"]);
+  expect(cues.every((cue) => cue.velocity >= 0.6)).toBe(true);
+  expect(cues[1]!.velocity).toBeGreaterThan(cues[2]!.velocity);
+});
+
 it("turns each hit into an immediate note and a seven-note phrase with its own loop length", () => {
   const director = createMusicDirector(0, 2026);
   const events = Array.from({ length: 7 }, (_, id) => event(id));

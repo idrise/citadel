@@ -41,7 +41,7 @@ export function createEventConductor() {
           source.voice === "damage" || source.voice === "breach"
             ? 0.5
             : source.voice === "ricochet"
-              ? 2
+              ? 0.5
               : source.voice === "serve"
                 ? 1
                 : source.voice === "success"
@@ -101,7 +101,7 @@ export function createEventConductor() {
             },
             ...grid,
           });
-          if (source.voice === "hit" && source.velocity > 0.6) {
+          if (source.voice === "hit" && source.velocity > 0.7) {
             const answer = nextGrid(grid.time + 0.001, anchor, 2);
             result.push({
               cue: {

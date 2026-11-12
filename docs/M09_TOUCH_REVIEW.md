@@ -1,5 +1,8 @@
 # M09 mobile review
 
+The later request for louder, distinct wall and paddle sounds is delivered for
+review in [bounce audio review](BOUNCE_AUDIO_REVIEW.md).
+
 ## Fullscreen follow-up
 
 The owner reported the board shrinking around browser tabs/address bars. Touch

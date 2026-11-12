@@ -43,7 +43,7 @@ export function createMusicDirector(humanSeat: number, seed: number) {
         if (event.id <= lastEvent) continue;
         lastEvent = event.id;
         if (event.type === "wall") {
-          cues.push(cue("ricochet", 74, 0.1, 0.045));
+          cues.push(cue("ricochet", 74, 0.65, 0.045));
           continue;
         }
         if (event.type === "launch")
@@ -74,7 +74,7 @@ export function createMusicDirector(humanSeat: number, seed: number) {
             SCALE[((seed >>> 0) + event.seat * 3 + part.streak * 5 + placement) % SCALE.length]!;
           if (part.phrase.length < 16) part.phrase.push(note);
           else part.phrase[(part.streak - 1) % 16] = note;
-          cues.push(cue("hit", note, event.seat === humanSeat ? 0.8 : 0.3, 0.12));
+          cues.push(cue("hit", note, event.seat === humanSeat ? 0.95 : 0.65, 0.12));
         } else if (event.type === "damage") {
           part.streak = 0;
           part.phrase = [];

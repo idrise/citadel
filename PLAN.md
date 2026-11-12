@@ -464,6 +464,13 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November sound follow-up: the owner requested louder sound effects and audible,
+distinct wall/paddle bounces. Dedicated low wall knocks and brighter bat pings
+now use the live bus at higher levels; wall cues retain successive fast bounces.
+See `docs/BOUNCE_AUDIO_REVIEW.md` for before/after auditions, a dense music mix,
+307 unit tests and native audio lifecycle checks. Simulation and music volume
+are unchanged. This amendment awaits review; it does not start M10.
+
 12 November fullscreen follow-up: touch Start/Resume request document fullscreen,
 menu controls allow entry/exit, and browser fullscreen exit pauses play. A relative
 manifest and Apple standalone metadata support Home Screen launch where element

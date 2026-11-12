@@ -77,6 +77,24 @@ it("keeps simultaneous personal losses audible as one bounded gesture without su
   expect(conductor.plan([loss], 0.01, anchor)).toHaveLength(1);
 });
 
+it("retains fast successive wall bounces on separate 32nds while coalescing simultaneous duplicates", () => {
+  const conductor = createEventConductor(),
+    anchor = { time: 0, step: 0 };
+  const wall: MusicCue = { voice: "ricochet", note: 74, velocity: 0.65, duration: 0.045 };
+  expect(conductor.plan([wall, wall], 0.01, anchor)).toHaveLength(1);
+  expect(conductor.plan([wall], 0.07, anchor)).toHaveLength(1);
+  expect(conductor.plan([wall], 0.13, anchor)).toHaveLength(1);
+});
+
+it("raises rival impact volume without adding the human-only musical answer", () => {
+  const notes = createEventConductor().plan([{ ...hit, velocity: 0.65 }], 1.01, {
+    time: 1,
+    step: 0,
+  });
+  expect(notes.some((p) => p.cue.voice === "hit")).toBe(true);
+  expect(notes.some((p) => p.cue.voice === "answer")).toBe(false);
+});
+
 it("never lets a wall ricochet suppress a capsule breach, and protects outcomes in dense batches", () => {
   const conductor = createEventConductor(),
     anchor = { time: 0, step: 0 };

@@ -45,8 +45,7 @@ export function createFeedback(context: Tone.BaseContext, output: Tone.InputNode
         crack.triggerAttackRelease(0.025, time, cue.velocity);
         return true;
       }
-      if (!["success", "serve", "ricochet", "eliminate", "victory"].includes(cue.voice))
-        return false;
+      if (!["success", "serve", "eliminate", "victory"].includes(cue.voice)) return false;
       const notes = cue.notes ?? [cue.note];
       if (cue.voice === "success" || cue.voice === "victory") {
         notes.forEach((note, index) =>
