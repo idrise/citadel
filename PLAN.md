@@ -1,7 +1,7 @@
 # NEON CITADEL — PLAN.md
 
 **Status:** Shared design in progress; confirmed rules and provisional prototype experiments distinguished below.  
-**Updated:** 11 November 2026\
+**Updated:** 12 November 2026\
 **Genre:** Fast, competitive, polygon-arena paddle/ball survival  
 **Target:** Understandable, tense matches that usually resolve in approximately **two minutes**. Difficulty is ramped as the game goes on.
 **Players:** 2–6 seats, initially **one human and the remaining seats filled by bots**  
@@ -16,7 +16,7 @@
 
 This takes inspiration from the immediacy of *Warlords*, the luminous geometry and motion of *Geometry Wars*, and the depth, edge treatment and controlled bloom associated with *Tron*. This is a 3D presentation over 2D gameplay. The camera must feel alive through a restrained orbit/tilt/breathing motion, while preserving camera-independent relative input. Camera movement is presentation-only and must never steer a stationary mouse or alter simulation. It must be an **original-looking game**, not a remake using existing franchise assets.
 
-One player occupies each defensive sector of a shared arena. Each player has a **thick, curved paddle** moving along a fixed arc in front of **eight visible, destructible health pieces**. Balls travel across the arena. Paddles return them to play and can impart spin. A ball must **physically collide with a remaining health piece** to destroy it. That piece disappears with a clear graphical flourish; the ball bursts and returns to the **damaged defender's paddle** for a revenge serve, provided they survive. Passing the paddle or crossing its rail alone causes no damage. Losing all eight pieces eliminates a player. **Last survivor wins.**
+One player occupies each defensive sector of a shared arena. Each player has a **thick, curved paddle** moving along a fixed arc in front of **three initial visible, destructible containers**, with extra containers collected from temporary falling supplies. Balls travel across the arena. Paddles return them to play and can impart spin. A ball must **physically collide with a remaining health piece** to destroy it. That piece disappears with a clear graphical flourish; the ball bursts and returns to the **damaged defender's paddle** for a revenge serve, provided they survive. Passing the paddle or crossing its rail alone causes no damage. Losing all remaining containers eliminates a player. **Last survivor wins.**
 
 The desired game loop is simple: **move → aim a deflection → launch/return → survive escalating pressure → rematch**. A non-gamer should understand the fundamental objective within one round, without reading a manual.
 
@@ -33,7 +33,7 @@ The desired game loop is simple: **move → aim a deflection → launch/return �
 | Camera | **Perspective RTS view**, behind the selected human fortress, about 38° down with a gentle live orbit |
 | Artwork | Procedural geometry only; **no surface textures** |
 | Visual style | Dark frosted reflective volumes with saturated neon tracing their edges, localised bloom and softened procedural reflections |
-| Health | Eight physical pieces in a compact staggered cluster behind each defence arc; survivors grow slightly and spring together after damage |
+| Health | Three initial physical containers; hit landed supply containers with the last-struck ball to add health. Supplies arrive during the opening minute, then stop. Survivors grow slightly and spring together after damage |
 | Damage | Physical collision destroys exactly the struck health piece with a graphical flourish; no nearest-piece substitution |
 | Next serve after damage | Damaged defender receives the ball for a revenge serve if still alive; elimination fallback remains open |
 | Elimination/winner | No health left = eliminated; last survivor wins |
@@ -121,7 +121,7 @@ The previously discussed sketch is a **layout reference**, not a requirement to 
 - Elimination at zero health; removed players can spectate. Edge cases include last piece lost simultaneously, serve recipient eliminated while another ball is active/returning, balls trapped near geometry and no survivors.
 - No random competitive power-ups in the default rule set; randomness (including bots/serves if needed) uses a seed and can be replayed.
 - Start each round with **one ball**, then add one every **15 playing seconds** to a provisional default cap of **four**, as requested during M01 hands-on feedback. Ball radius is **0.187** and speed **24 units/s**, respectively 10% larger and twice the initial prototype values. Expose arrival interval (5–30s) and cap (1–8) in the experiment panel. Pausing/countdown never advance arrivals. Balls do not collide with each other in this prototype. One click launches at most one queued ball, while each ball still has an automatic deadline; eliminating a defender reassigns their pending serves. Keep zero-spin behaviour and all ball IDs deterministic.
-- Provide configuration for player count, bot difficulty, ball count, spin strength, paddle width, ball speed and starting health (eight default). Keep the main menu very small; put experimental knobs in a developer/advanced panel.
+- Keep player count and assistance choices compact. Bot strength follows saved adaptive levels 1–100, with a level card before the opening ball; there is no difficulty selector. Starting health is three containers, augmented by temporary collectible supplies. Keep pacing experiments in the existing advanced panel.
 
 ### Input progression
 
@@ -143,14 +143,14 @@ Bots arrive **before** advanced polish and before mobile/networking:
 
 - One human can fill any seat in a 2–6 player local game; all other seats are bots.
 - Bots use the **same public game state and intent interface as a human**, with no wallhack/future-state privilege beyond a limited, explicit prediction horizon.
-- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. The owner now requests **100 adaptive levels**, replacing configurable Beginner/Standard/Expert choices. Start at level 1; learn between completed rounds from a bounded recent sample, move both up and down, soften return rounds after a week away, and persist progress locally. Level 100 uses the strongest legal visible-state bot controller. Show the level before the opening ball.
+- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. The owner now requests **100 adaptive levels**, replacing configurable Beginner/Standard/Expert choices. Start at level 1; learn between resolved player attempts from a bounded recent sample, move both up and down, soften return rounds after a week away, and persist progress locally. Level 100 uses the strongest legal visible-state bot controller. Show the level before the opening ball.
 - Bot randomness is seeded for repeatable test runs. Instrument who takes damage, causes deflections, survives and wins, plus mean/median duration. Bots must not all make exactly the same decisions.
 - Use separate match test seeds, not hand-scripted victories. One human vs five bots must be playable locally with **no network or account**.
 - The same bots can later fill unoccupied multiplayer seats, take over a disconnect or support practice. Their behaviour belongs in the pure simulation module (`apps/web/src/simulation` initially; extract `packages/simulation` when useful), not networking/UI.
 
 ### Pacing hypothesis
 
-A **two-minute match** is the product target, not a fixed timer that awards a winner. Aim for an understandable opening, increasing pressure and a decisive final stretch. At M06 compare at least three ramps (increasing speed, adding balls, changing defensive pressure, hybrid), guard against infinite rallies, and test whether two-player and six-player games both end naturally. A playtest median near **120 seconds** is the initial hypothesis; do not turn a bot-only result into a claim about human retention. With eight pieces each, a two-seat match needs at least eight damaging hits to produce a winner; six seats need at least forty. Do not assume one speed/ball-count ramp fits every arena. Report distributions separately by player count, including human survival time, rally length and time spent waiting to serve. Do not make the opening prototype meet the two-minute target at the expense of understandable play.
+A **two-minute match** is the product target, not a fixed timer that awards a winner. Aim for an understandable opening, increasing pressure and a decisive final stretch. At M06 compare at least three ramps (increasing speed, adding balls, changing defensive pressure, hybrid), guard against infinite rallies, and test whether two-player and six-player games both end naturally. A playtest median near **120 seconds** is the initial hypothesis; do not turn a bot-only result into a claim about human retention. With three initial containers each, a two-seat match needs at least three damaging hits to produce a winner; six seats need at least fifteen, plus collected supplies. The new supply/progression rules require renewed human pacing review. Do not assume one speed/ball-count ramp fits every arena. Report distributions separately by player count, including human survival time, rally length and time spent waiting to serve. Do not make the opening prototype meet the two-minute target at the expense of understandable play.
 
 ---
 
@@ -464,13 +464,20 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
-12 November adaptive progression amendment (in progress): the owner explicitly
+12 November adaptive progression and supply amendment: the owner explicitly
 authorised 100 saved adaptive levels, rapid calibration from recent performance,
 levels moving backwards after losses/inactivity, and a level introduction before
-the opening ball. This replaces the bot difficulty selector. A further authorised
-rule change starts each fortress with three containers and introduces temporary
-collectible supply drops; implementation and validation are ongoing. These
-requests do not approve M10, multiplayer or publication.
+the opening ball. The bot selector is replaced by a bounded recent-result model,
+with highest-level legal prediction and saved personal results. A further authorised
+rule change starts each fortress with three containers; ball hits collect landed
+falling supplies for the last striker. Provisional drops run from 4 to 52 seconds,
+with no new drops at/after 60 seconds. See `docs/PROGRESSION_AND_SUPPLIES_REVIEW.md`
+for implementation, 2/4/6/mobile/reduced rendering, video, 348 unit tests, 45 native
+production browser checks and Pages-path verification. Strong bot-only endgames
+can run beyond two minutes; human loss is saved immediately and permits retry.
+The broader M06 human pacing gate remains open. M09 awaits review; M10,
+multiplayer and publication remain unauthorised. Local implementation checkpoint:
+`66c70a0`; final corrections/evidence are recorded with this review amendment.
 
 12 November victory-star amendment: the owner requested a visible morph when
 only one player remains. The current floor/plinth/walls now become a five-point
@@ -552,7 +559,7 @@ for 2/4/6 renders and checks; M09 remains In progress and no push is authorised.
 
 #### M01 — First playable four-player prototype
 
-**Implement:** Scaffold strict TypeScript with Vite+ and a procedural Three.js view, keeping simulation independent. Add the required GitHub Actions CI and Pages publishing workflows described above. Build only the four-corner square: one human, three basic bots using normal intents, one initial ball with timed additions, curved responsive paddles, contact-position aiming, walls and eight physically collidable health pieces per fortress. Include swept collision for supported prototype speeds, visible piece destruction, return to the surviving damaged defender, tunable serve deadline, elimination, a basic winner/result and immediate rematch. Use the labelled seeded elimination-serve fallback and empty-sector wall rebounds. Add captured relative mouse/keyboard input, a gently animated 38° perspective camera, readable 3D extrusion and full-height walls, a raised base, softened floor/wall reflections, directional shadows and restrained bloom. Fill the viewport; keep diagnostics nonvisual and settings in minimal menus. Include a short conditional aim-preview toggle and an approach-slowdown toggle, initially off; keep these simple experiments. No advanced spin, other layouts, networking or elaborate polish.
+**Implement:** Scaffold strict TypeScript with Vite+ and a procedural Three.js view, keeping simulation independent. Add the required GitHub Actions CI and Pages publishing workflows described above. Build only the four-corner square: one human, three basic bots using normal intents, one initial ball with timed additions, curved responsive paddles, contact-position aiming, walls and physically collidable health pieces per fortress (originally eight; the 12 November amendment now starts at three with supplies). Include swept collision for supported prototype speeds, visible piece destruction, return to the surviving damaged defender, tunable serve deadline, elimination, a basic winner/result and immediate rematch. Use the labelled seeded elimination-serve fallback and empty-sector wall rebounds. Add captured relative mouse/keyboard input, a gently animated 38° perspective camera, readable 3D extrusion and full-height walls, a raised base, softened floor/wall reflections, directional shadows and restrained bloom. Fill the viewport; keep diagnostics nonvisual and settings in minimal menus. Include a short conditional aim-preview toggle and an approach-slowdown toggle, initially off; keep these simple experiments. No advanced spin, other layouts, networking or elaborate polish.
 
 **Acceptance:** One person can play and rematch complete four-player rounds without editing state. Physical hits destroy only the contacted piece; gaps cause no automatic damage; a surviving damaged defender receives the next serve; eliminated seats never receive serves; a winner ends serving. Focus loss pauses solo play and clears held inputs. Run focused geometry, collision, damage, serve and elimination tests plus typecheck/lint/build. Provide a four-seat screenshot, a short gameplay capture and a local demo. The tilted view must visibly show arena height, side faces and bloom while keeping threats readable; a technically 3D but visually flat board does not satisfy this gate. Identify the missing sketch rather than claiming reference fidelity. Validate the production asset base and inspect the CI/Pages workflow configuration; report actual remote-run/deployment evidence only when available.
 
@@ -578,7 +585,7 @@ for 2/4/6 renders and checks; M09 remains In progress and no push is authorised.
 
 #### M05 — Expand the proven solo game to 2–6 seats
 
-**Implement:** Extend arena generation to rectangle, triangle, pentagon and hexagon alongside the square. Support one human in any seat and bots in the others. Refine seeded intercept/deflect bots with reaction delay, imperfect prediction and Beginner/Standard/Expert parameters. Add player-count selection, basic results and developer statistics. Provide eight readable pieces and consistent rules in every layout. Keep only essential visual polish; follow the established GitHub Pages publishing policy.
+**Implement:** Extend arena generation to rectangle, triangle, pentagon and hexagon alongside the square. Support one human in any seat and bots in the others. Refine seeded intercept/deflect bots with reaction delay and imperfect prediction. The originally delivered Beginner/Standard/Expert settings are superseded by the 12 November saved 1–100 progression amendment. Add player-count selection, basic results and developer statistics. Provide readable containers and consistent rules in every layout (currently three initial containers plus collectible supplies). Keep only essential visual polish; follow the established GitHub Pages publishing policy.
 When a player dies, then the board slowly morphs to the new layout, not so quickly that it makes it impossible to defend. This way the player count is dynamic.
 
 **Acceptance:** Play and rematch full 2/3/4/5/6-seat games locally; symmetry/rail geometry tests cover all layouts; provide 2/4/6 screenshots and gameplay capture. Bots use normal input intents and exhibit meaningful skill differences. **Major review gate:** Play ten rounds across 2/4/6. If the idea is not fun, iterate rather than continue. **STOP: REVIEW REQUIRED — M05.**
@@ -708,10 +715,10 @@ Cloudflare documentation to check when implementing (product behaviour and plan 
 
 No public rankings or prize competitions; no account/social system; no in-game purchases; no pay-to-win; no intricate power-ups; no elaborate cosmetics; no gamepad-first design; no team modes; no native mobile app wrapper; no arbitrary sudden-death health deletion; no central always-on physics server; no server-side replay archive; no persistent player tracking; and **no public matchmaking before both the core game and broker security have been approved**.
 
-Potential extensions **only after validation**: campaign-like bot challenges, time-trial/solo survival, daily seeded challenge, spectator/replay links, cosmetics made from procedural geometry, community tournaments, adaptive bot difficulties, host migration, region-aware queueing and optional relay-only privacy mode.
+Potential extensions **only after validation**: campaign-like bot challenges, time-trial/solo survival, daily seeded challenge, spectator/replay links, cosmetics made from procedural geometry, community tournaments, host migration, region-aware queueing and optional relay-only privacy mode.
 
 ---
 
 ## 10. Next action
 
-**Review M09** using `docs/M09_TOUCH_REVIEW.md`, especially phone readability and fast pointer response. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/M09_TOUCH_REVIEW.md` and `docs/PROGRESSION_AND_SUPPLIES_REVIEW.md`, especially phone readability, fast pointer response, saved level adjustment and collectible containers. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

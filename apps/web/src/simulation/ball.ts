@@ -83,6 +83,7 @@ export function advanceBall(
     }
     const collector = state.players[ball.striker ?? ball.seat];
     if (
+      !stopAtFirstImpact &&
       collector &&
       alive(collector) &&
       collector.health.filter(Boolean).length < SUPPLIES.maxPieces

@@ -112,11 +112,13 @@ export function recordResult(progress: PlayerProgress, result: LevelResult): Pla
   };
 }
 
-/** One rating update per completed round, independent of rendering/report frequency. */
+/** One rating update per resolved player attempt, even while surviving bots finish. */
 export function createProgressRecorder(humanSeat: number, level: number) {
   let recorded = false;
   return (state: MatchState, now = Date.now()): LevelResult | null => {
-    if (recorded || state.phase !== "finished" || state.winner === null) return null;
+    if (recorded || (state.phase === "finished" && state.winner === null)) return null;
+    if (state.phase !== "finished" && !state.eliminations.some((entry) => entry.seat === humanSeat))
+      return null;
     const place = standings(state).find((row) => row.seat === humanSeat)?.place;
     if (place === null || place === undefined) return null;
     recorded = true;

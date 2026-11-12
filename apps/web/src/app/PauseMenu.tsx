@@ -64,8 +64,11 @@ export function PauseMenu({
           Resume
         </button>
         <button className="secondary" onClick={onRestart}>
-          Restart
+          {state.players[humanSeat]!.health.some(Boolean) ? "Restart" : "Play again"}
         </button>
+        {!state.players[humanSeat]!.health.some(Boolean) && (
+          <p>Your result is saved. Play again at your adjusted level, or resume to watch.</p>
+        )}
         <MobileDisplay />
         <details className="settings-menu">
           <summary>Settings</summary>

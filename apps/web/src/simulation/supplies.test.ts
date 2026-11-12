@@ -1,4 +1,6 @@
 import { expect, it } from "vite-plus/test";
+import { damagePiece } from "./serving";
+import { beginArenaMorph, stepArenaMorph } from "./arena-morph";
 import { createMatch, stepMatch } from "./match";
 import { collectSupply, stepSupplies, SUPPLIES } from "./supplies";
 import { ARENA, FIXED_DT } from "./arena";
@@ -100,8 +102,53 @@ it("keeps query forecasts read-only and clears resources when the round finishes
     trial.players.map((p) => p.pieces.map((b) => b.position)),
     true,
   );
-  expect(hit?.type).toBe("pickup");
+  expect(hit).toBeUndefined();
   expect(trial.supplies).toEqual(saved.supplies);
   expect(trial.players).toEqual(saved.players);
   expect(state).toEqual(saved);
+  state.players[2]!.health.fill(false);
+  state.players[3]!.health.fill(false);
+  state.players[1]!.health = [true, false, false];
+  damagePiece(state, state.balls[0]!, 1, 0);
+  expect(state.phase).toBe("finished");
+  expect(state.supplies).toEqual([]);
+  expect(collectSupply(state, saved.balls[0]!, 0)).toBe(false);
+});
+
+it("preserves last-paddle ownership through a real wall rebound before collection", () => {
+  const state = collectable();
+  state.balls[0]!.position = { x: 8, y: 0 };
+  state.balls[0]!.velocity = { x: 24, y: 0 };
+  state.supplies[0]!.position = { x: 5, y: 0 };
+  advanceBall(
+    state,
+    state.balls[0]!,
+    state.players.map((p) => p.angle),
+    0.4,
+    DEFAULT_OPTIONS,
+    state.players.map((p) => p.pieces.map((b) => b.position)),
+  );
+  expect(state.events.map((e) => e.type)).toEqual(["wall", "collection"]);
+  expect(state.events[1]!.seat).toBe(2);
+  expect(state.balls[0]!.striker).toBe(2);
+});
+it("carries landed and falling supplies safely with an elimination morph", () => {
+  const state = createMatch(2026, 6);
+  state.phase = "playing";
+  state.supplies = [
+    { id: 0, position: { x: 5, y: -5 }, age: 0.4 },
+    { id: 1, position: { x: -5, y: 5 }, age: 2 },
+  ];
+  state.players[4]!.health.fill(false);
+  state.eliminations.push({ seat: 4, elapsed: 0 });
+  beginArenaMorph(state);
+  for (let i = 0; i < 10; i++) {
+    stepArenaMorph(state, 0.4);
+    for (const drop of state.supplies)
+      for (const edge of polygonEdges(state.arena.vertices))
+        expect(dot(sub(drop.position, edge.start), edge.normal)).toBeGreaterThanOrEqual(
+          SUPPLIES.radius,
+        );
+  }
+  expect(state.supplies.map((drop) => drop.age)).toEqual([0.4, 2]);
 });

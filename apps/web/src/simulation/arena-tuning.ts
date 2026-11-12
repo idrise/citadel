@@ -9,7 +9,7 @@ export const ARENA = {
   paddleSpeed: 3.2,
   pointerPaddleSpeed: 16,
   pieceRadius: 0.26,
-  pieces: 8, // Legacy authored formation size; matches begin with startingPieces.
+  legacyFormationPieces: 8, // Retained for authored collision fixtures.
   startingPieces: 3,
   ballRadius: 0.187,
 } as const;

@@ -69,7 +69,12 @@ export function createArena(
       anchor,
       direction,
       halfAngle,
-      pieces: healthFormation(pieceAnchor, direction, ARENA.pieces, ARENA.pieceRadius),
+      pieces: healthFormation(
+        pieceAnchor,
+        direction,
+        ARENA.legacyFormationPieces,
+        ARENA.pieceRadius,
+      ),
     };
   });
   return fitDefenceLimits({ count, vertices, fortresses });

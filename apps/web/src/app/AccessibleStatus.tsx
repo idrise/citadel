@@ -1,3 +1,4 @@
+import { SUPPLIES } from "../simulation/supplies";
 import { VICTORY_HOLD_SECONDS } from "../rendering/victory-morph";
 import type { SessionSnapshot } from "../session/session";
 import { SEATS } from "../rendering/palette";
@@ -62,7 +63,7 @@ export function AccessibleStatus({
       <output aria-label="Your returns">{snapshot.totals.players[humanSeat]!.returns}</output>
       <output aria-label="Supply containers">{state.supplies.length}</output>
       <output aria-label="Supply phase">
-        {state.elapsed < 60 ? "supplying" : "final stretch"}
+        {state.elapsed < SUPPLIES.cutoff ? "supplying" : "final stretch"}
       </output>
       <output aria-label="Balls in play">{state.balls.length}</output>
       <output aria-label="Music status">{snapshot.music.status}</output>

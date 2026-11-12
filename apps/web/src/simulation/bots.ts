@@ -1,3 +1,4 @@
+import { SUPPLIES } from "./supplies";
 import { visibleTargets } from "./health";
 import { aimServeAt } from "./aim";
 import { ARENA, clampPaddleAngle, fortress } from "./arena";
@@ -40,7 +41,14 @@ export function botIntent(
       const targets = visibleTargets(
         state.players.filter((other) => other.id !== seat && alive(other)),
       );
-      bot.serveTarget = targets[Math.floor(sample(state) * targets.length)] ?? null;
+      const supply =
+        typeof difficulty === "number" &&
+        difficulty >= 85 &&
+        player.health.filter(Boolean).length < 4
+          ? state.supplies.find((drop) => drop.age >= SUPPLIES.fall)
+          : undefined;
+      bot.serveTarget =
+        supply?.position ?? targets[Math.floor(sample(state) * targets.length)] ?? null;
     }
     if (bot.serveTarget) bot.targetAngle = aimServeAt(seat, bot.serveTarget, state.arena);
   } else {

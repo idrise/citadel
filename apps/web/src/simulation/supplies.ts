@@ -35,6 +35,7 @@ export function stepSupplies(state: MatchState, dt: number) {
 /** Last actual paddle/serve owns the collection; walls never transfer credit.
  * A departed player's ball cannot resurrect them. Collection doesn't interrupt flight. */
 export function collectSupply(state: MatchState, ball: BallState, id: number) {
+  if (state.phase !== "playing") return false;
   const index = state.supplies.findIndex((drop) => drop.id === id && drop.age >= SUPPLIES.fall);
   const player = state.players[ball.striker ?? ball.seat];
   if (

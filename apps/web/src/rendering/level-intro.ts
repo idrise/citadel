@@ -16,6 +16,8 @@ export function createLevelIntro(camera: PerspectiveCamera) {
     update(value: number | null, width: number, height: number) {
       root.visible = value !== null;
       if (value === null) return;
+      camera.aspect = width / Math.max(1, height);
+      camera.updateProjectionMatrix();
       if (value !== level) {
         root.remove(text);
         disposeScene(text);

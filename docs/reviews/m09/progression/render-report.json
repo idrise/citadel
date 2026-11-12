@@ -1,0 +1,24 @@
+{
+  "kind": "Staged native GPU fixture; real collection collision and health award",
+  "checks": [
+    {
+      "count": 2,
+      "collections": 1,
+      "health": 4,
+      "transferWarmFloodFraction": 0.0007751736111111111
+    },
+    {
+      "count": 4,
+      "collections": 1,
+      "health": 4,
+      "transferWarmFloodFraction": 0.0006614583333333333
+    },
+    {
+      "count": 6,
+      "collections": 1,
+      "health": 4,
+      "transferWarmFloodFraction": 0.0016223958333333333
+    }
+  ],
+  "errors": []
+}

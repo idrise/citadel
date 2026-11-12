@@ -144,3 +144,18 @@ it("round-trips bounded versioned progress and survives blocked, malformed and h
   expect(loadProgress(blocked)).toEqual(freshProgress());
   expect(saveProgress(progress, blocked)).toBe(false);
 });
+
+it("saves a known personal loss immediately while remaining bots continue, without counting it again at victory", () => {
+  const state = createMatch(2026, 6),
+    recorder = createProgressRecorder(0, 80);
+  state.phase = "playing";
+  state.players[0]!.health.fill(false);
+  state.eliminations = [
+    { seat: 1, elapsed: 5 },
+    { seat: 0, elapsed: 10 },
+  ];
+  expect(recorder(state, 100)).toEqual({ level: 80, count: 6, place: 5, at: 100 });
+  state.phase = "finished";
+  state.winner = 2;
+  expect(recorder(state, 300)).toBeNull();
+});

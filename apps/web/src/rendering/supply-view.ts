@@ -1,4 +1,4 @@
-import { Group, Mesh, MeshBasicMaterial, TorusGeometry, Vector3 } from "three";
+import { Group, Mesh, MeshBasicMaterial, ShaderMaterial, TorusGeometry, Vector3 } from "three";
 import { SUPPLIES } from "../simulation/supplies";
 import type { MatchState } from "../simulation/types";
 import { createHealthFactory } from "./health-piece";
@@ -32,6 +32,21 @@ export function createSupplyView(root: Group) {
     const factory = createHealthFactory(seat.colour);
     return Array.from({ length: 2 }, () => {
       const group = factory();
+      group.traverse((object) => {
+        if (!(object instanceof Mesh)) return;
+        object.castShadow = false;
+        const originals = Array.isArray(object.material) ? object.material : [object.material];
+        const materials = originals.map((original) => {
+          // Feature edges update their original uniforms in onBeforeRender.
+          const material = original instanceof ShaderMaterial ? original : original.clone();
+          material.transparent = true;
+          material.depthWrite = false;
+          material.opacity = 0.35;
+          if (material instanceof ShaderMaterial) material.uniforms.opacity!.value = 0.45;
+          return material;
+        });
+        object.material = Array.isArray(object.material) ? materials : materials[0]!;
+      });
       group.name = "supply-transfer";
       group.visible = false;
       root.add(group);

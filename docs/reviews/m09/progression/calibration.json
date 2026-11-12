@@ -1,0 +1,168 @@
+{
+  "calibrations": [
+    {
+      "kind": "deterministic synthetic threshold player",
+      "capacity": 25,
+      "levels": [1, 1, 25, 49, 41, 34, 28, 22, 22, 22, 22, 22, 22, 22, 22, 23],
+      "returningAfterWeek": 21
+    },
+    {
+      "kind": "deterministic synthetic threshold player",
+      "capacity": 60,
+      "levels": [1, 1, 25, 49, 72, 64, 57, 57, 57, 57, 57, 57, 58, 59, 61, 58],
+      "returningAfterWeek": 51
+    },
+    {
+      "kind": "deterministic synthetic threshold player",
+      "capacity": 100,
+      "levels": [1, 1, 25, 49, 72, 90, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+      "returningAfterWeek": 88
+    }
+  ],
+  "botOnlyProxyMatches": [
+    {
+      "count": 2,
+      "opponentsLevel": 1,
+      "seed": 7,
+      "phase": "finished",
+      "winner": 0,
+      "humanAlive": true,
+      "seconds": 32.19166666666548,
+      "collisionCaps": 0,
+      "collections": 4,
+      "computeMs": 59.05720799999999
+    },
+    {
+      "count": 2,
+      "opponentsLevel": 1,
+      "seed": 21,
+      "phase": "finished",
+      "winner": 0,
+      "humanAlive": true,
+      "seconds": 15.958333333333067,
+      "collisionCaps": 0,
+      "collections": 1,
+      "computeMs": 21.28762499999999
+    },
+    {
+      "count": 2,
+      "opponentsLevel": 1,
+      "seed": 2026,
+      "phase": "finished",
+      "winner": 0,
+      "humanAlive": true,
+      "seconds": 8.891666666666802,
+      "collisionCaps": 0,
+      "collections": 1,
+      "computeMs": 13.009374999999977
+    },
+    {
+      "count": 2,
+      "opponentsLevel": 100,
+      "seed": 7,
+      "phase": "finished",
+      "winner": 1,
+      "humanAlive": false,
+      "seconds": 29.141666666665653,
+      "collisionCaps": 0,
+      "collections": 3,
+      "computeMs": 113.67912500000003
+    },
+    {
+      "count": 2,
+      "opponentsLevel": 100,
+      "seed": 21,
+      "phase": "finished",
+      "winner": 1,
+      "humanAlive": false,
+      "seconds": 7.7666666666668425,
+      "collisionCaps": 0,
+      "collections": 0,
+      "computeMs": 14.794624999999996
+    },
+    {
+      "count": 2,
+      "opponentsLevel": 100,
+      "seed": 2026,
+      "phase": "finished",
+      "winner": 1,
+      "humanAlive": false,
+      "seconds": 36.249999999998586,
+      "collisionCaps": 0,
+      "collections": 4,
+      "computeMs": 132.501625
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 1,
+      "seed": 7,
+      "phase": "finished",
+      "winner": 0,
+      "humanAlive": true,
+      "seconds": 48.19999999999791,
+      "collisionCaps": 0,
+      "collections": 5,
+      "computeMs": 374.00949999999995
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 1,
+      "seed": 21,
+      "phase": "finished",
+      "winner": 5,
+      "humanAlive": false,
+      "seconds": 45.29999999999807,
+      "collisionCaps": 0,
+      "collections": 3,
+      "computeMs": 312.0539580000001
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 1,
+      "seed": 2026,
+      "phase": "finished",
+      "winner": 0,
+      "humanAlive": true,
+      "seconds": 41.2999999999983,
+      "collisionCaps": 0,
+      "collections": 3,
+      "computeMs": 314.69166599999994
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 100,
+      "seed": 7,
+      "phase": "playing",
+      "winner": null,
+      "humanAlive": false,
+      "seconds": 118.49166666670703,
+      "collisionCaps": 0,
+      "collections": 7,
+      "computeMs": 7507.706791999999
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 100,
+      "seed": 21,
+      "phase": "playing",
+      "winner": null,
+      "humanAlive": false,
+      "seconds": 118.49166666670703,
+      "collisionCaps": 0,
+      "collections": 6,
+      "computeMs": 7576.508834
+    },
+    {
+      "count": 6,
+      "opponentsLevel": 100,
+      "seed": 2026,
+      "phase": "playing",
+      "winner": null,
+      "humanAlive": false,
+      "seconds": 118.49166666670703,
+      "collisionCaps": 0,
+      "collections": 6,
+      "computeMs": 6965.917042000001
+    }
+  ]
+}

@@ -114,7 +114,7 @@ export function createArenaView(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
           paddle.rotation.y = -ending.paddle.angle;
         }
         stage.health[player.id]!.forEach((piece, index) => {
-          piece.visible = Boolean(player.health[index]) && !supplies.inTransit(player.id, index);
+          piece.visible = Boolean(player.health[index]);
           const body = player.pieces[index];
           if (!body) return;
           const position = ending?.winner === player.id ? ending.pieces[index]! : body.position;

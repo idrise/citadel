@@ -1,4 +1,12 @@
-import { Group } from "three";
+import {
+  Group,
+  Mesh,
+  PerspectiveCamera,
+  Scene,
+  ShaderMaterial,
+  Vector2,
+  type WebGLRenderer,
+} from "three";
 import { expect, it } from "vite-plus/test";
 import { createSupplyView } from "./supply-view";
 import { createArenaView } from "./arena-view";
@@ -41,7 +49,7 @@ it("falls, holds on pause, transfers the awarded container, and keeps reduced mo
   );
   disposeScene(root);
 });
-it("renders exactly three initial containers then the actual awarded fourth, without duplicate transfer bodies", () => {
+it("renders exactly three initial containers then the actual awarded fourth, without hiding a live collider during the transfer effect", () => {
   const state = createMatch(7),
     view = createArenaView(0, state.arena);
   const options = { humanSeat: 0, preview: false, slowdown: false, reducedEffects: false };
@@ -54,9 +62,34 @@ it("renders exactly three initial containers then the actual awarded fourth, wit
   state.balls[0]!.striker = 0;
   collectSupply(state, state.balls[0]!, 0);
   view.update(state, 0.1, options);
-  expect(visibleHealth()).toHaveLength(3);
+  expect(visibleHealth()).toHaveLength(4);
   view.update(state, 0.6, options);
   expect(visibleHealth()).toHaveLength(4);
   view.dispose();
   disposeScene(view.root);
+});
+
+it("updates the transfer outline's actual drawing uniforms so an award cannot expand into a screen-wide flash", () => {
+  const root = new Group();
+  createSupplyView(root);
+  const flight = root.children.find((object) => object.name === "supply-transfer")!;
+  const edge = flight.getObjectByName("feature-edges") as Mesh;
+  const material = edge.material as ShaderMaterial;
+  const renderer = {
+    getCurrentViewport: (target: { set: (x: number, y: number, w: number, h: number) => void }) =>
+      target.set(0, 0, 1280, 900),
+    getPixelRatio: () => 2,
+  } as unknown as WebGLRenderer;
+  edge.onBeforeRender(
+    renderer,
+    new Scene(),
+    new PerspectiveCamera(),
+    edge.geometry,
+    material,
+    new Group(),
+  );
+  expect(material.uniforms.resolution!.value).toEqual(new Vector2(1280, 900));
+  expect(material.uniforms.pixelRatio!.value).toBe(2);
+  expect(material.uniforms.opacity!.value).toBe(0.45);
+  disposeScene(root);
 });

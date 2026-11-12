@@ -13,8 +13,6 @@ it("keeps level 1 and 100 readable and bounded in phone portrait, landscape and 
     [1280, 900],
   ])
     for (const level of [1, 100]) {
-      camera.aspect = width! / height!;
-      camera.updateProjectionMatrix();
       intro.update(level, width!, height!);
       camera.updateMatrixWorld(true);
       const box = new Box3().setFromObject(intro.root);

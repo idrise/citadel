@@ -9,7 +9,7 @@ export function App() {
     loadPreferences(window.matchMedia("(prefers-reduced-motion: reduce)").matches),
   );
   const [progress, setProgress] = useState(loadProgress);
-  const [seed, setSeed] = useState(() => 2026 + progress.rounds);
+  const [seed, setSeed] = useState(2026);
   const [count, setCount] = useState<PlayerCount>(initial.count);
   const [humanSeat, setHumanSeat] = useState(initial.humanSeat);
   const [round, setRound] = useState(0);
