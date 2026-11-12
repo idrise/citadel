@@ -1,5 +1,6 @@
-All requested implementation items are complete locally. See
-[the feedback review](docs/MOBILE_FEEDBACK_REVIEW.md) for checks, screenshots,
+All eleven requested implementation items are complete locally. See
+[the feedback review](docs/MOBILE_FEEDBACK_REVIEW.md) and
+[the triangle/rally review](docs/TRIANGLE_RALLY_REVIEW.md) for checks, screenshots,
 audio, measurements and physical-device limits. Awaiting M09 review.
 
 - [x] Use **Citadel** consistently in the page title, manifest, accessible UI, package and documentation.
@@ -11,3 +12,5 @@ audio, measurements and physical-device limits. Awaiting M09 review.
 - [x] Develop longer musical phrases, harmonic inversions, bass patterns, fills and seeded variations; add a velocity-driven FM paddle swish.
 - [x] Offer **Watch** and immediate **Retry** as soon as the human fortress falls; keep the bot match running and save each result once.
 - [x] Investigate iPad/iPhone stalls and reduce mobile GPU/allocation costs: one floor capture, bounded resolution, no multisample/shadow passes, instanced ball trails, reusable morph buffers and stable light counts. Native Chromium/WebKit checks pass; retesting on the reported physical devices remains part of the M10 validation gate.
+- [x] Move triangular-layout fortresses 1.2 units inward, allowing more bat travel while retaining physical wall clearance.
+- [x] Gradually accelerate each scoreless active rally after eight seconds, by 5% of base speed per second up to 1.75×; reset that ball on a scored container hit.

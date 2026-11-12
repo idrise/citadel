@@ -10,7 +10,13 @@ test("an eliminated player can watch live bots or retry immediately on the same 
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
   await play(page);
   await page.keyboard.down("KeyD");
-  await page.clock.runFor(67000);
+  // Observe the actual elimination; rally acceleration changes its timing.
+  for (
+    let seconds = 0;
+    seconds < 180 && (await page.getByLabel("Coral health", { exact: true }).textContent()) !== "0";
+    seconds += 2
+  )
+    await page.clock.runFor(2000);
   await page.keyboard.up("KeyD");
   await expect(page.getByLabel("Coral health", { exact: true })).toHaveText("0");
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");

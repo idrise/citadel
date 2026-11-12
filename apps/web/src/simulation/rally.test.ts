@@ -157,3 +157,35 @@ it("uses the same fixed-step ramp at 30/60/144 rendering rates and preserves sou
     dot(sub(next.balls[0]!.position, before.balls[0]!.position), before.balls[0]!.velocity),
   ).toBeGreaterThan(0);
 });
+it.each([2, 3, 4, 5, 6] as const)(
+  "keeps sixteen fully accelerated balls bounded without collision caps in %i seats",
+  (count) => {
+    const rules = levelDifficulty(100);
+    let state = createMatch(7, count, 3, 7, rules);
+    state.phase = "playing";
+    state.elapsed = 40;
+    state = stepMatch(
+      state,
+      IDLE_INTENT,
+      { ...DEFAULT_OPTIONS, humanSeat: -1, serveTimeout: Infinity },
+      0,
+    );
+    expect(state.balls).toHaveLength(16);
+    state.balls.forEach((ball, index) =>
+      Object.assign(ball, {
+        phase: "active",
+        position: { x: (index % 4) - 1.5, y: Math.floor(index / 4) - 1.5 },
+        velocity: scale(unit(index * 2.399963), 59.5),
+        rallyTime: 40,
+        spin: index % 2 ? 1.4 : -1.4,
+      }),
+    );
+    for (let tick = 0; tick < 120 * 4 && state.phase !== "finished"; tick++)
+      state = stepMatch(state, IDLE_INTENT, { ...DEFAULT_OPTIONS, humanSeat: -1 });
+    expect(state.stats.collisionCaps).toBe(0);
+    for (const ball of state.balls.filter((b) => b.phase === "active")) {
+      expect(length(ball.velocity)).toBeLessThanOrEqual(59.5 + 1e-7);
+      expect(length(ball.velocity)).toBeCloseTo(34 * rallyMultiplier(ball.rallyTime ?? 0), 6);
+    }
+  },
+);

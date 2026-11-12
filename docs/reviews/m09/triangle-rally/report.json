@@ -1,0 +1,1016 @@
+{
+  "poses": [
+    {
+      "count": 2,
+      "before": false,
+      "vertices": [
+        {
+          "x": -6,
+          "y": 11
+        },
+        {
+          "x": 6,
+          "y": 11
+        },
+        {
+          "x": 6,
+          "y": -11
+        },
+        {
+          "x": -6,
+          "y": -11
+        }
+      ],
+      "fortresses": [
+        {
+          "id": 0,
+          "anchor": {
+            "x": 0,
+            "y": 11
+          },
+          "limits": [-1.2096222541850752, 1.2096222541850752]
+        },
+        {
+          "id": 1,
+          "anchor": {
+            "x": 0,
+            "y": -11
+          },
+          "limits": [-1.2096222541850752, 1.2096222541850752]
+        }
+      ]
+    },
+    {
+      "count": 3,
+      "before": true,
+      "vertices": [
+        {
+          "x": -9.192388155425117,
+          "y": 9.19238815542512
+        },
+        {
+          "x": 12.557035741757886,
+          "y": 3.364647586332772
+        },
+        {
+          "x": -3.364647586332765,
+          "y": -12.55703574175789
+        }
+      ],
+      "fortresses": [
+        {
+          "id": 0,
+          "anchor": {
+            "x": -9.192388155425117,
+            "y": 9.19238815542512
+          },
+          "limits": [-0.16242907715628935, 0.16242907715628935]
+        },
+        {
+          "id": 1,
+          "anchor": {
+            "x": 12.557035741757886,
+            "y": 3.364647586332772
+          },
+          "limits": [-0.16242907715628935, 0.16242907715628935]
+        },
+        {
+          "id": 2,
+          "anchor": {
+            "x": -3.364647586332765,
+            "y": -12.55703574175789
+          },
+          "limits": [-0.16242907715628935, 0.16242907715628935]
+        }
+      ]
+    },
+    {
+      "count": 3,
+      "before": false,
+      "vertices": [
+        {
+          "x": -9.192388155425117,
+          "y": 9.19238815542512
+        },
+        {
+          "x": 12.557035741757886,
+          "y": 3.364647586332772
+        },
+        {
+          "x": -3.364647586332765,
+          "y": -12.55703574175789
+        }
+      ],
+      "fortresses": [
+        {
+          "id": 0,
+          "anchor": {
+            "x": -8.343860018001262,
+            "y": 8.343860018001264
+          },
+          "limits": [-0.30648856247122414, 0.30648856247122414]
+        },
+        {
+          "id": 1,
+          "anchor": {
+            "x": 11.397924750211006,
+            "y": 3.054064732209747
+          },
+          "limits": [-0.30648856247122414, 0.30648856247122414]
+        },
+        {
+          "id": 2,
+          "anchor": {
+            "x": -3.054064732209741,
+            "y": -11.39792475021101
+          },
+          "limits": [-0.30648856247122414, 0.30648856247122414]
+        }
+      ]
+    },
+    {
+      "count": 4,
+      "before": false,
+      "vertices": [
+        {
+          "x": -9,
+          "y": 9
+        },
+        {
+          "x": 9,
+          "y": 9
+        },
+        {
+          "x": 9,
+          "y": -9
+        },
+        {
+          "x": -9,
+          "y": -9
+        }
+      ],
+      "fortresses": [
+        {
+          "id": 0,
+          "anchor": {
+            "x": -9,
+            "y": 9
+          },
+          "limits": [-0.4242284917107901, 0.4242284917107901]
+        },
+        {
+          "id": 1,
+          "anchor": {
+            "x": 9,
+            "y": 9
+          },
+          "limits": [-0.4242284917107901, 0.4242284917107901]
+        },
+        {
+          "id": 2,
+          "anchor": {
+            "x": 9,
+            "y": -9
+          },
+          "limits": [-0.4242284917107901, 0.4242284917107901]
+        },
+        {
+          "id": 3,
+          "anchor": {
+            "x": -9,
+            "y": -9
+          },
+          "limits": [-0.4242284917107901, 0.4242284917107901]
+        }
+      ]
+    },
+    {
+      "count": 6,
+      "before": false,
+      "vertices": [
+        {
+          "x": -10.606601717798211,
+          "y": 10.606601717798213
+        },
+        {
+          "x": 3.882285676537811,
+          "y": 14.488887394336025
+        },
+        {
+          "x": 14.488887394336023,
+          "y": 3.8822856765378138
+        },
+        {
+          "x": 10.606601717798213,
+          "y": -10.606601717798211
+        },
+        {
+          "x": -3.882285676537806,
+          "y": -14.488887394336027
+        },
+        {
+          "x": -14.488887394336025,
+          "y": -3.8822856765378084
+        }
+      ],
+      "fortresses": [
+        {
+          "id": 0,
+          "anchor": {
+            "x": -10.606601717798211,
+            "y": 10.606601717798213
+          },
+          "limits": [-0.6860257532350845, 0.6860257532350845]
+        },
+        {
+          "id": 1,
+          "anchor": {
+            "x": 3.882285676537811,
+            "y": 14.488887394336025
+          },
+          "limits": [-0.6860257532350845, 0.6860257532350845]
+        },
+        {
+          "id": 2,
+          "anchor": {
+            "x": 14.488887394336023,
+            "y": 3.8822856765378138
+          },
+          "limits": [-0.6860257532350845, 0.6860257532350845]
+        },
+        {
+          "id": 3,
+          "anchor": {
+            "x": 10.606601717798213,
+            "y": -10.606601717798211
+          },
+          "limits": [-0.6860257532350845, 0.6860257532350845]
+        },
+        {
+          "id": 4,
+          "anchor": {
+            "x": -3.882285676537806,
+            "y": -14.488887394336027
+          },
+          "limits": [-0.6860257532350845, 0.6860257532350845]
+        },
+        {
+          "id": 5,
+          "anchor": {
+            "x": -14.488887394336025,
+            "y": -3.8822856765378084
+          },
+          "limits": [-0.6860257532350845, 0.6860257532350845]
+        }
+      ]
+    }
+  ],
+  "samples": [
+    {
+      "time": 0.9999999999999989,
+      "phase": "countdown",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "ready",
+          "rallyTime": 0,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "time": 1.9999999999999953,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "ready",
+          "rallyTime": 0,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "time": 2.999999999999992,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 0.366666666666667,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 3.9999999999999885,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 1.3666666666666643,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 5.000000000000038,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 2.366666666666661,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 6.000000000000088,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 3.3666666666666574,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 7.000000000000138,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 4.366666666666673,
+          "speed": 13.999999999999998
+        }
+      ]
+    },
+    {
+      "time": 8.000000000000187,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 5.366666666666723,
+          "speed": 14.000000000000002
+        }
+      ]
+    },
+    {
+      "time": 9.00000000000013,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 6.366666666666773,
+          "speed": 13.999999999999996
+        }
+      ]
+    },
+    {
+      "time": 10.000000000000073,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 7.366666666666823,
+          "speed": 13.999999999999998
+        }
+      ]
+    },
+    {
+      "time": 11.000000000000016,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 8.366666666666832,
+          "speed": 14.256666666666783
+        }
+      ]
+    },
+    {
+      "time": 11.99999999999996,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 9.366666666666775,
+          "speed": 14.95666666666674
+        }
+      ]
+    },
+    {
+      "time": 12.999999999999902,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 10.366666666666719,
+          "speed": 15.656666666666702
+        }
+      ]
+    },
+    {
+      "time": 13.999999999999845,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 11.366666666666662,
+          "speed": 16.35666666666666
+        }
+      ]
+    },
+    {
+      "time": 14.999999999999789,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 12.366666666666605,
+          "speed": 17.056666666666622
+        }
+      ]
+    },
+    {
+      "time": 15.999999999999732,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 13.366666666666548,
+          "speed": 17.756666666666586
+        }
+      ]
+    },
+    {
+      "time": 16.999999999999677,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 14.366666666666491,
+          "speed": 18.456666666666546
+        }
+      ]
+    },
+    {
+      "time": 17.99999999999962,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 15.366666666666434,
+          "speed": 19.1566666666665
+        }
+      ]
+    },
+    {
+      "time": 18.999999999999563,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 16.36666666666638,
+          "speed": 19.856666666666467
+        }
+      ]
+    },
+    {
+      "time": 19.999999999999506,
+      "phase": "playing",
+      "damage": 0,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 17.366666666666323,
+          "speed": 20.55666666666642
+        }
+      ]
+    },
+    {
+      "time": 20.99999999999945,
+      "phase": "playing",
+      "damage": 1,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "ready",
+          "rallyTime": 0,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "time": 21.999999999999392,
+      "phase": "playing",
+      "damage": 1,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 0.5583333333333338,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 22.999999999999336,
+      "phase": "playing",
+      "damage": 1,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 1.5583333333333302,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 23.99999999999928,
+      "phase": "playing",
+      "damage": 1,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 2.558333333333327,
+          "speed": 13.999999999999998
+        }
+      ]
+    },
+    {
+      "time": 24.999999999999222,
+      "phase": "playing",
+      "damage": 1,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 3.5583333333333234,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 25.999999999999165,
+      "phase": "playing",
+      "damage": 1,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 4.55833333333335,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 26.99999999999911,
+      "phase": "playing",
+      "damage": 1,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 5.558333333333399,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 27.99999999999905,
+      "phase": "playing",
+      "damage": 1,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 6.558333333333449,
+          "speed": 14.000000000000002
+        }
+      ]
+    },
+    {
+      "time": 28.999999999998995,
+      "phase": "playing",
+      "damage": 2,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "ready",
+          "rallyTime": 0,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "time": 29.999999999998938,
+      "phase": "playing",
+      "damage": 2,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "ready",
+          "rallyTime": 0,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "time": 30.99999999999888,
+      "phase": "playing",
+      "damage": 2,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 0.9333333333333325,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 31.999999999998824,
+      "phase": "playing",
+      "damage": 2,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 1.933333333333329,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 32.99999999999877,
+      "phase": "playing",
+      "damage": 2,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 2.9333333333333256,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 33.999999999998714,
+      "phase": "playing",
+      "damage": 2,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 3.933333333333322,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 34.99999999999866,
+      "phase": "playing",
+      "damage": 2,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 4.933333333333368,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 35.9999999999986,
+      "phase": "playing",
+      "damage": 3,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "ready",
+          "rallyTime": 0,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "time": 36.99999999999854,
+      "phase": "playing",
+      "damage": 3,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 0.6083333333333336,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 37.99999999999849,
+      "phase": "playing",
+      "damage": 3,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 1.60833333333333,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 38.99999999999843,
+      "phase": "playing",
+      "damage": 3,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 2.6083333333333267,
+          "speed": 13.999999999999998
+        }
+      ]
+    },
+    {
+      "time": 39.99999999999837,
+      "phase": "playing",
+      "damage": 3,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 3.608333333333323,
+          "speed": 14.000000000000005
+        }
+      ]
+    },
+    {
+      "time": 40.999999999998316,
+      "phase": "playing",
+      "damage": 3,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 4.608333333333352,
+          "speed": 14.000000000000002
+        }
+      ]
+    },
+    {
+      "time": 41.99999999999826,
+      "phase": "playing",
+      "damage": 4,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "ready",
+          "rallyTime": 0,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "time": 42.9999999999982,
+      "phase": "playing",
+      "damage": 4,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 0.5583333333333338,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 43.999999999998145,
+      "phase": "playing",
+      "damage": 4,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 1.5583333333333302,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 44.99999999999809,
+      "phase": "playing",
+      "damage": 4,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 2.558333333333327,
+          "speed": 14.000000000000002
+        }
+      ]
+    },
+    {
+      "time": 45.99999999999803,
+      "phase": "playing",
+      "damage": 4,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 3.5583333333333234,
+          "speed": 13.999999999999998
+        }
+      ]
+    },
+    {
+      "time": 46.999999999997975,
+      "phase": "playing",
+      "damage": 4,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 4.55833333333335,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 47.99999999999792,
+      "phase": "playing",
+      "damage": 4,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "active",
+          "rallyTime": 5.558333333333399,
+          "speed": 14
+        }
+      ]
+    },
+    {
+      "time": 48.75833333333121,
+      "phase": "finished",
+      "damage": 5,
+      "collisionCaps": 0,
+      "balls": []
+    }
+  ],
+  "scores": [
+    {
+      "time": 20.291666666666156,
+      "phase": "playing",
+      "damage": 1,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "ready",
+          "rallyTime": 0,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "time": 28.916666666665666,
+      "phase": "playing",
+      "damage": 2,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "ready",
+          "rallyTime": 0,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "time": 35.258333333331976,
+      "phase": "playing",
+      "damage": 3,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "ready",
+          "rallyTime": 0,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "time": 41.30833333333163,
+      "phase": "playing",
+      "damage": 4,
+      "collisionCaps": 0,
+      "balls": [
+        {
+          "id": 0,
+          "phase": "ready",
+          "rallyTime": 0,
+          "speed": 0
+        }
+      ]
+    },
+    {
+      "time": 48.75833333333121,
+      "phase": "finished",
+      "damage": 5,
+      "collisionCaps": 0,
+      "balls": []
+    }
+  ],
+  "maximum": 20.55666666666642,
+  "errors": []
+}

@@ -40,7 +40,8 @@ introduction. Its controls stay fixed while the board morphs between player coun
 **Settings** opens the compact Pause panel for effects, audio, assistance and your
 fortress. The saved 100-level challenge controls bot skill, ball speed, bat width,
 ball count and pickups (introduced at level 5). A ball unlocks every 6–7 levels,
-reaching 16 at level 100. A first win advances to level 2; three consecutive losses
+reaching 16 at level 100. Scoreless rallies gradually accelerate after eight
+active seconds and reset to normal speed when that ball scores. A first win advances to level 2; three consecutive losses
 demote one level with a notice. Earlier losses retry the same challenge.
 Two seats use a rectangle, then triangle, square, pentagon and hexagon.
 Eliminations gradually move walls and surviving fortresses to the new layout,

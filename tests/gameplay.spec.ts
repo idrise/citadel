@@ -26,6 +26,7 @@ test("captured controls, focus pause, timed balls and restart work", async ({ pa
   await page.clock.runFor(15500);
   await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("2");
   await pause(page);
+  await expect(page.getByRole("button", { name: "Restart", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Restart", exact: true }).click();
   await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
   await expect(page.getByLabel("Balls in play", { exact: true })).toHaveText("1");

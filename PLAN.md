@@ -464,6 +464,30 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November triangle / rally follow-up: the owner added two further TODO items.
+Three-seat fortress anchors now sit 1.2 units inward from the unchanged wall tips;
+physical wall fitting permits roughly 40–90% more bat travel depending on level
+width. The same geometry is used when an elimination reaches three survivors.
+Each active scoreless ball retains normal level speed for eight seconds, then gains
+5% of base speed per second to a bounded 1.75×. A scored container hit resets that
+ball and its next serve; other balls retain their own pressure. Pauses, countdown
+and ready time do not advance the clock. Supply collection does not reset it.
+Bots and forecasts share the rule. These explicit requests authorise the tuning
+follow-up without approving the broader M06 pacing study or the M10 device gate.
+See `docs/TRIANGLE_RALLY_REVIEW.md` and `docs/reviews/m09/triangle-rally/` for
+comparison poses, actual rally/score samples and validation. Initial local
+checkpoints: `e1daa8b` triangle clearance and `7007842` rally pressure.
+Validation: clean `vp check --fix`; 439 unit tests / 70 files, unchanged replay
+goldens, and maximum-pressure sixteen-ball stress in all five layouts pass.
+The broad root browser run passed 58/59; the fixed-time early-loss assumption was
+replaced with actual elimination observation and passes on rerun. The new rally
+pause/reset check also passes: all 60 distinct root scenarios have passing coverage
+across those runs. Eight final Pages-path checks pass, including complete 2–6-seat
+mobile matches. Both build bases pass with the existing ~964kB main-chunk advisory.
+Rendered 2/3/4/6 views and a natural rally movie/report have no browser errors;
+`git diff --check` passes. Physical-device validation remains open; M09 awaits review.
+
+
 12 November mobile-feedback / sixteen-ball amendment: the owner requested every
 item in `TODO.md`, a sixteen-ball level 100 and an extra ball every 5–10 levels.
 The live cap now unlocks every 6–7 levels; four-ball and higher challenges reach
@@ -822,4 +846,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
