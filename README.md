@@ -28,6 +28,10 @@ pnpm dev
 On a touchscreen, drag left or right to move the bat, tap to serve, and use the
 pause button in the top corner. Dragging is relative, so you can reposition your
 finger without moving the bat. Camera motion pauses with reduced effects.
+Touch Start/Resume requests fullscreen on supporting browsers. On iPhone, use
+Share → Add to Home Screen, enable Open as Web App if offered, then launch the
+Citadel icon to play without Safari's browser bars. Full screen help is available
+from the title and Pause menu.
 
 Use the floating title's **− / +** buttons to choose 2–6 players, then **START**.
 The lettering and buttons are procedural 3D meshes.

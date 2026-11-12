@@ -1,0 +1,11 @@
+{
+  "id": "./",
+  "name": "Neon Citadel",
+  "short_name": "Citadel",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#030610",
+  "theme_color": "#070b14"
+}

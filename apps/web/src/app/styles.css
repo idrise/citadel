@@ -44,6 +44,42 @@ body,
 .touch-pause {
   display: none;
 }
+.mobile-display {
+  display: none;
+}
+@media (pointer: coarse) {
+  .mobile-display {
+    display: block;
+    font-size: 14px;
+  }
+  .mobile-display button,
+  .fullscreen-help summary {
+    min-height: 44px;
+    padding: 10px 14px;
+  }
+  .title-display {
+    position: fixed;
+    left: max(10px, env(safe-area-inset-left));
+    top: max(10px, env(safe-area-inset-top));
+    max-width: min(340px, calc(100vw - 20px));
+  }
+  .fullscreen-help {
+    background: #07101cf5;
+    border: 1px solid #4f8395;
+    border-radius: 4px;
+  }
+  .fullscreen-help summary {
+    cursor: pointer;
+  }
+  .fullscreen-help p {
+    padding: 0 14px 14px;
+    line-height: 1.5;
+    margin: 0;
+  }
+  .menu-panel .mobile-display {
+    margin-top: 10px;
+  }
+}
 @media (pointer: coarse) {
   .touch-hint {
     display: block;

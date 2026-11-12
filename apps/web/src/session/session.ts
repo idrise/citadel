@@ -1,6 +1,7 @@
 import { createRoundObserver, type RoundTotals } from "./round-observer";
 import { createDesktopInput } from "../input/desktop";
 import { createTouchInput } from "../input/touch";
+import { enterMobileFullscreen, fullscreenActive } from "../input/fullscreen";
 import { createViewport } from "../rendering/viewport";
 import type { ViewOptions } from "../rendering/arena-view";
 import { SEATS } from "../rendering/palette";
@@ -99,6 +100,14 @@ export function createSession(
     () => state.arena,
   );
   const abort = new AbortController();
+  let hadFullscreen = fullscreenActive();
+  const fullscreenChanged = () => {
+    const active = fullscreenActive();
+    if (hadFullscreen && !active && started && state.phase !== "finished") setPaused(true);
+    hadFullscreen = active;
+  };
+  document.addEventListener("fullscreenchange", fullscreenChanged, { signal: abort.signal });
+  document.addEventListener("webkitfullscreenchange", fullscreenChanged, { signal: abort.signal });
   window.addEventListener(
     "pointerdown",
     (event) => {
@@ -187,6 +196,7 @@ export function createSession(
   frame = requestAnimationFrame(animate);
   report();
   const start = () => {
+    if (touchMode) void enterMobileFullscreen();
     initialSettings ??= { ...settings };
     started = true;
     menuSuppressed = false;
@@ -199,6 +209,7 @@ export function createSession(
     start,
     pause: () => setPaused(true),
     resume() {
+      if (touchMode && started) void enterMobileFullscreen();
       menuSuppressed = false;
       if (!started) {
         present([], 0);

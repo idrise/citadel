@@ -1,5 +1,30 @@
 # M09 mobile review
 
+## Fullscreen follow-up
+
+The owner reported the board shrinking around browser tabs/address bars. Touch
+Start and Resume now request fullscreen on the stable document root, with browser
+navigation hidden where supported. The title and Pause menu also offer Full screen /
+Exit fullscreen. Leaving fullscreen through the browser pauses an active round;
+denied or unsupported requests leave the game usable. ResizeObserver continues to
+fit the board after entry, exit and portrait/landscape changes.
+
+Browsers without an element-fullscreen API show Home Screen instructions. The
+relative-path web app manifest requests fullscreen display, and Apple standalone
+metadata supports launching without Safari's address/tab bars. On iPhone use
+Share → Add to Home Screen, enable Open as Web App if offered, and launch the icon.
+See [Apple's instructions](https://support.apple.com/guide/iphone/open-as-web-app-iphea86e5236/27/ios/27).
+
+Validation: 303 unit tests, eight distinct fullscreen/touch browser checks, Vite+
+check, and builds at `/` and `/citadel/` pass. Fullscreen entry, browser exit,
+explicit exit, resume, rotation, denial fallback and relative manifest URLs were
+tested in Chromium. [Portrait capture](reviews/m09/fullscreen/mobile.png) and
+[landscape capture](reviews/m09/fullscreen/landscape.png) show browser-emulated
+fullscreen rendering. Actual Android browser chrome and iPhone Home Screen launch
+still need physical-device verification. The existing bundle-size warning remains.
+
+## Responsive mobile build
+
 The owner requested full M09 on 12 November after finding the mobile title and
 logo too small. The current build uses a responsive procedural menu: a large
 CITADEL title and stacked controls in portrait, with title and controls alongside

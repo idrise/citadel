@@ -464,6 +464,13 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+12 November fullscreen follow-up: touch Start/Resume request document fullscreen,
+menu controls allow entry/exit, and browser fullscreen exit pauses play. A relative
+manifest and Apple standalone metadata support Home Screen launch where element
+fullscreen is unavailable. See `docs/M09_TOUCH_REVIEW.md` for root/subpath checks,
+303 unit tests, fullscreen/touch browser checks and phone-emulated captures.
+Physical-device browser chrome remains unverified; M09 still awaits review.
+
 12 November follow-up: the owner requested less mouse travel and reported an
 inner-bat bloom flash without readable motion blur. Baseline mouse gain is now
 25% higher. The trail uses instanced samples and masks the live bat footprint;

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { GameHelp } from "./GameHelp";
+import { MobileDisplay } from "./MobileDisplay";
 import { ExportRound } from "./ExportRound";
 import { RoundReport } from "./RoundReport";
 import { Experiments } from "./Experiments";
@@ -63,6 +64,7 @@ export function PauseMenu({
         <button className="secondary" onClick={onRestart}>
           Restart
         </button>
+        <MobileDisplay />
         <details className="settings-menu">
           <summary>Settings</summary>
           <p className="menu-hint">Changing players or fortress starts a new round.</p>

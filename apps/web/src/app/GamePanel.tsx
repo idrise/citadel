@@ -6,6 +6,7 @@ import { createMatch } from "../simulation/match";
 import { PauseMenu } from "./PauseMenu";
 import { AccessibleStatus } from "./AccessibleStatus";
 import type { GameSettings } from "../session/settings";
+import { MobileDisplay } from "./MobileDisplay";
 
 export function GamePanel({
   humanSeat,
@@ -91,6 +92,11 @@ export function GamePanel({
   return (
     <>
       <div className="viewport" ref={container} />
+      {!snapshot.started && !unavailable && (
+        <div className="title-display">
+          <MobileDisplay />
+        </div>
+      )}
       {snapshot.started && !snapshot.paused && snapshot.state.phase !== "finished" && (
         <button className="touch-pause" onClick={() => session.current?.pause()} aria-label="Pause">
           Ⅱ
