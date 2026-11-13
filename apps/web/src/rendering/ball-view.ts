@@ -1,3 +1,5 @@
+import { createReadyCharge } from "./ready-charge";
+import type { EffectsQuality } from "./quality";
 import {
   GreaterDepth,
   Group,
@@ -69,6 +71,7 @@ export function createBallView(root: Group) {
   });
   occludedMaterial.dispose();
   trailMaterial.dispose();
+  const charge = createReadyCharge(root);
   const matrix = new Matrix4(),
     rotation = new Quaternion(),
     scale = new Vector3();
@@ -80,7 +83,9 @@ export function createBallView(root: Group) {
       trailLimit = 20,
       owners?: ReadonlyMap<number, number>,
       hide = false,
+      quality: EffectsQuality = "high",
     ) {
+      charge.update(state, reduced, hide, quality);
       balls.forEach((view, index) => {
         const active = state.phase === "finished" || hide ? undefined : state.balls[index];
         const strength = spinStrength(active?.spin ?? 0);
@@ -101,7 +106,7 @@ export function createBallView(root: Group) {
         else if (!reduced && lastTick >= 0)
           view.rotation += Math.max(0, state.tick - lastTick) * FIXED_DT * (active.spin ?? 0) * 5;
         view.mesh.rotation.y = -view.rotation;
-        view.aura.scale.setScalar(reduced ? 1.45 : 1.8);
+        view.aura.scale.setScalar(reduced ? 1.45 : active?.phase === "ready" ? 2.15 : 1.8);
         if (active) view.mesh.position.set(active.position.x, 0.58, active.position.y);
         view.occluded.visible = view.mesh.visible;
         view.occluded.position.copy(view.mesh.position);

@@ -228,6 +228,7 @@ export function createArenaView(
         profile.trails,
         options.ballOwners,
         options.menu?.mode === "title" || options.menu?.mode === "level",
+        options.quality,
       );
       guide.hide();
       const defender = state.players[options.humanSeat];

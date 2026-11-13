@@ -487,7 +487,12 @@ the new geometry). The old seed now wins, so progression is still exercised by a
 real loss, not a state edit. Ten authored aiming renders show centre/left/right
 returns and zero browser errors. New physics traces retain old digests for review;
 wall-only replay behavior and 30/60/144-FPS equivalence remain checked. Remaining
-three entries are in progress.
+two entries remain. Held-ball threat presentation is implemented as the third:
+coloured energy rings and short aim chevrons track every visible holder and clear
+on launch. Reduced mode stays static; two instanced draws bound the cost at sixteen
+queued balls. Checks: 471 unit tests / 79 files, complete native mobile 2/6-player
+rounds and twelve held/launch/reduced renders with zero browser errors. Review
+links are in `docs/PRESIGNOFF_TWEAKS_REVIEW.md`.
 
 13 November reading-time / isolated-input follow-up: the owner requests longer
 level messages at a reasonable reading speed and confirms the game must wait

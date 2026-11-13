@@ -24,9 +24,16 @@ The tighter bow exposed an old half-bat sector cap, which left wall banks unreac
 
 Expected geometry-dependent test fixtures were updated: the moving-end fixture follows the actual rounded end, the wide/narrow-bat fixture uses the new arc, and curved supply targets are placed where a swipe is still useful (straighter 0.6-radian targets can now be aimed with contact position alone). Original reviewed M03/M04 logs remain untouched. The [new trace set](reviews/m09/paddle-aim/replays.json) records prior digests alongside current ones; 30/60/144-FPS replay equivalence, wall-only traces, contact order and zero collision caps remain checked.
 
+## 3. Held-ball threats — ready for review
+
+Every held ball now has a larger energy envelope, a pulsing coloured ring, a soft expanding ring and two short directional chevrons. The chevrons follow the actual holder's current serve aim, including bots; they stop before a wall and are not a guaranteed flight forecast. The warning clears on launch, hides during title/reading screens and leaves active balls and colliders unchanged.
+
+Reduced motion uses a static ring and one chevron. The effect is batched into two instanced draws even with sixteen queued balls, with stable geometry/materials and no new lights. It reads only ball age and visible aim, so pause freezes it and match state/RNG remain untouched.
+
+[Rival holding a serve](reviews/m09/ready-charge/desktop-4-rival.png), [phone neighbour](reviews/m09/ready-charge/phone-6-rival.png), [your held serve](reviews/m09/ready-charge/desktop-4-human.png) and [after launch](reviews/m09/ready-charge/desktop-4-launched.png) show the actual renderer. Ten 2/4/6 desktop/phone and reduced poses plus two launch comparisons report zero browser errors. Unit coverage checks aim following, launch clear, pause, reduced mode, sixteen-ball bounds and input-state immutability. Complete mobile 2/6-seat launch/rotation/interruption rounds pass.
+
 ## Remaining entries
 
-- Held-ball threat presentation.
 - Continuous transitions between title, live board and victory star.
 - Symmetrical level-specific arena variants.
 

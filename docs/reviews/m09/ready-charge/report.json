@@ -1,0 +1,76 @@
+{
+  "kind": "Authored real held-ball poses and launch; actual energy/aim renderer",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 2,
+      "seat": 1,
+      "reduced": false,
+      "phase": "ready"
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "seat": 1,
+      "reduced": false,
+      "phase": "ready"
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "seat": 1,
+      "reduced": false,
+      "phase": "ready"
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "seat": 0,
+      "reduced": false,
+      "phase": "ready"
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "seat": 1,
+      "reduced": true,
+      "phase": "ready"
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "seat": 1,
+      "reduced": false,
+      "phase": "ready"
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "seat": 1,
+      "reduced": false,
+      "phase": "ready"
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "seat": 1,
+      "reduced": false,
+      "phase": "ready"
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "seat": 0,
+      "reduced": false,
+      "phase": "ready"
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "seat": 1,
+      "reduced": true,
+      "phase": "ready"
+    }
+  ],
+  "errors": []
+}

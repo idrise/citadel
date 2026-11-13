@@ -17,7 +17,7 @@ audio, measurements and physical-device limits. Awaiting M09 review.
 - [x] Gradually accelerate each scoreless active rally after eight seconds, by 5% of base speed per second up to 1.75×; reset that ball on a scored container hit.
 - [x] When a player is killed we need an event a blooming particle destruction might just do it with an explosion sound effect (not a sample). If the players ball made the kill then trigger a short bout of fireworks as used in the win screen. Let's supply some dopamine!
 - [x] The bat is currently just a curve but I think we need some additional curvature on the front of the bat so that hitting the bat and ball at different parts of the bat allows the player to have skill based aiming system.
-- [ ] When one of the bots or the player is holding a ball then we need a special effect to make it more visually obvious as they are quite threatening especially when the person next to you decides to aim right at you.
+- [x] When one of the bots or the player is holding a ball then we need a special effect to make it more visually obvious as they are quite threatening especially when the person next to you decides to aim right at you.
 - [ ] One really nice feature is the morphing board. Can we get all states to be a transition to the board for the next screen? IE changing players morphs the board, going from the star when you win back to a say 6 player game just morphing. So it becomes the constant.
 - [ ] Add some different shapes for certain levels
 - [ ] Can you make the curve ball a little more pronounced IE more curve...and have the spin of the ball affect it's bounce?
