@@ -18,7 +18,7 @@ export function createSceneControls(
     ["options", "Settings"],
     ["rematch", "Rematch"],
     ["retry", "Retry"],
-    ["watch", "Watch"],
+    ["back", "Back"],
   ] as const) {
     const button = document.createElement("button");
     button.setAttribute("aria-label", label);

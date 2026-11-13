@@ -21,9 +21,9 @@ export type SceneAction =
   | "options"
   | "rematch"
   | "retry"
-  | "watch";
+  | "back";
 export interface SceneMenuState {
-  spectator?: { watching: boolean; level: number; demotion?: Demotion | null };
+  spectator?: { level: number; demotion?: Demotion | null };
   touch?: boolean;
   mode: "title" | "victory" | "defeat" | "hidden" | "level";
   level?: number;

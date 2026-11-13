@@ -9,7 +9,7 @@ import { levelDifficulty } from "../apps/web/src/simulation/difficulty";
 export function renderRetryGapReview(
   container: HTMLElement,
   count: PlayerCount,
-  mode: "previous" | "gap" | "spectator" | "watching",
+  mode: "previous" | "gap" | "spectator",
   width = 1280,
   height = 900,
 ) {
@@ -37,7 +37,7 @@ export function renderRetryGapReview(
     const home = fortress(p.id, state.arena);
     p.angle = home.direction + home.angleLimits![1];
   });
-  const spectator = mode === "spectator" || mode === "watching";
+  const spectator = mode === "spectator";
   if (spectator) state.players[0]!.health.fill(false);
   const view = createViewport(container, 0, state.arena);
   view.render(state, 0, {
@@ -51,7 +51,7 @@ export function renderRetryGapReview(
       count,
       elapsed: 0,
       reduced: false,
-      ...(spectator ? { spectator: { watching: mode === "watching", level: 5 } } : {}),
+      ...(spectator ? { spectator: { level: 5 } } : {}),
     },
   });
   return {

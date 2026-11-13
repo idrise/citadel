@@ -48,11 +48,8 @@ export function createSession(
   let resultFor = createProgressRecorder(humanSeat, level);
   const viewport = createViewport(container, humanSeat, state.arena, (action) => {
     if (action === "start") start();
-    else if (action === "watch") {
-      watching = true;
-      present([], 0);
-      report();
-    } else {
+    else if (action === "back") resetRound(count, humanSeat, continuationLevel, true);
+    else {
       if (action === "options") {
         menuSuppressed = true;
         setPaused(true);
@@ -64,7 +61,6 @@ export function createSession(
   let observer = createRoundObserver(count);
   let paused = true;
   let started = false;
-  let watching = false;
   let continuationLevel = level;
   let endingTime = 0;
   let menuSuppressed = false;
@@ -208,7 +204,7 @@ export function createSession(
       ballOwners: observer.owners(),
       menu: {
         ...(started && !paused && !menuSuppressed && state.phase === "playing" && !alive(human)
-          ? { spectator: { watching, level: continuationLevel, demotion } }
+          ? { spectator: { level: continuationLevel, demotion } }
           : {}),
         touch: touchMode,
         mode: menuSuppressed
@@ -275,7 +271,6 @@ export function createSession(
     started = false;
     paused = true;
     menuSuppressed = false;
-    watching = false;
     continuationLevel = nextLevel;
     endingTime = 0;
     initialSettings = null;

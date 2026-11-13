@@ -40,7 +40,7 @@ export function createSpectatorMenu(camera: PerspectiveCamera) {
   root.add(caption);
   const buttons = (
     [
-      ["watch", "WATCH"],
+      ["back", "BACK"],
       ["retry", "RETRY"],
     ] as const
   ).map(([action, text]) => {
@@ -81,7 +81,7 @@ export function createSpectatorMenu(camera: PerspectiveCamera) {
         right = width - 24,
         bottom = height - 44;
       const x = right - cardWidth / 2 - width / 2;
-      heading.visible = caption.visible = !state.watching;
+      heading.visible = true;
       heading.position.set(x, height / 2 - (bottom - 116), 0);
       heading.scale.setScalar(Math.min(1, cardWidth / headingWidth));
       const message = state.demotion
@@ -95,45 +95,40 @@ export function createSpectatorMenu(camera: PerspectiveCamera) {
         root.add(caption);
         key = message;
       }
-      caption.visible = !state.watching;
+      caption.visible = true;
       caption.position.set(x, height / 2 - (bottom - 88), 0);
       caption.scale.setScalar(Math.min(1, cardWidth / captionWidth));
       const placements = buttons.map((button) => {
-        const shown = button.action === "retry" || !state.watching;
-        button.item.visible = shown;
-        const buttonWidth = state.watching ? 168 : (cardWidth - 12) / 2;
-        const centre = state.watching
-          ? right - buttonWidth / 2
-          : right -
-            cardWidth +
-            (button.action === "watch" ? buttonWidth / 2 : cardWidth - buttonWidth / 2);
+        const buttonWidth = (cardWidth - 12) / 2;
+        const centre =
+          right -
+          cardWidth +
+          (button.action === "back" ? buttonWidth / 2 : cardWidth - buttonWidth / 2);
         button.item.position.set(centre - width / 2, height / 2 - (bottom - 25), 0);
         button.body.scale.set(buttonWidth, 50, 6);
         button.material.emissiveIntensity = hovered === button.action ? 0.6 : 0.12;
         button.edges.material.uniforms.opacity!.value = hovered === button.action ? 1 : 0.7;
-        return { button, shown, buttonWidth };
+        return button;
       });
       camera.updateMatrixWorld(true);
-      return placements
-        .filter((p) => p.shown)
-        .map(({ button }) => {
-          const points = [-1, 1].flatMap((x) =>
-            [-1, 1].map((y) =>
-              button.body.localToWorld(new Vector3(x / 2, y / 2, 0.5)).project(camera),
-            ),
-          );
-          const xs = points.map((p) => ((p.x + 1) * width) / 2),
-            ys = points.map((p) => ((1 - p.y) * height) / 2);
-          return {
-            action: button.action,
-            label: button.action === "retry" ? `Retry level ${state.level}` : "Watch",
-            disabled: false,
-            left: Math.min(...xs),
-            top: Math.min(...ys),
-            width: Math.max(...xs) - Math.min(...xs),
-            height: Math.max(...ys) - Math.min(...ys),
-          };
-        });
+      return placements.map((button) => {
+        const points = [-1, 1].flatMap((x) =>
+          [-1, 1].map((y) =>
+            button.body.localToWorld(new Vector3(x / 2, y / 2, 0.5)).project(camera),
+          ),
+        );
+        const xs = points.map((p) => ((p.x + 1) * width) / 2),
+          ys = points.map((p) => ((1 - p.y) * height) / 2);
+        return {
+          action: button.action,
+          label: button.action === "retry" ? `Retry level ${state.level}` : "Back",
+          disabled: false,
+          left: Math.min(...xs),
+          top: Math.min(...ys),
+          width: Math.max(...xs) - Math.min(...xs),
+          height: Math.max(...ys) - Math.min(...ys),
+        };
+      });
     },
   };
 }

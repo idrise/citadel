@@ -24,7 +24,7 @@ export function AccessibleStatus({
         state.phase !== "finished" &&
         !state.players[humanSeat]!.health.some(Boolean) && (
           <output aria-label="Elimination result" aria-live="polite">
-            Fortress lost. Watch or retry.
+            Fortress lost. Back to title or retry.
           </output>
         )}
       <output aria-label="Progress update" aria-live="polite">

@@ -31,7 +31,6 @@ try {
       [3, "gap"],
       [4, "spectator"],
       [6, "spectator"],
-      [6, "watching"],
     ]) {
       const size = page.viewportSize();
       samples.push(
