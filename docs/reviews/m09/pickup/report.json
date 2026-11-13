@@ -1,0 +1,150 @@
+{
+  "kind": "Actual swept pickup impact, rebound, transfer and arrival through fixed-step play and real renderer",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 2,
+      "time": 0,
+      "collections": 0,
+      "health": 3,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 2,
+      "time": 0.35,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 2,
+      "time": 0.95,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "time": 0,
+      "collections": 0,
+      "health": 3,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "time": 0.35,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "time": 0.95,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "time": 0,
+      "collections": 0,
+      "health": 3,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "time": 0.35,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "time": 0.95,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "time": 0,
+      "collections": 0,
+      "health": 3,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "time": 0.35,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "time": 0.95,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "time": 0,
+      "collections": 0,
+      "health": 3,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "time": 0.35,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "time": 0.95,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "time": 0,
+      "collections": 0,
+      "health": 3,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "time": 0.35,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "time": 0.95,
+      "collections": 1,
+      "health": 4,
+      "collisionCaps": 0
+    }
+  ],
+  "errors": []
+}

@@ -85,31 +85,24 @@ export function advanceBall(
           contacts.push({ ...contact, type: "piece", seat: player.id, piece, offset: 0 });
       });
     }
-    const collector = state.players[ball.striker ?? ball.seat];
-    if (
-      !stopAtFirstImpact &&
-      collector &&
-      alive(collector) &&
-      collector.health.filter(Boolean).length < SUPPLIES.maxPieces
-    )
-      for (const drop of state.supplies) {
-        if (drop.age < SUPPLIES.fall || passedSupplies.has(drop.id)) continue;
-        const contact = sweepCircle(
-          ball.position,
-          velocity,
-          drop.position,
-          SUPPLIES.radius + ARENA.ballRadius,
-          remaining,
-        );
-        if (contact)
-          contacts.push({
-            ...contact,
-            type: "pickup",
-            seat: collector.id,
-            piece: drop.id,
-            offset: 0,
-          });
-      }
+    for (const drop of state.supplies) {
+      if (drop.age < SUPPLIES.fall || passedSupplies.has(drop.id)) continue;
+      const contact = sweepCircle(
+        ball.position,
+        velocity,
+        drop.position,
+        SUPPLIES.radius + ARENA.ballRadius,
+        remaining,
+      );
+      if (contact)
+        contacts.push({
+          ...contact,
+          type: "pickup",
+          seat: ball.striker ?? ball.seat,
+          piece: drop.id,
+          offset: 0,
+        });
+    }
     contacts.sort(
       (a, b) =>
         a.time - b.time || rank[a.type] - rank[b.type] || a.seat - b.seat || a.piece - b.piece,
@@ -124,9 +117,22 @@ export function advanceBall(
     const report = stopAtFirstImpact ? { ...hit, position: { ...ball.position } } : undefined;
     const incoming = { ...ball.velocity };
     if (hit.type === "pickup") {
-      if (stopAtFirstImpact) return report;
       passedSupplies.add(hit.piece);
+      const rebound = spinBounce(ball.velocity, hit.normal, ball.spin);
+      ball.velocity = rebound.velocity;
+      ball.spin = rebound.spin;
+      ball.position = add(ball.position, scale(hit.normal, (hit.separation ?? 0) + 0.0001));
+      if (stopAtFirstImpact) return report;
       const collection = collectSupply(state, ball, hit.piece);
+      const impact = {
+        time: elapsed,
+        normal: { ...hit.normal },
+        incoming,
+        outgoing: { ...ball.velocity },
+        spin: ball.spin ?? 0,
+      };
+      if (collection) collection.impact = impact;
+      else emit(state, "wall", ball.position, -1, null, { ballId: ball.id, impact });
       if (collection && collection.piece !== null)
         previousPieces[collection.seat]![collection.piece] = { ...collection.returnTo! };
       continue;

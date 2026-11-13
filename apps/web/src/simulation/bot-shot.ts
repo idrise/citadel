@@ -1,6 +1,6 @@
 import { advanceRally, rallyBaseSpeed } from "./rally";
 import { ARENA, clampPaddleAngle } from "./arena";
-import { paddleReturn, sweepPaddle, sweepWalls } from "./collision";
+import { paddleReturn, sweepCircle, sweepPaddle, sweepWalls, type Contact } from "./collision";
 import { curveFlight, spinBounce, spinReturn, swipeCurve } from "./flight";
 import { SUPPLIES } from "./supplies";
 import { alive, type MatchState } from "./types";
@@ -99,7 +99,19 @@ export function planBotShot(
         const wall = sweepWalls(position, velocity, dt, state.arena).sort(
           (a, b) => a.time - b.time,
         )[0];
-        let travel = wall?.time ?? dt;
+        let pickup: Contact | null = null;
+        for (const drop of state.supplies) {
+          if (drop.age < SUPPLIES.fall) continue;
+          const hit = sweepCircle(
+            position,
+            velocity,
+            drop.position,
+            SUPPLIES.radius + ARENA.ballRadius,
+            dt,
+          );
+          if (hit && (!pickup || hit.time < pickup.time)) pickup = hit;
+        }
+        let travel = Math.min(wall?.time ?? dt, pickup?.time ?? dt);
         let blocked = false;
         for (const p of state.players) {
           if (p.id === seat || !alive(p)) continue;
@@ -121,7 +133,7 @@ export function planBotShot(
             target.reward / (1 + miss * miss * 6) - step * 0.008 - Math.abs(swipe) * 0.005,
           );
         }
-        if (blocked) break;
+        if (blocked || (pickup && pickup.time <= (wall?.time ?? dt))) break;
         position = end;
         if (wall) {
           position = add(position, scale(wall.normal, (wall.separation ?? 0) + 0.001));

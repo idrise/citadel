@@ -10,6 +10,7 @@ import {
   type MatchState,
 } from "./types";
 import { ARENA } from "./arena";
+import { SUPPLIES } from "./supplies";
 import { rememberSwipe } from "./flight";
 import { add, dot, length, normalise, scale, sub, type Vec2 } from "./vector";
 
@@ -178,6 +179,17 @@ function guideContact(
       );
       if (hit) contacts.push({ ...hit, wall: false });
     }
+  }
+  for (const drop of state.supplies) {
+    if (drop.age < SUPPLIES.fall) continue;
+    const hit = sweepCircle(
+      start,
+      direction,
+      drop.position,
+      SUPPLIES.radius + ARENA.ballRadius,
+      distance,
+    );
+    if (hit) contacts.push({ ...hit, wall: false });
   }
   return contacts.sort((a, b) => a.time - b.time || Number(a.wall) - Number(b.wall))[0];
 }

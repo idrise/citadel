@@ -464,6 +464,16 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+13 November pickup checkpoint: landed supplies now rebound on actual circle
+contact while ownership and awards remain independent. Queries, serve guides and
+bot forecasts see the physical obstacle. Brighter 0.85s pooled flights/streaks
+finish with a bank ring and +1; real new colliders remain visible throughout.
+Reduced motion uses a stationary award. Checks: 483 pickup-era units, two root
+pickup-enabled difficulty cases, eighteen actual 2/4/6 desktop/phone collection
+renders, zero errors/caps, scoped check/root build. The unchanged bounded ten-second
+sixteen-ball stress coverage now permits fifteen seconds of test runtime after
+its longer surviving flight crossed the old five-second deadline.
+
 13 November curve / bat-width checkpoint: maximum flight turn increases to
 64.5 degrees; signed spin adds tangential surface grip on wall and paddle bounces
 without changing speed. Wall banks retain 72% of spin. Bots and forecasts share

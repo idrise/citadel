@@ -60,9 +60,16 @@ All 481 unit tests pass. Controls/progression/mobile browser coverage passes acr
 
 The requested width ramp was already implemented: 135% at level 1, 100% at level 50, then 70% at level 100. Every level shrinks slightly; readable SMALLER BAT messages mark substantial cumulative changes. Rendering, collision, legal travel, forecasts and bot catches share the actual width. It stays frozen during each attempt and through eliminations, and demotion restores the appropriate wider bat. Existing monotonic-ramp, wide-catches/narrow-misses, all-layout clearance and width-preserving morph tests pass. The difficulty browser checks verify actual 1/4/5/10/50/100 settings, and variant renders show the same dimensions. No second width system was added.
 
+## 8. Pickup rebound and bank award — ready for review
+
+Landed supplies now physically rebound balls, preserving speed and striker credit while using the same spin grip as other surfaces. Airborne supplies remain passable. Full/dead owners cannot collect, but their balls still rebound. Fast sweeps, same-tick awards, real bank-then-pickup ownership and read-only queries remain covered. Serve guides stop at supplies; bot interception accounts for them and shot scoring ends at the first pickup impact.
+
+The awarded container is now brighter and spends 0.85 seconds on a higher arcing flight, with a coloured streak and collection ring, followed by a bank ring and a visible +1. The real awarded collider remains visible throughout. Reduced motion shows a static award at the bank. Twelve reusable slots, fixed line buffers and shared scratch vectors bound the work; pause/reset and source immutability are tested. Phone labels face the steeper camera and sit clear of the near wall.
+
+[Transfer](reviews/m09/pickup/desktop-4-0.35.png), [arrival](reviews/m09/pickup/desktop-4-0.95.png), [phone award](reviews/m09/pickup/phone-4-0.95.png). Eighteen actual fixed-step 2/4/6 desktop/phone captures each collect once and have zero browser errors or collision caps. All 483 pickup-era unit tests pass; two root pickup-enabled difficulty cases pass, and scoped check/root build pass. The sixteen-ball/ten-simulated-second stress test now has a fifteen-second test deadline: its longer surviving multi-ball flight crossed the old five-second limit; assertions and simulation coverage were retained.
+
 ## Remaining entries
 
-- Pickup rebound and clearer bank transfer.
 - Minimal scene-rendered settings.
 
 Local stable demo: `http://localhost:5179/` (refresh to load the latest completed checkpoint).

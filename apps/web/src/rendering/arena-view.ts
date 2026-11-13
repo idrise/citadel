@@ -194,7 +194,7 @@ export function createArenaView(
         options.menu?.previousLevel,
         options.menu?.introDuration,
       );
-      supplies.update(state, dt, options.reducedEffects);
+      supplies.update(state, dt, options.reducedEffects, options.humanSeat, options.portrait);
       for (const group of [
         ...stage.rails,
         ...stage.paddles,

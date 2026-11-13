@@ -41,7 +41,7 @@ it("falls, holds on pause, transfers the awarded container, and keeps reduced mo
   const pose = flight.position.clone();
   view.update(state, 0, false);
   expect(flight.position).toEqual(pose);
-  view.update(state, 0.4, false);
+  view.update(state, 0.7, false);
   expect(view.inTransit(0, 3)).toBe(false);
   view.update(state, 0, true);
   expect(root.children.filter((p) => p.name === "supply-transfer").every((p) => !p.visible)).toBe(
@@ -90,6 +90,36 @@ it("updates the transfer outline's actual drawing uniforms so an award cannot ex
   );
   expect(material.uniforms.resolution!.value).toEqual(new Vector2(1280, 900));
   expect(material.uniforms.pixelRatio!.value).toBe(2);
-  expect(material.uniforms.opacity!.value).toBe(0.45);
+  expect(material.uniforms.opacity!.value).toBe(0.8);
+  disposeScene(root);
+});
+
+it("shows a bounded, paused transfer streak then a bank arrival ring and +1, without altering live health", () => {
+  const state = createMatch(3),
+    root = new Group(),
+    view = createSupplyView(root);
+  state.phase = "playing";
+  state.supplies = [{ id: 0, age: 1, position: { x: 0, y: 0 } }];
+  state.balls[0]!.striker = 0;
+  collectSupply(state, state.balls[0]!, 0);
+  const saved = structuredClone(state),
+    resources = root.children.map((p) => p.uuid);
+  view.update(state, 0.3, false);
+  const trail = root.children.find((p) => p.name === "supply-streak" && p.visible) as Mesh;
+  expect(trail).toBeDefined();
+  const points = Array.from(trail.geometry.getAttribute("position").array);
+  view.update(state, 0, false);
+  expect(Array.from(trail.geometry.getAttribute("position").array)).toEqual(points);
+  view.update(state, 0.6, false);
+  expect(root.children.filter((p) => p.name === "supply-award" && p.visible)).toHaveLength(1);
+  expect(root.children.filter((p) => p.name === "supply-arrival" && p.visible)).toHaveLength(1);
+  expect(root.children.filter((p) => p.name === "supply-transfer" && p.visible)).toHaveLength(0);
+  view.update(state, 0.7, false);
+  expect(root.children.filter((p) => p.name === "supply-award" && p.visible)).toHaveLength(0);
+  expect(state).toEqual(saved);
+  expect(root.children.map((p) => p.uuid)).toEqual(resources);
+  view.reset();
+  view.update(state, 0, false);
+  expect(root.children.filter((p) => p.name === "supply-award" && p.visible)).toHaveLength(0);
   disposeScene(root);
 });

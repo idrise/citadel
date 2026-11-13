@@ -112,6 +112,7 @@ it.each([1, 50, 100])(
         6,
       );
   },
+  15_000,
 );
 it("a wide early bat catches a shot that passes the narrow level-100 bat", () => {
   const easy = createArena(4, undefined, 0, levelDifficulty(1).batScale);

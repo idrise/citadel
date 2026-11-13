@@ -1,3 +1,4 @@
+import { SUPPLIES } from "./supplies";
 import { advanceRally, rallyBaseSpeed } from "./rally";
 import { ARENA, fortress } from "./arena";
 import { sweepCircle, sweepPaddle, sweepWalls } from "./collision";
@@ -31,6 +32,7 @@ export function planIntercept(
         length(source.velocity) * horizon
     )
       continue;
+    const passedSupplies = new Set<number>();
     const forecast = { ...source };
     const baseSpeed = state.difficulty?.ballSpeed ?? rallyBaseSpeed(source);
     let position = { ...source.position },
@@ -50,9 +52,22 @@ export function planIntercept(
         ARENA.railRadius + ARENA.ballRadius + ARENA.paddleThickness / 2,
         dt,
       );
-      const wall = sweepWalls(position, velocity, dt, state.arena).sort(
-        (a, b) => a.time - b.time,
-      )[0];
+      const surfaces = sweepWalls(position, velocity, dt, state.arena).map((hit) => ({
+        ...hit,
+        pickup: -1,
+      }));
+      for (const drop of state.supplies) {
+        if (drop.age < SUPPLIES.fall || passedSupplies.has(drop.id)) continue;
+        const hit = sweepCircle(
+          position,
+          velocity,
+          drop.position,
+          SUPPLIES.radius + ARENA.ballRadius,
+          dt,
+        );
+        if (hit) surfaces.push({ ...hit, pickup: drop.id });
+      }
+      const wall = surfaces.sort((a, b) => a.time - b.time)[0];
       const travel = Math.min(rail?.time ?? dt, wall?.time ?? dt);
       let blocked = false;
       for (const other of state.players) {
@@ -104,6 +119,7 @@ export function planIntercept(
         break;
       }
       if (wall) {
+        if (wall.pickup >= 0) passedSupplies.add(wall.pickup);
         position = add(
           add(position, scale(velocity, wall.time)),
           scale(wall.normal, (wall.separation ?? 0) + 0.0001),

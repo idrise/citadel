@@ -22,5 +22,5 @@ audio, measurements and physical-device limits. Awaiting M09 review.
 - [x] Add some different shapes for certain levels
 - [x] Can you make the curve ball a little more pronounced IE more curve...and have the spin of the ball affect it's bounce?
 - [x] To modify difficulty we can shrink the size of the paddles, this should be worked into the level set.
-- [ ] Hitting a pickup should cause the ball to bounce off of it. The transition to the players bank needs to be emphasized a bit more so it's obvious what happened and why.
+- [x] Hitting a pickup should cause the ball to bounce off of it. The transition to the players bank needs to be emphasized a bit more so it's obvious what happened and why.
 - [ ]

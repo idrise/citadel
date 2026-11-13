@@ -51,7 +51,7 @@ export function stepSupplies(state: MatchState, dt: number) {
 }
 
 /** Last actual paddle/serve owns the collection; walls never transfer credit.
- * A departed player's ball cannot resurrect them. Collection doesn't interrupt flight. */
+ * A departed player's ball cannot resurrect them. The caller resolves its physical rebound independently of the award. */
 export function collectSupply(state: MatchState, ball: BallState, id: number) {
   if (state.phase !== "playing") return false;
   const index = state.supplies.findIndex((drop) => drop.id === id && drop.age >= SUPPLIES.fall);

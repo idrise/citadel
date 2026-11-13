@@ -56,7 +56,7 @@ function collectable() {
   });
   return state;
 }
-it("sweeps fast shots through a container, credits the last striker and continues the ball unchanged", () => {
+it("sweeps fast shots through a container, credits the last striker and rebounds at its physical surface", () => {
   const state = collectable(),
     before = structuredClone(state);
   const next = stepMatch(state);
@@ -65,7 +65,12 @@ it("sweeps fast shots through a container, credits the last striker and continue
   expect(next.players[2]!.health.filter(Boolean)).toHaveLength(4);
   expect(next.players[1]!.health.filter(Boolean)).toHaveLength(3);
   expect(next.balls[0]!.phase).toBe("active");
-  expect(next.balls[0]!.velocity).toEqual(state.balls[0]!.velocity);
+  expect(next.balls[0]!.velocity).toEqual({ x: -240, y: 0 });
+  expect(next.balls[0]!.position.x).toBeLessThan(-0.667);
+  expect(next.events.find((e) => e.type === "collection")!.impact!.outgoing).toEqual({
+    x: -240,
+    y: 0,
+  });
   expect(next.events.filter((e) => e.type === "collection")).toHaveLength(1);
   expect(next.stats.damage).toBe(0);
 });
@@ -102,7 +107,8 @@ it("keeps query forecasts read-only and clears resources when the round finishes
     trial.players.map((p) => p.pieces.map((b) => b.position)),
     true,
   );
-  expect(hit).toBeUndefined();
+  expect(hit?.type).toBe("pickup");
+  expect(trial.balls[0]!.velocity.x).toBeLessThan(0);
   expect(trial.supplies).toEqual(saved.supplies);
   expect(trial.players).toEqual(saved.players);
   expect(state).toEqual(saved);
@@ -128,7 +134,7 @@ it("preserves last-paddle ownership through a real wall rebound before collectio
     DEFAULT_OPTIONS,
     state.players.map((p) => p.pieces.map((b) => b.position)),
   );
-  expect(state.events.map((e) => e.type)).toEqual(["wall", "collection"]);
+  expect(state.events.map((e) => e.type)).toEqual(["wall", "collection", "wall"]);
   expect(state.events[1]!.seat).toBe(2);
   expect(state.balls[0]!.striker).toBe(2);
 });
@@ -151,4 +157,25 @@ it("carries landed and falling supplies safely with an elimination morph", () =>
         );
   }
   expect(state.supplies.map((drop) => drop.age)).toEqual([0.4, 2]);
+});
+
+it("rebounds off an uncollectable landed supply without resurrecting its striker, and ignores airborne ones", () => {
+  for (const airborne of [false, true]) {
+    const state = collectable();
+    state.players[2]!.health.fill(false);
+    if (airborne) state.supplies[0]!.age = 0.3;
+    const ball = state.balls[0]!;
+    advanceBall(
+      state,
+      ball,
+      state.players.map((p) => p.angle),
+      FIXED_DT,
+      DEFAULT_OPTIONS,
+      state.players.map((p) => p.pieces.map((b) => b.position)),
+    );
+    expect(Math.sign(ball.velocity.x)).toBe(airborne ? 1 : -1);
+    expect(state.supplies).toHaveLength(1);
+    expect(state.players[2]!.health.some(Boolean)).toBe(false);
+    expect(state.stats.collisionCaps).toBe(0);
+  }
 });
