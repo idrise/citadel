@@ -1,0 +1,96 @@
+{
+  "kind": "Authored parallel incoming balls; actual collision and live return preview",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 2,
+      "offset": 0,
+      "contactOffset": 0,
+      "deflectionDegrees": 0,
+      "radius": 1.55,
+      "halfSpan": 1.0159141861912624
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "offset": -0.75,
+      "contactOffset": -0.5848187963855921,
+      "deflectionDegrees": -39.02802882245521,
+      "radius": 1.55,
+      "halfSpan": 1.0159141861912624
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "offset": 0,
+      "contactOffset": -1.5533029206577706e-16,
+      "deflectionDegrees": -1.90833280887811e-14,
+      "radius": 1.55,
+      "halfSpan": 1.0159141861912624
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "offset": 0.75,
+      "contactOffset": 0.5848187963855919,
+      "deflectionDegrees": 39.028028822455184,
+      "radius": 1.55,
+      "halfSpan": 1.0159141861912624
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "offset": 0,
+      "contactOffset": -3.106605841315541e-16,
+      "deflectionDegrees": -1.2722218725854067e-14,
+      "radius": 1.55,
+      "halfSpan": 1.0159141861912624
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "offset": 0,
+      "contactOffset": 0,
+      "deflectionDegrees": 0,
+      "radius": 1.55,
+      "halfSpan": 1.0159141861912624
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "offset": -0.75,
+      "contactOffset": -0.5848187963855921,
+      "deflectionDegrees": -39.02802882245521,
+      "radius": 1.55,
+      "halfSpan": 1.0159141861912624
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "offset": 0,
+      "contactOffset": -1.5533029206577706e-16,
+      "deflectionDegrees": -1.90833280887811e-14,
+      "radius": 1.55,
+      "halfSpan": 1.0159141861912624
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "offset": 0.75,
+      "contactOffset": 0.5848187963855919,
+      "deflectionDegrees": 39.028028822455184,
+      "radius": 1.55,
+      "halfSpan": 1.0159141861912624
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "offset": 0,
+      "contactOffset": -3.106605841315541e-16,
+      "deflectionDegrees": -1.2722218725854067e-14,
+      "radius": 1.55,
+      "halfSpan": 1.0159141861912624
+    }
+  ],
+  "errors": []
+}

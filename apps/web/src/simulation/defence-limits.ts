@@ -27,9 +27,8 @@ export function fitDefenceLimits(arena: ArenaGeometry): ArenaGeometry {
       };
       const extent = (side: number) => {
         let low = 0,
-          // Inset triangle defenders can use the full rail sector. Actual arc/wall
-          // clearance below remains authoritative, including during morphs.
-          high = Math.max(0, home.halfAngle - (arena.count === 3 ? 0 : halfAngle / 2));
+          // The tighter bat bow needs the full sector; actual surface-to-wall clearance is authoritative.
+          high = home.halfAngle;
         for (let i = 0; i < 18; i++) {
           const mid = (low + high) / 2;
           if (safe(mid * side)) low = mid;

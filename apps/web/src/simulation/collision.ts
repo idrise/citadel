@@ -115,9 +115,11 @@ export function sweepPaddle(
   return candidates.sort((left, right) => left.time - right.time)[0] ?? null;
 }
 
+export const PADDLE_EDGE_AIM = 0.45;
+
 export function paddleReturn(incoming: Vec2, offset: number, contactNormal: Vec2): Vec2 {
   const faceAngle = angleOf(contactNormal);
-  let direction = unit(faceAngle + Math.max(-1, Math.min(1, offset)) * 0.32);
+  let direction = unit(faceAngle + Math.max(-1, Math.min(1, offset)) * PADDLE_EDGE_AIM);
   // A rounded-end hit must still leave its actual contact surface.
   const outward = dot(direction, contactNormal);
   if (outward < 0.15) direction = normalise(add(direction, scale(contactNormal, 0.15 - outward)));

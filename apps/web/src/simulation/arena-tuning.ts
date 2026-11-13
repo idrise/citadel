@@ -3,8 +3,9 @@ export const ARENA = {
   railRadius: 4.4,
   sectorHalfAngle: Math.PI / 4,
   paddleHalfAngle: 0.24,
-  batRadius: 2.2,
-  batHalfAngle: 0.48,
+  // Sharper physical bow, preserving the original standard bat's end-to-end span.
+  batRadius: 1.55,
+  batHalfAngle: Math.asin((2.2 * Math.sin(0.48)) / 1.55),
   paddleThickness: 0.28,
   paddleSpeed: 3.2,
   pointerPaddleSpeed: 16,

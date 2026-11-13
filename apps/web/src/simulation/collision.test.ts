@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
-import { ARENA, fortress, railPosition } from "./arena";
+import { ARENA, batCentre, fortress, railPosition } from "./arena";
 import { paddleReturn, sweepCircle, sweepPaddle, sweepWalls } from "./collision";
-import { dot, length, scale, unit } from "./vector";
+import { add, dot, length, scale, unit } from "./vector";
 
 describe("swept collisions", () => {
   it("finds a fast crossing that ends beyond the target and ignores a near miss", () => {
@@ -54,7 +54,12 @@ describe("swept collisions", () => {
   });
   it("detects a moving rounded end sweeping into a stationary ball", () => {
     const angle = fortress(0).direction;
-    const point = railPosition(0, angle + ARENA.paddleHalfAngle + 0.09);
+    const centre = batCentre(0, angle),
+      endAngle = angle + ARENA.batHalfAngle;
+    const point = add(
+      add(centre, scale(unit(endAngle), ARENA.batRadius)),
+      scale(unit(endAngle + Math.PI / 2), ARENA.ballRadius + ARENA.paddleThickness / 2 + 0.005),
+    );
     expect(sweepPaddle(point, { x: 0, y: 0 }, 0, angle, 3.2, 1 / 120)).not.toBeNull();
   });
   it("preserves speed and gives different centre/edge shot directions", () => {

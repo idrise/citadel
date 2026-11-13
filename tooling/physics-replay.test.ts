@@ -38,9 +38,9 @@ it.each(PHYSICS_CASES)(
   },
 );
 
-it("matches the reviewed golden impact logs and state trace digests", () => {
+it("matches the curved-face golden impact logs and state trace digests", () => {
   const golden = JSON.parse(
-    readFileSync(new URL("../docs/reviews/m03-m04/replays.json", import.meta.url), "utf8"),
+    readFileSync(new URL("../docs/reviews/m09/paddle-aim/replays.json", import.meta.url), "utf8"),
   ) as { cases: { name: (typeof PHYSICS_CASES)[number]; traceDigest: string }[] };
   for (const fixture of golden.cases)
     expect(replayPhysics(fixture.name).traceDigest).toBe(fixture.traceDigest);

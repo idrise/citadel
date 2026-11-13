@@ -119,7 +119,7 @@ it("produces curved real returns and collections through normal simulation, with
   expect(state.stats.collisionCaps).toBe(0);
 });
 
-it.each([-0.6, 0.6])(
+it.each([-0.8, 0.8])(
   "swipes a real return toward the supply at offset %s and earns its container",
   (turn) => {
     let state = createMatch(4, 4);
@@ -190,7 +190,7 @@ it("unlocks accurate signed shot planning as the bot tactics budget reaches leve
     ARENA.railRadius + ARENA.ballRadius + ARENA.paddleThickness / 2,
     state.arena,
   );
-  state.supplies = [{ id: 0, age: 2, position: add(point, scale(unit(home.direction + 0.6), 8)) }];
+  state.supplies = [{ id: 0, age: 2, position: add(point, scale(unit(home.direction + 1), 8)) }];
   const contact = { point, velocity: scale(unit(home.direction), -24), angle: home.direction };
   const easy = planBotShot(state, 0, contact, 2, botLevelProfile(1).tactics);
   const hard = planBotShot(state, 0, contact, 16, botLevelProfile(100).tactics);

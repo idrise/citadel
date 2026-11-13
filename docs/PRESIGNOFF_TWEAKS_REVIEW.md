@@ -14,9 +14,18 @@ A kill credited to the human's last-struck ball triggers three short victory-sty
 
 Unit tests cover pool bounds, event immutability, pause/expiry/reset, reduced and low budgets, last-striker attribution through banks, the short firework lifecycle and synth scheduling/coalescing/disposal. Final check counts are recorded in PLAN.md.
 
+## 2. Bowed paddle and contact aiming — ready for review
+
+The physical front now has a tighter bow: radius 1.55 instead of 2.2. Its angle is adjusted to keep the standard bat's original end-to-end span, rather than narrowing it. Rendering, collision, forecasts, bot shot planning and wall fitting all share those dimensions. The bounded contact-position steering contribution rises from 0.32 to 0.45 radians. Centre contacts stay straight; shoulders and ends create a broader, mirrored aiming fan. Speed is retained and swipe-induced flight curvature remains separate.
+
+Five parallel incoming shots are checked at every seat in every arena. A strike three-quarters across the standard bat now sends the ball roughly 39 degrees left/right; the middle stays on the bisector. The [centre preview](reviews/m09/paddle-aim/desktop-4-centre.png) and [left preview](reviews/m09/paddle-aim/desktop-4-left.png) show the actual forecast, not a drawn ideal path. Ten authored 2/4/6 desktop/phone poses have zero browser errors; [report](reviews/m09/paddle-aim/report.json).
+
+The tighter bow exposed an old half-bat sector cap, which left wall banks unreachable. All layouts now fit actual surface clearance across the full legal sector. Non-triangle bats can still catch wall-hugging balls, and triangle lanes retain their deliberate 0.7-unit passage. Width progression and the 50ms pointer target contract remain tested.
+
+Expected geometry-dependent test fixtures were updated: the moving-end fixture follows the actual rounded end, the wide/narrow-bat fixture uses the new arc, and curved supply targets are placed where a swipe is still useful (straighter 0.6-radian targets can now be aimed with contact position alone). Original reviewed M03/M04 logs remain untouched. The [new trace set](reviews/m09/paddle-aim/replays.json) records prior digests alongside current ones; 30/60/144-FPS replay equivalence, wall-only traces, contact order and zero collision caps remain checked.
+
 ## Remaining entries
 
-- Paddle front curvature and skill-based impact aiming.
 - Held-ball threat presentation.
 - Continuous transitions between title, live board and victory star.
 - Symmetrical level-specific arena variants.

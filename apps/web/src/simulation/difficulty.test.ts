@@ -117,7 +117,7 @@ it("a wide early bat catches a shot that passes the narrow level-100 bat", () =>
   const easy = createArena(4, undefined, 0, levelDifficulty(1).batScale);
   const hard = createArena(4, undefined, 0, levelDifficulty(100).batScale);
   const angle = fortress(0, easy).direction,
-    normal = unit(angle + 0.55);
+    normal = unit(angle + 0.75);
   const start = add(batCentre(0, angle, easy), scale(normal, ARENA.batRadius + 2));
   expect(sweepPaddle(start, scale(normal, -24), 0, angle, 0, 0.2, easy)).not.toBeNull();
   expect(sweepPaddle(start, scale(normal, -24), 0, angle, 0, 0.2, hard)).toBeNull();
