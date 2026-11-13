@@ -464,6 +464,29 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+13 November reading-time / isolated-input follow-up: the owner requests longer
+level messages at a reasonable reading speed and confirms the game must wait
+before moving. Budget all visible words at 180wpm, add 0.5s to notice the copy,
+reserve at least 2s fully raised, then add separate 0.4s rise / 0.45s sink and
+round upward to a quarter-second. A nine-word extra-ball/demotion-risk briefing
+lasts 4.5s; the first-level message lasts 5.25s. The session sets its authoritative
+pregame countdown at Start; balls stay ready and playing time stays zero until
+it ends. Pause freezes that countdown. The pure simulation's default 1.5s remains
+for standalone fixtures; browser sessions set their calculated duration explicitly.
+The owner also reported automated tests disturbing the system mouse. The native
+run was stopped. All browser specs now use an enforced document-local input hook
+for capture/fullscreen and synthetic movement through the real adapters; no native
+pointer lock or system mouse movement is needed. See `docs/BRIEFING_TIMING_REVIEW.md`
+and `docs/reviews/m09/briefing-timing/`. Implementation: `d72b3e7`.
+Validation: 463 unit tests / 75 files pass. All 65 root browser scenarios have
+passing coverage: 60/65 initially, then all five corrected test expectations pass
+on rerun. The final Pages selection passes 21/21. Changes account for countdown vs playing time, capture-origin resets,
+clamped flick setup and the longer real-time wait. The native run stopped at the
+owner's request is excluded from those totals. Scoped format/lint/type checks pass;
+global format checking reports the owner's concurrent TODO edits, left intact.
+Root/Pages builds pass with the existing ~970kB main-chunk advisory. Six authored
+late-hold renders and a phone clip report zero browser errors. M09 awaits review.
+
 13 November level-briefing amendment: the owner requests feedback beneath the
 reflected LEVEL string when a key challenge parameter changes, plus clear advance
 notice of whether losing the coming attempt causes demotion. World-space captions
@@ -923,4 +946,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

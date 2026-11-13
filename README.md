@@ -68,7 +68,9 @@ the same opening; Rematch starts a new seeded round.
 The original music theme returns regularly between variations, with quiet harmony
 and changing bar colours; [audition the latest score](docs/MOTIF_RETURN_REVIEW.md).
 The reflected level introduction announces challenge changes and whether a loss
-will retry the same level or cause demotion. The scene fills the viewport, with no visible HUD during active play.
+will retry the same level or cause demotion. Its reading time scales with the full
+message before any balls launch. Browser tests use document-local virtual input
+to keep automated capture and steering away from the system mouse. The scene fills the viewport, with no visible HUD during active play.
 Mobile uses a steeper portrait camera, a shorter steering drag and a bounded GPU
 budget with bloom and floor reflections. Interrupted audio offers **Enable sound**.
 See the [mobile feedback review](docs/MOBILE_FEEDBACK_REVIEW.md) for evidence and

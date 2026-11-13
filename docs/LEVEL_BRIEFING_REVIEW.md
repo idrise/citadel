@@ -1,3 +1,5 @@
+> Reading time is now calculated from the complete copy; see [the timing follow-up](BRIEFING_TIMING_REVIEW.md).
+
 # Challenge changes and demotion stakes
 
 The reflected world-space level announcement now carries concise captions below the level. They rise and sink with the existing introduction; the opening countdown and simulation never wait for text. The CITADEL title remains separate from the level briefing.

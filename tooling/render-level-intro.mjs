@@ -63,7 +63,17 @@ try {
       ["sinking", 1.3],
       ["playing", 1.51],
     ]) {
-      await page.evaluate((time) => window.introReview.advance(time), time);
+      await page.evaluate(
+        ({ time, label }) =>
+          window.introReview.advance(
+            label === "sinking"
+              ? window.introReview.duration - 0.2
+              : label === "playing"
+                ? window.introReview.duration + 0.01
+                : time,
+          ),
+        { time, label },
+      );
       await page.screenshot({ path: `${directory}/${label}-${count}.png` });
     }
   }

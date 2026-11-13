@@ -1,3 +1,4 @@
+import { levelBriefingTiming } from "../apps/web/src/session/briefing-timing";
 import { levelDifficulty } from "../apps/web/src/simulation/difficulty";
 import { createViewport } from "../apps/web/src/rendering/viewport";
 import { createMatch } from "../apps/web/src/simulation/match";
@@ -17,10 +18,16 @@ export function renderLevelIntroReview(
   container.style.cssText = `width:${width}px;height:${height}px;position:relative`;
   const state = createMatch(2026, count, 3, 2026, levelDifficulty(level)),
     viewport = createViewport(container, 0, state.arena);
+  const duration = levelBriefingTiming(
+    level,
+    lossLevel,
+    undefined,
+    demoted ? level + 1 : undefined,
+  ).duration;
   let previous = 0;
   const advance = (time: number) => {
-    state.countdown = Math.max(0, 1.5 - time);
-    state.phase = time < 1.5 ? "countdown" : "playing";
+    state.countdown = Math.max(0, duration - time);
+    state.phase = time < duration ? "countdown" : "playing";
     viewport.render(state, Math.max(0, time - previous), {
       humanSeat: 0,
       preview: false,
@@ -28,9 +35,10 @@ export function renderLevelIntroReview(
       reducedEffects: reduced,
       quality: "high",
       menu: {
-        mode: time < 1.5 ? "level" : "hidden",
+        mode: time < duration ? "level" : "hidden",
         level,
         lossLevel,
+        introDuration: duration,
         count,
         elapsed: 0,
         reduced,
@@ -40,5 +48,5 @@ export function renderLevelIntroReview(
     previous = time;
   };
   advance(0);
-  return { advance, dispose: () => viewport.dispose() };
+  return { duration, advance, dispose: () => viewport.dispose() };
 }

@@ -1,0 +1,54 @@
+{
+  "kind": "Authored actual countdown renders near the end of the fully raised reading hold",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 2,
+      "level": 1,
+      "loss": 1,
+      "duration": 5.25,
+      "capturedAt": 4.75
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "level": 100,
+      "loss": 99,
+      "duration": 5.25,
+      "capturedAt": 4.75
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "level": 8,
+      "loss": 7,
+      "duration": 4.5,
+      "capturedAt": 4
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "level": 1,
+      "loss": 1,
+      "duration": 5.25,
+      "capturedAt": 4.75
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "level": 100,
+      "loss": 99,
+      "duration": 5.25,
+      "capturedAt": 4.75
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "level": 8,
+      "loss": 7,
+      "duration": 4.5,
+      "capturedAt": 4
+    }
+  ],
+  "errors": []
+}
