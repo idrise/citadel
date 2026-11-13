@@ -57,8 +57,8 @@ export function createMusicDirector(humanSeat: number, seed: number) {
             cue(
               "eliminate",
               event.seat === humanSeat ? 38 : 81,
-              event.seat === humanSeat ? 0.5 : 0.22,
-              0.35,
+              event.seat === humanSeat ? 0.85 : 0.7,
+              0.6,
             ),
           );
         if (event.type === "collection")

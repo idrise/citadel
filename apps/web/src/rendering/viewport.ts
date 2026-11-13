@@ -1,3 +1,4 @@
+import { creditedPlayerKill } from "./elimination-burst";
 import { createTitleTransition } from "./title-transition";
 import {
   ACESFilmicToneMapping,
@@ -61,6 +62,7 @@ export function createViewport(
   const motion = createCameraMotion(camera);
   const title = createTitleTransition();
   let titleMoving = false;
+  let lastCelebrationEvent = -1;
   let aspect = 1;
   let menuLift = 0;
   const bounds = new Box3().setFromObject(arena.root);
@@ -92,6 +94,8 @@ export function createViewport(
     },
     transitionTitle(state: MatchState, seat: number, animate: boolean) {
       title.begin(state, seat, animate);
+      fireworks.reset();
+      lastCelebrationEvent = -1;
       if (!animate) arena.reset();
     },
     pointFromClient(x: number, y: number) {
@@ -185,6 +189,12 @@ export function createViewport(
       if (camera.view) {
         camera.view.offsetY += 0.28 * menuLift;
         camera.updateProjectionMatrix();
+      }
+      for (const event of state.events) {
+        if (event.id <= lastCelebrationEvent) continue;
+        lastCelebrationEvent = event.id;
+        if (creditedPlayerKill(event, options.humanSeat))
+          fireworks.celebrate(event.position, SEATS[options.humanSeat]!.colour);
       }
       fireworks.update(
         dt,

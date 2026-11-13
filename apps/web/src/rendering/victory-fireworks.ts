@@ -10,6 +10,7 @@ import {
   type Object3D,
 } from "three";
 import { createFeatureEdges } from "./feature-edges";
+import type { Vec2 } from "../simulation/vector";
 import type { EffectsQuality } from "./quality";
 
 const PARTS = 28;
@@ -57,11 +58,16 @@ export function createVictoryFireworks(root: Object3D) {
   let elapsed = 0,
     emitted = 0,
     wasActive = false;
-  const emit = (colour: number, quality: EffectsQuality) => {
+  let reward: { elapsed: number; bursts: number; colour: number; position: Vec2 } | null = null;
+  const emit = (colour: number, quality: EffectsQuality, local = false) => {
     const burst = bursts[emitted % bursts.length]!,
       angle = emitted * 2.39996;
     burst.age = 0;
-    burst.group.position.set(Math.sin(angle) * 6, 5.3 + (emitted % 3) * 0.8, Math.cos(angle) * 4);
+    burst.group.position.set(
+      local && reward ? reward.position.x * 0.55 + Math.sin(angle) * 1.1 : Math.sin(angle) * 6,
+      local ? 3.2 + (emitted % 2) * 0.45 : 5.3 + (emitted % 3) * 0.8,
+      local && reward ? reward.position.y * 0.55 + Math.cos(angle) * 1.1 : Math.cos(angle) * 4,
+    );
     const colourHex = emitted % 3 === 0 ? colour : emitted % 3 === 1 ? 0xffdf78 : 0xd9b4ff;
     burst.face.color.setHex(colourHex);
     burst.edges.material.uniforms.neonColour!.value.setHex(colourHex).multiplyScalar(2);
@@ -77,6 +83,19 @@ export function createVictoryFireworks(root: Object3D) {
     emitted++;
   };
   return {
+    reset() {
+      reward = null;
+      elapsed = 0;
+      emitted = 0;
+      wasActive = false;
+      for (const p of bursts) {
+        p.age = 10;
+        p.group.visible = false;
+      }
+    },
+    celebrate(position: Vec2, colour: number) {
+      reward = { elapsed: 0, bursts: 0, colour, position: { ...position } };
+    },
     update(
       dt: number,
       active: boolean,
@@ -84,19 +103,32 @@ export function createVictoryFireworks(root: Object3D) {
       colour: number,
       quality: EffectsQuality = "high",
     ) {
-      if (!active) {
+      if (!active && !reward) {
         elapsed = 0;
         emitted = 0;
         wasActive = false;
         for (const p of bursts) p.group.visible = false;
         return;
       }
-      if (!wasActive) {
+      if (active && !wasActive) {
+        reward = null;
+        elapsed = 0;
+        emitted = 0;
         for (const p of bursts) p.age = 10;
         wasActive = true;
       }
-      elapsed += Math.max(0, dt);
-      if (!reduced && emitted < 12 && elapsed >= 0.2 + emitted * 0.62) emit(colour, quality);
+      if (active) {
+        elapsed += Math.max(0, dt);
+        if (!reduced && emitted < 12 && elapsed >= 0.2 + emitted * 0.62) emit(colour, quality);
+      } else if (reward) {
+        wasActive = false;
+        reward.elapsed += Math.max(0, dt);
+        if (!reduced && reward.bursts < 3 && reward.elapsed >= reward.bursts * 0.22) {
+          emit(reward.colour, quality, true);
+          reward.bursts++;
+        }
+        if (reward.elapsed >= 2.3) reward = null;
+      }
       for (const burst of bursts) {
         burst.age += Math.max(0, dt);
         burst.group.visible = !reduced && burst.age < 1.8;

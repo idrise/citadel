@@ -1,8 +1,10 @@
+import { createExplosion } from "./tone-explosion";
 import * as Tone from "tone";
 import type { MusicCue } from "./music-types";
 const hz = (note: number) => 440 * 2 ** ((note - 69) / 12);
 /** Short, bright event gestures stay on the live bus, including a build's breath. */
 export function createFeedback(context: Tone.BaseContext, output: Tone.InputNode) {
+  const explosion = createExplosion(context, output);
   const synth = new Tone.PolySynth({
     context,
     voice: Tone.FMSynth,
@@ -40,6 +42,10 @@ export function createFeedback(context: Tone.BaseContext, output: Tone.InputNode
   }).connect(crackFilter);
   return {
     play(cue: MusicCue, time: number): boolean {
+      if (cue.voice === "eliminate") {
+        explosion.play(time, cue.velocity, cue.note < 60);
+        return true;
+      }
       if (cue.voice === "breach") {
         fracture.triggerAttackRelease(hz(cue.note), cue.duration, time, cue.velocity);
         crack.triggerAttackRelease(0.025, time, cue.velocity);
@@ -63,6 +69,7 @@ export function createFeedback(context: Tone.BaseContext, output: Tone.InputNode
       return true;
     },
     dispose() {
+      explosion.dispose();
       synth.dispose();
       fracture.dispose();
       crack.dispose();

@@ -464,6 +464,22 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+13 November pre-signoff TODO tweaks: the owner authorises the five newly added
+TODO entries, with incremental local review as each lands: elimination spectacle
+and synthesized sound / player-credit fireworks; a more strongly curved paddle
+front for skill-based impact aiming; an obvious held-ball threat effect; continuous
+board transitions across title, round and victory states; and level-specific arena
+shape variations. These are amendments to the current local M09 review, not approval
+of M10 or remote publication. Keep each item separately reviewable and record its
+checks and rendered evidence. The owner selected symmetrical shape variations.
+First entry is implemented locally: instanced elimination destruction, a generated
+bass/noise explosion, and three short pooled fireworks for actual player-credited
+kills. `docs/PRESIGNOFF_TWEAKS_REVIEW.md` records the review. Checks: clean scoped
+format/lint/types, 467 unit tests / 77 files, 9/9 root browser loss/audio/scene checks,
+root production build and ten desktop/phone renders. Both synthesized auditions
+have nonzero output, peaks below 0.32 and zero browser errors. Existing large-chunk
+advisory and physical-device review remain. Remaining four entries are in progress.
+
 13 November reading-time / isolated-input follow-up: the owner requests longer
 level messages at a reasonable reading speed and confirms the game must wait
 before moving. Budget all visible words at 180wpm, add 0.5s to notice the copy,

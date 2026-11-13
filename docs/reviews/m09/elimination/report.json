@@ -1,0 +1,130 @@
+{
+  "kind": "Authored real last-container damage and event attribution, procedural audio",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 2,
+      "playerKill": true,
+      "reduced": false,
+      "victim": 1,
+      "attacker": 0,
+      "time": 0.35,
+      "phase": "finished",
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "playerKill": true,
+      "reduced": false,
+      "victim": 1,
+      "attacker": 0,
+      "time": 0.35,
+      "phase": "playing",
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "playerKill": true,
+      "reduced": false,
+      "victim": 1,
+      "attacker": 0,
+      "time": 0.35,
+      "phase": "playing",
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "playerKill": false,
+      "reduced": false,
+      "victim": 1,
+      "attacker": 2,
+      "time": 0.35,
+      "phase": "playing",
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "playerKill": true,
+      "reduced": true,
+      "victim": 1,
+      "attacker": 0,
+      "time": 0.35,
+      "phase": "playing",
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "playerKill": true,
+      "reduced": false,
+      "victim": 1,
+      "attacker": 0,
+      "time": 0.35,
+      "phase": "finished",
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "playerKill": true,
+      "reduced": false,
+      "victim": 1,
+      "attacker": 0,
+      "time": 0.35,
+      "phase": "playing",
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "playerKill": true,
+      "reduced": false,
+      "victim": 1,
+      "attacker": 0,
+      "time": 0.35,
+      "phase": "playing",
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "playerKill": false,
+      "reduced": false,
+      "victim": 1,
+      "attacker": 2,
+      "time": 0.35,
+      "phase": "playing",
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "playerKill": true,
+      "reduced": true,
+      "victim": 1,
+      "attacker": 0,
+      "time": 0.35,
+      "phase": "playing",
+      "collisionCaps": 0
+    }
+  ],
+  "audio": [
+    {
+      "own": false,
+      "peak": 0.3168703615665436,
+      "rms": 0.02577277326740369,
+      "channels": 2
+    },
+    {
+      "own": true,
+      "peak": 0.28620797395706177,
+      "rms": 0.025774150463654062,
+      "channels": 2
+    }
+  ],
+  "errors": []
+}
