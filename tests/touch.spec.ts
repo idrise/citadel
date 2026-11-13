@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 test.use({
   hasTouch: true,
@@ -67,7 +67,9 @@ test("mobile gameplay capture with real-time touch movement", async ({ page, con
   await page.goto("./");
   await page.getByRole("button", { name: "Start", exact: true }).tap();
   const client = await context.newCDPSession(page);
-  await page.waitForTimeout(1800);
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing", {
+    timeout: 10000,
+  });
   for (const [from, to] of [
     [90, 270],
     [270, 100],

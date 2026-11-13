@@ -1,3 +1,4 @@
+import { levelBriefingTiming } from "./briefing-timing";
 import { levelDifficulty } from "../simulation/difficulty";
 import { roundSeed } from "./round-seed";
 import { createProgressRecorder, type Demotion, type LevelResult } from "./progression";
@@ -22,6 +23,7 @@ export interface SessionSnapshot {
   humanSeat: number;
   level: number;
   lossLevel: number;
+  introDuration: number;
   previousLevel: number | undefined;
   demotion: Demotion | null;
   paused: boolean;
@@ -70,6 +72,7 @@ export function createSession(
   let pendingPreviousLevel = initialPreviousLevel;
   let previousLevel = initialPreviousLevel;
   let lossLevel = initialLossLevel;
+  let introDuration = 1.5;
   let endingTime = 0;
   let menuSuppressed = false;
   let notice = "Defend your three containers. Last fortress standing wins.";
@@ -88,6 +91,7 @@ export function createSession(
       level,
       lossLevel,
       previousLevel,
+      introDuration,
       demotion,
       paused,
       started,
@@ -231,6 +235,7 @@ export function createSession(
         level,
         lossLevel,
         previousLevel,
+        introDuration,
         demotion,
         count,
         elapsed: endingTime,
@@ -253,6 +258,13 @@ export function createSession(
     initialSettings ??= { ...settings };
     lossLevel = pendingLossLevel;
     previousLevel = pendingPreviousLevel;
+    introDuration = levelBriefingTiming(
+      level,
+      lossLevel,
+      previousLevel,
+      demotion?.to === level && demotion.count === count ? demotion.from : undefined,
+    ).duration;
+    state = { ...state, countdown: introDuration };
     started = true;
     menuSuppressed = false;
     music.unlock();

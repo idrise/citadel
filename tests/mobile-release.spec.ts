@@ -1,5 +1,5 @@
-import { expect, test } from "@playwright/test";
-import { choosePlayers, openSettings } from "./helpers";
+import { expect, test } from "./fixtures";
+import { finishIntroduction, choosePlayers, openSettings } from "./helpers";
 
 test.use({
   hasTouch: true,
@@ -50,7 +50,6 @@ test("phone menus stay readable, finger-sized and reachable through rotation", a
 for (const count of [2, 3, 4, 5, 6]) {
   test(`mobile ${count}-seat match completes and rematches after rotation and interruption`, async ({
     page,
-    context,
   }, testInfo) => {
     test.setTimeout(240000);
     const errors: string[] = [];
@@ -69,21 +68,20 @@ for (const count of [2, 3, 4, 5, 6]) {
     if (await page.getByRole("button", { name: "Resume", exact: true }).isVisible())
       await page.getByRole("button", { name: "Resume", exact: true }).tap();
     await page.getByRole("button", { name: "Start", exact: true }).tap();
-    await page.clock.runFor(1900);
+    await finishIntroduction(page);
     await expect(page.getByLabel("Ball 0 phase", { exact: true })).toHaveText("ready");
-    const client = await context.newCDPSession(page);
-    await client.send("Input.dispatchTouchEvent", {
-      type: "touchStart",
-      touchPoints: [{ x: 100, y: 700 }],
+    await page.evaluate(() => {
+      const input = window.__citadelTestInput;
+      input.touch("pointerdown", 100, 700);
+      input.touch("pointermove", 220, 700);
+      input.touch("pointerup", 220, 700);
     });
-    await client.send("Input.dispatchTouchEvent", {
-      type: "touchMove",
-      touchPoints: [{ x: 220, y: 700 }],
-    });
-    await client.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
     await page.clock.runFor(80);
     await expect(page.getByLabel("Ball 0 phase", { exact: true })).toHaveText("ready");
-    await page.touchscreen.tap(210, 700);
+    await page.evaluate(() => {
+      window.__citadelTestInput.touch("pointerdown", 210, 700);
+      window.__citadelTestInput.touch("pointerup", 210, 700);
+    });
     await page.clock.runFor(100);
     await expect(page.getByLabel("Ball 0 phase", { exact: true })).toHaveText("active");
     await page.setViewportSize({ width: 844, height: 390 });

@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
-import { expect, test } from "@playwright/test";
-import { openGame, play, pause, openSettings, choosePlayers } from "./helpers";
+import { expect, test } from "./fixtures";
+import { finishIntroduction, openGame, play, pause, openSettings, choosePlayers } from "./helpers";
 
 test("fresh six-seat desktop round exports an honest local result and resets on rematch", async ({
   page,
@@ -21,7 +21,7 @@ test("fresh six-seat desktop round exports an honest local result and resets on 
   await playButton.focus();
   await page.keyboard.press("Enter");
   await expect.poll(() => page.evaluate(() => Boolean(document.pointerLockElement))).toBe(true);
-  await page.clock.runFor(1800);
+  await finishIntroduction(page);
   await page.keyboard.down("KeyA");
   await page.clock.runFor(100);
   await page.keyboard.up("KeyA");
@@ -105,7 +105,7 @@ test("solo preferences survive refresh, and every quality preset remains playabl
   await page.getByLabel("Effects quality", { exact: true }).selectOption("low");
   await openSettings(page);
   await play(page);
-  await page.clock.runFor(1800);
+  await finishIntroduction(page);
   for (const quality of ["low", "medium", "high"]) {
     await pause(page);
     await openSettings(page);
@@ -135,7 +135,7 @@ test("unavailable preference storage never prevents starting a local game", asyn
   page.on("pageerror", (error) => errors.push(error.message));
   await openGame(page);
   await play(page);
-  await page.clock.runFor(1800);
+  await finishIntroduction(page);
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
   expect(errors).toEqual([]);
 });

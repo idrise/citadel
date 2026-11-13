@@ -1,4 +1,5 @@
-import { levelHighlights, lossMessage } from "../session/level-briefing";
+import { BRIEFING_RISE_SECONDS, BRIEFING_SINK_SECONDS } from "../session/briefing-timing";
+import { levelBriefingLines } from "../session/level-briefing";
 import { Box3, Group, Mesh, ShaderMaterial, type Object3D, Vector3 } from "three";
 import { fortress, type ArenaGeometry } from "../simulation/arena";
 import type { Demotion } from "../session/progression";
@@ -10,11 +11,14 @@ const smooth = (t: number) => {
   return v * v * (3 - 2 * v);
 };
 /** Uses the authoritative countdown: pause freezes it, and play never waits for an animation. */
-export function levelIntroRise(countdown: number, reduced: boolean) {
+export function levelIntroRise(countdown: number, reduced: boolean, duration = 1.5) {
   if (countdown <= 0) return 0;
   if (reduced) return 1;
-  const elapsed = Math.max(0, 1.5 - countdown);
-  return Math.min(smooth(elapsed / 0.4), smooth(countdown / 0.45));
+  const elapsed = Math.max(0, duration - countdown);
+  return Math.min(
+    smooth(elapsed / BRIEFING_RISE_SECONDS),
+    smooth(countdown / BRIEFING_SINK_SECONDS),
+  );
 }
 
 /** Solid world-space lettering participates in the arena's existing planar reflections. */
@@ -41,6 +45,7 @@ export function createLevelIntro(parent: Object3D) {
       tilt = 0,
       lossLevel?: number,
       previousLevel?: number,
+      introDuration = 1.5,
     ) {
       root.visible = value !== null && countdown > 0 && rise !== 0;
       if (!root.visible || value === null) return;
@@ -59,21 +64,12 @@ export function createLevelIntro(parent: Object3D) {
         body.add(text);
         textWidth = new Box3().setFromObject(text).getSize(new Vector3()).x;
         if (typeof value === "number") {
-          const lines = [
-            ...(demoted
-              ? [
-                  {
-                    text: `DEMOTED FROM ${String(demotion.from).padStart(2, "0")}`,
-                    colour: 0xffab83,
-                  },
-                ]
-              : []),
-            ...levelHighlights(value, previousLevel).map((text) => ({ text, colour: 0x9ceaff })),
-            {
-              text: lossMessage(value, lossLevel),
-              colour: (lossLevel ?? value) < value ? 0xff8d71 : 0xb3c5dc,
-            },
-          ];
+          const lines = levelBriefingLines(
+            value,
+            lossLevel,
+            previousLevel,
+            demoted ? demotion.from : undefined,
+          );
           const fitted = compact
             ? lines.flatMap((line) => {
                 if (line.text.startsWith("LOSS "))
@@ -125,7 +121,9 @@ export function createLevelIntro(parent: Object3D) {
       const height = (bodyHeight * Math.cos(tilt) + bodyDepth * Math.abs(Math.sin(tilt))) * size;
       root.position.set(
         0,
-        height / 2 + 0.07 - (1 - (rise ?? levelIntroRise(countdown, reduced))) * (height + 0.18),
+        height / 2 +
+          0.07 -
+          (1 - (rise ?? levelIntroRise(countdown, reduced, introDuration))) * (height + 0.18),
         0,
       );
       root.updateMatrixWorld(true);

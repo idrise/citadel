@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import { openGame, play, pause } from "./helpers";
 
 test("production game fills the viewport and refreshes under the Pages path", async ({

@@ -42,6 +42,8 @@ export function AccessibleStatus({
       <output aria-label="Round level">{snapshot.level}</output>
       {snapshot.started && snapshot.state.phase === "countdown" && (
         <>
+          <output aria-label="Introduction remaining">{state.countdown.toFixed(3)}</output>
+          <output aria-label="Introduction duration">{snapshot.introDuration.toFixed(2)}</output>
           <output aria-label="Level introduction" aria-live="polite">
             Level {snapshot.level}
           </output>

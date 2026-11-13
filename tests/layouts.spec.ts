@@ -1,5 +1,13 @@
-import { expect, test } from "@playwright/test";
-import { openGame, play, pause, openSettings, choosePlayers } from "./helpers";
+import { expect, test } from "./fixtures";
+import {
+  moveMouse,
+  finishIntroduction,
+  openGame,
+  play,
+  pause,
+  openSettings,
+  choosePlayers,
+} from "./helpers";
 
 for (const [count, rounds] of [
   [2, 3],
@@ -30,7 +38,7 @@ for (const [count, rounds] of [
       await openSettings(page);
       await expect(page.getByLabel("Survivors", { exact: true })).toHaveText(String(count));
       await play(page);
-      await page.clock.runFor(1800);
+      await finishIntroduction(page);
       const angle = Number(await page.getByLabel("Bat angle", { exact: true }).textContent());
       await page.keyboard.down("KeyD");
       await page.clock.runFor(100);
@@ -84,7 +92,7 @@ test("all six human fortresses support captured input, adaptive levels and shrin
     await expect(page.getByLabel("Round level", { exact: true })).toHaveText("1");
     await page.getByLabel("Your fortress", { exact: true }).selectOption(String(seat));
     await play(page);
-    await page.clock.runFor(1800);
+    await finishIntroduction(page);
     await pause(page);
     await page.getByRole("button", { name: "Restart", exact: true }).click();
   }
@@ -109,15 +117,15 @@ test("two-player captured mouse reaches both end walls without the old travel ga
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
   await openSettings(page);
   await play(page);
-  await page.clock.runFor(1800);
-  await page.mouse.move(1500, 300);
+  await finishIntroduction(page);
+  await moveMouse(page, 1500, 300);
   await page.clock.runFor(600);
   expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeCloseTo(
     Number(await page.getByLabel("Bat maximum angle", { exact: true }).textContent()),
     1,
   );
   await page.screenshot({ path: testInfo.outputPath("reach-right.png") });
-  await page.mouse.move(-500, 300);
+  await moveMouse(page, -500, 300);
   await page.clock.runFor(1000);
   expect(Number(await page.getByLabel("Bat angle", { exact: true }).textContent())).toBeCloseTo(
     Number(await page.getByLabel("Bat minimum angle", { exact: true }).textContent()),

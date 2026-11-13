@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
-import { expect, test } from "@playwright/test";
-import { openGame, play, pause, saveLevel } from "./helpers";
+import { expect, test } from "./fixtures";
+import { finishIntroduction, openGame, play, pause, saveLevel } from "./helpers";
 
 for (const [level, balls, pickups, speed, bat] of [
   [1, 1, 0, "14.00", "1.35"],
@@ -41,6 +41,7 @@ for (const [level, balls, pickups, speed, bat] of [
         : `LOSS RETRIES LEVEL ${String(level).padStart(2, "0")}`,
     );
     await page.screenshot({ path: testInfo.outputPath(`level-${level}.png`) });
+    await finishIntroduction(page);
     await page.clock.runFor(5200);
     if (level <= 5)
       await expect(page.getByLabel("Supply containers", { exact: true })).toHaveText(

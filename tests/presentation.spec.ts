@@ -1,5 +1,5 @@
-import { expect, test } from "@playwright/test";
-import { openGame, play, pause, openSettings } from "./helpers";
+import { expect, test } from "./fixtures";
+import { moveMouse, finishIntroduction, openGame, play, pause, openSettings } from "./helpers";
 
 test("perspective walls and reflected bloom render, with a reduced-effects path", async ({
   page,
@@ -12,7 +12,7 @@ test("perspective walls and reflected bloom render, with a reduced-effects path"
   });
   await openGame(page, false);
   await play(page);
-  await page.clock.runFor(1800);
+  await finishIntroduction(page);
   await page.screenshot({ path: testInfo.outputPath("perspective-neon.png") });
   await pause(page);
   await openSettings(page);
@@ -32,8 +32,8 @@ test("live perspective camera cannot steer a stationary captured mouse", async (
   await page.setViewportSize({ width: 800, height: 600 });
   await openGame(page, false);
   await play(page);
-  await page.clock.runFor(1800);
-  await page.mouse.move(660, 360);
+  await finishIntroduction(page);
+  await moveMouse(page, 660, 360);
   await page.clock.runFor(400);
   const angle = await page.getByLabel("Bat angle", { exact: true }).textContent();
   await page.clock.runFor(2500);

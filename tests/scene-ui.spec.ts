@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import { choosePlayers, openGame, openSettings, play, pause } from "./helpers";
 
 test("the procedural title uses bounded 3D count controls and keyboard Start, with settings confined to pause", async ({

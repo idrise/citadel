@@ -141,6 +141,7 @@ export function createArenaView(
         options.portrait ? -0.95 : 0,
         options.menu?.lossLevel,
         options.menu?.previousLevel,
+        options.menu?.introDuration,
       );
       supplies.update(state, dt, options.reducedEffects);
       for (const group of [

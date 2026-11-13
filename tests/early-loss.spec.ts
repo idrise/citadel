@@ -1,5 +1,5 @@
-import { expect, test } from "@playwright/test";
-import { choosePlayers, openGame, openSettings, play } from "./helpers";
+import { expect, test } from "./fixtures";
+import { finishIntroduction, choosePlayers, openGame, openSettings, play } from "./helpers";
 for (const action of ["Back", "Retry"] as const)
   test(`an eliminated player can choose ${action} on the same canvas`, async ({
     page,
@@ -77,7 +77,7 @@ test.describe("touch scene retry", () => {
       if (await page.getByRole("button", { name: "Resume", exact: true }).isVisible())
         await page.getByRole("button", { name: "Resume", exact: true }).tap();
       await page.getByRole("button", { name: "Start", exact: true }).tap();
-      await page.clock.runFor(1800);
+      await finishIntroduction(page);
       const client = await context.newCDPSession(page);
       await client.send("Input.dispatchTouchEvent", {
         type: "touchStart",

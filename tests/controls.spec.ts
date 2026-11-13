@@ -1,5 +1,5 @@
-import { expect, test } from "@playwright/test";
-import { openGame, play, pause, openSettings } from "./helpers";
+import { expect, test } from "./fixtures";
+import { moveMouse, finishIntroduction, openGame, play, pause, openSettings } from "./helpers";
 
 async function settings(page: import("@playwright/test").Page) {
   await openSettings(page);
@@ -9,10 +9,10 @@ test("a mouse flick reaches the requested bat position within 50ms", async ({ pa
   await page.setViewportSize({ width: 800, height: 600 });
   await openGame(page);
   await play(page);
-  await page.mouse.move(0, 300);
+  await moveMouse(page, -100, 300);
   await page.clock.runFor(150);
   const before = Number(await page.getByLabel("Bat angle", { exact: true }).textContent());
-  await page.mouse.move(100, 300);
+  await moveMouse(page, 0, 300);
   await page.clock.runFor(50);
   // Pause reports the actual 50ms state; the normal accessible status is sampled every 80ms.
   await pause(page);
@@ -40,7 +40,7 @@ test("aid modes and sensitivity survive restart and every human fortress", async
     await expect(page.getByRole("checkbox", { name: "Reduced effects" })).toBeChecked();
     await openSettings(page);
     await play(page);
-    await page.mouse.move(790, 300);
+    await moveMouse(page, 790, 300);
     await page.clock.runFor(300);
     const angle = Number(await page.getByLabel("Bat angle", { exact: true }).textContent());
     expect(angle).toBeCloseTo(
@@ -64,8 +64,8 @@ test("restart repeats the same opening and resize does not steer captured input"
   await openGame(page);
   const opening = await page.locator(".diagnostics").textContent();
   await play(page);
-  await page.clock.runFor(1800);
-  await page.mouse.move(430, 300);
+  await finishIntroduction(page);
+  await moveMouse(page, 430, 300);
   await page.clock.runFor(300);
   const angle = await page.getByLabel("Bat angle", { exact: true }).textContent();
   await page.setViewportSize({ width: 1000, height: 650 });

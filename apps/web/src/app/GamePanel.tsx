@@ -51,6 +51,7 @@ export function GamePanel({
     humanSeat,
     level,
     lossLevel,
+    introDuration: 1.5,
     previousLevel,
     demotion,
     paused: true,

@@ -1,5 +1,12 @@
-import { expect, test } from "@playwright/test";
-import { choosePlayers, openGame, openSettings, play, saveLevel } from "./helpers";
+import { expect, test } from "./fixtures";
+import {
+  finishIntroduction,
+  choosePlayers,
+  openGame,
+  openSettings,
+  play,
+  saveLevel,
+} from "./helpers";
 import { readFile } from "node:fs/promises";
 
 test("player-count previews morph on the same canvas with fixed menu controls and rapid retargeting", async ({
@@ -50,7 +57,7 @@ test("clamping a selected fortress during the preview keeps the menu fixed and S
   await page.getByLabel("Your fortress", { exact: true }).selectOption("5");
   await choosePlayers(page, 2);
   await play(page);
-  await page.clock.runFor(1800);
+  await finishIntroduction(page);
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
   await expect(page.getByLabel("Arena preview", { exact: true })).toHaveText("settled");
   await expect(page.getByLabel("Survivors", { exact: true })).toHaveText("2");
@@ -73,7 +80,9 @@ test("ordinary restarted attempts keep their opening seed but vary pickup seeds 
   }[] = [];
   for (let attempt = 0; attempt < 2; attempt++) {
     await play(page);
-    await page.clock.runFor(6100);
+    await finishIntroduction(page);
+    // Inspect the first drop before it lands and can be collected.
+    await page.clock.runFor(4200);
     await page.keyboard.press("Escape");
     await openSettings(page);
     const download = page.waitForEvent("download");
@@ -97,7 +106,7 @@ test("choosing the current roster keeps Settings usable without resetting the ro
   await page.getByLabel("Players", { exact: true }).selectOption("4");
   await expect(page.getByRole("button", { name: "Resume", exact: true })).toBeVisible();
   await play(page);
-  await page.clock.runFor(1800);
+  await finishIntroduction(page);
   await page.keyboard.press("Escape");
   await openSettings(page);
   const before = await page.locator(".diagnostics").textContent();

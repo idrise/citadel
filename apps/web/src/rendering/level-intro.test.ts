@@ -137,3 +137,14 @@ it("wraps portrait loss stakes into larger short lines instead of shrinking the 
   expect(intro.root.getObjectByName("neon-text:LOSS DROPS TO")).toBeUndefined();
   disposeScene(scene);
 });
+
+it("keeps the sign fully raised for the calculated reading window and only sinks at the end", () => {
+  const duration = 4.5;
+  expect(levelIntroRise(duration, false, duration)).toBe(0);
+  expect(levelIntroRise(duration - 0.4, false, duration)).toBe(1);
+  expect(levelIntroRise(2, false, duration)).toBe(1);
+  expect(levelIntroRise(0.45, false, duration)).toBe(1);
+  expect(levelIntroRise(0.2, false, duration)).toBeLessThan(1);
+  expect(levelIntroRise(0, false, duration)).toBe(0);
+  expect(levelIntroRise(duration, true, duration)).toBe(1);
+});

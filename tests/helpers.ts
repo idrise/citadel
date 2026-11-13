@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type Page } from "./fixtures";
 
 export async function openGame(page: Page, reduced = true, seed = 2026) {
   await page.clock.install();
@@ -64,4 +64,20 @@ export async function saveLevel(page: Page, level: number, count = 4) {
     },
     { level, count },
   );
+}
+
+/** Advance the text-dependent intro and the existing quarter-second serve arming window. */
+export async function finishIntroduction(page: Page) {
+  if ((await page.getByLabel("Round phase", { exact: true }).textContent()) === "countdown") {
+    const remaining = Number(
+      await page.getByLabel("Introduction remaining", { exact: true }).textContent(),
+    );
+    await page.clock.runFor(Math.ceil(remaining * 1000) + 350);
+  }
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
+}
+
+/** Dispatch relative movement directly to the normal input adapter without any OS mouse activity. */
+export async function moveMouse(page: Page, x: number, y: number) {
+  await page.evaluate(({ x, y }) => window.__citadelTestInput.move(x, y), { x, y });
 }

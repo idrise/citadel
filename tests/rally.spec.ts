@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import { choosePlayers, openGame, openSettings, play, pause } from "./helpers";
 test("natural rallies accelerate, freeze while paused and reset after a real score", async ({
   page,

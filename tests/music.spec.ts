@@ -1,5 +1,5 @@
 import { saveLevel, choosePlayers, openSettings, play } from "./helpers";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./fixtures";
 
 test.use({ viewport: { width: 480, height: 360 } });
 
@@ -113,7 +113,9 @@ test("unavailable audio leaves captured gameplay playable", async ({ page }) => 
   await play(page);
   await expect(page.getByLabel("Music status", { exact: true })).toHaveText("unavailable");
   await expect.poll(() => page.evaluate(() => Boolean(document.pointerLockElement))).toBe(true);
-  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
+  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing", {
+    timeout: 10000,
+  });
   await page.keyboard.press("Escape");
   await expect(page.getByRole("heading", { name: "Paused", exact: true })).toBeVisible();
 });

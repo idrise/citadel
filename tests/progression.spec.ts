@@ -1,5 +1,5 @@
-import { expect, test } from "@playwright/test";
-import { choosePlayers, openGame, openSettings, pause, play } from "./helpers";
+import { expect, test } from "./fixtures";
+import { finishIntroduction, choosePlayers, openGame, openSettings, pause, play } from "./helpers";
 
 const key = "citadel.progress.v1";
 test("introduces the level before play, pauses the introduction and never rates an abandoned round", async ({
@@ -21,7 +21,7 @@ test("introduces the level before play, pauses the introduction and never rates 
   await page.clock.runFor(3000);
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("countdown");
   await page.getByRole("button", { name: "Resume", exact: true }).click();
-  await page.clock.runFor(1200);
+  await finishIntroduction(page);
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
   await expect(page.getByLabel("Level introduction", { exact: true })).toHaveCount(0);
   for (const seat of ["Coral", "Amber", "Violet", "Rose"])
@@ -65,7 +65,7 @@ test("a first win advances 1 to 2 and one click starts the next round without re
   await expect(page.locator("canvas")).toHaveAttribute("data-continued", "same");
   await page.screenshot({ path: testInfo.outputPath("level-2-start.png") });
   await expect.poll(() => page.evaluate(() => Boolean(document.pointerLockElement))).toBe(true);
-  await page.clock.runFor(1600);
+  await finishIntroduction(page);
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(progress.level));
   await page.reload();
@@ -155,7 +155,7 @@ test("a loss retries the played level directly and preserves it after reload", a
   await expect(page.getByLabel("Level introduction", { exact: true })).toHaveText("Level 2");
   await expect(page.getByRole("button", { name: "Start", exact: true })).toBeHidden();
   await page.screenshot({ path: testInfo.outputPath("retry-level-2.png") });
-  await page.clock.runFor(1600);
+  await finishIntroduction(page);
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
   await page.reload();
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText("2");
