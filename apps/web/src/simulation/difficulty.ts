@@ -1,8 +1,10 @@
+import { levelArenaShape, type ArenaShape } from "./arena-variant";
 import { clamp } from "./vector";
 
 /** Frozen for a whole attempt; promotion/demotion only changes the following round. */
 export interface RoundDifficulty {
   readonly level: number;
+  readonly arenaShape: ArenaShape;
   readonly maxBalls: number;
   readonly ballInterval: number;
   readonly ballSpeed: number;
@@ -17,6 +19,7 @@ export function levelDifficulty(requested: number): RoundDifficulty {
   const maxBalls = 1 + Math.floor(((level - 1) * 15) / 99);
   return {
     level,
+    arenaShape: levelArenaShape(level),
     maxBalls,
     ballInterval: Math.min(12, 30 / Math.max(1, maxBalls - 1)),
     ballSpeed: 14 + 20 * t,

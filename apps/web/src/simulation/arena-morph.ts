@@ -14,7 +14,7 @@ export function beginArenaMorph(state: MatchState): void {
     return;
   const count = survivors.length as PlayerCount;
   const batScale = (state.arena.batHalfAngle ?? ARENA.batHalfAngle) / ARENA.batHalfAngle;
-  const template = createArena(count, survivors, 0, batScale);
+  const template = createArena(count, survivors, 0, batScale, state.arena.variant);
   let alignment = 0,
     turn = 0;
   for (const id of survivors) {
@@ -25,7 +25,13 @@ export function beginArenaMorph(state: MatchState): void {
   }
   // Least-squares rotation shares the adjustment across survivors, rather than pinning
   // the first survivor and making the opposite walls sweep the remaining full angle.
-  const target = createArena(count, survivors, Math.atan2(turn, alignment), batScale);
+  const target = createArena(
+    count,
+    survivors,
+    Math.atan2(turn, alignment),
+    batScale,
+    state.arena.variant,
+  );
   // Retain eliminated seat metadata for event consumers/camera; those seats never defend again.
   target.fortresses.push(...state.arena.fortresses.filter((seat) => !survivors.includes(seat.id)));
   const travel = Math.max(

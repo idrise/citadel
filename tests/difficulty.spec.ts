@@ -32,8 +32,10 @@ for (const [level, balls, pickups, speed, bat] of [
           : level === 100
             ? "EXTRA BALL. ELITE BOTS"
             : level === 50
-              ? "MORE PICKUPS"
-              : "SPEED UP",
+              ? "MORE PICKUPS. FACETED ARENA"
+              : level === 10
+                ? "WIDE ARENA"
+                : "SPEED UP",
     );
     await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
       level === 1

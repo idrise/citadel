@@ -464,6 +464,15 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+13 November symmetric arena checkpoint: classic / wide / faceted families change
+in ten-level bands, retaining equal geometry for each seat. Shared convex wall
+outlines feed collision, bots, placements, rendering and camera. Families remain
+frozen through elimination and retry, and shape changes appear in the reading
+briefing before play. Level 100 retains classic geometry and sixteen balls. Checks:
+478 unit tests / 81 files, eight root browser difficulty/reading cases, eighteen
+2/4/6 desktop/phone renders, scoped check and root build. Zero rendered errors or
+seeded variant collision caps. Review evidence is in the pre-signoff tweak review.
+
 13 November board continuity checkpoint: title, Back, Retry and Next Level now
 morph from the actual displayed board, including a partially or fully revealed
 victory star and its central paddle, containers, mark and light. Revived actors

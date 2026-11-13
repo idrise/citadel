@@ -39,7 +39,7 @@ export function createMatch(
 ): MatchState {
   if (!Number.isInteger(initialPieces) || initialPieces < 1 || initialPieces > 12)
     throw new Error("Invalid initial containers");
-  const arena = createArena(count, undefined, 0, difficulty?.batScale ?? 1);
+  const arena = createArena(count, undefined, 0, difficulty?.batScale ?? 1, difficulty?.arenaShape);
   const state: MatchState = {
     ...(difficulty ? { difficulty: Object.freeze({ ...difficulty }) } : {}),
     arena,

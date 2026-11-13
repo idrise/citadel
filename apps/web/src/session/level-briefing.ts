@@ -13,6 +13,8 @@ export function levelHighlights(requested: number, previousLevel = requested - 1
   if (current.pickupCount < previous.pickupCount) messages.push("FEWER PICKUPS");
   if (current.pickupCount > previous.pickupCount)
     messages.push(previous.pickupCount === 0 ? "PICKUPS INTRODUCED" : "MORE PICKUPS");
+  if (current.arenaShape !== previous.arenaShape)
+    messages.push(`${current.arenaShape.toUpperCase()} ARENA`);
   if (current.level === 100 && previous.level < 100) messages.push("ELITE BOTS");
   else {
     // Call out cumulative changes that are large enough to notice, rather than tiny per-level steps.

@@ -40,9 +40,20 @@ A presentation-only ordered outline matcher replaces combinatorial corner select
 
 [Star](reviews/m09/board-transition/desktop-6-0.png), [returning board](reviews/m09/board-transition/desktop-6-0.7.png), [next arena](reviews/m09/board-transition/desktop-6-1.4.png) and [phone return](reviews/m09/board-transition/phone-6-0.7.png). Eighteen actual viewport captures cover 2/4/6 desktop/phone with zero errors and a constant canvas. Unit checks cover all title pairs, rapid retargeting, pause, reduced mode, star boundaries, actor/light/health continuity and source immutability. All 474 unit tests pass; root build and scoped check pass. Browser title, real win, Back and Retry checks cover the session wiring.
 
+## 5. Symmetrical level shapes — ready for review
+
+Classic, Wide and Faceted families rotate in ten-level bands. Wide opens each side into a regular extra facet; Faceted uses a shallower bevel. Two-player variants remain symmetrical octagons around the original rectangle. Fortresses keep their positions and every seat receives identical geometry. All shapes are convex, so wall collisions, bot forecasts, placement, reflections and camera framing use the same authoritative edges. The family stays frozen through eliminations and retries; the next level morphs into it during its reading window. Level 100 retains classic walls and sixteen balls.
+
+Level 10 announces WIDE ARENA, level 20 FACETED ARENA, level 30 CLASSIC ARENA, then the pattern repeats. Shape changes join existing ball/pickup/width/bot messages without exceeding two change lines. [Wide phone arena](reviews/m09/arena-variant/phone-4-wide.png), [faceted six-player arena](reviews/m09/arena-variant/desktop-6-faceted.png), [classic](reviews/m09/arena-variant/desktop-4-classic.png). Eighteen desktop/phone 2/4/6 renders report zero errors.
+
+All 478 unit tests pass, including rotational symmetry, convexity, actual bat/container clearance, seeded deterministic bot flight in all layouts, zero collision caps and family/width persistence through elimination. The old triangle test now checks its original three corners within the expanded six-edge variants; the classic travel improvement and all triangle ball corridors remain checked. Eight root browser difficulty/reading-window cases pass. Scoped check and root build pass; physical-device play remains open.
+
 ## Remaining entries
 
-- Symmetrical level-specific arena variants.
+- Stronger curve and spin-sensitive bounces.
+- Verify existing bat-size difficulty progression.
+- Pickup rebound and clearer bank transfer.
+- Minimal scene-rendered settings.
 
 Local stable demo: `http://localhost:5179/` (refresh to load the latest completed checkpoint).
 

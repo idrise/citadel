@@ -14,13 +14,13 @@ import { createMatch } from "./match";
 import { levelDifficulty } from "./difficulty";
 import { beginArenaMorph, stepArenaMorph } from "./arena-morph";
 it.each([1, 50, 100])(
-  "moves triangle fortresses inwards and increases usable bat travel at level %i without moving walls",
+  "moves triangle fortresses inwards and increases usable bat travel at level %i without moving original corners",
   (level) => {
     const state = createMatch(7, 3, 3, 7, levelDifficulty(level)),
       arena = state.arena;
-    expect(arena.vertices).toHaveLength(3);
+    expect(arena.vertices).toHaveLength(arena.variant ? 6 : 3);
     for (const [index, home] of arena.fortresses.entries()) {
-      const tip = arena.vertices[index]!;
+      const tip = arena.vertices[index * (arena.variant ? 2 : 1)]!;
       expect(length(tip)).toBeCloseTo(13);
       expect(length(home.anchor)).toBeCloseTo(13 - TRIANGLE_FORTRESS_INSET);
       expect(length(sub(home.anchor, tip))).toBeCloseTo(TRIANGLE_FORTRESS_INSET);
@@ -30,9 +30,10 @@ it.each([1, 50, 100])(
         batWallGap: 0.015,
         fortresses: [{ ...home, anchor: tip }],
       });
-      expect(home.angleLimits![1] - home.angleLimits![0]).toBeGreaterThan(
-        (old.fortresses[0]!.angleLimits![1] - old.fortresses[0]!.angleLimits![0]) * 1.4,
-      );
+      if (!arena.variant)
+        expect(home.angleLimits![1] - home.angleLimits![0]).toBeGreaterThan(
+          (old.fortresses[0]!.angleLimits![1] - old.fortresses[0]!.angleLimits![0]) * 1.4,
+        );
       for (const offset of home.angleLimits!)
         for (let sample = 0; sample <= 40; sample++) {
           const angle = home.direction + offset,

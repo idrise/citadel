@@ -1,3 +1,4 @@
+import { arenaVariant, type ArenaShape } from "./arena-variant";
 import { healthFormation } from "./health-layout";
 import { add, angleDifference, clamp, scale, unit, type Vec2 } from "./vector";
 
@@ -9,6 +10,7 @@ export const TRIANGLE_BAT_WALL_GAP = 0.7;
 export type PlayerCount = 2 | 3 | 4 | 5 | 6;
 export interface ArenaGeometry {
   count: PlayerCount;
+  variant?: ArenaShape;
   batHalfAngle?: number;
   /** Skin clearance at every legal bat pose; triangle lanes must admit a whole ball. */
   batWallGap?: number;
@@ -30,6 +32,7 @@ export function createArena(
   ids: number[] = Array.from({ length: count }, (_, i) => i),
   rotation = 0,
   batScale = 1,
+  variant: ArenaShape = "classic",
 ): ArenaGeometry {
   if (![2, 3, 4, 5, 6].includes(count) || ids.length !== count || new Set(ids).size !== count)
     throw new Error("Arena needs 2–6 distinct seats");
@@ -88,7 +91,8 @@ export function createArena(
   });
   return fitDefenceLimits({
     count,
-    vertices,
+    vertices: arenaVariant(vertices, count, variant),
+    ...(variant === "classic" ? {} : { variant }),
     fortresses,
     ...(count === 3 ? { batWallGap: TRIANGLE_BAT_WALL_GAP } : {}),
     ...(batScale === 1 ? {} : { batHalfAngle: ARENA.batHalfAngle * batScale }),

@@ -1,0 +1,132 @@
+{
+  "kind": "Symmetrical frozen level variants through actual geometry, framing, reflections and briefing renderer",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 2,
+      "level": 1,
+      "shape": "classic",
+      "vertices": 4
+    },
+    {
+      "mobile": false,
+      "count": 2,
+      "level": 10,
+      "shape": "wide",
+      "vertices": 8
+    },
+    {
+      "mobile": false,
+      "count": 2,
+      "level": 20,
+      "shape": "faceted",
+      "vertices": 8
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "level": 1,
+      "shape": "classic",
+      "vertices": 4
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "level": 10,
+      "shape": "wide",
+      "vertices": 8
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "level": 20,
+      "shape": "faceted",
+      "vertices": 8
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "level": 1,
+      "shape": "classic",
+      "vertices": 6
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "level": 10,
+      "shape": "wide",
+      "vertices": 12
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "level": 20,
+      "shape": "faceted",
+      "vertices": 12
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "level": 1,
+      "shape": "classic",
+      "vertices": 4
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "level": 10,
+      "shape": "wide",
+      "vertices": 8
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "level": 20,
+      "shape": "faceted",
+      "vertices": 8
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "level": 1,
+      "shape": "classic",
+      "vertices": 4
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "level": 10,
+      "shape": "wide",
+      "vertices": 8
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "level": 20,
+      "shape": "faceted",
+      "vertices": 8
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "level": 1,
+      "shape": "classic",
+      "vertices": 6
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "level": 10,
+      "shape": "wide",
+      "vertices": 12
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "level": 20,
+      "shape": "faceted",
+      "vertices": 12
+    }
+  ],
+  "errors": []
+}
