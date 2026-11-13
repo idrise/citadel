@@ -1,3 +1,4 @@
+import { levelDifficulty } from "../apps/web/src/simulation/difficulty";
 import { createViewport } from "../apps/web/src/rendering/viewport";
 import { createMatch } from "../apps/web/src/simulation/match";
 import type { PlayerCount } from "../apps/web/src/simulation/arena";
@@ -11,9 +12,10 @@ export function renderLevelIntroReview(
   reduced = false,
   width = 1280,
   height = 900,
+  lossLevel = level,
 ) {
   container.style.cssText = `width:${width}px;height:${height}px;position:relative`;
-  const state = createMatch(2026, count),
+  const state = createMatch(2026, count, 3, 2026, levelDifficulty(level)),
     viewport = createViewport(container, 0, state.arena);
   let previous = 0;
   const advance = (time: number) => {
@@ -28,6 +30,7 @@ export function renderLevelIntroReview(
       menu: {
         mode: time < 1.5 ? "level" : "hidden",
         level,
+        lossLevel,
         count,
         elapsed: 0,
         reduced,

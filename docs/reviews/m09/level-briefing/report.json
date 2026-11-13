@@ -1,0 +1,1878 @@
+{
+  "kind": "Actual countdown lettering and reflections; authored preview poses",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 2,
+      "level": 1,
+      "lossLevel": 1,
+      "demoted": false
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "level": 5,
+      "lossLevel": 5,
+      "demoted": false
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "level": 8,
+      "lossLevel": 7,
+      "demoted": false
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "level": 100,
+      "lossLevel": 99,
+      "demoted": false
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "level": 7,
+      "lossLevel": 7,
+      "demoted": true
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "level": 1,
+      "lossLevel": 1,
+      "demoted": false
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "level": 5,
+      "lossLevel": 5,
+      "demoted": false
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "level": 8,
+      "lossLevel": 7,
+      "demoted": false
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "level": 100,
+      "lossLevel": 99,
+      "demoted": false
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "level": 7,
+      "lossLevel": 7,
+      "demoted": true
+    }
+  ],
+  "errors": [],
+  "curve": [
+    {
+      "level": 1,
+      "maxBalls": 1,
+      "ballInterval": 12,
+      "ballSpeed": 14,
+      "pickupCount": 0,
+      "batScale": 1.35,
+      "highlights": ["ONE BALL - WIDE BAT"],
+      "bots": {
+        "reaction": 0.65,
+        "jitter": 0.3,
+        "error": 2.8,
+        "horizon": 0.1,
+        "serveScale": 1.7,
+        "speed": 2,
+        "tactics": 0
+      }
+    },
+    {
+      "level": 2,
+      "maxBalls": 1,
+      "ballInterval": 12,
+      "ballSpeed": 14.202020202020202,
+      "pickupCount": 0,
+      "batScale": 1.342857142857143,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.6420588235294118,
+        "jitter": 0.2994117647058823,
+        "error": 2.776470588235294,
+        "horizon": 0.1011764705882353,
+        "serveScale": 1.6897058823529412,
+        "speed": 2.0352941176470587,
+        "tactics": 0.010101010101010102
+      }
+    },
+    {
+      "level": 3,
+      "maxBalls": 1,
+      "ballInterval": 12,
+      "ballSpeed": 14.404040404040405,
+      "pickupCount": 0,
+      "batScale": 1.3357142857142859,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.6341176470588236,
+        "jitter": 0.2988235294117647,
+        "error": 2.7529411764705882,
+        "horizon": 0.10235294117647059,
+        "serveScale": 1.6794117647058824,
+        "speed": 2.070588235294118,
+        "tactics": 0.020202020202020204
+      }
+    },
+    {
+      "level": 4,
+      "maxBalls": 1,
+      "ballInterval": 12,
+      "ballSpeed": 14.606060606060606,
+      "pickupCount": 0,
+      "batScale": 1.3285714285714287,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.6261764705882353,
+        "jitter": 0.29823529411764704,
+        "error": 2.729411764705882,
+        "horizon": 0.10352941176470588,
+        "serveScale": 1.6691176470588236,
+        "speed": 2.1058823529411765,
+        "tactics": 0.030303030303030304
+      }
+    },
+    {
+      "level": 5,
+      "maxBalls": 1,
+      "ballInterval": 12,
+      "ballSpeed": 14.808080808080808,
+      "pickupCount": 1,
+      "batScale": 1.3214285714285716,
+      "highlights": ["PICKUPS INTRODUCED"],
+      "bots": {
+        "reaction": 0.6182352941176471,
+        "jitter": 0.29764705882352943,
+        "error": 2.705882352941176,
+        "horizon": 0.10470588235294118,
+        "serveScale": 1.6588235294117646,
+        "speed": 2.1411764705882352,
+        "tactics": 0.04040404040404041
+      }
+    },
+    {
+      "level": 6,
+      "maxBalls": 1,
+      "ballInterval": 12,
+      "ballSpeed": 15.01010101010101,
+      "pickupCount": 1,
+      "batScale": 1.3142857142857143,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.6102941176470589,
+        "jitter": 0.29705882352941176,
+        "error": 2.6823529411764704,
+        "horizon": 0.10588235294117648,
+        "serveScale": 1.6485294117647058,
+        "speed": 2.1764705882352944,
+        "tactics": 0.050505050505050504
+      }
+    },
+    {
+      "level": 7,
+      "maxBalls": 1,
+      "ballInterval": 12,
+      "ballSpeed": 15.212121212121213,
+      "pickupCount": 1,
+      "batScale": 1.3071428571428572,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.6023529411764706,
+        "jitter": 0.2964705882352941,
+        "error": 2.6588235294117646,
+        "horizon": 0.10705882352941178,
+        "serveScale": 1.638235294117647,
+        "speed": 2.211764705882353,
+        "tactics": 0.06060606060606061
+      }
+    },
+    {
+      "level": 8,
+      "maxBalls": 2,
+      "ballInterval": 12,
+      "ballSpeed": 15.414141414141413,
+      "pickupCount": 1,
+      "batScale": 1.3,
+      "highlights": ["EXTRA BALL"],
+      "bots": {
+        "reaction": 0.5944117647058824,
+        "jitter": 0.2958823529411765,
+        "error": 2.635294117647059,
+        "horizon": 0.10823529411764707,
+        "serveScale": 1.6279411764705882,
+        "speed": 2.2470588235294118,
+        "tactics": 0.0707070707070707
+      }
+    },
+    {
+      "level": 9,
+      "maxBalls": 2,
+      "ballInterval": 12,
+      "ballSpeed": 15.616161616161616,
+      "pickupCount": 1,
+      "batScale": 1.292857142857143,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.5864705882352941,
+        "jitter": 0.2952941176470588,
+        "error": 2.611764705882353,
+        "horizon": 0.10941176470588236,
+        "serveScale": 1.6176470588235294,
+        "speed": 2.2823529411764705,
+        "tactics": 0.08080808080808081
+      }
+    },
+    {
+      "level": 10,
+      "maxBalls": 2,
+      "ballInterval": 12,
+      "ballSpeed": 15.818181818181818,
+      "pickupCount": 1,
+      "batScale": 1.2857142857142858,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.578529411764706,
+        "jitter": 0.29470588235294115,
+        "error": 2.5882352941176467,
+        "horizon": 0.11058823529411765,
+        "serveScale": 1.6073529411764707,
+        "speed": 2.3176470588235296,
+        "tactics": 0.09090909090909091
+      }
+    },
+    {
+      "level": 11,
+      "maxBalls": 2,
+      "ballInterval": 12,
+      "ballSpeed": 16.02020202020202,
+      "pickupCount": 1,
+      "batScale": 1.2785714285714287,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.5705882352941176,
+        "jitter": 0.29411764705882354,
+        "error": 2.564705882352941,
+        "horizon": 0.11176470588235295,
+        "serveScale": 1.5970588235294119,
+        "speed": 2.3529411764705883,
+        "tactics": 0.10101010101010101
+      }
+    },
+    {
+      "level": 12,
+      "maxBalls": 2,
+      "ballInterval": 12,
+      "ballSpeed": 16.22222222222222,
+      "pickupCount": 1,
+      "batScale": 1.2714285714285716,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.5626470588235294,
+        "jitter": 0.29352941176470587,
+        "error": 2.541176470588235,
+        "horizon": 0.11294117647058824,
+        "serveScale": 1.5867647058823529,
+        "speed": 2.388235294117647,
+        "tactics": 0.1111111111111111
+      }
+    },
+    {
+      "level": 13,
+      "maxBalls": 2,
+      "ballInterval": 12,
+      "ballSpeed": 16.424242424242426,
+      "pickupCount": 1,
+      "batScale": 1.2642857142857145,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.5547058823529412,
+        "jitter": 0.29294117647058826,
+        "error": 2.5176470588235293,
+        "horizon": 0.11411764705882355,
+        "serveScale": 1.576470588235294,
+        "speed": 2.423529411764706,
+        "tactics": 0.12121212121212122
+      }
+    },
+    {
+      "level": 14,
+      "maxBalls": 2,
+      "ballInterval": 12,
+      "ballSpeed": 16.626262626262626,
+      "pickupCount": 1,
+      "batScale": 1.2571428571428571,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.5467647058823529,
+        "jitter": 0.2923529411764706,
+        "error": 2.4941176470588236,
+        "horizon": 0.11529411764705882,
+        "serveScale": 1.5661764705882353,
+        "speed": 2.458823529411765,
+        "tactics": 0.13131313131313133
+      }
+    },
+    {
+      "level": 15,
+      "maxBalls": 3,
+      "ballInterval": 12,
+      "ballSpeed": 16.828282828282827,
+      "pickupCount": 1,
+      "batScale": 1.25,
+      "highlights": ["EXTRA BALL", "SMALLER BAT"],
+      "bots": {
+        "reaction": 0.5388235294117647,
+        "jitter": 0.2917647058823529,
+        "error": 2.4705882352941178,
+        "horizon": 0.11647058823529413,
+        "serveScale": 1.5558823529411765,
+        "speed": 2.4941176470588236,
+        "tactics": 0.1414141414141414
+      }
+    },
+    {
+      "level": 16,
+      "maxBalls": 3,
+      "ballInterval": 12,
+      "ballSpeed": 17.03030303030303,
+      "pickupCount": 1,
+      "batScale": 1.2428571428571429,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.5308823529411765,
+        "jitter": 0.2911764705882353,
+        "error": 2.4470588235294115,
+        "horizon": 0.11764705882352942,
+        "serveScale": 1.5455882352941177,
+        "speed": 2.5294117647058822,
+        "tactics": 0.15151515151515152
+      }
+    },
+    {
+      "level": 17,
+      "maxBalls": 3,
+      "ballInterval": 12,
+      "ballSpeed": 17.232323232323232,
+      "pickupCount": 1,
+      "batScale": 1.2357142857142858,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.5229411764705882,
+        "jitter": 0.29058823529411765,
+        "error": 2.4235294117647057,
+        "horizon": 0.11882352941176472,
+        "serveScale": 1.535294117647059,
+        "speed": 2.5647058823529414,
+        "tactics": 0.16161616161616163
+      }
+    },
+    {
+      "level": 18,
+      "maxBalls": 3,
+      "ballInterval": 12,
+      "ballSpeed": 17.434343434343432,
+      "pickupCount": 1,
+      "batScale": 1.2285714285714286,
+      "highlights": ["QUICKER BOTS"],
+      "bots": {
+        "reaction": 0.515,
+        "jitter": 0.29000000000000004,
+        "error": 2.4,
+        "horizon": 0.12000000000000001,
+        "serveScale": 1.525,
+        "speed": 2.6,
+        "tactics": 0.1717171717171717
+      }
+    },
+    {
+      "level": 19,
+      "maxBalls": 3,
+      "ballInterval": 12,
+      "ballSpeed": 17.636363636363637,
+      "pickupCount": 1,
+      "batScale": 1.2214285714285715,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.5070588235294118,
+        "jitter": 0.28941176470588237,
+        "error": 2.376470588235294,
+        "horizon": 0.1211764705882353,
+        "serveScale": 1.5147058823529411,
+        "speed": 2.635294117647059,
+        "tactics": 0.18181818181818182
+      }
+    },
+    {
+      "level": 20,
+      "maxBalls": 3,
+      "ballInterval": 12,
+      "ballSpeed": 17.838383838383837,
+      "pickupCount": 2,
+      "batScale": 1.2142857142857144,
+      "highlights": ["MORE PICKUPS"],
+      "bots": {
+        "reaction": 0.49911764705882355,
+        "jitter": 0.2888235294117647,
+        "error": 2.3529411764705883,
+        "horizon": 0.1223529411764706,
+        "serveScale": 1.5044117647058823,
+        "speed": 2.670588235294118,
+        "tactics": 0.1919191919191919
+      }
+    },
+    {
+      "level": 21,
+      "maxBalls": 4,
+      "ballInterval": 10,
+      "ballSpeed": 18.04040404040404,
+      "pickupCount": 2,
+      "batScale": 1.2071428571428573,
+      "highlights": ["EXTRA BALL"],
+      "bots": {
+        "reaction": 0.4911764705882353,
+        "jitter": 0.2882352941176471,
+        "error": 2.329411764705882,
+        "horizon": 0.12352941176470589,
+        "serveScale": 1.4941176470588236,
+        "speed": 2.7058823529411766,
+        "tactics": 0.20202020202020202
+      }
+    },
+    {
+      "level": 22,
+      "maxBalls": 4,
+      "ballInterval": 10,
+      "ballSpeed": 18.242424242424242,
+      "pickupCount": 2,
+      "batScale": 1.2000000000000002,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.4832352941176471,
+        "jitter": 0.2876470588235294,
+        "error": 2.3058823529411763,
+        "horizon": 0.1247058823529412,
+        "serveScale": 1.4838235294117648,
+        "speed": 2.7411764705882353,
+        "tactics": 0.21212121212121213
+      }
+    },
+    {
+      "level": 23,
+      "maxBalls": 4,
+      "ballInterval": 10,
+      "ballSpeed": 18.444444444444443,
+      "pickupCount": 2,
+      "batScale": 1.192857142857143,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.47529411764705887,
+        "jitter": 0.28705882352941176,
+        "error": 2.2823529411764705,
+        "horizon": 0.12588235294117647,
+        "serveScale": 1.473529411764706,
+        "speed": 2.776470588235294,
+        "tactics": 0.2222222222222222
+      }
+    },
+    {
+      "level": 24,
+      "maxBalls": 4,
+      "ballInterval": 10,
+      "ballSpeed": 18.646464646464647,
+      "pickupCount": 2,
+      "batScale": 1.185714285714286,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.4673529411764706,
+        "jitter": 0.28647058823529414,
+        "error": 2.2588235294117647,
+        "horizon": 0.12705882352941178,
+        "serveScale": 1.4632352941176472,
+        "speed": 2.811764705882353,
+        "tactics": 0.23232323232323232
+      }
+    },
+    {
+      "level": 25,
+      "maxBalls": 4,
+      "ballInterval": 10,
+      "ballSpeed": 18.848484848484848,
+      "pickupCount": 2,
+      "batScale": 1.1785714285714286,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.45941176470588235,
+        "jitter": 0.2858823529411765,
+        "error": 2.235294117647059,
+        "horizon": 0.12823529411764706,
+        "serveScale": 1.4529411764705882,
+        "speed": 2.847058823529412,
+        "tactics": 0.24242424242424243
+      }
+    },
+    {
+      "level": 26,
+      "maxBalls": 4,
+      "ballInterval": 10,
+      "ballSpeed": 19.050505050505052,
+      "pickupCount": 2,
+      "batScale": 1.1714285714285715,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.4514705882352941,
+        "jitter": 0.28529411764705886,
+        "error": 2.211764705882353,
+        "horizon": 0.12941176470588237,
+        "serveScale": 1.4426470588235294,
+        "speed": 2.882352941176471,
+        "tactics": 0.25252525252525254
+      }
+    },
+    {
+      "level": 27,
+      "maxBalls": 4,
+      "ballInterval": 10,
+      "ballSpeed": 19.252525252525253,
+      "pickupCount": 2,
+      "batScale": 1.1642857142857144,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.4435294117647059,
+        "jitter": 0.2847058823529412,
+        "error": 2.1882352941176473,
+        "horizon": 0.13058823529411767,
+        "serveScale": 1.4323529411764706,
+        "speed": 2.9176470588235297,
+        "tactics": 0.26262626262626265
+      }
+    },
+    {
+      "level": 28,
+      "maxBalls": 5,
+      "ballInterval": 7.5,
+      "ballSpeed": 19.454545454545453,
+      "pickupCount": 2,
+      "batScale": 1.1571428571428573,
+      "highlights": ["EXTRA BALL"],
+      "bots": {
+        "reaction": 0.43558823529411766,
+        "jitter": 0.28411764705882353,
+        "error": 2.164705882352941,
+        "horizon": 0.13176470588235295,
+        "serveScale": 1.4220588235294118,
+        "speed": 2.9529411764705884,
+        "tactics": 0.2727272727272727
+      }
+    },
+    {
+      "level": 29,
+      "maxBalls": 5,
+      "ballInterval": 7.5,
+      "ballSpeed": 19.656565656565657,
+      "pickupCount": 2,
+      "batScale": 1.1500000000000001,
+      "highlights": ["SMALLER BAT"],
+      "bots": {
+        "reaction": 0.42764705882352944,
+        "jitter": 0.2835294117647059,
+        "error": 2.1411764705882352,
+        "horizon": 0.13294117647058823,
+        "serveScale": 1.411764705882353,
+        "speed": 2.988235294117647,
+        "tactics": 0.2828282828282828
+      }
+    },
+    {
+      "level": 30,
+      "maxBalls": 5,
+      "ballInterval": 7.5,
+      "ballSpeed": 19.858585858585858,
+      "pickupCount": 2,
+      "batScale": 1.142857142857143,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.41970588235294115,
+        "jitter": 0.28294117647058825,
+        "error": 2.1176470588235294,
+        "horizon": 0.13411764705882354,
+        "serveScale": 1.4014705882352942,
+        "speed": 3.023529411764706,
+        "tactics": 0.29292929292929293
+      }
+    },
+    {
+      "level": 31,
+      "maxBalls": 5,
+      "ballInterval": 7.5,
+      "ballSpeed": 20.060606060606062,
+      "pickupCount": 2,
+      "batScale": 1.135714285714286,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.4117647058823529,
+        "jitter": 0.2823529411764706,
+        "error": 2.0941176470588236,
+        "horizon": 0.13529411764705884,
+        "serveScale": 1.3911764705882355,
+        "speed": 3.058823529411765,
+        "tactics": 0.30303030303030304
+      }
+    },
+    {
+      "level": 32,
+      "maxBalls": 5,
+      "ballInterval": 7.5,
+      "ballSpeed": 20.262626262626263,
+      "pickupCount": 2,
+      "batScale": 1.1285714285714286,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.4038235294117647,
+        "jitter": 0.281764705882353,
+        "error": 2.0705882352941174,
+        "horizon": 0.13647058823529412,
+        "serveScale": 1.3808823529411764,
+        "speed": 3.0941176470588236,
+        "tactics": 0.31313131313131315
+      }
+    },
+    {
+      "level": 33,
+      "maxBalls": 5,
+      "ballInterval": 7.5,
+      "ballSpeed": 20.464646464646464,
+      "pickupCount": 2,
+      "batScale": 1.1214285714285714,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.39588235294117646,
+        "jitter": 0.2811764705882353,
+        "error": 2.0470588235294116,
+        "horizon": 0.13764705882352943,
+        "serveScale": 1.3705882352941177,
+        "speed": 3.129411764705883,
+        "tactics": 0.32323232323232326
+      }
+    },
+    {
+      "level": 34,
+      "maxBalls": 6,
+      "ballInterval": 6,
+      "ballSpeed": 20.666666666666664,
+      "pickupCount": 2,
+      "batScale": 1.1142857142857143,
+      "highlights": ["EXTRA BALL", "QUICKER BOTS"],
+      "bots": {
+        "reaction": 0.38794117647058823,
+        "jitter": 0.2805882352941177,
+        "error": 2.023529411764706,
+        "horizon": 0.13882352941176473,
+        "serveScale": 1.3602941176470589,
+        "speed": 3.1647058823529415,
+        "tactics": 0.3333333333333333
+      }
+    },
+    {
+      "level": 35,
+      "maxBalls": 6,
+      "ballInterval": 6,
+      "ballSpeed": 20.86868686868687,
+      "pickupCount": 3,
+      "batScale": 1.1071428571428572,
+      "highlights": ["MORE PICKUPS"],
+      "bots": {
+        "reaction": 0.38,
+        "jitter": 0.28,
+        "error": 2,
+        "horizon": 0.14,
+        "serveScale": 1.35,
+        "speed": 3.2,
+        "tactics": 0.3434343434343434
+      }
+    },
+    {
+      "level": 36,
+      "maxBalls": 6,
+      "ballInterval": 6,
+      "ballSpeed": 21.070707070707073,
+      "pickupCount": 3,
+      "batScale": 1.1,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.3736,
+        "jitter": 0.276,
+        "error": 1.98,
+        "horizon": 0.14320000000000002,
+        "serveScale": 1.336,
+        "speed": 3.2,
+        "tactics": 0.35353535353535354
+      }
+    },
+    {
+      "level": 37,
+      "maxBalls": 6,
+      "ballInterval": 6,
+      "ballSpeed": 21.272727272727273,
+      "pickupCount": 3,
+      "batScale": 1.092857142857143,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.3672,
+        "jitter": 0.272,
+        "error": 1.96,
+        "horizon": 0.1464,
+        "serveScale": 1.322,
+        "speed": 3.2,
+        "tactics": 0.36363636363636365
+      }
+    },
+    {
+      "level": 38,
+      "maxBalls": 6,
+      "ballInterval": 6,
+      "ballSpeed": 21.474747474747474,
+      "pickupCount": 3,
+      "batScale": 1.0857142857142859,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.3608,
+        "jitter": 0.268,
+        "error": 1.94,
+        "horizon": 0.1496,
+        "serveScale": 1.308,
+        "speed": 3.2,
+        "tactics": 0.37373737373737376
+      }
+    },
+    {
+      "level": 39,
+      "maxBalls": 6,
+      "ballInterval": 6,
+      "ballSpeed": 21.676767676767675,
+      "pickupCount": 3,
+      "batScale": 1.0785714285714287,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.3544,
+        "jitter": 0.264,
+        "error": 1.92,
+        "horizon": 0.15280000000000002,
+        "serveScale": 1.294,
+        "speed": 3.2,
+        "tactics": 0.3838383838383838
+      }
+    },
+    {
+      "level": 40,
+      "maxBalls": 6,
+      "ballInterval": 6,
+      "ballSpeed": 21.87878787878788,
+      "pickupCount": 3,
+      "batScale": 1.0714285714285716,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.348,
+        "jitter": 0.26,
+        "error": 1.9,
+        "horizon": 0.156,
+        "serveScale": 1.28,
+        "speed": 3.2,
+        "tactics": 0.3939393939393939
+      }
+    },
+    {
+      "level": 41,
+      "maxBalls": 7,
+      "ballInterval": 5,
+      "ballSpeed": 22.080808080808083,
+      "pickupCount": 3,
+      "batScale": 1.0642857142857145,
+      "highlights": ["EXTRA BALL"],
+      "bots": {
+        "reaction": 0.3416,
+        "jitter": 0.256,
+        "error": 1.88,
+        "horizon": 0.1592,
+        "serveScale": 1.266,
+        "speed": 3.2,
+        "tactics": 0.40404040404040403
+      }
+    },
+    {
+      "level": 42,
+      "maxBalls": 7,
+      "ballInterval": 5,
+      "ballSpeed": 22.282828282828284,
+      "pickupCount": 3,
+      "batScale": 1.0571428571428572,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.3352,
+        "jitter": 0.252,
+        "error": 1.8599999999999999,
+        "horizon": 0.16240000000000002,
+        "serveScale": 1.252,
+        "speed": 3.2,
+        "tactics": 0.41414141414141414
+      }
+    },
+    {
+      "level": 43,
+      "maxBalls": 7,
+      "ballInterval": 5,
+      "ballSpeed": 22.484848484848484,
+      "pickupCount": 3,
+      "batScale": 1.05,
+      "highlights": ["SMALLER BAT"],
+      "bots": {
+        "reaction": 0.3288,
+        "jitter": 0.248,
+        "error": 1.84,
+        "horizon": 0.16560000000000002,
+        "serveScale": 1.238,
+        "speed": 3.2,
+        "tactics": 0.42424242424242425
+      }
+    },
+    {
+      "level": 44,
+      "maxBalls": 7,
+      "ballInterval": 5,
+      "ballSpeed": 22.686868686868685,
+      "pickupCount": 3,
+      "batScale": 1.042857142857143,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.3224,
+        "jitter": 0.24400000000000002,
+        "error": 1.82,
+        "horizon": 0.1688,
+        "serveScale": 1.224,
+        "speed": 3.2,
+        "tactics": 0.43434343434343436
+      }
+    },
+    {
+      "level": 45,
+      "maxBalls": 7,
+      "ballInterval": 5,
+      "ballSpeed": 22.88888888888889,
+      "pickupCount": 3,
+      "batScale": 1.0357142857142858,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.316,
+        "jitter": 0.24000000000000002,
+        "error": 1.8,
+        "horizon": 0.17200000000000001,
+        "serveScale": 1.21,
+        "speed": 3.2,
+        "tactics": 0.4444444444444444
+      }
+    },
+    {
+      "level": 46,
+      "maxBalls": 7,
+      "ballInterval": 5,
+      "ballSpeed": 23.09090909090909,
+      "pickupCount": 3,
+      "batScale": 1.0285714285714287,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.3096,
+        "jitter": 0.23600000000000002,
+        "error": 1.78,
+        "horizon": 0.17520000000000002,
+        "serveScale": 1.196,
+        "speed": 3.2,
+        "tactics": 0.45454545454545453
+      }
+    },
+    {
+      "level": 47,
+      "maxBalls": 7,
+      "ballInterval": 5,
+      "ballSpeed": 23.292929292929294,
+      "pickupCount": 3,
+      "batScale": 1.0214285714285716,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.3032,
+        "jitter": 0.232,
+        "error": 1.76,
+        "horizon": 0.1784,
+        "serveScale": 1.182,
+        "speed": 3.2,
+        "tactics": 0.46464646464646464
+      }
+    },
+    {
+      "level": 48,
+      "maxBalls": 8,
+      "ballInterval": 4.285714285714286,
+      "ballSpeed": 23.494949494949495,
+      "pickupCount": 3,
+      "batScale": 1.0142857142857145,
+      "highlights": ["EXTRA BALL"],
+      "bots": {
+        "reaction": 0.2968,
+        "jitter": 0.228,
+        "error": 1.74,
+        "horizon": 0.1816,
+        "serveScale": 1.1680000000000001,
+        "speed": 3.2,
+        "tactics": 0.47474747474747475
+      }
+    },
+    {
+      "level": 49,
+      "maxBalls": 8,
+      "ballInterval": 4.285714285714286,
+      "ballSpeed": 23.696969696969695,
+      "pickupCount": 3,
+      "batScale": 1.0071428571428573,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.2904,
+        "jitter": 0.224,
+        "error": 1.72,
+        "horizon": 0.18480000000000002,
+        "serveScale": 1.154,
+        "speed": 3.2,
+        "tactics": 0.48484848484848486
+      }
+    },
+    {
+      "level": 50,
+      "maxBalls": 8,
+      "ballInterval": 4.285714285714286,
+      "ballSpeed": 23.8989898989899,
+      "pickupCount": 4,
+      "batScale": 1,
+      "highlights": ["MORE PICKUPS"],
+      "bots": {
+        "reaction": 0.28400000000000003,
+        "jitter": 0.22,
+        "error": 1.7,
+        "horizon": 0.188,
+        "serveScale": 1.1400000000000001,
+        "speed": 3.2,
+        "tactics": 0.494949494949495
+      }
+    },
+    {
+      "level": 51,
+      "maxBalls": 8,
+      "ballInterval": 4.285714285714286,
+      "ballSpeed": 24.101010101010104,
+      "pickupCount": 4,
+      "batScale": 0.994,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.2776,
+        "jitter": 0.216,
+        "error": 1.68,
+        "horizon": 0.1912,
+        "serveScale": 1.1260000000000001,
+        "speed": 3.2,
+        "tactics": 0.5050505050505051
+      }
+    },
+    {
+      "level": 52,
+      "maxBalls": 8,
+      "ballInterval": 4.285714285714286,
+      "ballSpeed": 24.303030303030305,
+      "pickupCount": 4,
+      "batScale": 0.988,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.2712,
+        "jitter": 0.212,
+        "error": 1.66,
+        "horizon": 0.19440000000000002,
+        "serveScale": 1.112,
+        "speed": 3.2,
+        "tactics": 0.5151515151515151
+      }
+    },
+    {
+      "level": 53,
+      "maxBalls": 8,
+      "ballInterval": 4.285714285714286,
+      "ballSpeed": 24.505050505050505,
+      "pickupCount": 4,
+      "batScale": 0.982,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.26480000000000004,
+        "jitter": 0.20800000000000002,
+        "error": 1.6400000000000001,
+        "horizon": 0.1976,
+        "serveScale": 1.098,
+        "speed": 3.2,
+        "tactics": 0.5252525252525253
+      }
+    },
+    {
+      "level": 54,
+      "maxBalls": 9,
+      "ballInterval": 3.75,
+      "ballSpeed": 24.707070707070706,
+      "pickupCount": 4,
+      "batScale": 0.976,
+      "highlights": ["EXTRA BALL", "QUICKER BOTS"],
+      "bots": {
+        "reaction": 0.2584,
+        "jitter": 0.20400000000000001,
+        "error": 1.62,
+        "horizon": 0.2008,
+        "serveScale": 1.084,
+        "speed": 3.2,
+        "tactics": 0.5353535353535354
+      }
+    },
+    {
+      "level": 55,
+      "maxBalls": 9,
+      "ballInterval": 3.75,
+      "ballSpeed": 24.909090909090907,
+      "pickupCount": 4,
+      "batScale": 0.97,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.252,
+        "jitter": 0.2,
+        "error": 1.6,
+        "horizon": 0.20400000000000001,
+        "serveScale": 1.07,
+        "speed": 3.2,
+        "tactics": 0.5454545454545454
+      }
+    },
+    {
+      "level": 56,
+      "maxBalls": 9,
+      "ballInterval": 3.75,
+      "ballSpeed": 25.11111111111111,
+      "pickupCount": 4,
+      "batScale": 0.964,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.2456,
+        "jitter": 0.196,
+        "error": 1.58,
+        "horizon": 0.2072,
+        "serveScale": 1.056,
+        "speed": 3.2,
+        "tactics": 0.5555555555555556
+      }
+    },
+    {
+      "level": 57,
+      "maxBalls": 9,
+      "ballInterval": 3.75,
+      "ballSpeed": 25.313131313131315,
+      "pickupCount": 4,
+      "batScale": 0.958,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.2392,
+        "jitter": 0.192,
+        "error": 1.56,
+        "horizon": 0.2104,
+        "serveScale": 1.042,
+        "speed": 3.2,
+        "tactics": 0.5656565656565656
+      }
+    },
+    {
+      "level": 58,
+      "maxBalls": 9,
+      "ballInterval": 3.75,
+      "ballSpeed": 25.515151515151516,
+      "pickupCount": 4,
+      "batScale": 0.952,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.2328,
+        "jitter": 0.188,
+        "error": 1.54,
+        "horizon": 0.2136,
+        "serveScale": 1.028,
+        "speed": 3.2,
+        "tactics": 0.5757575757575758
+      }
+    },
+    {
+      "level": 59,
+      "maxBalls": 9,
+      "ballInterval": 3.75,
+      "ballSpeed": 25.717171717171716,
+      "pickupCount": 4,
+      "batScale": 0.946,
+      "highlights": ["SMALLER BAT"],
+      "bots": {
+        "reaction": 0.22640000000000002,
+        "jitter": 0.184,
+        "error": 1.52,
+        "horizon": 0.2168,
+        "serveScale": 1.014,
+        "speed": 3.2,
+        "tactics": 0.5858585858585859
+      }
+    },
+    {
+      "level": 60,
+      "maxBalls": 9,
+      "ballInterval": 3.75,
+      "ballSpeed": 25.919191919191917,
+      "pickupCount": 4,
+      "batScale": 0.94,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.22,
+        "jitter": 0.18,
+        "error": 1.5,
+        "horizon": 0.22,
+        "serveScale": 1,
+        "speed": 3.2,
+        "tactics": 0.5959595959595959
+      }
+    },
+    {
+      "level": 61,
+      "maxBalls": 10,
+      "ballInterval": 3.3333333333333335,
+      "ballSpeed": 26.12121212121212,
+      "pickupCount": 4,
+      "batScale": 0.9339999999999999,
+      "highlights": ["EXTRA BALL"],
+      "bots": {
+        "reaction": 0.214,
+        "jitter": 0.175,
+        "error": 1.444,
+        "horizon": 0.23,
+        "serveScale": 0.99,
+        "speed": 3.2,
+        "tactics": 0.6060606060606061
+      }
+    },
+    {
+      "level": 62,
+      "maxBalls": 10,
+      "ballInterval": 3.3333333333333335,
+      "ballSpeed": 26.32323232323232,
+      "pickupCount": 4,
+      "batScale": 0.928,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.208,
+        "jitter": 0.16999999999999998,
+        "error": 1.388,
+        "horizon": 0.24,
+        "serveScale": 0.98,
+        "speed": 3.2,
+        "tactics": 0.6161616161616161
+      }
+    },
+    {
+      "level": 63,
+      "maxBalls": 10,
+      "ballInterval": 3.3333333333333335,
+      "ballSpeed": 26.525252525252526,
+      "pickupCount": 4,
+      "batScale": 0.922,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.202,
+        "jitter": 0.165,
+        "error": 1.332,
+        "horizon": 0.25,
+        "serveScale": 0.97,
+        "speed": 3.2,
+        "tactics": 0.6262626262626263
+      }
+    },
+    {
+      "level": 64,
+      "maxBalls": 10,
+      "ballInterval": 3.3333333333333335,
+      "ballSpeed": 26.727272727272727,
+      "pickupCount": 4,
+      "batScale": 0.916,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.196,
+        "jitter": 0.16,
+        "error": 1.276,
+        "horizon": 0.26,
+        "serveScale": 0.96,
+        "speed": 3.2,
+        "tactics": 0.6363636363636364
+      }
+    },
+    {
+      "level": 65,
+      "maxBalls": 10,
+      "ballInterval": 3.3333333333333335,
+      "ballSpeed": 26.92929292929293,
+      "pickupCount": 5,
+      "batScale": 0.91,
+      "highlights": ["MORE PICKUPS"],
+      "bots": {
+        "reaction": 0.19,
+        "jitter": 0.155,
+        "error": 1.22,
+        "horizon": 0.27,
+        "serveScale": 0.95,
+        "speed": 3.2,
+        "tactics": 0.6464646464646465
+      }
+    },
+    {
+      "level": 66,
+      "maxBalls": 10,
+      "ballInterval": 3.3333333333333335,
+      "ballSpeed": 27.13131313131313,
+      "pickupCount": 5,
+      "batScale": 0.904,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.184,
+        "jitter": 0.15,
+        "error": 1.164,
+        "horizon": 0.27999999999999997,
+        "serveScale": 0.9400000000000001,
+        "speed": 3.2,
+        "tactics": 0.6565656565656566
+      }
+    },
+    {
+      "level": 67,
+      "maxBalls": 11,
+      "ballInterval": 3,
+      "ballSpeed": 27.333333333333332,
+      "pickupCount": 5,
+      "batScale": 0.898,
+      "highlights": ["EXTRA BALL"],
+      "bots": {
+        "reaction": 0.178,
+        "jitter": 0.145,
+        "error": 1.108,
+        "horizon": 0.29,
+        "serveScale": 0.93,
+        "speed": 3.2,
+        "tactics": 0.6666666666666666
+      }
+    },
+    {
+      "level": 68,
+      "maxBalls": 11,
+      "ballInterval": 3,
+      "ballSpeed": 27.535353535353536,
+      "pickupCount": 5,
+      "batScale": 0.892,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.172,
+        "jitter": 0.13999999999999999,
+        "error": 1.052,
+        "horizon": 0.3,
+        "serveScale": 0.92,
+        "speed": 3.2,
+        "tactics": 0.6767676767676768
+      }
+    },
+    {
+      "level": 69,
+      "maxBalls": 11,
+      "ballInterval": 3,
+      "ballSpeed": 27.737373737373737,
+      "pickupCount": 5,
+      "batScale": 0.886,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.166,
+        "jitter": 0.135,
+        "error": 0.9959999999999999,
+        "horizon": 0.31,
+        "serveScale": 0.91,
+        "speed": 3.2,
+        "tactics": 0.6868686868686869
+      }
+    },
+    {
+      "level": 70,
+      "maxBalls": 11,
+      "ballInterval": 3,
+      "ballSpeed": 27.93939393939394,
+      "pickupCount": 5,
+      "batScale": 0.88,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.16,
+        "jitter": 0.13,
+        "error": 0.94,
+        "horizon": 0.32,
+        "serveScale": 0.9,
+        "speed": 3.2,
+        "tactics": 0.696969696969697
+      }
+    },
+    {
+      "level": 71,
+      "maxBalls": 11,
+      "ballInterval": 3,
+      "ballSpeed": 28.141414141414142,
+      "pickupCount": 5,
+      "batScale": 0.874,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.154,
+        "jitter": 0.125,
+        "error": 0.8839999999999999,
+        "horizon": 0.33,
+        "serveScale": 0.89,
+        "speed": 3.2,
+        "tactics": 0.7070707070707071
+      }
+    },
+    {
+      "level": 72,
+      "maxBalls": 11,
+      "ballInterval": 3,
+      "ballSpeed": 28.343434343434343,
+      "pickupCount": 5,
+      "batScale": 0.868,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.14800000000000002,
+        "jitter": 0.12,
+        "error": 0.828,
+        "horizon": 0.33999999999999997,
+        "serveScale": 0.88,
+        "speed": 3.2,
+        "tactics": 0.7171717171717171
+      }
+    },
+    {
+      "level": 73,
+      "maxBalls": 11,
+      "ballInterval": 3,
+      "ballSpeed": 28.545454545454547,
+      "pickupCount": 5,
+      "batScale": 0.862,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.14200000000000002,
+        "jitter": 0.11499999999999999,
+        "error": 0.7719999999999999,
+        "horizon": 0.35,
+        "serveScale": 0.87,
+        "speed": 3.2,
+        "tactics": 0.7272727272727273
+      }
+    },
+    {
+      "level": 74,
+      "maxBalls": 12,
+      "ballInterval": 2.727272727272727,
+      "ballSpeed": 28.747474747474747,
+      "pickupCount": 5,
+      "batScale": 0.856,
+      "highlights": ["EXTRA BALL"],
+      "bots": {
+        "reaction": 0.136,
+        "jitter": 0.11,
+        "error": 0.716,
+        "horizon": 0.36,
+        "serveScale": 0.8600000000000001,
+        "speed": 3.2,
+        "tactics": 0.7373737373737373
+      }
+    },
+    {
+      "level": 75,
+      "maxBalls": 12,
+      "ballInterval": 2.727272727272727,
+      "ballSpeed": 28.949494949494948,
+      "pickupCount": 5,
+      "batScale": 0.85,
+      "highlights": ["SMALLER BAT", "QUICKER BOTS"],
+      "bots": {
+        "reaction": 0.13,
+        "jitter": 0.105,
+        "error": 0.6599999999999999,
+        "horizon": 0.37,
+        "serveScale": 0.8500000000000001,
+        "speed": 3.2,
+        "tactics": 0.7474747474747475
+      }
+    },
+    {
+      "level": 76,
+      "maxBalls": 12,
+      "ballInterval": 2.727272727272727,
+      "ballSpeed": 29.151515151515152,
+      "pickupCount": 5,
+      "batScale": 0.844,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.124,
+        "jitter": 0.09999999999999999,
+        "error": 0.6039999999999999,
+        "horizon": 0.38,
+        "serveScale": 0.8400000000000001,
+        "speed": 3.2,
+        "tactics": 0.7575757575757576
+      }
+    },
+    {
+      "level": 77,
+      "maxBalls": 12,
+      "ballInterval": 2.727272727272727,
+      "ballSpeed": 29.353535353535353,
+      "pickupCount": 5,
+      "batScale": 0.838,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.11800000000000001,
+        "jitter": 0.095,
+        "error": 0.5479999999999999,
+        "horizon": 0.39,
+        "serveScale": 0.8300000000000001,
+        "speed": 3.2,
+        "tactics": 0.7676767676767676
+      }
+    },
+    {
+      "level": 78,
+      "maxBalls": 12,
+      "ballInterval": 2.727272727272727,
+      "ballSpeed": 29.555555555555557,
+      "pickupCount": 5,
+      "batScale": 0.832,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.112,
+        "jitter": 0.09,
+        "error": 0.49199999999999977,
+        "horizon": 0.4,
+        "serveScale": 0.8200000000000001,
+        "speed": 3.2,
+        "tactics": 0.7777777777777778
+      }
+    },
+    {
+      "level": 79,
+      "maxBalls": 12,
+      "ballInterval": 2.727272727272727,
+      "ballSpeed": 29.757575757575758,
+      "pickupCount": 5,
+      "batScale": 0.8260000000000001,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.10600000000000001,
+        "jitter": 0.085,
+        "error": 0.43599999999999994,
+        "horizon": 0.41,
+        "serveScale": 0.81,
+        "speed": 3.2,
+        "tactics": 0.7878787878787878
+      }
+    },
+    {
+      "level": 80,
+      "maxBalls": 12,
+      "ballInterval": 2.727272727272727,
+      "ballSpeed": 29.95959595959596,
+      "pickupCount": 6,
+      "batScale": 0.8200000000000001,
+      "highlights": ["MORE PICKUPS"],
+      "bots": {
+        "reaction": 0.1,
+        "jitter": 0.08,
+        "error": 0.38,
+        "horizon": 0.42,
+        "serveScale": 0.8,
+        "speed": 3.2,
+        "tactics": 0.797979797979798
+      }
+    },
+    {
+      "level": 81,
+      "maxBalls": 13,
+      "ballInterval": 2.5,
+      "ballSpeed": 30.161616161616163,
+      "pickupCount": 6,
+      "batScale": 0.8140000000000001,
+      "highlights": ["EXTRA BALL"],
+      "bots": {
+        "reaction": 0.09541666666666668,
+        "jitter": 0.076,
+        "error": 0.361,
+        "horizon": 0.449,
+        "serveScale": 0.7825000000000001,
+        "speed": 3.8400000000000003,
+        "tactics": 0.8080808080808081
+      }
+    },
+    {
+      "level": 82,
+      "maxBalls": 13,
+      "ballInterval": 2.5,
+      "ballSpeed": 30.363636363636363,
+      "pickupCount": 6,
+      "batScale": 0.808,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.09083333333333334,
+        "jitter": 0.07200000000000001,
+        "error": 0.34199999999999997,
+        "horizon": 0.478,
+        "serveScale": 0.765,
+        "speed": 4.48,
+        "tactics": 0.8181818181818182
+      }
+    },
+    {
+      "level": 83,
+      "maxBalls": 13,
+      "ballInterval": 2.5,
+      "ballSpeed": 30.565656565656568,
+      "pickupCount": 6,
+      "batScale": 0.802,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.08625000000000001,
+        "jitter": 0.068,
+        "error": 0.323,
+        "horizon": 0.507,
+        "serveScale": 0.7475,
+        "speed": 5.12,
+        "tactics": 0.8282828282828283
+      }
+    },
+    {
+      "level": 84,
+      "maxBalls": 13,
+      "ballInterval": 2.5,
+      "ballSpeed": 30.767676767676768,
+      "pickupCount": 6,
+      "batScale": 0.796,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.08166666666666667,
+        "jitter": 0.064,
+        "error": 0.304,
+        "horizon": 0.536,
+        "serveScale": 0.73,
+        "speed": 5.760000000000001,
+        "tactics": 0.8383838383838383
+      }
+    },
+    {
+      "level": 85,
+      "maxBalls": 13,
+      "ballInterval": 2.5,
+      "ballSpeed": 30.96969696969697,
+      "pickupCount": 6,
+      "batScale": 0.79,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.07708333333333334,
+        "jitter": 0.06,
+        "error": 0.28500000000000003,
+        "horizon": 0.565,
+        "serveScale": 0.7125,
+        "speed": 6.4,
+        "tactics": 0.8484848484848485
+      }
+    },
+    {
+      "level": 86,
+      "maxBalls": 13,
+      "ballInterval": 2.5,
+      "ballSpeed": 31.17171717171717,
+      "pickupCount": 6,
+      "batScale": 0.784,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.07250000000000001,
+        "jitter": 0.056,
+        "error": 0.266,
+        "horizon": 0.594,
+        "serveScale": 0.6950000000000001,
+        "speed": 7.04,
+        "tactics": 0.8585858585858586
+      }
+    },
+    {
+      "level": 87,
+      "maxBalls": 14,
+      "ballInterval": 2.3076923076923075,
+      "ballSpeed": 31.373737373737374,
+      "pickupCount": 6,
+      "batScale": 0.778,
+      "highlights": ["EXTRA BALL"],
+      "bots": {
+        "reaction": 0.06791666666666668,
+        "jitter": 0.052000000000000005,
+        "error": 0.24700000000000003,
+        "horizon": 0.623,
+        "serveScale": 0.6775,
+        "speed": 7.68,
+        "tactics": 0.8686868686868687
+      }
+    },
+    {
+      "level": 88,
+      "maxBalls": 14,
+      "ballInterval": 2.3076923076923075,
+      "ballSpeed": 31.575757575757574,
+      "pickupCount": 6,
+      "batScale": 0.772,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.06333333333333332,
+        "jitter": 0.048,
+        "error": 0.22799999999999998,
+        "horizon": 0.652,
+        "serveScale": 0.66,
+        "speed": 8.32,
+        "tactics": 0.8787878787878788
+      }
+    },
+    {
+      "level": 89,
+      "maxBalls": 14,
+      "ballInterval": 2.3076923076923075,
+      "ballSpeed": 31.77777777777778,
+      "pickupCount": 6,
+      "batScale": 0.766,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.058750000000000004,
+        "jitter": 0.044,
+        "error": 0.209,
+        "horizon": 0.681,
+        "serveScale": 0.6425000000000001,
+        "speed": 8.96,
+        "tactics": 0.8888888888888888
+      }
+    },
+    {
+      "level": 90,
+      "maxBalls": 14,
+      "ballInterval": 2.3076923076923075,
+      "ballSpeed": 31.97979797979798,
+      "pickupCount": 6,
+      "batScale": 0.76,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.05416666666666667,
+        "jitter": 0.04,
+        "error": 0.19,
+        "horizon": 0.71,
+        "serveScale": 0.625,
+        "speed": 9.600000000000001,
+        "tactics": 0.898989898989899
+      }
+    },
+    {
+      "level": 91,
+      "maxBalls": 14,
+      "ballInterval": 2.3076923076923075,
+      "ballSpeed": 32.18181818181818,
+      "pickupCount": 6,
+      "batScale": 0.754,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.04958333333333333,
+        "jitter": 0.036,
+        "error": 0.17099999999999999,
+        "horizon": 0.7390000000000001,
+        "serveScale": 0.6075,
+        "speed": 10.240000000000002,
+        "tactics": 0.9090909090909091
+      }
+    },
+    {
+      "level": 92,
+      "maxBalls": 14,
+      "ballInterval": 2.3076923076923075,
+      "ballSpeed": 32.38383838383838,
+      "pickupCount": 6,
+      "batScale": 0.748,
+      "highlights": ["SMALLER BAT"],
+      "bots": {
+        "reaction": 0.045000000000000005,
+        "jitter": 0.032,
+        "error": 0.15200000000000002,
+        "horizon": 0.768,
+        "serveScale": 0.5900000000000001,
+        "speed": 10.879999999999999,
+        "tactics": 0.9191919191919192
+      }
+    },
+    {
+      "level": 93,
+      "maxBalls": 14,
+      "ballInterval": 2.3076923076923075,
+      "ballSpeed": 32.58585858585859,
+      "pickupCount": 6,
+      "batScale": 0.742,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.04041666666666666,
+        "jitter": 0.027999999999999997,
+        "error": 0.13299999999999998,
+        "horizon": 0.797,
+        "serveScale": 0.5725,
+        "speed": 11.52,
+        "tactics": 0.9292929292929293
+      }
+    },
+    {
+      "level": 94,
+      "maxBalls": 15,
+      "ballInterval": 2.142857142857143,
+      "ballSpeed": 32.78787878787879,
+      "pickupCount": 6,
+      "batScale": 0.736,
+      "highlights": ["EXTRA BALL"],
+      "bots": {
+        "reaction": 0.03583333333333334,
+        "jitter": 0.024000000000000007,
+        "error": 0.11400000000000005,
+        "horizon": 0.8260000000000001,
+        "serveScale": 0.555,
+        "speed": 12.16,
+        "tactics": 0.9393939393939394
+      }
+    },
+    {
+      "level": 95,
+      "maxBalls": 15,
+      "ballInterval": 2.142857142857143,
+      "ballSpeed": 32.98989898989899,
+      "pickupCount": 7,
+      "batScale": 0.73,
+      "highlights": ["MORE PICKUPS"],
+      "bots": {
+        "reaction": 0.03125,
+        "jitter": 0.020000000000000004,
+        "error": 0.09499999999999997,
+        "horizon": 0.855,
+        "serveScale": 0.5375000000000001,
+        "speed": 12.8,
+        "tactics": 0.9494949494949495
+      }
+    },
+    {
+      "level": 96,
+      "maxBalls": 15,
+      "ballInterval": 2.142857142857143,
+      "ballSpeed": 33.19191919191919,
+      "pickupCount": 7,
+      "batScale": 0.724,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.026666666666666658,
+        "jitter": 0.016,
+        "error": 0.07599999999999996,
+        "horizon": 0.8840000000000001,
+        "serveScale": 0.52,
+        "speed": 13.440000000000001,
+        "tactics": 0.9595959595959596
+      }
+    },
+    {
+      "level": 97,
+      "maxBalls": 15,
+      "ballInterval": 2.142857142857143,
+      "ballSpeed": 33.39393939393939,
+      "pickupCount": 7,
+      "batScale": 0.718,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.02208333333333333,
+        "jitter": 0.011999999999999997,
+        "error": 0.056999999999999995,
+        "horizon": 0.913,
+        "serveScale": 0.5025,
+        "speed": 14.080000000000002,
+        "tactics": 0.9696969696969697
+      }
+    },
+    {
+      "level": 98,
+      "maxBalls": 15,
+      "ballInterval": 2.142857142857143,
+      "ballSpeed": 33.5959595959596,
+      "pickupCount": 7,
+      "batScale": 0.712,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.0175,
+        "jitter": 0.007999999999999993,
+        "error": 0.03799999999999998,
+        "horizon": 0.9420000000000002,
+        "serveScale": 0.485,
+        "speed": 14.720000000000002,
+        "tactics": 0.9797979797979798
+      }
+    },
+    {
+      "level": 99,
+      "maxBalls": 15,
+      "ballInterval": 2.142857142857143,
+      "ballSpeed": 33.7979797979798,
+      "pickupCount": 7,
+      "batScale": 0.706,
+      "highlights": ["SPEED UP"],
+      "bots": {
+        "reaction": 0.012916666666666674,
+        "jitter": 0.0040000000000000036,
+        "error": 0.019000000000000017,
+        "horizon": 0.9710000000000001,
+        "serveScale": 0.4675,
+        "speed": 15.36,
+        "tactics": 0.98989898989899
+      }
+    },
+    {
+      "level": 100,
+      "maxBalls": 16,
+      "ballInterval": 2,
+      "ballSpeed": 34,
+      "pickupCount": 7,
+      "batScale": 0.7,
+      "highlights": ["EXTRA BALL", "ELITE BOTS"],
+      "bots": {
+        "reaction": 0.008333333333333333,
+        "jitter": 0,
+        "error": 0,
+        "horizon": 1,
+        "serveScale": 0.45,
+        "speed": 16,
+        "tactics": 1
+      }
+    }
+  ]
+}

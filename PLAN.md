@@ -143,7 +143,7 @@ Bots arrive **before** advanced polish and before mobile/networking:
 
 - One human can fill any seat in a 2–6 player local game; all other seats are bots.
 - Bots use the **same public game state and intent interface as a human**, with no wallhack/future-state privilege beyond a limited, explicit prediction horizon.
-- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. The owner now requests **100 adaptive levels**, replacing configurable Beginner/Standard/Expert choices. Start at level 1 and persist progress locally. Wins advance at least one level, with calibrated streak jumps capped at five; three consecutive losses at a challenge demote one level and reset the streak. Wins reset losses; level 1 is the floor and 100 the ceiling. Time away never changes the level or skill weighting. Announce demotions on results and at the next introduction. Level 100 uses the strongest legal visible-state controller with no deliberate error; earlier levels use slower, less accurate prediction, serve aim and shot/curve planning. Show LEVEL 01 as reflected world geometry rising from and sinking into the floor during the existing opening countdown. Each attempt also freezes the level-driven ball cap (1–8), arrival interval (22–5 s), ball speed (14–34), pickup budget (0 until level 5, rising to 7) and physical bat width (135% down to 70% of standard). Ball unlocks at 10/25/40/55/70/85/100 alternate with pickup unlocks at 5/20/35/50/65/80/95. All players share the width, and player settings cannot override this progression.
+- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. The owner now requests **100 adaptive levels**, replacing configurable Beginner/Standard/Expert choices. Start at level 1 and persist progress locally. Wins advance at least one level, with calibrated streak jumps capped at five; three consecutive losses at a challenge demote one level and reset the streak. Wins reset losses; level 1 is the floor and 100 the ceiling. Time away never changes the level or skill weighting. Announce demotions on results and at the next introduction. Level 100 uses the strongest legal visible-state controller with no deliberate error; earlier levels use slower, less accurate prediction, serve aim and shot/curve planning. Show LEVEL 01 as reflected world geometry rising from and sinking into the floor during the existing opening countdown. Each attempt also freezes the level-driven ball cap (1–16), arrival interval (12–2 s), ball speed (14–34), pickup budget (0 until level 5, rising to 7) and physical bat width (135% down to 70% of standard). Extra balls unlock at 8/15/21/28/34/41/48/54/61/67/74/81/87/94/100; pickups unlock at 5/20/35/50/65/80/95. All players share the width, and player settings cannot override this progression.
 - Bot randomness is seeded for repeatable test runs. Instrument who takes damage, causes deflections, survives and wins, plus mean/median duration. Bots must not all make exactly the same decisions.
 - Use separate match test seeds, not hand-scripted victories. One human vs five bots must be playable locally with **no network or account**.
 - The same bots can later fill unoccupied multiplayer seats, take over a disconnect or support practice. Their behaviour belongs in the pure simulation module (`apps/web/src/simulation` initially; extract `packages/simulation` when useful), not networking/UI.
@@ -463,6 +463,24 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 - **Permanent boundary:** Music observes events only. Musical quantisation delays sounds, never collisions, rules, inputs, health, spawning or RNG. No music-driven camera motion. User accepted the detour for now and requested M05; full M06/M07 remain unstarted.
 
 ### Progress / approval ledger
+
+13 November level-briefing amendment: the owner requests feedback beneath the
+reflected LEVEL string when a key challenge parameter changes, plus clear advance
+notice of whether losing the coming attempt causes demotion. World-space captions
+now announce extra balls, pickup introduction/budgets, cumulative bat-width and
+bot-reaction milestones, and speed increases between them. Level 100 calls out its
+extra ball and elite bots. Comparison uses the actual previous same-arena attempt,
+so skipped levels retain unlocks and retries do not falsely announce an upgrade.
+Each introduction also states LOSS RETRIES LEVEL NN, LOSS DROPS TO LEVEL NN on the
+third-loss attempt, or LEVEL 01 IS THE FLOOR. These stakes are frozen per attempt,
+with the same challenge/arena rules as actual progression. Existing demotion-result
+text is retained. Captions rise/sink and reflect with the level; the countdown and
+existing easy-to-hard physics/bot ramp are retained. See `docs/LEVEL_BRIEFING_REVIEW.md`
+and `docs/reviews/m09/level-briefing/`. Validation: clean `vp check --fix`,
+456 unit tests / 73 files, 16/16 root production browser checks and 12/12 Pages
+checks. Both builds pass with the existing ~969kB main-chunk advisory; ten authored
+renders have zero browser errors. Physical-device readability remains open.
+Local implementation: `c546258`. M09 awaits review.
 
 13 November loss-navigation correction: the owner found Watch confusing because
 it only hid the result card, and requested Back/Retry. The scene loss menu now
@@ -905,4 +923,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
