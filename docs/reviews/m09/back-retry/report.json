@@ -1,0 +1,42 @@
+{
+  "kind": "Authored Back/Retry scene controls across desktop and phone 2/4/6 arenas",
+  "samples": [
+    {
+      "count": 2,
+      "mode": "spectator",
+      "inset": 2,
+      "gap": 0.015
+    },
+    {
+      "count": 4,
+      "mode": "spectator",
+      "inset": 0.272077938642143,
+      "gap": 0.015
+    },
+    {
+      "count": 6,
+      "mode": "spectator",
+      "inset": -2,
+      "gap": 0.015
+    },
+    {
+      "count": 2,
+      "mode": "spectator",
+      "inset": 2,
+      "gap": 0.015
+    },
+    {
+      "count": 4,
+      "mode": "spectator",
+      "inset": 0.272077938642143,
+      "gap": 0.015
+    },
+    {
+      "count": 6,
+      "mode": "spectator",
+      "inset": -2,
+      "gap": 0.015
+    }
+  ],
+  "errors": []
+}

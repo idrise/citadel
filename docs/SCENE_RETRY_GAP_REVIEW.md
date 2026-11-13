@@ -1,3 +1,5 @@
+> The Watch interaction below is superseded by [Back/Retry navigation](BACK_RETRY_REVIEW.md). Triangle geometry and its evidence remain current.
+
 # Scene Retry and a passable triangle gap
 
 Watch and Retry now use the same scene rendering approach as the title/result controls: solid geometry, dark button bodies and the neon crease shader. The visible React result card and its styling are removed. Invisible semantic hit targets retain touch, mouse and keyboard access. Loss/level/demotion lettering is also drawn in the scene.

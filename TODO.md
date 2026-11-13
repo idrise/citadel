@@ -11,7 +11,7 @@ audio, measurements and physical-device limits. Awaiting M09 review.
 - [x] Give the title the same reflected, rising/sinking world lettering as the level introduction; keep menu controls fixed during roster changes.
 - [x] Repair mobile audio routing, gesture priming and interruption recovery, with an **Enable sound** action when another gesture is needed.
 - [x] Develop longer musical phrases, harmonic inversions, bass patterns, fills and seeded variations; add a velocity-driven FM paddle swish.
-- [x] Offer scene-rendered **Watch** and immediate **Retry** as soon as the human fortress falls; keep the bot match running and save each result once.
+- [x] Offer scene-rendered **Back** (title screen) and immediate **Retry** as soon as the human fortress falls; retain progress and save each result once.
 - [x] Investigate iPad/iPhone stalls and reduce mobile GPU/allocation costs: one floor capture, bounded resolution, no multisample/shadow passes, instanced ball trails, reusable morph buffers and stable light counts. Native Chromium/WebKit checks pass; retesting on the reported physical devices remains part of the M10 validation gate.
 - [x] Move triangular-layout fortresses 2.6 units inward and reserve a 0.7-unit ball passage beside every legal bat pose; interpolate the gap through elimination morphs.
 - [x] Gradually accelerate each scoreless active rally after eight seconds, by 5% of base speed per second up to 1.75×; reset that ball on a scored container hit.

@@ -1,7 +1,7 @@
 # CITADEL — PLAN.md
 
 **Status:** Shared design in progress; confirmed rules and provisional prototype experiments distinguished below.  
-**Updated:** 12 November 2026\
+**Updated:** 13 November 2026\
 **Genre:** Fast, competitive, polygon-arena paddle/ball survival  
 **Target:** Understandable, tense matches that usually resolve in approximately **two minutes**. Difficulty is ramped as the game goes on.
 **Players:** 2–6 seats, initially **one human and the remaining seats filled by bots**  
@@ -464,6 +464,20 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+13 November loss-navigation correction: the owner found Watch confusing because
+it only hid the result card, and requested Back/Retry. The scene loss menu now
+renders BACK and RETRY. Back resets the abandoned match to a paused title preview
+on the same canvas, retaining the selected player count, fortress and saved next
+challenge level/demotion. Start is available again; Retry still starts immediately.
+The obsolete watching state is removed from session, rendering and review fixtures.
+Neither action records an extra result. See `docs/BACK_RETRY_REVIEW.md` and
+`docs/reviews/m09/back-retry/` for the rendered 2/4/6 desktop/phone controls and checks.
+Local implementation: `0a2bc62`. Validation: clean `vp check --fix`, 449 unit
+tests / 72 files, root production browser selection 10/10 and Pages loss-navigation
+selection 4/4. Both builds pass with the existing ~967kB main-chunk advisory. Six
+rendered fixtures report zero browser errors. Physical iPad/iPhone review remains
+open. M09 awaits review; this correction does not authorise later milestones or publishing.
+
 12 November returning-melody amendment: the owner likes the new musical variety
 but requests regular returns to the original tune, with small per-bar instrument,
 effect and harmony changes. The original call/answer now opens the first groove
@@ -891,4 +905,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
