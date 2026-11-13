@@ -1,7 +1,7 @@
 import { advanceRally, rallyBaseSpeed } from "./rally";
 import { ARENA, clampPaddleAngle } from "./arena";
 import { paddleReturn, sweepPaddle, sweepWalls } from "./collision";
-import { curveFlight, swipeCurve } from "./flight";
+import { curveFlight, spinBounce, spinReturn, swipeCurve } from "./flight";
 import { SUPPLIES } from "./supplies";
 import { alive, type MatchState } from "./types";
 import { add, clamp, dot, length, scale, sub, type Vec2 } from "./vector";
@@ -59,7 +59,7 @@ function segmentDistance(point: Vec2, start: Vec2, end: Vec2) {
 export function planBotShot(
   state: MatchState,
   seat: number,
-  contact: { point: Vec2; velocity: Vec2; angle: number; rallyTime?: number },
+  contact: { point: Vec2; velocity: Vec2; angle: number; spin?: number; rallyTime?: number },
   speed: number,
   precision = 1,
 ): BotShot {
@@ -76,7 +76,11 @@ export function planBotShot(
     const brush = Math.min(speed, ARENA.paddleSpeed) * precision;
     for (const swipe of precision < 0.2 ? [0] : [-brush, 0, brush]) {
       let position = add(add(start, scale(contact.velocity, hit.time)), scale(hit.normal, 0.001));
-      let velocity = paddleReturn(contact.velocity, hit.offset, hit.normal);
+      let velocity = spinReturn(
+        paddleReturn(contact.velocity, hit.offset, hit.normal),
+        hit.normal,
+        contact.spin,
+      );
       const forecast = {
         phase: "active" as const,
         velocity,
@@ -121,7 +125,9 @@ export function planBotShot(
         position = end;
         if (wall) {
           position = add(position, scale(wall.normal, (wall.separation ?? 0) + 0.001));
-          velocity = sub(velocity, scale(wall.normal, 2 * dot(velocity, wall.normal)));
+          const rebound = spinBounce(velocity, wall.normal, spin);
+          velocity = rebound.velocity;
+          spin = rebound.spin;
           // Remaining substep deliberately omitted: this is a bounded aim estimate.
         }
       }

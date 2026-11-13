@@ -125,7 +125,7 @@ test("a loss retries the played level directly and preserves it after reload", a
     },
     { key, now: Date.now() },
   );
-  await openGame(page, true, 2);
+  await openGame(page, true, 1);
   await choosePlayers(page, 2);
   await openSettings(page);
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
@@ -211,7 +211,7 @@ test("the third consecutive loss demotes one level, announces it and persists th
     },
     { key, now: Date.now() },
   );
-  await openGame(page, true, 2);
+  await openGame(page, true, 1);
   await choosePlayers(page, 2);
   await openSettings(page);
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();

@@ -20,7 +20,7 @@ audio, measurements and physical-device limits. Awaiting M09 review.
 - [x] When one of the bots or the player is holding a ball then we need a special effect to make it more visually obvious as they are quite threatening especially when the person next to you decides to aim right at you.
 - [x] One really nice feature is the morphing board. Can we get all states to be a transition to the board for the next screen? IE changing players morphs the board, going from the star when you win back to a say 6 player game just morphing. So it becomes the constant.
 - [x] Add some different shapes for certain levels
-- [ ] Can you make the curve ball a little more pronounced IE more curve...and have the spin of the ball affect it's bounce?
-- [ ] To modify difficulty we can shrink the size of the paddles, this should be worked into the level set.
+- [x] Can you make the curve ball a little more pronounced IE more curve...and have the spin of the ball affect it's bounce?
+- [x] To modify difficulty we can shrink the size of the paddles, this should be worked into the level set.
 - [ ] Hitting a pickup should cause the ball to bounce off of it. The transition to the players bank needs to be emphasized a bit more so it's obvious what happened and why.
 - [ ]

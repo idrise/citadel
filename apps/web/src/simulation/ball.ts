@@ -4,9 +4,9 @@ import { ARENA } from "./arena";
 import { paddleReturn, sweepCircle, sweepPaddle, sweepWalls, type Contact } from "./collision";
 import { damagePiece, emit } from "./serving";
 import { alive, type BallState, type MatchOptions, type MatchState } from "./types";
-import { add, dot, scale, sub, type Vec2 } from "./vector";
+import { add, scale, sub, type Vec2 } from "./vector";
 import { approachSlowdown } from "./slowdown";
-import { contactSwipe, curveFlight, swipeCurve } from "./flight";
+import { contactSwipe, curveFlight, spinBounce, spinReturn, swipeCurve } from "./flight";
 
 interface Impact extends Contact {
   type: "paddle" | "piece" | "wall" | "pickup";
@@ -148,7 +148,11 @@ export function advanceBall(
         (state.players[hit.seat]!.angle -
           (previousAngles[hit.seat] ?? state.players[hit.seat]!.angle)) /
         dt;
-      ball.velocity = paddleReturn(ball.velocity, hit.offset, hit.normal);
+      ball.velocity = spinReturn(
+        paddleReturn(ball.velocity, hit.offset, hit.normal),
+        hit.normal,
+        ball.spin,
+      );
       ball.spin = swipeCurve(
         contactSwipe(state.players[hit.seat]!.swipe, angularVelocity),
         incoming,
@@ -168,7 +172,9 @@ export function advanceBall(
         },
       });
     } else {
-      ball.velocity = sub(ball.velocity, scale(hit.normal, 2 * dot(ball.velocity, hit.normal)));
+      const rebound = spinBounce(ball.velocity, hit.normal, ball.spin);
+      ball.velocity = rebound.velocity;
+      ball.spin = rebound.spin;
       emit(state, "wall", ball.position, -1, null, {
         ballId: ball.id,
         impact: {

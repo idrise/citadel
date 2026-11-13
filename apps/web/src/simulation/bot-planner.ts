@@ -1,9 +1,9 @@
 import { advanceRally, rallyBaseSpeed } from "./rally";
 import { ARENA, fortress } from "./arena";
 import { sweepCircle, sweepPaddle, sweepWalls } from "./collision";
-import { curveFlight } from "./flight";
+import { curveFlight, spinBounce } from "./flight";
 import { alive, type MatchState } from "./types";
-import { add, angleDifference, angleOf, dot, length, scale, sub, type Vec2 } from "./vector";
+import { add, angleDifference, angleOf, length, scale, sub, type Vec2 } from "./vector";
 
 /** Bounded visible-state forecast: curve, wall banks and intervening actors.
  * No future inputs, RNG writes or full-match search. At most 30 steps per ball. */
@@ -21,6 +21,7 @@ export function planIntercept(
     time: number;
     angle: number;
     ballId: number;
+    spin: number;
     rallyTime?: number;
   } | null = null;
   for (const source of state.balls) {
@@ -97,6 +98,7 @@ export function planIntercept(
             time,
             angle,
             ballId: source.id,
+            spin: spin ?? 0,
             ...(forecast.rallyTime !== undefined ? { rallyTime: forecast.rallyTime } : {}),
           };
         break;
@@ -106,7 +108,9 @@ export function planIntercept(
           add(position, scale(velocity, wall.time)),
           scale(wall.normal, (wall.separation ?? 0) + 0.0001),
         );
-        velocity = sub(velocity, scale(wall.normal, 2 * dot(velocity, wall.normal)));
+        const rebound = spinBounce(velocity, wall.normal, spin);
+        velocity = rebound.velocity;
+        spin = rebound.spin;
         position = add(position, scale(velocity, dt - wall.time));
       } else position = add(position, scale(velocity, dt));
     }

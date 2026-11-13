@@ -464,6 +464,16 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+13 November curve / bat-width checkpoint: maximum flight turn increases to
+64.5 degrees; signed spin adds tangential surface grip on wall and paddle bounces
+without changing speed. Wall banks retain 72% of spin. Bots and forecasts share
+the rebound helpers. Existing level width ramp (135% -> 100% -> 70% at 1/50/100)
+is verified and the duplicate TODO request is satisfied by that shared system.
+Checks: 481 unit tests / 82 files, fifteen selected root browser scenarios have
+passing coverage (two loss fixtures now naturally lose with seed 1 after seed 2
+began winning under the new spin), eighteen 2/4/6 desktop/phone forecast renders,
+clean scoped check/root build, deterministic new traces and zero collision caps.
+
 13 November symmetric arena checkpoint: classic / wide / faceted families change
 in ten-level bands, retaining equal geometry for each seat. Shared convex wall
 outlines feed collision, bots, placements, rendering and camera. Families remain

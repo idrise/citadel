@@ -48,10 +48,20 @@ Level 10 announces WIDE ARENA, level 20 FACETED ARENA, level 30 CLASSIC ARENA, t
 
 All 478 unit tests pass, including rotational symmetry, convexity, actual bat/container clearance, seeded deterministic bot flight in all layouts, zero collision caps and family/width persistence through elimination. The old triangle test now checks its original three corners within the expanded six-edge variants; the classic travel improvement and all triangle ball corridors remain checked. Eight root browser difficulty/reading-window cases pass. Scoped check and root build pass; physical-device play remains open.
 
+## 6. Stronger curves and spin-sensitive rebounds — ready for review
+
+Maximum swipe curve rises from 1.4 to 1.8 rad/s and decay changes from 1.8 to 1.6/s: a full unimpeded swipe turns up to 64.5 degrees rather than 44.6. Ordinary half-speed swipes now move laterally more than 2.8 units over the first half-second. Signed surface grip adds up to roughly eleven degrees to a head-on rebound, preserves ball speed, bounds grazing departures, and retains 72% of spin after a wall bank. A stationary paddle still clears subsequent flight spin, while the incoming spin affects its rebound angle. Bot bank forecasts, interception and shot planning share these rules.
+
+[Positive-spin return](reviews/m09/spin-bounce/desktop-4-1.png), [negative](reviews/m09/spin-bounce/desktop-4--1.png), [straight](reviews/m09/spin-bounce/desktop-4-0.png). Eighteen actual incoming-spin/return-forecast renders cover 2/4/6 desktop/phone with zero errors. New [replay traces](reviews/m09/spin-bounce/replays.json) preserve prior digests for comparison; original reviews remain untouched. Zero-spin wall/corner paths are unchanged, and fixed-step frame-rate equivalence and collision caps remain checked.
+
+All 481 unit tests pass. Controls/progression/mobile browser coverage passes across fifteen scenarios (13 initially; two loss tests rerun with naturally losing seed 1 because seed 2 now wins under the changed physics). No winner/health mutations are used. Scoped check and root build pass.
+
+## 7. Bat-size progression — verified and ready for review
+
+The requested width ramp was already implemented: 135% at level 1, 100% at level 50, then 70% at level 100. Every level shrinks slightly; readable SMALLER BAT messages mark substantial cumulative changes. Rendering, collision, legal travel, forecasts and bot catches share the actual width. It stays frozen during each attempt and through eliminations, and demotion restores the appropriate wider bat. Existing monotonic-ramp, wide-catches/narrow-misses, all-layout clearance and width-preserving morph tests pass. The difficulty browser checks verify actual 1/4/5/10/50/100 settings, and variant renders show the same dimensions. No second width system was added.
+
 ## Remaining entries
 
-- Stronger curve and spin-sensitive bounces.
-- Verify existing bat-size difficulty progression.
 - Pickup rebound and clearer bank transfer.
 - Minimal scene-rendered settings.
 

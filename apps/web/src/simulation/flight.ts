@@ -1,8 +1,8 @@
 import { ARENA } from "./arena";
-import { clamp, dot, normalise, type Vec2 } from "./vector";
+import { add, clamp, dot, length, normalise, scale, sub, type Vec2 } from "./vector";
 
-export const MAX_SWIPE_CURVE = 1.4; // radians / second; under 45 degrees total at full swipe
-export const CURVE_DECAY = 1.8;
+export const MAX_SWIPE_CURVE = 1.8; // radians / second; under 65 degrees total at full swipe
+export const CURVE_DECAY = 1.6;
 export const SWIPE_WINDOW = 0.1;
 
 export interface BatSwipe {
@@ -51,4 +51,25 @@ export function swipeCurve(angularVelocity: number, incoming: Vec2, normal: Vec2
   const approach = clamp(-dot(normalise(incoming), normal), 0, 1);
   const swipe = clamp(angularVelocity / ARENA.paddleSpeed, -1, 1);
   return Math.sign(swipe) * Math.sqrt(Math.abs(swipe)) * MAX_SWIPE_CURVE * (0.45 + 0.55 * approach);
+}
+
+/** A little tangential grip converts visible spin into a signed rebound angle.
+ * Preserve speed and an inward departure, including almost tangent corner contacts.
+ * Zero spin returns the existing aim vector exactly. */
+export function spinReturn(outgoing: Vec2, normal: Vec2, spin: number | undefined): Vec2 {
+  const rate = Number.isFinite(spin) ? clamp(spin ?? 0, -MAX_SWIPE_CURVE, MAX_SWIPE_CURVE) : 0;
+  if (rate === 0) return outgoing;
+  const speed = length(outgoing),
+    tangent = { x: -normal.y, y: normal.x };
+  let direction = normalise(add(outgoing, scale(tangent, (speed * 0.2 * rate) / MAX_SWIPE_CURVE)));
+  if (dot(direction, normal) < 0.12)
+    direction = normalise(add(scale(tangent, dot(direction, tangent)), scale(normal, 0.12)));
+  return scale(direction, speed);
+}
+export function spinBounce(incoming: Vec2, normal: Vec2, spin: number | undefined) {
+  const reflected = sub(incoming, scale(normal, 2 * dot(incoming, normal)));
+  return {
+    velocity: spinReturn(reflected, normal, spin),
+    spin: (Number.isFinite(spin) ? clamp(spin ?? 0, -MAX_SWIPE_CURVE, MAX_SWIPE_CURVE) : 0) * 0.72,
+  };
 }

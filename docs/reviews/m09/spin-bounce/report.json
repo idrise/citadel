@@ -1,0 +1,114 @@
+{
+  "kind": "Actual incoming spin, physical paddle bounce and shared return forecast",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 2,
+      "spin": -1.8,
+      "outgoingDegrees": -6.939822349550781
+    },
+    {
+      "mobile": false,
+      "count": 2,
+      "spin": 0,
+      "outgoingDegrees": 0
+    },
+    {
+      "mobile": false,
+      "count": 2,
+      "spin": 1.8,
+      "outgoingDegrees": 6.939822349550781
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "spin": -1.8,
+      "outgoingDegrees": -6.939822349550781
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "spin": 0,
+      "outgoingDegrees": 0
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "spin": 1.8,
+      "outgoingDegrees": 6.939822349550768
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "spin": -1.8,
+      "outgoingDegrees": -6.939822349550736
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "spin": 0,
+      "outgoingDegrees": 4.4527765540489235e-14
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "spin": 1.8,
+      "outgoingDegrees": 6.939822349550824
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "spin": -1.8,
+      "outgoingDegrees": -6.939822349550781
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "spin": 0,
+      "outgoingDegrees": 0
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "spin": 1.8,
+      "outgoingDegrees": 6.939822349550781
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "spin": -1.8,
+      "outgoingDegrees": -6.939822349550781
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "spin": 0,
+      "outgoingDegrees": 0
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "spin": 1.8,
+      "outgoingDegrees": 6.939822349550768
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "spin": -1.8,
+      "outgoingDegrees": -6.939822349550736
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "spin": 0,
+      "outgoingDegrees": 4.4527765540489235e-14
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "spin": 1.8,
+      "outgoingDegrees": 6.939822349550824
+    }
+  ],
+  "errors": []
+}

@@ -26,7 +26,7 @@ it("preserves a straight zero-spin flight exactly and bounds curve without addin
     spin = next.spin;
     expect(length(current)).toBeCloseTo(24, 10);
   }
-  expect(angleOf(current)).toBeGreaterThan(0.77);
+  expect(angleOf(current)).toBeGreaterThan(1.1);
   expect(angleOf(current)).toBeLessThanOrEqual(MAX_SWIPE_CURVE / CURVE_DECAY);
   expect(spin).toBeLessThan(0.001);
   expect(swipeCurve(0, { x: -24, y: 0 }, { x: 1, y: 0 })).toBe(0);
@@ -43,7 +43,7 @@ it("makes an ordinary swipe visibly bend the path while preserving ball speed", 
     spin = next.spin;
     lateral += velocity.y * FIXED_DT;
   }
-  expect(lateral).toBeGreaterThan(2);
+  expect(lateral).toBeGreaterThan(2.8);
   expect(angleOf(velocity)).toBeGreaterThan(0.3);
   expect(length(velocity)).toBeCloseTo(24, 10);
 });
