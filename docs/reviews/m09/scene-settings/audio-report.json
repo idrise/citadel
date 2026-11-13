@@ -1,0 +1,45 @@
+{
+  "samples": [
+    {
+      "name": "music-only",
+      "peak": 0.07220690697431564,
+      "rms": 0.001878257982106846,
+      "channels": 2,
+      "musicRms": 0.005783332424251622,
+      "effectsRms": 0.0001428210531052476
+    },
+    {
+      "name": "effects-only",
+      "peak": 0.35927194356918335,
+      "rms": 0.02324029533160442,
+      "channels": 2,
+      "musicRms": 0.012208047106546644,
+      "effectsRms": 0.025897723689338084
+    },
+    {
+      "name": "music-blocked",
+      "peak": 0,
+      "rms": 0,
+      "channels": 2,
+      "musicRms": 0,
+      "effectsRms": 0
+    },
+    {
+      "name": "effects-blocked",
+      "peak": 2.489557893170513e-9,
+      "rms": 2.4042019759838218e-11,
+      "channels": 2,
+      "musicRms": 7.602754199186313e-11,
+      "effectsRms": 0
+    },
+    {
+      "name": "muted",
+      "peak": 2.489557893170513e-9,
+      "rms": 2.4042019759838218e-11,
+      "channels": 2,
+      "musicRms": 7.602754199186313e-11,
+      "effectsRms": 0
+    }
+  ],
+  "errors": []
+}

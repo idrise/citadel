@@ -1,5 +1,13 @@
 import { expect, test } from "./fixtures";
-import { moveMouse, finishIntroduction, openGame, play, pause, openSettings } from "./helpers";
+import {
+  configureGame,
+  moveMouse,
+  finishIntroduction,
+  openGame,
+  play,
+  pause,
+  openSettings,
+} from "./helpers";
 
 test("perspective walls and reflected bloom render, with a reduced-effects path", async ({
   page,
@@ -17,10 +25,10 @@ test("perspective walls and reflected bloom render, with a reduced-effects path"
   await pause(page);
   await openSettings(page);
   const stats = await page.locator(".diagnostics").textContent();
-  await page.getByRole("checkbox", { name: "Reduced effects" }).check();
+  await configureGame(page, { reducedEffects: true });
   await page.clock.runFor(150);
   expect(await page.locator(".diagnostics").textContent()).toBe(stats);
-  await page.getByRole("checkbox", { name: "Reduced effects" }).uncheck();
+  await configureGame(page, { reducedEffects: false });
   await page.clock.runFor(150);
   expect(await page.locator(".diagnostics").textContent()).toBe(stats);
   expect(errors).toEqual([]);

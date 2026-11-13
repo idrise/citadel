@@ -1,3 +1,4 @@
+import type { SessionTestPort } from "../apps/web/src/app/test-port";
 /** Installed by Playwright before the app loads; never imported by the game bundle.
  * Capture and fullscreen state remain inside this document. Native OS APIs are never called.
  */
@@ -94,6 +95,7 @@ export function installVirtualBrowserControls() {
 declare global {
   interface Window {
     __citadelTestInput: {
+      session?: SessionTestPort;
       move(x: number, y: number): void;
       key(code: string, down: boolean): void;
       click(): void;

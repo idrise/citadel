@@ -1,6 +1,7 @@
 import type { MusicCue, MusicVisuals } from "./music-types";
 
 export interface MusicEngine {
+  setMix?: (music: number, effects: number) => void;
   steer?: (velocity: number, position: number) => void;
   play: (cues: readonly MusicCue[]) => void;
   setPlaying: (value: boolean, volume: number) => void;

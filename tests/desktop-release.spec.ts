@@ -1,6 +1,16 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { expect, test } from "./fixtures";
-import { finishIntroduction, openGame, play, pause, openSettings, choosePlayers } from "./helpers";
+import {
+  configureGame,
+  selectFortress,
+  exportRound,
+  finishIntroduction,
+  openGame,
+  play,
+  pause,
+  openSettings,
+  choosePlayers,
+} from "./helpers";
 
 test("fresh six-seat desktop round exports an honest local result and resets on rematch", async ({
   page,
@@ -12,11 +22,10 @@ test("fresh six-seat desktop round exports an honest local result and resets on 
   await openGame(page);
   await choosePlayers(page, 6);
   await openSettings(page);
-  await page.getByText("How to play", { exact: true }).click();
-  await expect(page.getByText(/Desktop preview · v0.1.0/)).toBeVisible();
+  await expect(page.getByText("How to play", { exact: true })).toHaveCount(0);
   await openSettings(page);
-  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
-  await page.getByLabel("Your fortress", { exact: true }).selectOption("5");
+  await configureGame(page, { music: false, effectsVolume: 0 });
+  await selectFortress(page, Number("5"));
   const playButton = page.getByRole("button", { name: "Start", exact: true });
   await playButton.focus();
   await page.keyboard.press("Enter");
@@ -36,7 +45,7 @@ test("fresh six-seat desktop round exports an honest local result and resets on 
   await expect(page.locator("canvas")).toHaveCount(1);
   await openSettings(page);
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export round", exact: true }).click();
+  await exportRound(page);
   const download = await downloadPromise;
   const report = JSON.parse(await readFile((await download.path())!, "utf8")) as {
     schema: string;
@@ -92,24 +101,24 @@ test("solo preferences survive refresh, and every quality preset remains playabl
   page.on("pageerror", (error) => errors.push(error.message));
   await choosePlayers(page, 6);
   await openSettings(page);
-  await page.getByLabel("Effects quality", { exact: true }).selectOption("medium");
-  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
-  await page.getByLabel("Your fortress", { exact: true }).selectOption("5");
+  await configureGame(page, { effectsQuality: "medium" });
+  await configureGame(page, { music: false, effectsVolume: 0 });
+  await selectFortress(page, Number("5"));
   await page.reload();
   await expect(page.getByLabel("Player count", { exact: true })).toHaveText("6");
   await openSettings(page);
-  await expect(page.getByLabel("Your fortress", { exact: true })).toHaveValue("5");
-  await expect(page.getByLabel("Effects quality", { exact: true })).toHaveValue("medium");
-  await expect(page.getByRole("checkbox", { name: "Music", exact: true })).not.toBeChecked();
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem("citadel.solo.v1")!)),
+  ).toMatchObject({ humanSeat: 5, settings: { effectsQuality: "medium", music: false } });
   // Run the countdown cheaply; exercise the actual full presets in bounded frame samples below.
-  await page.getByLabel("Effects quality", { exact: true }).selectOption("low");
+  await configureGame(page, { effectsQuality: "low" });
   await openSettings(page);
   await play(page);
   await finishIntroduction(page);
-  for (const quality of ["low", "medium", "high"]) {
+  for (const quality of ["low", "medium", "high"] as const) {
     await pause(page);
     await openSettings(page);
-    await page.getByLabel("Effects quality", { exact: true }).selectOption(quality);
+    await configureGame(page, { effectsQuality: quality });
     await page.getByRole("button", { name: "Resume", exact: true }).click();
     await page.clock.runFor(100);
     await expect(page.locator(".menu-panel")).toHaveCount(0);

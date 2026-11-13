@@ -1,5 +1,9 @@
 import { expect, test } from "./fixtures";
 import {
+  configureGame,
+  selectFortress,
+  restartGame,
+  exportRound,
   finishIntroduction,
   choosePlayers,
   openGame,
@@ -54,7 +58,7 @@ test("clamping a selected fortress during the preview keeps the menu fixed and S
   await openGame(page, false);
   await choosePlayers(page, 6);
   await openSettings(page);
-  await page.getByLabel("Your fortress", { exact: true }).selectOption("5");
+  await selectFortress(page, Number("5"));
   await choosePlayers(page, 2);
   await play(page);
   await finishIntroduction(page);
@@ -71,8 +75,8 @@ test("ordinary restarted attempts keep their opening seed but vary pickup seeds 
   await page.goto("./");
   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 60000));
   await openSettings(page);
-  await page.getByRole("checkbox", { name: "Reduced effects", exact: false }).check();
-  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+  await configureGame(page, { reducedEffects: true });
+  await configureGame(page, { music: false, effectsVolume: 0 });
   const reports: {
     seed: number;
     supplySeed: number;
@@ -86,9 +90,9 @@ test("ordinary restarted attempts keep their opening seed but vary pickup seeds 
     await page.keyboard.press("Escape");
     await openSettings(page);
     const download = page.waitForEvent("download");
-    await page.getByRole("button", { name: "Export round", exact: true }).click();
+    await exportRound(page);
     reports.push(JSON.parse(await readFile((await (await download).path())!, "utf8")));
-    if (!attempt) await page.getByRole("button", { name: "Restart", exact: true }).click();
+    if (!attempt) await restartGame(page);
   }
   expect(reports[0]!.supplies).toHaveLength(1);
   expect(reports[1]!.supplies).toHaveLength(1);
@@ -102,15 +106,15 @@ test("choosing the current roster keeps Settings usable without resetting the ro
 }) => {
   await openGame(page);
   await openSettings(page);
-  await page.getByLabel("Your fortress", { exact: true }).selectOption("0");
-  await page.getByLabel("Players", { exact: true }).selectOption("4");
+  await selectFortress(page, Number("0"));
+  await page.evaluate(() => window.__citadelTestInput.session!.roster(4, 0));
   await expect(page.getByRole("button", { name: "Resume", exact: true })).toBeVisible();
   await play(page);
   await finishIntroduction(page);
   await page.keyboard.press("Escape");
   await openSettings(page);
   const before = await page.locator(".diagnostics").textContent();
-  await page.getByLabel("Your fortress", { exact: true }).selectOption("0");
+  await selectFortress(page, Number("0"));
   await expect(page.getByRole("button", { name: "Resume", exact: true })).toBeVisible();
   expect(await page.locator(".diagnostics").textContent()).toBe(before);
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");

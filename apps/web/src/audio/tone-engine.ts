@@ -31,6 +31,8 @@ export function createToneEngine(
   transport.bpm.value = MUSIC_BPM;
   let step = 0;
   let running = false;
+  let scoreAudible = true,
+    effectsAudible = true;
   let outroStart: number | null = null;
   const beats = createBeatEnvelope();
   const conductor = createEventConductor();
@@ -52,11 +54,18 @@ export function createToneEngine(
       else if (cue.voice === "pad" && !cues.some((item) => item.voice === "kick"))
         beats.schedule(time, 0.4);
     }
-    instruments.play(cues, time);
+    if (scoreAudible) instruments.play(cues, time, "music");
   }, "16n");
   return {
-    steer: instruments.steer,
+    steer: (velocity, position) => instruments.steer(effectsAudible ? velocity : 0, position),
+    setMix(music, effects) {
+      scoreAudible = music > 0;
+      effectsAudible = effects > 0;
+      instruments.setMix(music, effects, native.currentTime);
+      if (!effectsAudible) instruments.steer(0, 0);
+    },
     play(cues) {
+      if (!effectsAudible) return;
       for (const planned of conductor.plan(cues, native.currentTime, anchor))
         instruments.play([planned.cue], planned.time);
     },

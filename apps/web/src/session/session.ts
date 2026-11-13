@@ -49,6 +49,7 @@ export function createSession(
   onComplete: (result: LevelResult) => void = () => {},
   initialLossLevel = level,
   initialPreviousLevel?: number,
+  onSettings: (settings: GameSettings) => void = () => {},
 ) {
   const debug = createDebugLevels();
   let savedLevel = level;
@@ -56,20 +57,47 @@ export function createSession(
   let state = createMatch(seed, count, ARENA.startingPieces, supplySeed, levelDifficulty(level));
   let demotion: Demotion | null = null;
   let resultFor = createProgressRecorder(humanSeat, level);
-  const viewport = createViewport(container, humanSeat, state.arena, (action) => {
-    if (action === "start") start();
-    else if (action === "back") {
-      const target = debug.active ? savedLevel : continuationLevel;
-      debug.exit();
-      resetRound(count, humanSeat, target, true);
-    } else {
-      if (action === "options") {
-        menuSuppressed = true;
-        setPaused(true);
+  const viewport = createViewport(
+    container,
+    humanSeat,
+    state.arena,
+    (action) => {
+      if (action === "start") start();
+      else if (action === "back") {
+        const target = debug.active ? savedLevel : continuationLevel;
+        debug.exit();
+        resetRound(count, humanSeat, target, true);
+      } else {
+        if (action === "options") {
+          menuSuppressed = true;
+          settingsOpen = true;
+          setPaused(true);
+        }
+        onSceneAction(action);
       }
-      onSceneAction(action);
-    }
-  });
+    },
+    {
+      action(action) {
+        if (action === "pause") setPaused(true);
+        else if (action === "resume") resume();
+        else music.unlock();
+      },
+      change(key, value) {
+        if (!Number.isFinite(value)) return;
+        const low = key === "mouseSensitivity" ? 0.5 : 0,
+          high = key === "mouseSensitivity" ? 2 : 1;
+        settings = {
+          ...settings,
+          [key]: Math.max(low, Math.min(high, value)),
+          ...(key === "musicVolume" ? { music: value > 0 } : {}),
+        };
+        music.configure(settings);
+        onSettings(settings);
+        present([], 0);
+        report();
+      },
+    },
+  );
   const clock = createFixedClock();
   let observer = createRoundObserver(count);
   let paused = true;
@@ -82,6 +110,7 @@ export function createSession(
   let introDuration = 1.5;
   let endingTime = 0;
   let menuSuppressed = false;
+  let settingsOpen = false;
   let notice = "Defend your three containers. Last fortress standing wins.";
   let settings = createSettings(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   let initialSettings: GameSettings | null = null;
@@ -113,7 +142,10 @@ export function createSession(
     });
   const setPaused = (value: boolean) => {
     paused = value;
-    if (started && state.phase !== "finished") menuSuppressed = value;
+    if (started && state.phase !== "finished") {
+      menuSuppressed = value;
+      settingsOpen = value;
+    }
     if (value) music.silence();
     else music.setPlaying(started && state.phase !== "finished");
     input.clear();
@@ -248,6 +280,15 @@ export function createSession(
           : {}),
         touch: touchMode,
         debug: debug.active,
+        settings: {
+          open: settingsOpen,
+          touch: touchMode,
+          showPause: started && !paused && state.phase !== "finished",
+          needsSound: started && !paused && music.snapshot().needsGesture,
+          effectsVolume: settings.effectsVolume,
+          musicVolume: settings.music ? settings.musicVolume : 0,
+          mouseSensitivity: settings.mouseSensitivity,
+        },
         mode: menuSuppressed
           ? "hidden"
           : !started
@@ -296,12 +337,29 @@ export function createSession(
     ).duration;
     state = { ...state, countdown: introDuration };
     started = true;
+    settingsOpen = false;
     menuSuppressed = false;
     music.unlock();
     setPaused(false);
     if (touchMode) touch.capture();
     else input.capture();
   };
+  function resume() {
+    settingsOpen = false;
+    if (touchMode && started) void enterMobileFullscreen();
+    menuSuppressed = false;
+    if (!started) {
+      present([], 0);
+      report();
+      return;
+    }
+    music.unlock();
+    setPaused(false);
+    if (state.phase !== "finished" && alive(state.players[humanSeat]!)) {
+      if (touchMode) touch.capture();
+      else input.capture();
+    }
+  }
   function resetRound(
     nextCount: PlayerCount,
     nextSeat: number,
@@ -327,6 +385,7 @@ export function createSession(
     previousLevel = debug.active ? debug.previous : pendingPreviousLevel;
     state = nextState;
     started = false;
+    settingsOpen = false;
     paused = true;
     menuSuppressed = false;
     continuationLevel = nextLevel;
@@ -347,21 +406,7 @@ export function createSession(
     start,
     unlockAudio: () => music.unlock(),
     pause: () => setPaused(true),
-    resume() {
-      if (touchMode && started) void enterMobileFullscreen();
-      menuSuppressed = false;
-      if (!started) {
-        present([], 0);
-        report();
-        return;
-      }
-      music.unlock();
-      setPaused(false);
-      if (state.phase !== "finished" && alive(state.players[humanSeat]!)) {
-        if (touchMode) touch.capture();
-        else input.capture();
-      }
-    },
+    resume,
     restart() {
       resetRound(count, humanSeat, level, true);
     },

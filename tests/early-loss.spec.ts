@@ -1,14 +1,22 @@
 import { expect, test } from "./fixtures";
-import { finishIntroduction, choosePlayers, openGame, openSettings, play } from "./helpers";
+import {
+  configureGame,
+  selectFortress,
+  finishIntroduction,
+  choosePlayers,
+  openGame,
+  openSettings,
+  play,
+} from "./helpers";
 for (const action of ["Back", "Retry"] as const)
   test(`an eliminated player can choose ${action} on the same canvas`, async ({
     page,
   }, testInfo) => {
     test.setTimeout(120000);
-    await openGame(page, true, 8);
+    await openGame(page, true, 1);
     await choosePlayers(page, 6);
     await openSettings(page);
-    await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+    await configureGame(page, { music: false, effectsVolume: 0 });
     await play(page);
     await page.keyboard.down("KeyD");
     // Observe the actual elimination; rally acceleration changes its timing.
@@ -72,8 +80,8 @@ test.describe("touch scene retry", () => {
       await openGame(page, true, 8);
       await choosePlayers(page, 6);
       await openSettings(page);
-      await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
-      await page.getByLabel("Your fortress", { exact: true }).selectOption("5");
+      await configureGame(page, { music: false, effectsVolume: 0 });
+      await selectFortress(page, Number("5"));
       if (await page.getByRole("button", { name: "Resume", exact: true }).isVisible())
         await page.getByRole("button", { name: "Resume", exact: true }).tap();
       await page.getByRole("button", { name: "Start", exact: true }).tap();

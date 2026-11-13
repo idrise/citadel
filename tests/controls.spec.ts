@@ -1,5 +1,15 @@
 import { expect, test } from "./fixtures";
-import { moveMouse, finishIntroduction, openGame, play, pause, openSettings } from "./helpers";
+import {
+  configureGame,
+  selectFortress,
+  restartGame,
+  moveMouse,
+  finishIntroduction,
+  openGame,
+  play,
+  pause,
+  openSettings,
+} from "./helpers";
 
 async function settings(page: import("@playwright/test").Page) {
   await openSettings(page);
@@ -27,17 +37,30 @@ test("aid modes and sensitivity survive restart and every human fortress", async
   await openGame(page);
   await settings(page);
   for (const mode of ["none", "preview", "slowdown", "both"]) {
-    await page.getByLabel("Aiming assistance", { exact: true }).selectOption(mode);
-    await expect(page.getByLabel("Aiming assistance", { exact: true })).toHaveValue(mode);
+    await configureGame(page, {
+      preview: mode === "preview" || mode === "both",
+      slowdown: mode === "slowdown" || mode === "both",
+    });
+    const saved = await page.evaluate(
+      () => JSON.parse(localStorage.getItem("citadel.solo.v1")!).settings,
+    );
+    expect(saved.preview).toBe(mode === "preview" || mode === "both");
+    expect(saved.slowdown).toBe(mode === "slowdown" || mode === "both");
   }
   await page.getByLabel("Mouse sensitivity", { exact: true }).focus();
-  for (let step = 0; step < 6; step++) await page.keyboard.press("ArrowRight");
+  for (let step = 0; step < 12; step++) await page.keyboard.press("ArrowRight");
   for (const seat of ["1", "2", "3", "0"]) {
-    await page.getByLabel("Your fortress", { exact: true }).selectOption(seat);
+    await selectFortress(page, Number(seat));
     await settings(page);
-    await expect(page.getByLabel("Aiming assistance", { exact: true })).toHaveValue("both");
+    expect(
+      await page.evaluate(() => JSON.parse(localStorage.getItem("citadel.solo.v1")!).settings),
+    ).toMatchObject({ preview: true, slowdown: true });
     await expect(page.getByLabel("Mouse sensitivity", { exact: true })).toHaveValue("1.6");
-    await expect(page.getByRole("checkbox", { name: "Reduced effects" })).toBeChecked();
+    expect(
+      await page.evaluate(
+        () => JSON.parse(localStorage.getItem("citadel.solo.v1")!).settings.reducedEffects,
+      ),
+    ).toBe(true);
     await openSettings(page);
     await play(page);
     await moveMouse(page, 790, 300);
@@ -50,9 +73,11 @@ test("aid modes and sensitivity survive restart and every human fortress", async
     await pause(page);
     await settings(page);
   }
-  await page.getByRole("button", { name: "Restart", exact: true }).click();
+  await restartGame(page);
   await settings(page);
-  await expect(page.getByLabel("Aiming assistance", { exact: true })).toHaveValue("both");
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem("citadel.solo.v1")!).settings),
+  ).toMatchObject({ preview: true, slowdown: true });
   await expect(page.getByLabel("Mouse sensitivity", { exact: true })).toHaveValue("1.6");
 });
 
@@ -72,7 +97,7 @@ test("restart repeats the same opening and resize does not steer captured input"
   await page.clock.runFor(250);
   expect(await page.getByLabel("Bat angle", { exact: true }).textContent()).toBe(angle);
   await pause(page);
-  await page.getByRole("button", { name: "Restart", exact: true }).click();
+  await restartGame(page);
   expect(await page.locator(".diagnostics").textContent()).toBe(opening);
   await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
 });

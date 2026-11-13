@@ -23,4 +23,4 @@ audio, measurements and physical-device limits. Awaiting M09 review.
 - [x] Can you make the curve ball a little more pronounced IE more curve...and have the spin of the ball affect it's bounce?
 - [x] To modify difficulty we can shrink the size of the paddles, this should be worked into the level set.
 - [x] Hitting a pickup should cause the ball to bounce off of it. The transition to the players bank needs to be emphasized a bit more so it's obvious what happened and why.
-- [ ]
+- [x] When you press the settings panel it should in game ui withonly resume, soundfx volume, music volume, sensitivity on normal browser. Touch interface may not require this setting. Remove all the other stuff like how to play etc, number of players, time to x' anything like that just pull it out. This should mean we have no react ui at this point. Remove all the react components that we no longer use.

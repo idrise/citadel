@@ -38,72 +38,6 @@ body,
   width: auto;
   height: auto;
 }
-.touch-hint {
-  display: none;
-}
-.touch-pause {
-  display: none;
-}
-.mobile-display {
-  display: none;
-}
-@media (pointer: coarse) {
-  .mobile-display {
-    display: block;
-    font-size: 14px;
-  }
-  .mobile-display button,
-  .fullscreen-help summary {
-    min-height: 44px;
-    padding: 10px 14px;
-  }
-  .title-display {
-    position: fixed;
-    left: max(10px, env(safe-area-inset-left));
-    top: max(10px, env(safe-area-inset-top));
-    max-width: min(340px, calc(100vw - 20px));
-  }
-  .fullscreen-help {
-    background: #07101cf5;
-    border: 1px solid #4f8395;
-    border-radius: 4px;
-  }
-  .fullscreen-help summary {
-    cursor: pointer;
-  }
-  .fullscreen-help p {
-    padding: 0 14px 14px;
-    line-height: 1.5;
-    margin: 0;
-  }
-  .menu-panel .mobile-display {
-    margin-top: 10px;
-  }
-}
-@media (pointer: coarse) {
-  .touch-hint {
-    display: block;
-    position: fixed;
-    bottom: max(16px, env(safe-area-inset-bottom));
-    left: 16px;
-    right: 16px;
-    margin: 0;
-    text-align: center;
-    color: #b5d9e5;
-    font-size: 16px;
-    pointer-events: none;
-  }
-  .touch-pause {
-    display: block;
-    position: fixed;
-    top: max(10px, env(safe-area-inset-top));
-    right: max(10px, env(safe-area-inset-right));
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    opacity: 0.8;
-  }
-}
 .scene-controls button {
   touch-action: manipulation;
 }
@@ -144,219 +78,33 @@ body,
   place-items: center;
   padding: 24px;
 }
-.menu-panel {
-  width: min(300px, 100%);
-  padding: 20px;
-  border: 1px solid #4caab377;
-  border-radius: 6px;
-  background: #07101cdf;
-  box-shadow: 0 0 36px #39cbd51a;
-  max-height: 86dvh;
-  overflow-y: auto;
+.scene-settings-controls {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
 }
-.menu-panel h2 {
-  margin: 0 0 20px;
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 550;
-}
-button,
-select,
-input {
-  font: inherit;
-}
-button {
+.scene-settings-controls button,
+.scene-settings-controls input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: auto;
+  margin: 0;
+  padding: 0;
   cursor: pointer;
-  border: 1px solid #4f8395;
-  border-radius: 4px;
-  padding: 10px 16px;
-  background: #0d1b2b;
-  color: #d4eef6;
+  touch-action: pan-x;
 }
-button:hover {
-  background: #173348;
-}
-button:focus-visible,
-summary:focus-visible,
-select:focus-visible {
-  outline: 2px solid #a2faff;
+.scene-settings-controls :focus-visible {
+  opacity: 1;
+  background: transparent;
+  color: transparent;
+  outline: 2px solid #d2faff;
   outline-offset: 3px;
 }
-.primary,
-.secondary {
-  display: block;
-  width: 100%;
-}
-.primary {
-  background: #65d9e1;
-  border-color: #65d9e1;
-  color: #06121e;
-  font-weight: 650;
-}
-.primary:hover {
-  background: #9ff4f5;
-}
-.secondary {
-  margin-top: 10px;
-}
-.settings-menu {
-  margin-top: 16px;
-  font-size: 0.75rem;
-  color: #a5c6d9;
-}
-.settings-menu summary {
-  cursor: pointer;
-  text-align: center;
-  padding: 4px;
-}
-.settings-menu label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-  line-height: 1.5;
-}
-.settings-menu select {
-  border: 1px solid #355566;
-  border-radius: 4px;
-  background: #101e2d;
-  padding: 6px;
-  max-width: 100%;
-}
-.experiment-options {
-  display: grid;
-  gap: 0;
-}
-input {
-  accent-color: #65d9e1;
-}
-input[type="range"] {
-  width: 85px;
-}
-.game-overlay[data-mode="paused"] {
-  place-items: end start;
-  padding: 12px;
-  pointer-events: none;
-}
-.game-overlay[data-mode="paused"] .menu-panel {
-  width: 220px;
-  padding: 12px;
-  pointer-events: auto;
-}
-.game-overlay[data-mode="paused"] h2 {
-  font-size: 0.8rem;
-  text-align: left;
-  margin-bottom: 8px;
-}
-.game-overlay[data-mode="paused"] button {
-  font-size: 0.8rem;
-  padding: 7px 10px;
-}
-.game-overlay[data-mode="paused"] .settings-menu {
-  margin-top: 8px;
-}
-.hide-controls {
-  margin-top: 4px;
-  width: 100%;
-  background: transparent;
-  border: 0;
-  color: #98bdcd;
+.scene-settings-controls input:focus-visible {
+  opacity: 0.2;
 }
 
-.settings-hint {
-  font-size: 0.75rem;
-  line-height: 1.5;
-  color: #8ba9ba;
-  margin: 10px 0 0;
-}
-
-.menu-hint {
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
-.round-report {
-  font-size: 0.85rem;
-  text-align: left;
-  margin: 1rem 0;
-}
-.round-report table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.round-report th,
-.round-report td {
-  padding: 0.3rem 0.5rem;
-  border-bottom: 1px solid #254758;
-  text-align: left;
-}
-.round-report summary {
-  cursor: pointer;
-}
-
-.game-help {
-  font-size: 0.75rem;
-  color: #a5c6d9;
-  margin-top: 1rem;
-  line-height: 1.5;
-}
-.game-help summary {
-  cursor: pointer;
-  text-align: center;
-}
-.game-help small {
-  display: block;
-  border-top: 1px solid #254758;
-  padding-top: 0.7rem;
-  color: #86a5b8;
-}
-.export-round {
-  margin-top: 0.75rem;
-  width: 100%;
-  background: transparent;
-  font-size: 0.8rem;
-}
-@media (pointer: coarse) {
-  .game-overlay[data-mode="paused"] {
-    place-items: center;
-    padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
-      max(12px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
-  }
-  .game-overlay[data-mode="paused"] .menu-panel {
-    width: min(360px, 100%);
-    max-height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    min-height: 0;
-    padding: 20px;
-    overscroll-behavior: contain;
-  }
-  .game-overlay[data-mode="paused"] h2 {
-    font-size: 20px;
-    margin-bottom: 16px;
-  }
-  .game-overlay[data-mode="paused"] button,
-  .game-overlay[data-mode="paused"] summary,
-  .settings-menu select {
-    min-height: 44px;
-    font-size: 16px;
-  }
-  .game-overlay[data-mode="paused"] button {
-    padding: 10px 14px;
-  }
-  .settings-menu,
-  .game-help,
-  .menu-hint,
-  .settings-hint {
-    font-size: 14px;
-  }
-  .game-overlay[data-mode="paused"] .hide-controls {
-    display: none;
-  }
-}
-
-.enable-sound {
-  position: fixed;
-  top: max(16px, env(safe-area-inset-top));
-  left: 16px;
-  z-index: 15;
+.scene-settings-controls input {
   min-height: 44px;
 }

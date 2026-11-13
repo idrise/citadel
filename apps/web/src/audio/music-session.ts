@@ -30,19 +30,36 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
   let disposed = false;
   let enabled = true;
   let volume = 0.45;
+  let effectsVolume = 0.45;
+  let scoreEnabled = true;
   let wanted = false;
   let applied = "";
+  let appliedMix = "";
   let endingUntil = 0;
   const sync = () => {
     if (!engine || disposed) return;
     if (!wanted) engine.steer?.(0, 0);
-    if (endingUntil > (context?.currentTime ?? 0) && enabled && volume > 0 && !failed) return;
+    const mixKey = `${scoreEnabled}:${volume}:${effectsVolume}`;
+    if (engine.setMix && mixKey !== appliedMix) {
+      engine.setMix(scoreEnabled ? volume : 0, effectsVolume);
+      appliedMix = mixKey;
+    }
+    if (
+      endingUntil > (context?.currentTime ?? 0) &&
+      enabled &&
+      (volume > 0 || effectsVolume > 0) &&
+      !failed
+    )
+      return;
     endingUntil = 0;
     const playing = enabled && wanted && unlocked && !failed && contextRunning(context);
-    const key = `${playing}:${volume}`;
+    const key = `${playing}:${scoreEnabled}:${volume}:${effectsVolume}`;
     if (applied === key) return;
     applied = key;
-    engine.setPlaying(playing, volume);
+    engine.setPlaying(
+      playing,
+      engine.setMix ? 1 : Math.max(scoreEnabled ? volume : 0, effectsVolume),
+    );
   };
   const fail = () => {
     failed = true;
@@ -108,11 +125,14 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
     steer(velocity: number, position: number) {
       if (engine && wanted && enabled && unlocked && !failed) engine.steer?.(velocity, position);
     },
-    configure(next: { music: boolean; musicVolume: number }) {
-      enabled = next.music;
+    configure(next: { music: boolean; musicVolume: number; effectsVolume?: number }) {
+      scoreEnabled = next.music;
       volume = Number.isFinite(next.musicVolume)
         ? Math.max(0, Math.min(1, next.musicVolume))
         : 0.45;
+      const effects = next.effectsVolume ?? (next.music ? volume : 0);
+      effectsVolume = Number.isFinite(effects) ? Math.max(0, Math.min(1, effects)) : 0.75;
+      enabled = next.music || effectsVolume > 0;
       try {
         sync();
       } catch {
@@ -170,10 +190,15 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
                 : loading
                   ? "loading"
                   : "idle";
-      return { status, ...director.snapshot() };
+      return {
+        status: scoreEnabled ? status : ("off" as const),
+        needsGesture: enabled && (failed || Boolean(wanted && context && !contextRunning(context))),
+        ...director.snapshot(),
+      };
     },
     pulse() {
       return enabled &&
+        scoreEnabled &&
         (wanted || endingUntil > (context?.currentTime ?? 0)) &&
         volume > 0 &&
         unlocked &&
@@ -184,6 +209,7 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
     },
     visuals() {
       return enabled &&
+        scoreEnabled &&
         (wanted || endingUntil > (context?.currentTime ?? 0)) &&
         volume > 0 &&
         unlocked &&

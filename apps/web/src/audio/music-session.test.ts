@@ -146,7 +146,7 @@ it("can mute the final crowd tail immediately", async () => {
   music.setPlaying(false);
   music.configure({ music: false, musicVolume: 0.45 });
   expect(music.snapshot().status).toBe("off");
-  expect(engine.setPlaying).toHaveBeenLastCalledWith(false, 0.45);
+  expect(engine.setPlaying).toHaveBeenLastCalledWith(false, 0);
   music.dispose();
 });
 
@@ -198,5 +198,44 @@ it("reports an interrupted Safari context honestly and recovers on the next expl
   expect(music.snapshot().status).toBe("playing");
   expect(deps.createContext).toHaveBeenCalledOnce();
   expect(deps.load).toHaveBeenCalledOnce();
+  music.dispose();
+});
+
+it("keeps impacts enabled with the score muted, independently updates both buses and silences all on pause", async () => {
+  const { music, engine, host } = fixture();
+  engine.setMix = vi.fn();
+  music.configure({ music: false, musicVolume: 0, effectsVolume: 0.8 });
+  music.setPlaying(true);
+  music.unlock();
+  await flush();
+  expect(engine.setMix).toHaveBeenLastCalledWith(0, 0.8);
+  expect(engine.setPlaying).toHaveBeenLastCalledWith(true, 1);
+  music.observe(frame, [hit]);
+  expect(engine.play).toHaveBeenCalledOnce();
+  expect(music.pulse()).toBe(0);
+  expect(music.snapshot().status).toBe("off");
+  music.configure({ music: true, musicVolume: 0.2, effectsVolume: 0 });
+  expect(engine.setMix).toHaveBeenLastCalledWith(0.2, 0);
+  music.silence();
+  expect(engine.setPlaying).toHaveBeenLastCalledWith(false, 1);
+  music.configure({ music: false, musicVolume: 0, effectsVolume: 0 });
+  music.unlock();
+  expect(host.resume).toHaveBeenCalledOnce();
+  music.dispose();
+});
+
+it("applies either volume immediately during the result tail while leaving the other bus audible", async () => {
+  const { music, engine } = fixture();
+  engine.setMix = vi.fn();
+  music.configure({ music: true, musicVolume: 0.45, effectsVolume: 0.75 });
+  music.setPlaying(true);
+  music.unlock();
+  await flush();
+  music.observe(frame, [{ ...hit, type: "victory", seat: 0 }]);
+  music.setPlaying(false);
+  music.configure({ music: true, musicVolume: 0.2, effectsVolume: 0 });
+  expect(engine.setMix).toHaveBeenLastCalledWith(0.2, 0);
+  music.configure({ music: false, musicVolume: 0, effectsVolume: 0.6 });
+  expect(engine.setMix).toHaveBeenLastCalledWith(0, 0.6);
   music.dispose();
 });

@@ -74,9 +74,21 @@ Press + (or =) / - to move one level, including numpad Add/Subtract. Levels clam
 
 [Desktop introduction](reviews/m09/debug-levels/debug-level-01.png), [phone shape change](reviews/m09/debug-levels/debug-level-10-phone.png). All 485 unit tests pass including key filtering, bounds and persistence-independent navigation. Two production browser tests complete a real debug round, prove progress and preferences remain byte-for-byte unchanged, return to the saved level, and retain the same canvas. Scoped check and root build pass.
 
-## Remaining entries
+## 9. Minimal scene settings and independent sound layers — ready for review
 
-- Minimal scene-rendered settings.
+Settings now use solid procedural scene geometry with Resume, Sound Effects volume, Music volume and desktop Sensitivity. Touch shows the two volume sliders. Native invisible semantic ranges provide keyboard and touch input over the actual rendered tracks. The camera projection updates while the title is hidden, keeping hit targets aligned after rotation. Settings pause simulation and release capture; Resume returns to the same board. Pause and audio recovery actions are also scene-rendered.
+
+The old React pause panel, statistics, export/help, experimental controls, fortress selector, display helpers and associated styles were removed. React retains state/persistence, hidden accessible status and the WebGL-unavailable fallback. Player count stays in the existing scene title. Fullscreen still requests automatically on mobile Start/Resume and Home Screen metadata remains; extra HTML explanations and manual display buttons were removed as requested.
+
+Sound Effects owns every event voice: paddle/wall impacts, serves, pickup success/arrival, damage/breach, elimination explosions, victory/crowd responses, event answers/tics and the paddle swish. Music owns the arrangement and its own answers. The two mix buses ramp independently, including during result tails; pause mutes both. Muted channels skip new synthesis work. Preferences migrate older saves and clamp/persist both volumes. The default effects level is 75%; music stays 45%.
+
+[Phone settings](reviews/m09/scene-settings/phone-4.png), [desktop](reviews/m09/scene-settings/desktop-6.png), [effects audition](reviews/m09/scene-settings/effects-only.wav), [music audition](reviews/m09/scene-settings/music-only.wav). Six 2/4/6 desktop/phone renders have zero errors. Actual graph auditions include every event voice and swish: effects peak below 0.38; blocked cross-channel/muted auditions are effectively silent, with no browser errors. An initial overlapping-window audition contained a legitimate score delay tail; independent source auditions now verify isolation without that confound.
+
+All 492 unit tests pass. All 69 native production browser scenarios have passing coverage (65 in the full run, then four updated fixtures: mobile seed 8 for actual early losses, six-seat seed 11 for three naturally completing rounds, and the removed H-panel contract replaced by scene pause/resume). A stale-control race in the automation roster hook was fixed by synchronously applying ordinary roster configuration; UI action waits are now capped at fifteen seconds. Legacy quality/seat/export experiments are driven through the injected document-local test port, never visible product controls or match-state edits. Scope checks, diff checks and root build pass; physical Safari review and the existing chunk-size advisory remain.
+
+## Current follow-up
+
+The owner subsequently requested more layout variety and a sixteen-player test ceiling. That experiment follows this completed TODO set; a final sensible player limit remains for hands-on review.
 
 Local stable demo: `http://localhost:5179/` (refresh to load the latest completed checkpoint).
 

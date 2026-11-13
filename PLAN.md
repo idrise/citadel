@@ -464,6 +464,29 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+13 November scene settings / all-sound amendment: minimal procedural settings
+replace the React pause/help/experiment/statistics UI. Only Resume, independent
+Sound Effects and Music volumes, and desktop sensitivity remain. Pause and audio
+recovery also render in the scene; native transparent semantic controls remain
+for accessibility. Every event cue and swish uses the effects bus; arrangement
+answers use a separate score voice. Volume changes work during result tails,
+muted channels skip new synthesis, and old preferences gain a bounded effects
+volume. Hidden test-only ordinary configuration/export actions replace removed
+experiment controls; no match-state writes or native mouse capture are exposed.
+Checks: 492 units / 85 files; all 69 native browser scenarios have passing coverage
+(65 plus four updated natural-round/scene-pause reruns), six 2/4/6 renders,
+actual all-effects/music/blocked auditions, scoped check, diff check and root build.
+Cross-bus muted output is effectively zero; audible effects peak below .38. UI
+projection during paused rotation has explicit render/target alignment coverage.
+Physical-device review and the existing bundle advisory remain.
+
+13 November roster/variety amendment: the owner explicitly raises the local test
+ceiling from six to sixteen players and asks for more varied level layouts. Keep
+all level shapes symmetrical and deterministic, preserve existing player/progress
+identities and evaluate readability/performance before selecting a final sensible
+limit. This extends local M09 feedback work; it is not M10 or publication approval.
+
+
 13 November debug navigation amendment: the owner explicitly requests + and -
 level traversal that cannot change saved progress. Plus/equals/minus and numpad
 Add/Subtract start unranked previews at bounded levels 1–100, with normal reading

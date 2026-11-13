@@ -1,6 +1,14 @@
 import { readFile } from "node:fs/promises";
 import { expect, test } from "./fixtures";
-import { finishIntroduction, openGame, play, pause, saveLevel } from "./helpers";
+import {
+  restartGame,
+  exportRound,
+  finishIntroduction,
+  openGame,
+  play,
+  pause,
+  saveLevel,
+} from "./helpers";
 
 for (const [level, balls, pickups, speed, bat] of [
   [1, 1, 0, "14.00", "1.35"],
@@ -53,10 +61,10 @@ for (const [level, balls, pickups, speed, bat] of [
     await expect(page.getByLabel("Ball limit", { exact: true })).toHaveCount(0);
     await expect(page.getByLabel("Ball addition interval", { exact: true })).toHaveCount(0);
     const download = page.waitForEvent("download");
-    await page.getByRole("button", { name: "Export round", exact: true }).click();
+    await exportRound(page);
     const report = JSON.parse(await readFile((await (await download).path())!, "utf8"));
     expect(report.difficulty).toMatchObject({ level, maxBalls: balls, pickupCount: pickups });
-    await page.getByRole("button", { name: /^(Restart|Play again)$/, exact: true }).click();
+    await restartGame(page);
     await expect(page.getByLabel("Round ball limit", { exact: true })).toHaveText(String(balls));
     await expect(page.getByLabel("Supply containers", { exact: true })).toHaveText("0");
   });

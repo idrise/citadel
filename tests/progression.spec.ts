@@ -1,5 +1,15 @@
 import { expect, test } from "./fixtures";
-import { finishIntroduction, choosePlayers, openGame, openSettings, pause, play } from "./helpers";
+import {
+  configureGame,
+  selectFortress,
+  restartGame,
+  finishIntroduction,
+  choosePlayers,
+  openGame,
+  openSettings,
+  pause,
+  play,
+} from "./helpers";
 
 const key = "citadel.progress.v1";
 test("introduces the level before play, pauses the introduction and never rates an abandoned round", async ({
@@ -27,7 +37,7 @@ test("introduces the level before play, pauses the introduction and never rates 
   for (const seat of ["Coral", "Amber", "Violet", "Rose"])
     await expect(page.getByLabel(`${seat} health`, { exact: true })).toHaveText("3");
   await pause(page);
-  await page.getByRole("button", { name: "Restart", exact: true }).click();
+  await restartGame(page);
   expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).rounds, key)).toBe(0);
 });
 
@@ -38,7 +48,7 @@ test("a first win advances 1 to 2 and one click starts the next round without re
   await openGame(page);
   await choosePlayers(page, 2);
   await openSettings(page);
-  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+  await configureGame(page, { music: false, effectsVolume: 0 });
   await play(page);
   for (
     let time = 0;
@@ -128,8 +138,8 @@ test("a loss retries the played level directly and preserves it after reload", a
   await openGame(page, true, 1);
   await choosePlayers(page, 2);
   await openSettings(page);
-  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
-  await page.getByLabel("Your fortress", { exact: true }).selectOption("1");
+  await configureGame(page, { music: false, effectsVolume: 0 });
+  await selectFortress(page, Number("1"));
   await play(page);
   await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
     "LOSS RETRIES LEVEL 02",
@@ -214,8 +224,8 @@ test("the third consecutive loss demotes one level, announces it and persists th
   await openGame(page, true, 1);
   await choosePlayers(page, 2);
   await openSettings(page);
-  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
-  await page.getByLabel("Your fortress", { exact: true }).selectOption("1");
+  await configureGame(page, { music: false, effectsVolume: 0 });
+  await selectFortress(page, Number("1"));
   await play(page);
   await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
     "LOSS DROPS TO LEVEL 01",

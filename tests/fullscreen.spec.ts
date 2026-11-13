@@ -27,11 +27,11 @@ test("mobile Start enters fullscreen, keeps the canvas fitted and pauses on brow
   await page.getByRole("button", { name: "Resume", exact: true }).tap();
   await expect.poll(() => page.evaluate(() => document.fullscreenElement?.tagName)).toBe("HTML");
   await page.getByRole("button", { name: "Pause", exact: true }).tap();
-  await page.getByRole("button", { name: "Exit fullscreen", exact: true }).tap();
+  await page.evaluate(() => document.exitFullscreen());
   await expect.poll(() => page.evaluate(() => document.fullscreenElement)).toBeNull();
 });
 
-test("unsupported iPhone-style fullscreen offers Home Screen instructions and starts normally", async ({
+test("unsupported iPhone-style fullscreen starts normally with the minimal scene interface", async ({
   page,
 }) => {
   await page.addInitScript(() => {
@@ -39,8 +39,7 @@ test("unsupported iPhone-style fullscreen offers Home Screen instructions and st
     Object.defineProperty(document, "webkitFullscreenEnabled", { get: () => false });
   });
   await page.goto("./");
-  await page.getByText("Full screen", { exact: true }).tap();
-  await expect(page.getByText(/On iPhone, open Share/)).toBeVisible();
+  await expect(page.getByText("Full screen", { exact: true })).toHaveCount(0);
   await page.getByRole("button", { name: "Start", exact: true }).tap();
   await expect(page.getByRole("button", { name: "Pause", exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.fullscreenElement)).toBeNull();
@@ -51,10 +50,6 @@ test("a rejected fullscreen request still allows the touch round to start", asyn
     Element.prototype.requestFullscreen = () => Promise.reject(new Error("Fullscreen denied"));
   });
   await page.goto("./");
-  await page.getByRole("button", { name: "Full screen", exact: true }).tap();
-  await expect(
-    page.getByRole("status").filter({ hasText: "Fullscreen was unavailable" }),
-  ).toBeVisible();
   await page.getByRole("button", { name: "Start", exact: true }).tap();
   await expect(page.getByRole("button", { name: "Pause", exact: true })).toBeVisible();
 });

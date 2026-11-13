@@ -1,23 +1,49 @@
+import type { GameSettings } from "../apps/web/src/session/settings";
+import type { PlayerCount } from "../apps/web/src/simulation/arena";
 import { expect, type Page } from "./fixtures";
 
 export async function openGame(page: Page, reduced = true, seed = 2026) {
   await page.clock.install();
   await page.goto(`./?seed=${seed}`);
   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 60000));
-  if (reduced) {
-    await openSettings(page);
-    await page.getByRole("checkbox", { name: "Reduced effects" }).check();
-    await page.getByRole("button", { name: "Resume", exact: true }).click();
-  }
+  if (reduced) await configureGame(page, { reducedEffects: true });
 }
 export async function openSettings(page: Page) {
-  if (!(await page.locator(".menu-panel").isVisible()))
+  if (!(await page.getByRole("button", { name: "Resume", exact: true }).isVisible()))
     await page.getByRole("button", { name: "Settings", exact: true }).click();
-  const details = page.locator(".settings-menu");
-  if ((await details.getAttribute("open")) === null) await details.locator("summary").click();
+}
+export async function configureGame(page: Page, patch: Partial<GameSettings>) {
+  await page.evaluate((patch) => window.__citadelTestInput.session!.configure(patch), patch);
+  await expect
+    .poll(() =>
+      page.evaluate((patch) => {
+        try {
+          return JSON.parse(localStorage.getItem("citadel.solo.v1")!).settings;
+        } catch {
+          return patch;
+        }
+      }, patch),
+    )
+    .toMatchObject(patch);
+}
+export async function selectFortress(page: Page, seat: number) {
+  const count = Number(await page.getByLabel("Player count", { exact: true }).textContent());
+  await page.evaluate(
+    ({ count, seat }) => window.__citadelTestInput.session!.roster(count as PlayerCount, seat),
+    { count, seat },
+  );
+  await expect
+    .poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("citadel.solo.v1")!).humanSeat))
+    .toBe(seat);
+}
+export async function restartGame(page: Page) {
+  await page.evaluate(() => window.__citadelTestInput.session!.restart());
+}
+export async function exportRound(page: Page) {
+  await page.evaluate(() => window.__citadelTestInput.session!.download());
 }
 export async function choosePlayers(page: Page, count: number) {
-  if (await page.locator(".menu-panel").isVisible())
+  if (await page.getByRole("button", { name: "Resume", exact: true }).isVisible())
     await page.getByRole("button", { name: "Resume", exact: true }).click();
   const current = Number(await page.getByLabel("Player count", { exact: true }).textContent());
   for (let n = current; n !== count; n += Math.sign(count - current))
@@ -30,7 +56,7 @@ export async function choosePlayers(page: Page, count: number) {
   await expect(page.getByLabel("Player count", { exact: true })).toHaveText(String(count));
 }
 export async function play(page: Page) {
-  if (await page.locator(".menu-panel").isVisible())
+  if (await page.getByRole("button", { name: "Resume", exact: true }).isVisible())
     await page.getByRole("button", { name: "Resume", exact: true }).click();
   if (!(await page.evaluate(() => Boolean(document.pointerLockElement))))
     await page.getByRole("button", { name: "Start", exact: true }).click();

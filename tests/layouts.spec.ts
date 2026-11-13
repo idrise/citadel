@@ -1,5 +1,8 @@
 import { expect, test } from "./fixtures";
 import {
+  configureGame,
+  selectFortress,
+  restartGame,
   moveMouse,
   finishIntroduction,
   openGame,
@@ -23,10 +26,10 @@ for (const [count, rounds] of [
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.stack ?? error.message));
     await page.setViewportSize({ width: 480, height: 360 });
-    await openGame(page);
+    await openGame(page, true, count === 6 ? 11 : 2026);
     await choosePlayers(page, count);
     await openSettings(page);
-    await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+    await configureGame(page, { music: false, effectsVolume: 0 });
     await expect(page.getByLabel("Bot difficulty", { exact: true })).toHaveCount(0);
     await openSettings(page);
     let sawTransition = false;
@@ -34,7 +37,7 @@ for (const [count, rounds] of [
       if (round > 0) await pause(page);
       const seat = round === 0 ? count - 1 : round % count;
       await openSettings(page);
-      await page.getByLabel("Your fortress", { exact: true }).selectOption(String(seat));
+      await selectFortress(page, Number(String(seat)));
       await openSettings(page);
       await expect(page.getByLabel("Survivors", { exact: true })).toHaveText(String(count));
       await play(page);
@@ -63,8 +66,7 @@ for (const [count, rounds] of [
       await expect(rematch).toBeVisible();
       await expect(page.locator(".menu-panel")).toHaveCount(0);
       await openSettings(page);
-      await page.getByText("Round statistics", { exact: true }).click();
-      await expect(page.getByRole("table", { name: "Round standings" })).toBeVisible();
+      await expect(page.getByText("Round statistics", { exact: true })).toHaveCount(0);
       await expect(page.getByLabel("Survivors", { exact: true })).toHaveText("1");
       await page.getByRole("button", { name: "Resume", exact: true }).click();
       await rematch.click();
@@ -90,16 +92,18 @@ test("all six human fortresses support captured input, adaptive levels and shrin
   for (let seat = 0; seat < 6; seat++) {
     await openSettings(page);
     await expect(page.getByLabel("Round level", { exact: true })).toHaveText("1");
-    await page.getByLabel("Your fortress", { exact: true }).selectOption(String(seat));
+    await selectFortress(page, Number(String(seat)));
     await play(page);
     await finishIntroduction(page);
     await pause(page);
-    await page.getByRole("button", { name: "Restart", exact: true }).click();
+    await restartGame(page);
   }
   await choosePlayers(page, 2);
   await openSettings(page);
-  await expect(page.getByLabel("Your fortress", { exact: true })).toHaveValue("1");
-  await expect(page.getByLabel("Your fortress", { exact: true }).locator("option")).toHaveCount(2);
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem("citadel.solo.v1")!).humanSeat),
+  ).toBe(1);
+  await expect(page.getByLabel("Your fortress", { exact: true })).toHaveCount(0);
   await expect(page.getByLabel("Bot difficulty", { exact: true })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
@@ -114,7 +118,7 @@ test("two-player captured mouse reaches both end walls without the old travel ga
   await openGame(page, false);
   await choosePlayers(page, 2);
   await openSettings(page);
-  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+  await configureGame(page, { music: false, effectsVolume: 0 });
   await openSettings(page);
   await play(page);
   await finishIntroduction(page);

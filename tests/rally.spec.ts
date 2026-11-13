@@ -1,5 +1,5 @@
 import { expect, test } from "./fixtures";
-import { choosePlayers, openGame, openSettings, play, pause } from "./helpers";
+import { configureGame, choosePlayers, openGame, openSettings, play, pause } from "./helpers";
 test("natural rallies accelerate, freeze while paused and reset after a real score", async ({
   page,
 }, testInfo) => {
@@ -8,7 +8,7 @@ test("natural rallies accelerate, freeze while paused and reset after a real sco
   await openGame(page, true, 1);
   await choosePlayers(page, 4);
   await openSettings(page);
-  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+  await configureGame(page, { music: false, effectsVolume: 0 });
   await play(page);
   let boosted = false,
     reset = false,

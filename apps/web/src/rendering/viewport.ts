@@ -1,3 +1,5 @@
+import { createSettingsControls } from "../input/settings-controls";
+import type { SettingKey, SettingsAction } from "./scene-settings";
 import { creditedPlayerKill } from "./elimination-burst";
 import { createTitleTransition, type TitleFrame } from "./title-transition";
 import {
@@ -35,6 +37,10 @@ export function createViewport(
   humanSeat = 0,
   initial: ArenaGeometry = SQUARE_ARENA,
   onSceneAction: (action: SceneAction) => void = () => {},
+  settingsCallbacks?: {
+    action: (action: SettingsAction) => void;
+    change: (key: SettingKey, value: number) => void;
+  },
 ) {
   const mobile = navigator.maxTouchPoints > 0 || matchMedia("(pointer: coarse)").matches;
   const renderer = new WebGLRenderer({ antialias: !mobile, powerPreference: "high-performance" });
@@ -56,6 +62,11 @@ export function createViewport(
   const menu = createMenuOverlay();
   const fireworks = createVictoryFireworks(scene);
   const controls = createSceneControls(container, onSceneAction, (action) => menu.hover(action));
+  const settingsControls = createSettingsControls(
+    container,
+    (action) => settingsCallbacks?.action(action),
+    (key, value) => settingsCallbacks?.change(key, value),
+  );
   const disposeLighting = lightArena(scene, createArena(6));
   const disposeEnvironment = createNeonEnvironment(renderer, scene, initial);
   const camera = createArenaCamera(humanSeat, initial);
@@ -228,6 +239,7 @@ export function createViewport(
         menu.update(menuState, dt, container.clientWidth, container.clientHeight),
         state.players.length,
       );
+      settingsControls.update(menu.settingsTargets, menuState.settings?.open ?? false);
       const pulse = options.musicPulse ?? 0;
       worldGrid.material.uniforms.musicGain!.value = musicLight(
         pulse,
@@ -241,6 +253,7 @@ export function createViewport(
     dispose() {
       observer.disconnect();
       controls.dispose();
+      settingsControls.dispose();
       bloom.dispose();
       menu.dispose();
       arena.dispose();

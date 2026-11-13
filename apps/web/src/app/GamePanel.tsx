@@ -1,3 +1,8 @@
+import { levelFor, loadProgress } from "../session/progression";
+import { attachSessionTestPort } from "./test-port";
+import { parsePreferences } from "../session/preferences";
+import { createRoundExport, downloadRound } from "../session/round-export";
+import { BUILD_INFO } from "./build-info";
 import { levelDifficulty } from "../simulation/difficulty";
 import { ARENA } from "../simulation/arena";
 import type { Demotion, LevelResult } from "../session/progression";
@@ -6,10 +11,8 @@ import type { PlayerCount } from "../simulation/arena";
 import { useEffect, useRef, useState } from "react";
 import { createSession, type GameSession, type SessionSnapshot } from "../session/session";
 import { createMatch } from "../simulation/match";
-import { PauseMenu } from "./PauseMenu";
 import { AccessibleStatus } from "./AccessibleStatus";
 import type { GameSettings } from "../session/settings";
-import { MobileDisplay } from "./MobileDisplay";
 
 export function GamePanel({
   humanSeat,
@@ -41,9 +44,8 @@ export function GamePanel({
   const container = useRef<HTMLDivElement>(null);
   const session = useRef<GameSession | null>(null);
   const [unavailable, setUnavailable] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const callbacks = useRef({ count, onCount, level, onComplete });
-  callbacks.current = { count, onCount, level, onComplete };
+  const callbacks = useRef({ count, onCount, level, onComplete, onSettings, onSeat, settings });
+  callbacks.current = { count, onCount, level, onComplete, onSettings, onSeat, settings };
   const initialConfig = useRef({ seed, humanSeat, count, level, lossLevel, previousLevel });
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => ({
     state: createMatch(seed, count, ARENA.startingPieces, undefined, levelDifficulty(level)),
@@ -65,6 +67,7 @@ export function GamePanel({
     ballOwners: new Map(),
     music: {
       status: "idle",
+      needsGesture: false,
       section: "intro",
       energy: 0.45,
       intensity: 0,
@@ -74,6 +77,8 @@ export function GamePanel({
       seat: humanSeat,
     },
   }));
+  const latest = useRef(snapshot);
+  latest.current = snapshot;
   useEffect(() => {
     if (!container.current) return;
     try {
@@ -85,7 +90,6 @@ export function GamePanel({
         setSnapshot,
         count,
         (action) => {
-          if (action === "options") setSettingsOpen(true);
           if (action === "decrease")
             callbacks.current.onCount(Math.max(2, callbacks.current.count - 1) as PlayerCount);
           if (action === "increase")
@@ -97,9 +101,51 @@ export function GamePanel({
         (result) => callbacks.current.onComplete(result),
         lossLevel,
         previousLevel,
+        (value) => callbacks.current.onSettings(value),
       );
       session.current = game;
+      const detach = attachSessionTestPort({
+        configure(patch) {
+          const current = callbacks.current;
+          const parsed = parsePreferences(
+            JSON.stringify({
+              version: 1,
+              count: current.count,
+              humanSeat: latest.current.humanSeat,
+              settings: { ...current.settings, ...patch },
+            }),
+          );
+          current.settings = parsed.settings;
+          game.configure(parsed.settings);
+          current.onSettings(parsed.settings);
+        },
+        roster(count, seat) {
+          game.configureRoster(count, Math.min(count - 1, seat), levelFor(loadProgress(), count));
+          callbacks.current.onCount(count);
+          callbacks.current.onSeat(seat);
+        },
+        restart: () => game.restart(),
+        download() {
+          const snap = latest.current,
+            current = callbacks.current;
+          downloadRound(
+            createRoundExport(
+              {
+                seed: snap.seed,
+                humanSeat: snap.humanSeat,
+                settings: current.settings,
+                initialSettings: snap.initialSettings ?? current.settings,
+                level: snap.level,
+                build: BUILD_INFO,
+              },
+              snap.state,
+              snap.totals,
+            ),
+          );
+        },
+      });
       return () => {
+        detach();
         game.dispose();
         session.current = null;
       };
@@ -116,77 +162,14 @@ export function GamePanel({
   useEffect(() => {
     session.current?.configure(settings);
   }, [settings]);
-  const rosterReady = snapshot.humanSeat === humanSeat && snapshot.state.players.length === count;
-  const mode =
-    rosterReady &&
-    (settingsOpen || (snapshot.started && snapshot.paused && snapshot.state.phase !== "finished"))
-      ? "paused"
-      : null;
   return (
     <>
       <div className="viewport" ref={container} />
-      {!snapshot.started && !unavailable && (
-        <div className="title-display">
-          <MobileDisplay />
-        </div>
-      )}
-      {snapshot.started && !snapshot.paused && snapshot.state.phase !== "finished" && (
-        <button className="touch-pause" onClick={() => session.current?.pause()} aria-label="Pause">
-          Ⅱ
-        </button>
-      )}
-      {snapshot.started &&
-        !snapshot.paused &&
-        settings.music &&
-        ["waiting", "unavailable"].includes(snapshot.music.status) && (
-          <button className="enable-sound" onClick={() => session.current?.unlockAudio()}>
-            Enable sound
-          </button>
-        )}
       <AccessibleStatus snapshot={snapshot} humanSeat={snapshot.humanSeat} />
-      {!snapshot.started && !unavailable && (
-        <p className="touch-hint">Drag to steer · Tap to serve</p>
-      )}
-      {unavailable ? (
+      {unavailable && (
         <div className="game-overlay">
           <p role="status">WebGL2 is needed to render the arena.</p>
         </div>
-      ) : (
-        mode && (
-          <PauseMenu
-            count={count}
-            onCount={(value) => {
-              if (value === count) return;
-              setSettingsOpen(false);
-              onCount(value);
-            }}
-            state={snapshot.state}
-            totals={snapshot.totals}
-            seed={snapshot.seed}
-            initialSettings={snapshot.initialSettings ?? settings}
-            level={snapshot.level}
-            demotion={snapshot.demotion}
-            humanSeat={humanSeat}
-            settings={settings}
-            musicStatus={snapshot.music.status}
-            onSettings={onSettings}
-            onSeat={(value) => {
-              if (value === humanSeat) return;
-              setSettingsOpen(false);
-              onSeat(value);
-            }}
-            onRestart={() => {
-              setSettingsOpen(false);
-              if (!snapshot.state.players[humanSeat]!.health.some(Boolean))
-                session.current?.nextRound(level);
-              else session.current?.restart();
-            }}
-            onResume={() => {
-              setSettingsOpen(false);
-              session.current?.resume();
-            }}
-          />
-        )
       )}
     </>
   );

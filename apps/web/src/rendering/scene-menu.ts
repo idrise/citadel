@@ -1,3 +1,4 @@
+import type { SceneSettingsState } from "./scene-settings";
 import type { Demotion } from "../session/progression";
 export const RESULT_ACTION_SECONDS = 0.9;
 import {
@@ -24,6 +25,7 @@ export type SceneAction =
   | "back";
 export interface SceneMenuState {
   debug?: boolean;
+  settings?: SceneSettingsState;
   spectator?: { level: number; demotion?: Demotion | null };
   touch?: boolean;
   mode: "title" | "victory" | "defeat" | "hidden" | "level";

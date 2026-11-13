@@ -10,6 +10,7 @@ export interface GameSettings {
   serveTimeout: number;
   music: boolean;
   musicVolume: number;
+  effectsVolume: number;
   musicLights: boolean;
 }
 export const ASSISTANCE = [
@@ -38,6 +39,7 @@ export function createSettings(reducedEffects = false): GameSettings {
     serveTimeout: 1.8,
     music: true,
     musicVolume: 0.45,
+    effectsVolume: 0.75,
     musicLights: true,
   };
 }

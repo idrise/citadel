@@ -1,5 +1,5 @@
 import { expect, test } from "./fixtures";
-import { choosePlayers, openGame, openSettings, play, pause } from "./helpers";
+import { configureGame, choosePlayers, openGame, openSettings, play, pause } from "./helpers";
 
 test("the procedural title uses bounded 3D count controls and keyboard Start, with settings confined to pause", async ({
   page,
@@ -40,7 +40,7 @@ test("the procedural title uses bounded 3D count controls and keyboard Start, wi
   await page.clock.runFor(200);
   await pause(page);
   await openSettings(page);
-  await expect(page.getByLabel("Effects quality", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Sound effects volume", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Resume", exact: true }).click();
   await expect(page.locator(".menu-panel")).toHaveCount(0);
   expect(errors).toEqual([]);
@@ -56,9 +56,9 @@ test("a real human win keeps the arena alive for neon fireworks and scene rematc
   await openGame(page, false);
   await choosePlayers(page, 2);
   await openSettings(page);
-  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+  await configureGame(page, { music: false, effectsVolume: 0 });
   // Keep full motion/fireworks, but bound the controlled-clock render cost.
-  await page.getByLabel("Effects quality", { exact: true }).selectOption("low");
+  await configureGame(page, { effectsQuality: "low" });
   await play(page);
   const owners = new Set<string>();
   for (
@@ -96,7 +96,7 @@ test("a real human win keeps the arena alive for neon fireworks and scene rematc
   await expect(rematch).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("victory-readable-low.png") });
   await openSettings(page);
-  await page.getByLabel("Effects quality", { exact: true }).selectOption("high");
+  await configureGame(page, { effectsQuality: "high" });
   await page.clock.runFor(400);
   expect(await page.locator(".diagnostics").textContent()).toBe(stats);
   await page.getByRole("button", { name: "Resume", exact: true }).click();

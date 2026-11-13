@@ -27,6 +27,7 @@ export function parsePreferences(raw: string | null, reduced = false): SoloPrefe
       ["mouseSensitivity", 0.5, 2],
       ["serveTimeout", 1, 4],
       ["musicVolume", 0, 1],
+      ["effectsVolume", 0, 1],
     ] as const) {
       const value = saved[key];
       if (typeof value === "number" && Number.isFinite(value))

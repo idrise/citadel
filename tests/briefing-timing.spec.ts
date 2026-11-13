@@ -1,5 +1,12 @@
 import { expect, test } from "./fixtures";
-import { choosePlayers, finishIntroduction, openGame, openSettings, play } from "./helpers";
+import {
+  configureGame,
+  choosePlayers,
+  finishIntroduction,
+  openGame,
+  openSettings,
+  play,
+} from "./helpers";
 
 for (const touch of [false, true]) {
   test.describe(touch ? "touch reading window" : "mouse reading window", () => {
@@ -37,7 +44,7 @@ for (const touch of [false, true]) {
       await openGame(page, false, 8);
       await choosePlayers(page, 6);
       await openSettings(page);
-      await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+      await configureGame(page, { music: false, effectsVolume: 0 });
       await page.getByRole("button", { name: "Resume", exact: true }).click();
       if (touch) await page.getByRole("button", { name: "Start", exact: true }).tap();
       else await play(page);

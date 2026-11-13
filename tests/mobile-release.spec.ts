@@ -1,5 +1,11 @@
 import { expect, test } from "./fixtures";
-import { finishIntroduction, choosePlayers, openSettings } from "./helpers";
+import {
+  configureGame,
+  selectFortress,
+  finishIntroduction,
+  choosePlayers,
+  openSettings,
+} from "./helpers";
 
 test.use({
   hasTouch: true,
@@ -40,10 +46,9 @@ test("phone menus stay readable, finger-sized and reachable through rotation", a
     await page.screenshot({ path: testInfo.outputPath(`title-${width}.png`) });
   }
   await page.getByRole("button", { name: "Settings", exact: true }).tap();
-  await expect(page.getByRole("button", { name: "Resume", exact: true })).toHaveCSS(
-    "min-height",
-    "44px",
-  );
+  expect(
+    (await page.getByRole("button", { name: "Resume", exact: true }).boundingBox())!.height,
+  ).toBeGreaterThanOrEqual(44);
   await expect(page.getByRole("button", { name: "Hide controls (H)" })).toBeHidden();
 });
 
@@ -59,12 +64,12 @@ for (const count of [2, 3, 4, 5, 6]) {
     await page.clock.pauseAt(await page.evaluate(() => Date.now() + 60000));
     await choosePlayers(page, count);
     await openSettings(page);
-    await page.getByRole("checkbox", { name: "Reduced effects & motion", exact: true }).check();
-    await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
+    await configureGame(page, { reducedEffects: true });
+    await configureGame(page, { music: false, effectsVolume: 0 });
     // Give this tester the seeded opening serve through the normal fortress selector.
     const owner = await page.getByLabel("Ball 0 owner", { exact: true }).textContent();
     const seat = ["Coral", "Amber", "Violet", "Rose", "Lime", "Gold"].indexOf(owner!);
-    await page.getByLabel("Your fortress", { exact: true }).selectOption(String(seat));
+    await selectFortress(page, Number(String(seat)));
     if (await page.getByRole("button", { name: "Resume", exact: true }).isVisible())
       await page.getByRole("button", { name: "Resume", exact: true }).tap();
     await page.getByRole("button", { name: "Start", exact: true }).tap();

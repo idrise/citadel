@@ -14,7 +14,7 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: "list",
-  use: { baseURL: previewUrl, trace: "retain-on-failure" },
+  use: { baseURL: previewUrl, trace: "retain-on-failure", actionTimeout: 15_000 },
   projects: [
     {
       name: "chromium",

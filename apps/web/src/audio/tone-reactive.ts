@@ -45,17 +45,20 @@ export function createReactiveVoices(
       modulationEnvelope: { attack: 0.03, decay: 0.12, sustain: 0.2, release: 0.1 },
     },
   }).connect(output);
-  const answers = new Tone.PolySynth({
-    context,
-    voice: Tone.FMSynth,
-    maxPolyphony: 6,
-    options: {
-      volume: -16,
-      harmonicity: 1.5,
-      modulationIndex: 1.4,
-      envelope: { attack: 0.002, decay: 0.13, sustain: 0, release: 0.09 },
-    },
-  }).connect(live);
+  const answerVoice = (destination: Tone.InputNode) =>
+    new Tone.PolySynth({
+      context,
+      voice: Tone.FMSynth,
+      maxPolyphony: 6,
+      options: {
+        volume: -16,
+        harmonicity: 1.5,
+        modulationIndex: 1.4,
+        envelope: { attack: 0.002, decay: 0.13, sustain: 0, release: 0.09 },
+      },
+    }).connect(destination);
+  const answers = answerVoice(live),
+    arrangedAnswers = answerVoice(output);
   const filter = new Tone.Filter({ context, type: "bandpass", frequency: 2400, Q: 0.7 }).connect(
     live,
   );
@@ -77,7 +80,7 @@ export function createReactiveVoices(
     envelope: { attack: 0.001, decay: 0.014, sustain: 0, release: 0.004 },
   }).connect(muteFilter);
   return {
-    play(cue: MusicCue, time: number) {
+    play(cue: MusicCue, time: number, event = true) {
       const { voice, note, velocity, duration } = cue;
       if (voice === "harmony") harmony.triggerAttackRelease(hz(note), duration, time, velocity);
       else if (voice === "acid") {
@@ -86,14 +89,30 @@ export function createReactiveVoices(
       } else if (voice === "brass")
         brass.triggerAttackRelease((cue.notes ?? [note]).map(hz), duration, time, velocity);
       else if (voice === "answer" || voice === "unlock")
-        answers.triggerAttackRelease((cue.notes ?? [note]).map(hz), duration, time, velocity);
+        (event ? answers : arrangedAnswers).triggerAttackRelease(
+          (cue.notes ?? [note]).map(hz),
+          duration,
+          time,
+          velocity,
+        );
       else if (voice === "tic") tic.triggerAttackRelease(duration, time, velocity);
       else if (voice === "mutedHat") mutedHat.triggerAttackRelease(duration, time, velocity);
       else return false;
       return true;
     },
     dispose() {
-      for (const node of [harmony, pan, acid, brass, answers, tic, filter, mutedHat, muteFilter])
+      for (const node of [
+        harmony,
+        pan,
+        acid,
+        brass,
+        answers,
+        arrangedAnswers,
+        tic,
+        filter,
+        mutedHat,
+        muteFilter,
+      ])
         node.dispose();
     },
   };

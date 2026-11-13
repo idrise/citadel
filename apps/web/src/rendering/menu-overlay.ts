@@ -1,3 +1,4 @@
+import { createSceneSettings, type SettingsTarget } from "./scene-settings";
 import { createDebugLabel } from "./debug-label";
 import { createSpectatorMenu } from "./scene-spectator";
 import { VICTORY_HOLD_SECONDS } from "./victory-morph";
@@ -27,6 +28,8 @@ export function createMenuOverlay() {
   scene.add(light);
   const menu = createSceneMenu(camera);
   const debug = createDebugLabel(camera);
+  const settings = createSceneSettings(camera);
+  let settingsTargets: SettingsTarget[] = [];
   const spectator = createSpectatorMenu(camera);
   const dimmer = new ShaderPass({
     uniforms: { tDiffuse: { value: null }, gain: { value: 1 } },
@@ -57,6 +60,9 @@ export function createMenuOverlay() {
       menu.hover(action);
       spectator.hover(action);
     },
+    get settingsTargets() {
+      return settingsTargets;
+    },
     get visible() {
       return visible;
     },
@@ -64,11 +70,14 @@ export function createMenuOverlay() {
       return gain;
     },
     update(state: SceneMenuState, dt: number, width: number, height: number) {
+      camera.aspect = width / Math.max(1, height);
+      camera.updateProjectionMatrix();
       const celebrating =
         (state.mode === "victory" || state.mode === "defeat") &&
         state.elapsed < VICTORY_HOLD_SECONDS;
-      const target =
-        state.mode === "hidden" || state.mode === "level" || state.mode === "title" || celebrating
+      const target = state.settings?.open
+        ? MENU_BACKGROUND_GAIN
+        : state.mode === "hidden" || state.mode === "level" || state.mode === "title" || celebrating
           ? 1
           : MENU_BACKGROUND_GAIN;
       gain =
@@ -83,8 +92,9 @@ export function createMenuOverlay() {
       veil.opacity = 1 - gain;
       const controls = menu.update(state, width, height);
       const liveControls = spectator.update(state.spectator, width, height);
+      settingsTargets = settings.update(state.settings, width, height);
       debug.update(state.debug ?? false, width, height);
-      visible ||= liveControls.length > 0 || Boolean(state.debug);
+      visible ||= liveControls.length > 0 || Boolean(state.debug) || settingsTargets.length > 0;
       return [...controls, ...liveControls];
     },
     renderDirect(renderer: WebGLRenderer) {

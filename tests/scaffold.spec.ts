@@ -57,19 +57,19 @@ test("missing WebGL2 leaves a readable fallback", async ({ page }) => {
   await expect(page.locator("canvas")).toHaveCount(0);
 });
 
-test("pause controls stay small and can be hidden for an unobstructed screenshot", async ({
-  page,
-}) => {
+test("pause uses the minimal scene controls and resumes on the same canvas", async ({ page }) => {
   await openGame(page);
   await play(page);
   await pause(page);
-  const panel = page.locator(".menu-panel");
-  expect((await panel.boundingBox())!.width).toBeLessThanOrEqual(220);
+  await expect(page.locator(".menu-panel,.game-overlay")).toHaveCount(0);
+  expect(
+    (await page.getByRole("button", { name: "Resume", exact: true }).boundingBox())!.width,
+  ).toBeLessThanOrEqual(382);
   const stats = await page.locator(".diagnostics").textContent();
-  await page.getByRole("button", { name: "Hide controls (H)", exact: true }).click();
-  await expect(page.locator(".game-overlay")).toHaveCount(0);
   await page.clock.runFor(500);
   expect(await page.locator(".diagnostics").textContent()).toBe(stats);
-  await page.keyboard.press("KeyH");
-  await expect(page.getByRole("heading", { name: "Paused", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Hide controls (H)", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Resume", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Paused", exact: true })).toBeHidden();
+  await expect(page.locator("canvas")).toHaveCount(1);
 });

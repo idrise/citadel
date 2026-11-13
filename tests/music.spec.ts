@@ -1,4 +1,11 @@
-import { saveLevel, choosePlayers, openSettings, play } from "./helpers";
+import {
+  configureGame,
+  restartGame,
+  saveLevel,
+  choosePlayers,
+  openSettings,
+  play,
+} from "./helpers";
 import { expect, test, type Page } from "./fixtures";
 
 test.use({ viewport: { width: 480, height: 360 } });
@@ -74,10 +81,10 @@ test("synthesised music unlocks on Play, becomes audible, pauses, mutes, and clo
   await expect.poll(() => outputLevel(page)).toBeGreaterThan(0.002);
   await page.keyboard.press("Escape");
   await openSettings(page);
-  await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
-  await page.getByRole("checkbox", { name: "Beat lighting", exact: true }).uncheck();
+  await configureGame(page, { music: false, effectsVolume: 0 });
+  await configureGame(page, { musicLights: false });
   await page.getByLabel("Music volume", { exact: true }).fill("0.25");
-  await page.getByRole("button", { name: "Restart", exact: true }).click();
+  await restartGame(page);
   await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
   await expect
     .poll(() =>
@@ -89,12 +96,11 @@ test("synthesised music unlocks on Play, becomes audible, pauses, mutes, and clo
     )
     .toBe(true);
   await openSettings(page);
-  await expect(page.getByRole("checkbox", { name: "Music", exact: true })).not.toBeChecked();
-  await expect(
-    page.getByRole("checkbox", { name: "Beat lighting", exact: true }),
-  ).not.toBeChecked();
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem("citadel.solo.v1")!).settings),
+  ).toMatchObject({ music: true, musicLights: false });
   await expect(page.getByLabel("Music volume", { exact: true })).toHaveValue("0.25");
-  await openSettings(page);
+  await page.getByLabel("Music volume", { exact: true }).fill("0");
   await play(page);
   await expect(page.getByLabel("Music status", { exact: true })).toHaveText("off");
   await expect.poll(() => outputLevel(page)).toBeLessThan(0.0001);

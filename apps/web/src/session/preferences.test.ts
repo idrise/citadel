@@ -58,3 +58,17 @@ it("remains playable when storage is blocked, full or unavailable", () => {
     false,
   );
 });
+it("migrates old preferences to an independent effects bus, clamps it and retains both volumes", () => {
+  const old = JSON.stringify({
+    version: 1,
+    count: 4,
+    humanSeat: 0,
+    settings: { musicVolume: 0.2 },
+  });
+  expect(parsePreferences(old).settings).toMatchObject({ musicVolume: 0.2, effectsVolume: 0.75 });
+  const prefs = parsePreferences(
+    JSON.stringify({ version: 1, settings: { effectsVolume: 9, musicVolume: -1 } }),
+  );
+  expect(prefs.settings.effectsVolume).toBe(1);
+  expect(prefs.settings.musicVolume).toBe(0);
+});

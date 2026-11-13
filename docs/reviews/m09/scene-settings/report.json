@@ -1,0 +1,48 @@
+{
+  "kind": "Actual scene settings, fixed desktop/phone layout, backdrop in 2/4/6 arenas",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 2,
+      "width": 1280,
+      "height": 900,
+      "touch": false
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "width": 1280,
+      "height": 900,
+      "touch": false
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "width": 1280,
+      "height": 900,
+      "touch": false
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "width": 390,
+      "height": 844,
+      "touch": true
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "width": 390,
+      "height": 844,
+      "touch": true
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "width": 390,
+      "height": 844,
+      "touch": true
+    }
+  ],
+  "errors": []
+}
