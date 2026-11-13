@@ -73,3 +73,8 @@ export function spinBounce(incoming: Vec2, normal: Vec2, spin: number | undefine
     spin: (Number.isFinite(spin) ? clamp(spin ?? 0, -MAX_SWIPE_CURVE, MAX_SWIPE_CURVE) : 0) * 0.72,
   };
 }
+
+/** The same remembered brush can curve a launch; a held bat has no residual launch spin. */
+export function serveCurve(swipe: BatSwipe | undefined): number {
+  return swipeCurve(contactSwipe(swipe, 0), { x: -1, y: 0 }, { x: 1, y: 0 });
+}

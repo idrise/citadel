@@ -1,3 +1,5 @@
+import { serveCurve } from "./flight";
+import { planBotServe, servePlanTarget } from "./bot-serve";
 import { ARENA, clampPaddleAngle, fortress } from "./arena";
 import { aimServeAt, serveDirection } from "./aim";
 import { botLevelProfile } from "./bot-level";
@@ -27,37 +29,54 @@ export function tacticalBotIntent(state: MatchState, seat: number, level: number
     )[0];
   if (!threat && ownServe) {
     delete bot.stroke;
-    // Re-evaluate public supplies: a cached target may have been collected or expired.
-    const targets = botTargets(state, seat, ownServe.position);
-    const supply = targets.find((target) => {
-      if (target.reward < 9) return false;
-      const angle = aimServeAt(seat, target.position, state.arena);
-      // Aim uses the actual moving serve origin; only select targets in the legal fan.
-      const origin = add(
-        home.anchor,
-        scale({ x: Math.cos(angle), y: Math.sin(angle) }, ARENA.railRadius + 0.4),
-      );
-      const travel = sub(target.position, origin),
-        direction = serveDirection(seat, angle, state.arena);
-      const along = dot(travel, direction);
-      return (
-        along > 0 &&
-        along / (state.difficulty?.ballSpeed ?? 24) < target.expires &&
-        length(sub(travel, scale(direction, along))) < target.radius + ARENA.ballRadius
-      );
-    });
-    if (supply) bot.serveTarget = supply.position;
-    else if (
-      !bot.serveTarget ||
-      !targets.some(
-        (t) =>
-          t.reward < 9 &&
-          t.position.x === bot.serveTarget!.x &&
-          t.position.y === bot.serveTarget!.y,
-      )
-    ) {
-      const enemies = targets.filter((t) => t.reward < 9);
-      bot.serveTarget = enemies[Math.floor(sample(state) * enemies.length)]?.position ?? null;
+    if (profile.tactics >= 0.35) {
+      const cached = bot.servePlan;
+      if (
+        !cached ||
+        cached.ballId !== ownServe.id ||
+        cached.roster !== state.arena.count ||
+        state.elapsed >= cached.reconsiderAt ||
+        !servePlanTarget(state, cached)
+      ) {
+        const next = planBotServe(state, seat, profile.tactics);
+        if (next) bot.servePlan = next;
+        else delete bot.servePlan;
+      }
+    } else delete bot.servePlan;
+    if (bot.servePlan) bot.serveTarget = servePlanTarget(state, bot.servePlan);
+    else {
+      // Re-evaluate public supplies: a cached target may have been collected or expired.
+      const targets = botTargets(state, seat, ownServe.position);
+      const supply = targets.find((target) => {
+        if (target.reward < 9) return false;
+        const angle = aimServeAt(seat, target.position, state.arena);
+        // Aim uses the actual moving serve origin; only select targets in the legal fan.
+        const origin = add(
+          home.anchor,
+          scale({ x: Math.cos(angle), y: Math.sin(angle) }, ARENA.railRadius + 0.4),
+        );
+        const travel = sub(target.position, origin),
+          direction = serveDirection(seat, angle, state.arena);
+        const along = dot(travel, direction);
+        return (
+          along > 0 &&
+          along / (state.difficulty?.ballSpeed ?? 24) < target.expires &&
+          length(sub(travel, scale(direction, along))) < target.radius + ARENA.ballRadius
+        );
+      });
+      if (supply) bot.serveTarget = supply.position;
+      else if (
+        !bot.serveTarget ||
+        !targets.some(
+          (t) =>
+            t.reward < 9 &&
+            t.position.x === bot.serveTarget!.x &&
+            t.position.y === bot.serveTarget!.y,
+        )
+      ) {
+        const enemies = targets.filter((t) => t.reward < 9);
+        bot.serveTarget = enemies[Math.floor(sample(state) * enemies.length)]?.position ?? null;
+      }
     }
     if (bot.serveError === undefined) bot.serveError = (sample(state) - 0.5) * profile.error * 0.16;
     if (bot.serveTarget)
@@ -68,6 +87,7 @@ export function tacticalBotIntent(state: MatchState, seat: number, level: number
       );
   } else if (threat) {
     bot.serveTarget = null;
+    delete bot.servePlan;
     delete bot.serveError;
     const locked =
       bot.stroke &&
@@ -126,6 +146,7 @@ export function tacticalBotIntent(state: MatchState, seat: number, level: number
     }
   } else {
     delete bot.stroke;
+    delete bot.servePlan;
     delete bot.serveError;
   }
   const targetAngle = bot.stroke
@@ -138,6 +159,8 @@ export function tacticalBotIntent(state: MatchState, seat: number, level: number
     launch: Boolean(
       ownServe &&
       ownServe.age > bot.serveDelay * profile.serveScale &&
+      (!bot.servePlan || bot.servePlan.open || ownServe.age >= 0.35 + 0.8 * profile.tactics) &&
+      (!bot.servePlan || Math.abs(serveCurve(player.swipe)) < 0.02 || ownServe.age >= 1.5) &&
       Math.abs(angleDifference(player.angle, bot.targetAngle)) < 0.08 &&
       !threat,
     ),

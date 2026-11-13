@@ -1,3 +1,4 @@
+import type { ServePlan } from "./bot-serve";
 import type { RoundDifficulty } from "./difficulty";
 import type { OutlineTransition } from "./outline-transition";
 import type { ArenaGeometry } from "./arena";
@@ -30,6 +31,7 @@ export interface BotState {
   serveDelay: number;
   serveTarget: Vec2 | null;
   serveError?: number;
+  servePlan?: ServePlan;
   stroke?: {
     ballId: number;
     angle: number;

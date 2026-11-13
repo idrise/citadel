@@ -1,3 +1,4 @@
+import { serveCurve } from "./flight";
 import { serveDirection } from "./aim";
 import { ARENA, fortress, railPosition } from "./arena";
 import { sample } from "./random";
@@ -54,7 +55,7 @@ export function launchBall(state: MatchState, ball: BallState, options: MatchOpt
   if (options.rallyAcceleration) ball.rallyTime = 0;
   ball.striker = ball.seat;
   ball.slowSeat = null;
-  ball.spin = 0;
+  ball.spin = serveCurve(state.players[ball.seat]?.swipe);
   emit(state, "launch", ball.position, ball.seat, null, { ballId: ball.id });
 }
 export function damagePiece(

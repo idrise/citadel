@@ -60,7 +60,9 @@ lettering stays bright. Settings and pause controls are procedural scene geometr
 React retains state/persistence and hidden accessible status.
 
 Click **START** to capture the mouse. Move left/right to steer your curved bat;
-click or press Space to serve. A/D or Left/Right also steer. **Escape/P** pauses
+click or press Space to serve. Flick while launching to curve the serve; a stationary
+bat serves straight. On touch, drag then tap within the short swipe window. The held-ball
+guide previews the curve. A/D or Left/Right also steer. **Escape/P** pauses
 and releases the cursor. Focus loss or capture loss pauses and clears held input;
 click **Resume** to recapture and continue. Desktop sensitivity spans 0.5–2×.
 Volumes and sensitivity persist locally. Keyboard **+ / =** and **−** (including
@@ -93,6 +95,9 @@ and end markers. Moving actors can change that forecast. Pressure slowdown
 remains optional and off. It only helps with later arrivals when two separated
 shots demand a fast move; ordinary shots and bat input stay at normal speed.
 The same rule applies to humans and bots.
+Bots aim for reachable pickups and use curved returns. Later levels also consider
+exposed banks and wait briefly for a defender to move away before serving; incoming
+defence takes priority. Their decisions use visible poses and ordinary movement.
 Brush the bat sideways into an incoming ball for a visible, fading curve. A short
 100ms tolerance lets a quick flick count just before contact. Rotating cyan/pink
 arrow bands show opposite spin directions, with a longer trail tracing the bend.

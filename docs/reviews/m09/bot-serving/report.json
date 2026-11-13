@@ -1,0 +1,242 @@
+{
+  "kind": "Authored swipe-ready launch poses and actual exposed-bank bot duel; ordinary simulation and renderer",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 2,
+      "side": -1,
+      "initialSpin": -1.8,
+      "spin": -1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 2,
+      "side": 1,
+      "initialSpin": 1.8,
+      "spin": 1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "side": -1,
+      "initialSpin": -1.8,
+      "spin": -1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "side": 1,
+      "initialSpin": 1.8,
+      "spin": 1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "side": -1,
+      "initialSpin": -1.8,
+      "spin": -1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "side": 1,
+      "initialSpin": 1.8,
+      "spin": 1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "side": 0,
+      "initialSpin": 0,
+      "spin": 0,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": false,
+      "count": 16,
+      "side": 1,
+      "initialSpin": 1.8,
+      "spin": 1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "side": -1,
+      "initialSpin": -1.8,
+      "spin": -1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "side": 1,
+      "initialSpin": 1.8,
+      "spin": 1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "side": -1,
+      "initialSpin": -1.8,
+      "spin": -1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "side": 1,
+      "initialSpin": 1.8,
+      "spin": 1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "side": -1,
+      "initialSpin": -1.8,
+      "spin": -1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "side": 1,
+      "initialSpin": 1.8,
+      "spin": 1.028176314927866,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "side": 0,
+      "initialSpin": 0,
+      "spin": 0,
+      "collisionCaps": 0
+    },
+    {
+      "mobile": true,
+      "count": 16,
+      "side": 1,
+      "initialSpin": 1.8,
+      "spin": 1.028176314927866,
+      "collisionCaps": 0
+    }
+  ],
+  "duels": [
+    {
+      "mobile": false,
+      "time": 0.2,
+      "launches": [],
+      "damage": [],
+      "health": [
+        3,
+        3
+      ],
+      "collisionCaps": 0,
+      "phase": "ready"
+    },
+    {
+      "mobile": false,
+      "time": 0.35,
+      "launches": [
+        {
+          "time": 0.24166666666666664,
+          "seat": 1,
+          "spin": 0
+        }
+      ],
+      "damage": [],
+      "health": [
+        3,
+        3
+      ],
+      "collisionCaps": 0,
+      "phase": "active"
+    },
+    {
+      "mobile": false,
+      "time": 0.9,
+      "launches": [
+        {
+          "time": 0.24166666666666664,
+          "seat": 1,
+          "spin": 0
+        }
+      ],
+      "damage": [
+        {
+          "time": 0.675,
+          "seat": 0
+        }
+      ],
+      "health": [
+        2,
+        3
+      ],
+      "collisionCaps": 0,
+      "phase": "ready"
+    },
+    {
+      "mobile": true,
+      "time": 0.2,
+      "launches": [],
+      "damage": [],
+      "health": [
+        3,
+        3
+      ],
+      "collisionCaps": 0,
+      "phase": "ready"
+    },
+    {
+      "mobile": true,
+      "time": 0.35,
+      "launches": [
+        {
+          "time": 0.24166666666666664,
+          "seat": 1,
+          "spin": 0
+        }
+      ],
+      "damage": [],
+      "health": [
+        3,
+        3
+      ],
+      "collisionCaps": 0,
+      "phase": "active"
+    },
+    {
+      "mobile": true,
+      "time": 0.9,
+      "launches": [
+        {
+          "time": 0.24166666666666664,
+          "seat": 1,
+          "spin": 0
+        }
+      ],
+      "damage": [
+        {
+          "time": 0.675,
+          "seat": 0
+        }
+      ],
+      "health": [
+        2,
+        3
+      ],
+      "collisionCaps": 0,
+      "phase": "ready"
+    }
+  ],
+  "errors": []
+}

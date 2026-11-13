@@ -1,3 +1,4 @@
+import { serveDirection } from "./aim";
 import { rallyBaseSpeed } from "./rally";
 import { FIXED_DT, fortress } from "./arena";
 import { advanceBall } from "./ball";
@@ -11,7 +12,7 @@ import {
 } from "./types";
 import { ARENA } from "./arena";
 import { SUPPLIES } from "./supplies";
-import { rememberSwipe } from "./flight";
+import { rememberSwipe, serveCurve } from "./flight";
 import { add, dot, length, normalise, scale, sub, type Vec2 } from "./vector";
 
 export const PREVIEW_HORIZON = 0.45;
@@ -210,4 +211,46 @@ export function traceAimGuide(
   const remaining = Math.min(3, distance - first.time);
   const second = guideContact(state, nextStart, reflected, remaining, -1);
   return [start, bend, add(nextStart, scale(reflected, second?.time ?? remaining))];
+}
+
+/** A swipe-ready launch forecast uses the same fixed-step solver, with frozen visible actors.
+ * It is bounded to twelve units / 120 ticks and one bank, with no damage or collection writes. */
+export function predictServe(state: MatchState, seat: number, distance = 12) {
+  const source = state.balls.find((b) => b.phase === "ready" && b.seat === seat),
+    player = state.players[seat];
+  if (state.phase !== "playing" || !source || !player || !alive(player)) return null;
+  const speed = state.difficulty?.ballSpeed ?? DEFAULT_OPTIONS.ballSpeed;
+  const ball: BallState = {
+    ...source,
+    phase: "active",
+    position: { ...source.position },
+    velocity: scale(serveDirection(seat, player.angle, state.arena), speed),
+    spin: serveCurve(player.swipe),
+    rallyTime: 0,
+  };
+  const trial: MatchState = {
+    ...state,
+    balls: [ball],
+    events: [],
+    stats: { ...state.stats },
+    players: state.players.map((p) => ({
+      ...p,
+      health: [...p.health],
+      swipe: { velocity: 0, remaining: 0 },
+    })),
+  };
+  const angles = trial.players.map((p) => p.angle),
+    pieces = trial.players.map((p) => p.pieces.map((body) => body.position));
+  const points: Vec2[] = [{ ...ball.position }],
+    impacts: Vec2[] = [];
+  let banks = 0;
+  const options = { ...DEFAULT_OPTIONS, humanSeat: seat, ballSpeed: speed };
+  for (let step = 0; step < Math.min(120, Math.ceil(distance / speed / FIXED_DT)); step++) {
+    const hit = advanceBall(trial, ball, angles, FIXED_DT, options, pieces, true);
+    points.push(hit?.position ?? { ...ball.position });
+    if (!hit) continue;
+    impacts.push(hit.position);
+    if (hit.type !== "wall" || ++banks > 1) break;
+  }
+  return { points, impacts };
 }

@@ -108,6 +108,11 @@ export function AccessibleStatus({
       </output>
       <output aria-label="Your pieces broken">{snapshot.totals.players[humanSeat]!.scored}</output>
       <output aria-label="Your returns">{snapshot.totals.players[humanSeat]!.returns}</output>
+      {state.balls.map((ball) => (
+        <output key={`spin-${ball.id}`} aria-label={`Ball ${ball.id} spin`}>
+          {(ball.spin ?? 0).toFixed(3)}
+        </output>
+      ))}
       <output aria-label="Supply containers">{state.supplies.length}</output>
       <output aria-label="Supply phase">
         {state.difficulty?.pickupCount === 0

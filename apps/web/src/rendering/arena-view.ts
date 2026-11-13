@@ -1,3 +1,4 @@
+import { serveCurve } from "../simulation/flight";
 import { MAX_PLAYERS } from "../simulation/player-count";
 import type { TitleFrame } from "./title-transition";
 import type { Vec2 } from "../simulation/vector";
@@ -14,7 +15,7 @@ import {
 } from "../simulation/arena";
 import { serveDirection } from "../simulation/aim";
 import { alive, type MatchState } from "../simulation/types";
-import { predictReturn, traceAimGuide } from "../simulation/return-preview";
+import { predictReturn, predictServe, traceAimGuide } from "../simulation/return-preview";
 import { createEffects } from "./effects";
 import { createBallView } from "./ball-view";
 import { createArenaReflections } from "./arena-reflections";
@@ -305,6 +306,11 @@ export function createArenaView(
         (ball) => ball.phase === "ready" && ball.seat === defender.id,
       );
       if (ownServe) {
+        if (Math.abs(serveCurve(defender.swipe)) > 1e-4) {
+          const curved = predictServe(state, defender.id);
+          if (curved) guide.show(curved.points, curved.impacts);
+          return;
+        }
         const points = traceAimGuide(
           state,
           ownServe.position,

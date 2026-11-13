@@ -3,11 +3,13 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 const origin = process.argv.find((arg) => arg.startsWith("http")) ?? "http://localhost:5177",
-  directory = "docs/reviews/m09/roster-variety";
+  directory =
+    process.argv.find((arg) => arg.startsWith("--output="))?.slice(9) ??
+    "docs/reviews/m09/roster-variety";
 await mkdir(directory, { recursive: true });
 const performanceOnly = process.argv.includes("--performance-only");
 const prior = performanceOnly
-  ? JSON.parse(await readFile(`${directory}/report.json`, "utf8"))
+  ? JSON.parse(await readFile("docs/reviews/m09/roster-variety/report.json", "utf8"))
   : null;
 const browser = await chromium.launch({ channel: "chromium" }),
   errors = [],

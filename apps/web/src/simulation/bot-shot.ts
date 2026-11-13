@@ -11,6 +11,9 @@ export interface BotTarget {
   radius: number;
   reward: number;
   expires: number;
+  targetSeat?: number;
+  piece?: number;
+  supplyId?: number;
 }
 export interface BotShot {
   angle: number;
@@ -29,6 +32,7 @@ export function botTargets(state: MatchState, seat: number, origin: Vec2): BotTa
         radius: SUPPLIES.radius,
         reward: 9,
         expires: SUPPLIES.lifetime - drop.age,
+        supplyId: drop.id,
       });
     }
   for (const player of state.players) {
@@ -42,6 +46,8 @@ export function botTargets(state: MatchState, seat: number, origin: Vec2): BotTa
         radius: nearest.radius,
         reward: 5,
         expires: Infinity,
+        targetSeat: player.id,
+        piece: player.pieces.indexOf(nearest),
       });
   }
   return targets;

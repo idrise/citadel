@@ -1,0 +1,17 @@
+# Curved serves and bot tactics
+
+Serving now uses the same signed swipe curve and 100ms recent-motion window as bat returns. Flick and click/Space to bend a launch; on touch, drag then tap promptly. Holding still serves straight. Ball speed, credit, serve arming and normal launch controls remain intact. The dotted held-ball guide follows the actual fixed-step curve with frozen visible actors, including one wall bank; subsequent actor movement can change the outcome.
+
+The bot audit preserves pickup targeting and curved return strokes. From level 36, bots also compare reachable pickups and nearby banks, prefer exposed/vulnerable targets, and can hold a covered shot briefly for an opening. They eventually apply pressure instead of waiting indefinitely. Incoming defence takes priority. Planning reads current visible geometry, never future inputs; aiming uses the ordinary motor and level-specific error. Targets are cached between staggered bounded decisions and invalidated when collected or destroyed. Planned straight launches allow residual aiming motion to settle.
+
+[Curved held-ball guide](reviews/m09/bot-serving/desktop-4-1-held.png), [curved flight](reviews/m09/bot-serving/desktop-4-1-launched.png), [phone launch](reviews/m09/bot-serving/phone-6-1-launched.png), and [phone exposed-bank hit](reviews/m09/bot-serving/phone-bot-scored.png). The [render report](reviews/m09/bot-serving/report.json) records sixteen signed/control scenarios and six duel frames: the bot holds at 0.2s, launches at 0.242s after normal defender movement opens the shot, then physically destroys a container at 0.675s. No forced health or score writes are used in that sequence. All frames report zero collision caps and browser errors.
+
+510 unit tests in 90 files pass, including signed, expired and stationary serve spin, unchanged launch speed and credit across 2/4/8/16 seats, preview agreement with real physics, read-only planning, target invalidation, pickup eligibility, defensive priority and the actual bot duel. Scoped format/lint/type checks and the root production build pass; the existing bundle-size advisory remains.
+
+Twenty selected production Chromium scenarios have passing coverage: nineteen initially, followed by all four serving cases after correcting the touch test's stale-roster owner selection. Mouse flick/click, both keyboard curve signs and drag-then-tap touch launch pass through ordinary adapters using document-local virtual controls. The other checks cover controls, progression/demotion, sixteen-seat rotation and real audio. No native system mouse capture is used.
+
+The [isolated stress report](reviews/m09/bot-serving/stress/report.json) runs actual level-100 bot simulation with sixteen balls at 6/8/12/16 seats, desktop and phone-sized views. Each uses fifteen warm-up and 120 measured frames on this Mac's M2 Pro Metal renderer. P95 frame intervals stay 16.7–16.8ms, with zero collision caps/errors; sixteen-seat simulation p95 is about 13.5ms and renderer submission p95 up to 11.1ms, sampled separately. These are short local samples, not sustained or physical iPhone/iPad validation.
+
+Refresh the stable local demo at **http://localhost:5179/**. Try a stationary launch, then a flick-and-launch in both directions. Use **+ / −** for unranked level comparisons and **Backspace** to return to the saved challenge. The sixteen-player limit remains an experiment awaiting hands-on review. Nothing has been pushed or deployed.
+
+**REVIEW REQUIRED — M09**

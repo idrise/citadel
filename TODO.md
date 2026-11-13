@@ -1,8 +1,8 @@
-All eleven requested implementation items are complete locally. See
+All authored TODO items are implemented locally; awaiting hands-on review. See
 [the feedback review](docs/MOBILE_FEEDBACK_REVIEW.md) and
 [the triangle/rally review](docs/TRIANGLE_RALLY_REVIEW.md), and
 [the scene Retry and wall-gap correction](docs/SCENE_RETRY_GAP_REVIEW.md) for checks, screenshots,
-audio, measurements and physical-device limits. Awaiting M09 review.
+audio, measurements and physical-device limits. See also [the pre-signoff tweaks](docs/PRESIGNOFF_TWEAKS_REVIEW.md), [roster/layout variety](docs/ROSTER_VARIETY_REVIEW.md), and [curved serves and bot tactics](docs/SERVING_TACTICS_REVIEW.md). Awaiting M09 review.
 
 - [x] Use **Citadel** consistently in the page title, manifest, accessible UI, package and documentation.
 - [x] Enlarge the mobile portrait arena while retaining every opponent and container; use a steeper camera and tighter safe framing.
@@ -24,3 +24,5 @@ audio, measurements and physical-device limits. Awaiting M09 review.
 - [x] To modify difficulty we can shrink the size of the paddles, this should be worked into the level set.
 - [x] Hitting a pickup should cause the ball to bounce off of it. The transition to the players bank needs to be emphasized a bit more so it's obvious what happened and why.
 - [x] When you press the settings panel it should in game ui withonly resume, soundfx volume, music volume, sensitivity on normal browser. Touch interface may not require this setting. Remove all the other stuff like how to play etc, number of players, time to x' anything like that just pull it out. This should mean we have no react ui at this point. Remove all the react components that we no longer use.
+- [x] Double check the bot code and make sure that it has tactics for getting pickups, sneak attack when holding the ball. these sorts of things.
+- [ ]

@@ -465,6 +465,23 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+13 November serving/tactics checkpoint: moving launches now inherit the same signed,
+100ms remembered swipe curve as returns. A stationary bat launches straight; speed,
+shot credit and serve arming remain intact. A bounded, read-only fixed-step guide
+previews the held-ball curve. Higher-level bots cache visible pickup/bank targets,
+briefly hold covered shots and launch at openings or a bounded deadline. Incoming
+defence preempts attack, consumed targets invalidate immediately, and planned
+straight bot shots let aiming motion settle. Early levels retain simpler tactics.
+Checks: 510 units / 90 files, scoped check and root build pass. Twenty selected
+production browser scenarios have passing coverage (nineteen
+initially plus all four serving cases after fixing a stale-roster test setup).
+Rendered desktop/phone evidence covers both curve signs at 2/4/6 seats, a stationary control, sixteen seats,
+and a real-physics held-ball duel that scores through an exposed bank. Eight isolated
+sixteen-ball stress samples at 6/8/12/16 seats retain zero collision caps/errors and
+16.7–16.8ms p95 frame intervals on this M2 Pro; sixteen-seat simulation p95 is about
+13.5ms. These short samples do not validate physical Safari or sustained load.
+See `docs/SERVING_TACTICS_REVIEW.md`. No publication or later milestone authorised.
+
 13 November roster/variety checkpoint: the experimental local ceiling is now
 sixteen players, with distinct seat colours, extended preference/progress validation,
 larger regular polygons, adjacent-bank serve reach and camera scaling. Five symmetric
