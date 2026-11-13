@@ -1,3 +1,4 @@
+import { isPlayerCount } from "../simulation/player-count";
 import type { PlayerCount } from "../simulation/arena";
 import { createSettings, type GameSettings } from "./settings";
 export const PREFERENCES_KEY = "citadel.solo.v1";
@@ -13,9 +14,7 @@ export function parsePreferences(raw: string | null, reduced = false): SoloPrefe
   try {
     const source: unknown = JSON.parse(raw ?? "null");
     if (!record(source) || source.version !== 1 || !record(source.settings)) return fallback;
-    const count = [2, 3, 4, 5, 6].includes(Number(source.count))
-      ? (Number(source.count) as PlayerCount)
-      : 4;
+    const count = isPlayerCount(source.count) ? (Number(source.count) as PlayerCount) : 4;
     const seat = Number.isInteger(source.humanSeat)
       ? Math.max(0, Math.min(count - 1, Number(source.humanSeat)))
       : 0;

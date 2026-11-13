@@ -41,7 +41,7 @@ it("projects accessible scene controls, bounds player count, and waits before of
     ),
   ).toBe(true);
   expect(
-    menu.update({ ...state, count: 6 }, 1280, 900).find((c) => c.action === "increase")!.disabled,
+    menu.update({ ...state, count: 16 }, 1280, 900).find((c) => c.action === "increase")!.disabled,
   ).toBe(true);
   expect(menu.update({ ...state, mode: "victory", elapsed: 0.8 }, 1280, 900)).toEqual([]);
   expect(

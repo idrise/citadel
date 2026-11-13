@@ -1,3 +1,4 @@
+import { MAX_PLAYERS } from "../simulation/player-count";
 import { createArena, fortress, type ArenaGeometry } from "../simulation/arena";
 import { blendPresentationOutline, matchPresentationOutlines } from "./presentation-outline";
 import type { MatchState, PlayerState } from "../simulation/types";
@@ -15,7 +16,7 @@ export interface TitleFrame {
   railGain?: number;
   victoryFraming?: number;
 }
-const templates = createArena(6).fortresses;
+const templates = createArena(MAX_PLAYERS).fortresses;
 const mix = (a: Vec2, b: Vec2, t: number) => add(scale(a, 1 - t), scale(b, t));
 const angle = (a: number, b: number, t: number) => a + angleDifference(b, a) * t;
 const yawFor = (state: MatchState, seat: number) => {
@@ -23,7 +24,7 @@ const yawFor = (state: MatchState, seat: number) => {
   return Math.atan2(home.x, home.y);
 };
 const scalesFor = (state: MatchState) =>
-  Array.from({ length: 6 }, (_, id) =>
+  Array.from({ length: MAX_PLAYERS }, (_, id) =>
     state.players.some((p) => p.id === id && p.health.some(Boolean)) ? 1 : 0,
   );
 
@@ -75,6 +76,10 @@ export function createTitleTransition() {
       }
       const t = time * time * (3 - 2 * time),
         before = transition.from.state;
+      const targetScales = scalesFor(state);
+      const born = (id: number) => (transition!.from.scales[id] ?? 0) === 0;
+      const retired = (id: number) => (targetScales[id] ?? 0) === 0;
+      const centre = { x: 0, y: 0 };
       const fortresses = templates.map((template) => {
         const target = state.arena.fortresses.find((f) => f.id === template.id);
         const source = before.arena.fortresses.find((f) => f.id === template.id);
@@ -82,7 +87,11 @@ export function createTitleTransition() {
           b = target ?? source ?? template;
         return {
           ...b,
-          anchor: mix(a.anchor, b.anchor, t),
+          anchor: mix(
+            born(template.id) ? centre : a.anchor,
+            retired(template.id) ? centre : b.anchor,
+            t,
+          ),
           direction: angle(a.direction, b.direction, t),
           halfAngle: a.halfAngle + (b.halfAngle - a.halfAngle) * t,
         };
@@ -110,7 +119,11 @@ export function createTitleTransition() {
             return {
               ...target,
               radius: source.radius + (target.radius - source.radius) * t,
-              position: mix(source.position, target.position, t),
+              position: mix(
+                born(template.id) ? centre : source.position,
+                retired(template.id) ? centre : target.position,
+                t,
+              ),
             };
           }),
         };
@@ -120,12 +133,19 @@ export function createTitleTransition() {
           const a = before.arena.fortresses.find((f) => f.id === template.id) ?? template;
           const b = state.arena.fortresses.find((f) => f.id === template.id) ?? a;
           return mix(
-            cached?.[template.id] ??
-              add(
-                a.anchor,
-                scale({ x: Math.cos(a.direction), y: Math.sin(a.direction) }, distance),
-              ),
-            add(b.anchor, scale({ x: Math.cos(b.direction), y: Math.sin(b.direction) }, distance)),
+            born(template.id)
+              ? centre
+              : (cached?.[template.id] ??
+                  add(
+                    a.anchor,
+                    scale({ x: Math.cos(a.direction), y: Math.sin(a.direction) }, distance),
+                  )),
+            retired(template.id)
+              ? centre
+              : add(
+                  b.anchor,
+                  scale({ x: Math.cos(b.direction), y: Math.sin(b.direction) }, distance),
+                ),
             t,
           );
         });

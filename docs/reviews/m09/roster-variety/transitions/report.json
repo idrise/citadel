@@ -1,0 +1,48 @@
+{
+  "kind": "Authored completed match through real viewport capture, constant canvas, star to next board",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 16,
+      "elapsed": 0,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": false,
+      "count": 16,
+      "elapsed": 0.7,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": false,
+      "count": 16,
+      "elapsed": 1.4,
+      "moving": false,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 16,
+      "elapsed": 0,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 16,
+      "elapsed": 0.7,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 16,
+      "elapsed": 1.4,
+      "moving": false,
+      "sameCanvas": true
+    }
+  ],
+  "errors": []
+}

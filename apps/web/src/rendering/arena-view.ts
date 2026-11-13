@@ -1,3 +1,4 @@
+import { MAX_PLAYERS } from "../simulation/player-count";
 import type { TitleFrame } from "./title-transition";
 import type { Vec2 } from "../simulation/vector";
 import { resizePaddle } from "./paddle-shape";
@@ -53,7 +54,7 @@ export function createArenaView(
     ...initial,
     fortresses: [
       ...initial.fortresses,
-      ...createArena(6).fortresses.filter(
+      ...createArena(MAX_PLAYERS).fortresses.filter(
         (f) => !initial.fortresses.some((other) => other.id === f.id),
       ),
     ].sort((a, b) => a.id - b.id),
@@ -85,7 +86,7 @@ export function createArenaView(
       const ending = lastEnding;
       if (!ending) return frame;
       const positions = (distance: number) =>
-        createArena(6).fortresses.map((template) => {
+        createArena(MAX_PLAYERS).fortresses.map((template) => {
           const home = frame.state.arena.fortresses.find((f) => f.id === template.id) ?? template;
           return {
             x: home.anchor.x + Math.cos(home.direction) * distance,
@@ -163,7 +164,9 @@ export function createArenaView(
         ) => void
       )(displayArena, options.humanSeat, options.cameraAnchor, dt);
       reflection.update(displayArena, options.humanSeat, options.cameraAnchor);
-      reflection.setVictory(Boolean(ending) || (options.victoryFraming ?? 0) > 0);
+      reflection.setFloorOnly(
+        Boolean(ending) || (options.victoryFraming ?? 0) > 0 || displayArena.count > 6,
+      );
       const profile = effectsProfile(options.quality, options.reducedEffects, 1, 4, mobile);
       reflection.setReduced(!profile.reflections);
       const titleMode = options.menu?.mode === "title";

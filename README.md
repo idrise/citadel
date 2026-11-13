@@ -1,7 +1,7 @@
 # Citadel
 
 A local-first paddle arena, built with strict TypeScript, React, Three.js and Vite+.
-Choose 2–6 fortresses: one human versus 1–5 bots, with physical health pieces,
+Choose 2–16 fortresses (an experimental local ceiling): one human versus 1–15 bots, with physical health pieces,
 revenge serves, timed ball additions and rematch. The arena gradually changes
 shape as players fall, normally over 2.8 seconds. M01–M05 are approved.
 The [M07 effects/edge review](docs/M07_REVIEW.md) and
@@ -30,20 +30,23 @@ pause button in the top corner. Dragging is relative, so you can reposition your
 finger without moving the bat. Camera motion pauses with reduced effects.
 Touch Start/Resume requests fullscreen on supporting browsers. On iPhone, use
 Share → Add to Home Screen, enable Open as Web App if offered, then launch the
-Citadel icon to play without Safari's browser bars. Full screen help is available
-from the title and Pause menu.
+Citadel icon to play without Safari's browser bars.
 
-Use the floating title's **− / +** buttons to choose 2–6 players, then **START**.
+Use the floating title's **− / +** buttons to choose 2–16 players, then **START**.
 The lettering and buttons are procedural 3D meshes.
 The title rises from the floor with the same reflected lettering as each level
 introduction. Its controls stay fixed while the board morphs between player counts.
-**Settings** opens the compact Pause panel for effects, audio, assistance and your
-fortress. The saved 100-level challenge controls bot skill, ball speed, bat width,
+**Settings** opens a scene-rendered panel with **Resume**, **Sound Effects**,
+**Music**, and desktop **Sensitivity**. Touch omits mouse sensitivity. The saved 100-level challenge controls bot skill, ball speed, bat width,
 ball count and pickups (introduced at level 5). A ball unlocks every 6–7 levels,
 reaching 16 at level 100. Scoreless rallies gradually accelerate after eight
 active seconds and reset to normal speed when that ball scores. A first win advances to level 2; three consecutive losses
 demote one level with a notice. Earlier losses retry the same challenge.
-Two seats use a rectangle, then triangle, square, pentagon and hexagon.
+Two seats start with a rectangle, then triangle, square, pentagon and hexagon;
+7–16 seats use larger regular polygons. A deterministic itinerary mixes Classic,
+Wide, Faceted, Compact and Spacious arenas between levels. New layouts are
+announced before play and morph into place. The sixteen-player ceiling is for
+hands-on readability/performance review, not a final supported limit.
 Eliminations gradually move walls and surviving fortresses to the new layout,
 preserving health and relative steering. Wins celebrate in the arena with neon
 fireworks, a musical closing phrase and a **NEXT** button. Eliminated players can
@@ -53,18 +56,16 @@ Triangle defences sit forward of their corners and retain a ball-sized passage
 beside the bats, including at their travel limits.
 Other results show **ROUND OVER** in the scene.
 Settled result screens dim the arena while the foreground
-lettering stays bright. Pause has optional Round statistics
-and **Export round** for a local JSON summary; nothing is uploaded. How to play and
-version/build details stay in Pause.
+lettering stays bright. Settings and pause controls are procedural scene geometry;
+React retains state/persistence and hidden accessible status.
 
 Click **START** to capture the mouse. Move left/right to steer your curved bat;
 click or press Space to serve. A/D or Left/Right also steer. **Escape/P** pauses
 and releases the cursor. Focus loss or capture loss pauses and clears held input;
-click **Resume** to recapture and continue. While paused, **H** hides/restores the
-small corner controls for screenshots. Settings offers 0.5–2× mouse sensitivity
-and Neither / Preview only / Pressure slowdown / Both assistance modes. Settings
-are saved locally across refresh, Restart, Rematch and seat changes. Restart repeats
-the same opening; Rematch starts a new seeded round.
+click **Resume** to recapture and continue. Desktop sensitivity spans 0.5–2×.
+Volumes and sensitivity persist locally. Keyboard **+ / =** and **−** (including
+numpad keys) navigate unranked debug levels. Debug attempts are labelled and never
+save results; **Backspace** returns to the real saved challenge on the title.
 The original music theme returns regularly between variations, with quiet harmony
 and changing bar colours; [audition the latest score](docs/MOTIF_RETURN_REVIEW.md).
 The reflected level introduction announces challenge changes and whether a loss
@@ -85,9 +86,8 @@ A ball can pass through any current gap; the outer walls rebound it back into pl
 either end of your arc to bank off the walls beside your bat. The serve guide
 shows the first wall bounce; opponents can intercept it.
 
-Rounds start with one ball and add another every 15 playing seconds, up to four.
-The Settings menu exposes the interval/cap, reduced effects and the auto-serve
-deadline. Preview only is the default: near your fortress, dots forecast the
+Rounds start with one ball; the saved challenge sets the addition interval and
+limit, reaching sixteen balls at level 100. Preview only is the default: near your fortress, dots forecast the
 ball through your stationary bat's bounce toward the next impact, with bounce
 and end markers. Moving actors can change that forecast. Pressure slowdown
 remains optional and off. It only helps with later arrivals when two separated
@@ -96,7 +96,8 @@ The same rule applies to humans and bots.
 Brush the bat sideways into an incoming ball for a visible, fading curve. A short
 100ms tolerance lets a quick flick count just before contact. Rotating cyan/pink
 arrow bands show opposite spin directions, with a longer trail tracing the bend.
-Spin does not add speed; holding the bat still retains the established contact-position aim.
+Spin does not add speed. Signed spin changes wall and bat rebounds, with a damped
+curve continuing after banks; a stationary bat clears subsequent flight spin.
 The dotted forecast follows curved incoming flight and assumes a stationary bat.
 The new ball size/speed and bank-shot reach reflect the initial hands-on feedback.
 The live perspective camera sits behind your selected fortress at about 38° over
@@ -114,13 +115,14 @@ Pieces occupy compact staggered rows and grow by 3.5% per loss (up to 24.5%), wi
 visible geometry matching the moving collision bodies. Relative mouse input is
 independent of camera motion. Reduced effects/motion disables bloom/reflections
 and holds the current camera pose without a snap.
-Low/Medium/High effects presets control resolution, reflections, bloom and pooled
-particles. High is the default; reduced effects overrides it. The bloom path
+High is the default graphics profile, with a bounded mobile budget and reduced-motion
+default from the operating system. Existing graphics preferences remain compatible.
+Larger rosters retain six point lights and use the single floor reflection. The bloom path
 preserves antialiasing on solid wall edges, alongside the screen-space neon shader.
 
 ## Music
 
-Press Play for a 136 BPM adaptive club score. Muted hats open, snare and melodic
+Press Start for a 136 BPM adaptive club score. Muted hats open, snare and melodic
 hints join, then the driving kick enters. The build leads to a drop around 28s.
 Two balls add harmony, three add FM arpeggios/acid counter-line, four add FM brass.
 New parts enter on bar boundaries. Returns grow your own phrase and performance
@@ -133,9 +135,10 @@ Bat notes align to 32nds with a short bounded delay; replies/cheers use eighths.
 Collisions, movement and results always happen immediately and never wait for music.
 
 Kick beats swell the bloom and send travelling waves over the exterior grid.
-**Beat lighting** has its own setting; **Reduced effects & motion** disables it.
-Pause/focus loss silences the music; Resume continues it. Music, volume (default
-45%) and beat-lighting choices survive round changes. No recorded audio assets
+Reduced effects disables beat lighting. Pause/focus loss silences both audio layers;
+Resume continues them. Music (default 45%) and all gameplay Sound Effects
+(default 75%) have independent sliders, including impacts, swishes, pickups and
+result sounds. Both volumes survive round changes. No recorded audio assets
 are loaded. See the [music review, layer comparison and crowd audition](docs/MUSIC_REVIEW.md).
 
 ## Check and build

@@ -8,9 +8,9 @@ import {
 
 it("allows three words per second plus notice time, with animations outside the reading hold", () => {
   const timing = levelBriefingTiming(8, 7, 7);
-  expect(timing.words).toBe(9);
-  expect(timing.readingSeconds).toBe(3);
-  expect(timing.duration).toBe(4.5);
+  expect(timing.words).toBe(11);
+  expect(timing.readingSeconds).toBe(11 / 3);
+  expect(timing.duration).toBe(5.25);
   expect(timing.holdSeconds).toBeGreaterThanOrEqual(
     timing.readingSeconds + BRIEFING_NOTICE_SECONDS,
   );

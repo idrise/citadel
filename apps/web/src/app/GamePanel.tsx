@@ -1,3 +1,4 @@
+import { MAX_PLAYERS } from "../simulation/player-count";
 import { levelFor, loadProgress } from "../session/progression";
 import { attachSessionTestPort } from "./test-port";
 import { parsePreferences } from "../session/preferences";
@@ -93,7 +94,9 @@ export function GamePanel({
           if (action === "decrease")
             callbacks.current.onCount(Math.max(2, callbacks.current.count - 1) as PlayerCount);
           if (action === "increase")
-            callbacks.current.onCount(Math.min(6, callbacks.current.count + 1) as PlayerCount);
+            callbacks.current.onCount(
+              Math.min(MAX_PLAYERS, callbacks.current.count + 1) as PlayerCount,
+            );
           if (action === "rematch" || action === "retry")
             session.current?.nextRound(callbacks.current.level);
         },

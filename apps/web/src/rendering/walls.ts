@@ -1,3 +1,4 @@
+import { MAX_PLAYERS } from "../simulation/player-count";
 import { createCornerMotion } from "./corner-motion";
 import { BoxGeometry, Group, Mesh } from "three";
 import { fortress, SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
@@ -22,8 +23,8 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
   const walls: Group[] = [];
   const posts: Mesh[] = [];
   const fits: ((length: number, start: number, end: number) => void)[][] = [];
-  // Shared rays for the live outline and victory star need at most 22 segments.
-  for (let side = 0; side < 24; side++) {
+  // Shared rays for the live outline and victory star need at most 42 segments at the sixteen-player test ceiling.
+  for (let side = 0; side < MAX_PLAYERS * 2 + 16; side++) {
     const length = 1,
       near = false;
     const wall = new Group();
@@ -76,7 +77,7 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
     walls.push(wall);
     root.add(wall);
   }
-  for (let index = 0; index < 24; index++) {
+  for (let index = 0; index < MAX_PLAYERS * 2 + 16; index++) {
     const post = new Mesh(
       new BoxGeometry(0.98, WALL_HEIGHT + 0.12, 0.98),
       frostedMaterial(0x33465b),

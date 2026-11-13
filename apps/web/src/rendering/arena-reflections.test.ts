@@ -16,7 +16,7 @@ it("allocates only a small floor capture on mobile and retains geometry when jus
   expect(floor.visible).toBe(false);
   view.setReduced(false);
   expect(floor.visible).toBe(true);
-  view.setVictory(true);
+  view.setFloorOnly(true);
   expect(floor.visible).toBe(true);
   view.update(createArena(4));
   expect(floor.geometry).not.toBe(geometry);

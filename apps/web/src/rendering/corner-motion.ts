@@ -1,3 +1,4 @@
+import { MAX_PLAYERS } from "../simulation/player-count";
 import type { Vec2 } from "../simulation/vector";
 export interface CornerPose {
   point: Vec2;
@@ -9,7 +10,7 @@ export interface CornerPose {
 }
 /** Match spatial neighbours rather than hull-array indices (which rotate during a morph).
  * Pillars grow from the floor and retire in place. Simulation never sees these poses. */
-export function createCornerMotion(capacity = 24) {
+export function createCornerMotion(capacity = MAX_PLAYERS * 2 + 16) {
   const slots: { pose: CornerPose; growth: number; target: number }[] = [];
   return {
     update(corners: readonly CornerPose[], dt: number) {

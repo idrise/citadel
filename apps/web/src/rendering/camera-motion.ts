@@ -23,7 +23,8 @@ export function cameraDanger(state: MatchState, seat: number): number {
 export function createCameraMotion(camera: PerspectiveCamera) {
   const target = new Vector3(CAMERA_TARGET.x, CAMERA_TARGET.y, CAMERA_TARGET.z);
   const offset = camera.position.clone().sub(target);
-  const radius = offset.length();
+  let radius = offset.length();
+  const baseRadius = radius / ((camera.userData.arenaScale as number | undefined) ?? 1);
   let homeYaw = Math.atan2(offset.x, offset.z);
   let homeTilt = Math.acos(offset.y / radius);
   const desktopTilt = homeTilt;
@@ -32,6 +33,16 @@ export function createCameraMotion(camera: PerspectiveCamera) {
   let shimmy = 0,
     dangerZoom = 0;
   return {
+    scale(value: number) {
+      const next = baseRadius * Math.max(1, value);
+      if (Math.abs(next - radius) < 1e-8) return;
+      camera.position
+        .sub(target)
+        .multiplyScalar(next / radius)
+        .add(target);
+      radius = next;
+      camera.lookAt(target);
+    },
     layout(aspect: number) {
       // A steeper portrait view spends the narrow screen on playable floor rather than perspective.
       const tilt =

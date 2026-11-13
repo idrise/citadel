@@ -8,23 +8,24 @@ import { levelDifficulty } from "./difficulty";
 import { beginArenaMorph, stepArenaMorph } from "./arena-morph";
 import { DEFAULT_OPTIONS } from "./types";
 
-it("uses deterministic ten-level shape bands and retains the classic level-100 finale", () => {
-  expect([1, 9, 10, 19, 20, 29, 30, 40, 50, 60, 70, 80, 90, 100].map(levelArenaShape)).toEqual([
-    "classic",
-    "classic",
-    "wide",
-    "wide",
-    "faceted",
-    "faceted",
+it("mixes five deterministic shapes through the itinerary and keeps the level-100 finale classic", () => {
+  const shapes = Array.from({ length: 100 }, (_, i) => levelArenaShape(i + 1));
+  expect(shapes.slice(0, 10)).toEqual([
     "classic",
     "wide",
     "faceted",
-    "classic",
+    "compact",
     "wide",
+    "spacious",
     "faceted",
     "classic",
-    "classic",
+    "compact",
+    "wide",
   ]);
+  expect(new Set(shapes.slice(0, 10)).size).toBe(5);
+  expect(shapes.filter((shape, i) => i > 0 && shape !== shapes[i - 1]).length).toBeGreaterThan(85);
+  expect(levelArenaShape(100)).toBe("classic");
+  expect(levelArenaShape(NaN)).toBe("classic");
   expect(arenaVariant(createArena().vertices, 4, "classic")).toEqual(createArena().vertices);
 });
 it("gives every defender symmetric convex walls, keeping actual bats and containers inside in all layouts and shapes", () => {

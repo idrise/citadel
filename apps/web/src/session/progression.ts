@@ -1,3 +1,4 @@
+import { MAX_PLAYERS } from "../simulation/player-count";
 import type { PlayerCount } from "../simulation/arena";
 import { standings } from "../simulation/standings";
 import type { MatchState } from "../simulation/types";
@@ -153,7 +154,7 @@ function validResult(value: unknown): value is LevelResult {
   return (
     record(value) &&
     integer(value.level, 1, 100) &&
-    integer(value.count, 2, 6) &&
+    integer(value.count, 2, MAX_PLAYERS) &&
     integer(value.place, 1, value.count) &&
     typeof value.at === "number" &&
     Number.isFinite(value.at) &&
@@ -169,7 +170,7 @@ export function parseProgress(raw: string | null): PlayerProgress {
       !record(value) ||
       (value.version !== 1 && value.version !== 2) ||
       !integer(value.level, 1, 100) ||
-      !integer(value.count, 2, 6) ||
+      !integer(value.count, 2, MAX_PLAYERS) ||
       !integer(value.best, 1, 100) ||
       !integer(value.rounds, 0, 1e9) ||
       !Array.isArray(value.recent) ||

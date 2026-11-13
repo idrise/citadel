@@ -1,3 +1,4 @@
+import { MAX_PLAYERS } from "../simulation/player-count";
 import type { SceneSettingsState } from "./scene-settings";
 import type { Demotion } from "../session/progression";
 export const RESULT_ACTION_SECONDS = 0.9;
@@ -194,7 +195,7 @@ export function createSceneMenu(camera: PerspectiveCamera) {
         if (button.action === "options") button.item.position.y = result ? -4.5 : -5.1;
         button.disabled =
           (button.action === "decrease" && state.count <= 2) ||
-          (button.action === "increase" && state.count >= 6);
+          (button.action === "increase" && state.count >= MAX_PLAYERS);
         button.material.emissiveIntensity =
           hover === button.action && !button.disabled ? 0.6 : 0.12;
         button.glow.material.uniforms.opacity!.value = button.disabled

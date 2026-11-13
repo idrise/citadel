@@ -110,3 +110,29 @@ it("returns from the actually displayed victory star and centre actors, then rev
     view.dispose();
   }
 });
+
+it("grows new seats from the current board and retires them inward instead of appearing outside an expanding boundary", () => {
+  for (const [from, to] of [
+    [2, 16],
+    [16, 2],
+  ] as const) {
+    const transition = createTitleTransition(),
+      a = createMatch(2, from),
+      b = createMatch(2, to);
+    transition.update(a, 0, 0, false);
+    transition.begin(b, 0, true);
+    const first = transition.update(b, 0, 0, false);
+    if (to === 16) expect(first.state.arena.fortresses[15]!.anchor).toEqual({ x: 0, y: 0 });
+    const halfway = transition.update(b, 0, TITLE_TRANSITION_SECONDS / 2, false);
+    const anchor = halfway.state.arena.fortresses[15]!.anchor;
+    const full = (to === 16 ? b : a).arena.fortresses[15]!.anchor;
+    expect(anchor.x).toBeCloseTo(full.x / 2);
+    expect(anchor.y).toBeCloseTo(full.y / 2);
+    const retarget = createMatch(3, 8),
+      pose = halfway.state.players[15]!.pieces[0]!.position;
+    transition.begin(retarget, 0, true);
+    expect(transition.update(retarget, 0, 0, false).state.players[15]!.pieces[0]!.position).toEqual(
+      pose,
+    );
+  }
+});

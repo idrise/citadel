@@ -1,3 +1,11 @@
+import { isPlayerCount, type PlayerCount } from "./player-count";
+export {
+  MIN_PLAYERS,
+  MAX_PLAYERS,
+  PLAYER_COUNTS,
+  isPlayerCount,
+  type PlayerCount,
+} from "./player-count";
 import { arenaVariant, type ArenaShape } from "./arena-variant";
 import { healthFormation } from "./health-layout";
 import { add, angleDifference, clamp, scale, unit, type Vec2 } from "./vector";
@@ -7,7 +15,6 @@ import { fitDefenceLimits } from "./defence-limits";
 export { ARENA, FIXED_DT, MAX_BALLS } from "./arena-tuning";
 export const TRIANGLE_FORTRESS_INSET = 2.6;
 export const TRIANGLE_BAT_WALL_GAP = 0.7;
-export type PlayerCount = 2 | 3 | 4 | 5 | 6;
 export interface ArenaGeometry {
   count: PlayerCount;
   variant?: ArenaShape;
@@ -34,28 +41,39 @@ export function createArena(
   batScale = 1,
   variant: ArenaShape = "classic",
 ): ArenaGeometry {
-  if (![2, 3, 4, 5, 6].includes(count) || ids.length !== count || new Set(ids).size !== count)
-    throw new Error("Arena needs 2–6 distinct seats");
+  if (!isPlayerCount(count) || ids.length !== count || new Set(ids).size !== count)
+    throw new Error("Arena needs 2–16 distinct seats");
   const rotate = (point: Vec2): Vec2 => ({
     x: point.x * Math.cos(rotation) - point.y * Math.sin(rotation),
     y: point.x * Math.sin(rotation) + point.y * Math.cos(rotation),
   });
-  const radius = count === 3 ? 13 : count === 4 ? Math.sqrt(162) : count === 5 ? 14 : 15;
+  const size = variant === "compact" ? 0.9 : variant === "spacious" ? 1.12 : 1;
+  const radius =
+    (count === 3
+      ? 13
+      : count === 4
+        ? Math.sqrt(162)
+        : count === 5
+          ? 14
+          : 15 + Math.max(0, count - 6) * 1.1) * size;
   const anchors =
     count === 2
       ? [
-          { x: 0, y: 11 },
-          { x: 0, y: -11 },
+          { x: 0, y: 11 * size },
+          { x: 0, y: -11 * size },
         ].map(rotate)
       : Array.from({ length: count }, (_, i) => {
           if (count === 4)
             return rotate(
-              [
-                { x: -9, y: 9 },
-                { x: 9, y: 9 },
-                { x: 9, y: -9 },
-                { x: -9, y: -9 },
-              ][i]!,
+              scale(
+                [
+                  { x: -9, y: 9 },
+                  { x: 9, y: 9 },
+                  { x: 9, y: -9 },
+                  { x: -9, y: -9 },
+                ][i]!,
+                size,
+              ),
             );
           const angle = (Math.PI * 3) / 4 - (i * Math.PI * 2) / count;
           return rotate(scale(unit(angle), radius));
@@ -67,7 +85,7 @@ export function createArena(
           { x: 6, y: 11 },
           { x: 6, y: -11 },
           { x: -6, y: -11 },
-        ].map(rotate)
+        ].map((p) => rotate(scale(p, size)))
       : anchors.map((p) => ({ ...p }));
   const halfAngle = count === 2 ? Math.PI / 2 : Math.PI / 2 - Math.PI / count;
   const fortresses = anchors.map((corner, index) => {

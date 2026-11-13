@@ -7,10 +7,16 @@ export function createArenaCamera(
   humanSeat = 0,
   arena: ArenaGeometry = SQUARE_ARENA,
 ): PerspectiveCamera {
-  const camera = new PerspectiveCamera(44, 1, 0.1, 180);
+  const camera = new PerspectiveCamera(44, 1, 0.1, 400);
   const anchor = fortress(humanSeat, arena).anchor;
   const distance = Math.hypot(anchor.x, anchor.y);
-  camera.position.set((anchor.x / distance) * 25, 18.9, (anchor.y / distance) * 25);
+  const size = Math.max(1, ...arena.vertices.map((p) => Math.hypot(p.x, p.y) / 15));
+  camera.userData.arenaScale = size;
+  camera.position.set(
+    (anchor.x / distance) * 25 * size,
+    18.9 * size,
+    (anchor.y / distance) * 25 * size,
+  );
   camera.lookAt(CAMERA_TARGET.x, CAMERA_TARGET.y, CAMERA_TARGET.z);
   camera.updateMatrixWorld();
   return camera;

@@ -84,7 +84,7 @@ export function createArenaReflections(
   return {
     meshes,
     update,
-    setVictory(value: boolean) {
+    setFloorOnly(value: boolean) {
       victory = value;
       apply();
     },

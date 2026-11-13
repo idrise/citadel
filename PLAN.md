@@ -4,7 +4,7 @@
 **Updated:** 13 November 2026\
 **Genre:** Fast, competitive, polygon-arena paddle/ball survival  
 **Target:** Understandable, tense matches that usually resolve in approximately **two minutes**. Difficulty is ramped as the game goes on.
-**Players:** 2–6 seats, initially **one human and the remaining seats filled by bots**  
+**Players:** 2–16 seats as an experimental local test ceiling, initially **one human and the remaining seats filled by bots**\
 **Delivery order:** **Desktop browser + mouse + bots → mobile browser + touch + bots → multiplayer P2P → secure public matchmaking**  
 **Hosting:** Static game on GitHub Pages; Cloudflare matchmaking/signalling only in the final phase
 
@@ -28,8 +28,8 @@ The desired game loop is simple: **move → aim a deflection → launch/return �
 | First platform | Desktop web, primarily mouse input |
 | Next platform | Mobile web, touch drag and tap-to-launch |
 | Final platform phase | Online multiplayer, followed by random matchmaking |
-| Player counts | Exactly 2, 3, 4, 5, or 6 total participants |
-| Arena topology | 2: rectangle; 3: triangle; 4: square; 5: pentagon; 6: hexagon |
+| Player counts | 2–16 total participants for local limit testing; final cap awaits review |
+| Arena topology | 2: rectangle; 3–16: regular polygons; symmetrical level variants |
 | Camera | **Perspective RTS view**, behind the selected human fortress, about 38° down with a gentle live orbit |
 | Artwork | Procedural geometry only; **no surface textures** |
 | Visual style | Dark frosted reflective volumes with saturated neon tracing their edges, localised bloom and softened procedural reflections |
@@ -91,6 +91,7 @@ The first useful review is hands-on: does moving feel right, can the player plac
 | **4** | Square | Four corners, matching the supplied layout sketch |
 | **5** | Regular pentagon | Five vertices |
 | **6** | Regular hexagon | Six vertices |
+| **7–16** | Larger regular polygons, experimental | One fortress per vertex; camera and resource budgets follow the roster |
 
 For 3–6 seats, derive fortress anchors, arc centre, rail radius, allowed paddle angles, wall endpoints and ball spawn locations from a single polygon specification. M05 uses this per-match specification for every consumer and transitions it gradually as seats are eliminated; stable seat IDs retain their colours/health rather than being renumbered. A fortress sits *behind* its curved defence rail, towards its vertex/anchor. Balance the angle/radius and shielding opportunity by geometry, not by eyeballing each arena separately. M01 established the four-player square. M05 delivers all five layouts for review before desktop release.
 
@@ -463,6 +464,20 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 - **Permanent boundary:** Music observes events only. Musical quantisation delays sounds, never collisions, rules, inputs, health, spawning or RNG. No music-driven camera motion. User accepted the detour for now and requested M05; full M06/M07 remain unstarted.
 
 ### Progress / approval ledger
+
+13 November roster/variety checkpoint: the experimental local ceiling is now
+sixteen players, with distinct seat colours, extended preference/progress validation,
+larger regular polygons, adjacent-bank serve reach and camera scaling. Five symmetric
+families mix between levels; compact/spacious scale anchors and walls together.
+The last two levels retain classic geometry. Large outline matching is bounded,
+star returns preserve notches, and actors grow/retire within the moving board.
+Lighting stays at six point lights; large rosters use a single floor reflection.
+Checks: 501 units / 87 files, twenty selected root browser scenarios have passing
+coverage (nineteen plus a phone touch-authored rerun), 42 layout views, eight stress
+captures and six star-return frames. Isolated warmed 120-frame M2 Pro samples are
+near 60fps through sixteen players and balls, with zero collision caps/errors;
+physical-device readability, sustained performance and the final cap await review.
+See `docs/ROSTER_VARIETY_REVIEW.md`. Root build/scoped checks pass; no publishing.
 
 13 November scene settings / all-sound amendment: minimal procedural settings
 replace the React pause/help/experiment/statistics UI. Only Resume, independent

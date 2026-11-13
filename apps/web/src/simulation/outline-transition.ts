@@ -1,3 +1,4 @@
+import { matchPresentationOutlines } from "./ordered-outlines";
 import { convexHull } from "./polygon";
 import { add, dot, length, scale, sub, type Vec2 } from "./vector";
 
@@ -39,6 +40,7 @@ function expand(
 /** Pair actual corners in perimeter order. Extra corners flatten onto an edge,
  * so an n→n-1 change uses n wall sections, never n+(n-1) temporary sections. */
 export function matchOutlines(from: readonly Vec2[], to: readonly Vec2[]): OutlineTransition {
+  if (Math.max(from.length, to.length) > 12) return matchPresentationOutlines(from, to);
   const sourceLarger = from.length >= to.length,
     large = sourceLarger ? from : to,
     small = sourceLarger ? to : from;

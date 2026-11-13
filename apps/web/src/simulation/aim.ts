@@ -16,8 +16,9 @@ export function serveDirection(
 ): Vec2 {
   const home = fortress(seat, arena);
   const fan = home.halfAngle < 0.7 ? 3.5 : 2;
+  const spread = arena.count > 6 ? Math.PI * 0.68 : 1.45;
   return unit(
-    home.direction + clamp(angleDifference(paddleAngle, home.direction) * fan, -1.45, 1.45),
+    home.direction + clamp(angleDifference(paddleAngle, home.direction) * fan, -spread, spread),
   );
 }
 

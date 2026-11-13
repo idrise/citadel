@@ -1,3 +1,5 @@
+import { MAX_PLAYERS } from "../simulation/player-count";
+import { seatLights } from "./seat-lights";
 import { createSettingsControls } from "../input/settings-controls";
 import type { SettingKey, SettingsAction } from "./scene-settings";
 import { creditedPlayerKill } from "./elimination-burst";
@@ -67,7 +69,7 @@ export function createViewport(
     (action) => settingsCallbacks?.action(action),
     (key, value) => settingsCallbacks?.change(key, value),
   );
-  const disposeLighting = lightArena(scene, createArena(6));
+  const disposeLighting = lightArena(scene, createArena(MAX_PLAYERS));
   const disposeEnvironment = createNeonEnvironment(renderer, scene, initial);
   const camera = createArenaCamera(humanSeat, initial);
   const motion = createCameraMotion(camera);
@@ -149,9 +151,12 @@ export function createViewport(
           : {}),
       });
       const displayArena = arena.displayArena;
+      const litSeats = seatLights(displayed.players, options.humanSeat);
       for (const light of scene.children)
         if (light instanceof PointLight) {
-          const id = light.userData.seat as number;
+          const id = litSeats[light.userData.slot as number] ?? -1;
+          light.userData.seat = id;
+          if (id >= 0) light.color.setHex(SEATS[id]!.colour);
           const player = displayed.players.find((p) => p.id === id);
           // Keep the light count stable: changing it recompiles every lit material on Safari.
           light.visible = true;
@@ -176,6 +181,7 @@ export function createViewport(
         }
       const home = fortress(options.humanSeat, state.arena);
       motion.follow(presentation.yaw);
+      motion.scale(Math.max(1, ...displayArena.vertices.map((p) => Math.hypot(p.x, p.y) / 15)));
       const paddleOffset =
         state.phase === "playing"
           ? (state.players[options.humanSeat]!.angle - home.direction) / home.halfAngle

@@ -18,7 +18,7 @@ it("announces every ball and pickup unlock from the real 100-level curve", () =>
     expect(messages.every((m) => m.length <= 20)).toBe(true);
   }
   expect(levelHighlights(100)).toEqual(["EXTRA BALL", "ELITE BOTS"]);
-  expect(levelHighlights(2)).toEqual(["SPEED UP"]);
+  expect(levelHighlights(2)).toEqual(["WIDE ARENA"]);
   expect(levelHighlights(NaN)).toEqual(levelHighlights(1));
 });
 it("makes shrinking bats and meaningful bot reaction improvements visible between unlocks", () => {

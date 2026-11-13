@@ -63,7 +63,7 @@ it("moves meshes and mirrors with the colliders, hides eliminated actors, and re
   const paddles = view.root.children.filter(
     (child) => child instanceof Mesh && child.position.y === 0.95,
   );
-  expect(paddles).toHaveLength(6);
+  expect(paddles).toHaveLength(16);
   expect(paddles[1]!.visible).toBe(false);
   const home = fortress(5, state.arena);
   expect(paddles[5]!.position.x).toBe(home.anchor.x);

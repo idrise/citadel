@@ -1,3 +1,4 @@
+import { levelDifficulty } from "../apps/web/src/simulation/difficulty";
 import { createViewport } from "../apps/web/src/rendering/viewport";
 import { createMatch } from "../apps/web/src/simulation/match";
 import type { PlayerCount } from "../apps/web/src/simulation/arena";
@@ -7,10 +8,11 @@ export function renderBoardTransitionReview(
   count: PlayerCount,
   width = 1280,
   height = 900,
+  graded = false,
 ) {
   container.style.cssText = `width:${width}px;height:${height}px;position:relative`;
-  const finished = createMatch(2026, count),
-    target = createMatch(2027, count);
+  const finished = createMatch(2026, count, 3, 2026, graded ? levelDifficulty(1) : undefined),
+    target = createMatch(2027, count, 3, 2027, graded ? levelDifficulty(2) : undefined);
   finished.phase = "finished";
   finished.winner = 0;
   for (const player of finished.players) if (player.id !== 0) player.health.fill(false);
