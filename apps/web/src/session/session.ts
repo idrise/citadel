@@ -21,6 +21,8 @@ export interface SessionSnapshot {
   seed: number;
   humanSeat: number;
   level: number;
+  lossLevel: number;
+  previousLevel: number | undefined;
   demotion: Demotion | null;
   paused: boolean;
   started: boolean;
@@ -41,6 +43,8 @@ export function createSession(
   onSceneAction: (action: SceneAction) => void = () => {},
   level = 1,
   onComplete: (result: LevelResult) => void = () => {},
+  initialLossLevel = level,
+  initialPreviousLevel?: number,
 ) {
   let supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
   let state = createMatch(seed, count, ARENA.startingPieces, supplySeed, levelDifficulty(level));
@@ -62,6 +66,10 @@ export function createSession(
   let paused = true;
   let started = false;
   let continuationLevel = level;
+  let pendingLossLevel = initialLossLevel;
+  let pendingPreviousLevel = initialPreviousLevel;
+  let previousLevel = initialPreviousLevel;
+  let lossLevel = initialLossLevel;
   let endingTime = 0;
   let menuSuppressed = false;
   let notice = "Defend your three containers. Last fortress standing wins.";
@@ -78,6 +86,8 @@ export function createSession(
       seed,
       humanSeat,
       level,
+      lossLevel,
+      previousLevel,
       demotion,
       paused,
       started,
@@ -219,6 +229,8 @@ export function createSession(
                 ? "level"
                 : "hidden",
         level,
+        lossLevel,
+        previousLevel,
         demotion,
         count,
         elapsed: endingTime,
@@ -239,6 +251,8 @@ export function createSession(
   const start = () => {
     if (touchMode) void enterMobileFullscreen();
     initialSettings ??= { ...settings };
+    lossLevel = pendingLossLevel;
+    previousLevel = pendingPreviousLevel;
     started = true;
     menuSuppressed = false;
     music.unlock();
@@ -267,6 +281,8 @@ export function createSession(
     count = nextCount;
     humanSeat = nextSeat;
     level = nextLevel;
+    lossLevel = pendingLossLevel;
+    previousLevel = pendingPreviousLevel;
     state = nextState;
     started = false;
     paused = true;
@@ -318,8 +334,14 @@ export function createSession(
       resetRound(nextCount, nextSeat, nextLevel, !started);
       return true;
     },
-    configureProgress(next: Demotion | null) {
+    configureProgress(next: Demotion | null, nextLossLevel = level, nextPreviousLevel?: number) {
       demotion = next;
+      pendingLossLevel = nextLossLevel;
+      pendingPreviousLevel = nextPreviousLevel;
+      if (!started) {
+        lossLevel = nextLossLevel;
+        previousLevel = nextPreviousLevel;
+      }
       present([], 0);
       report();
     },

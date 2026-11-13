@@ -1,5 +1,11 @@
 import { roundSeed } from "../session/round-seed";
-import { levelFor, loadProgress, recordResult, saveProgress } from "../session/progression";
+import {
+  levelFor,
+  levelAfterLoss,
+  loadProgress,
+  recordResult,
+  saveProgress,
+} from "../session/progression";
 import type { PlayerCount } from "../simulation/arena";
 import { useState, useEffect } from "react";
 import { GamePanel } from "./GamePanel";
@@ -25,6 +31,10 @@ export function App() {
       <h1 className="sr-only">Citadel</h1>
       <GamePanel
         level={levelFor(progress, count)}
+        lossLevel={levelAfterLoss(progress, count)}
+        previousLevel={
+          progress.recent.at(-1)?.count === count ? progress.recent.at(-1)?.level : undefined
+        }
         demotion={progress.demotion?.count === count ? progress.demotion : null}
         onComplete={(result) => setProgress((current) => recordResult(current, result))}
         count={count}

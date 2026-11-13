@@ -22,13 +22,24 @@ it("puts solid level lettering in the reflected world, fits every seat and hides
         arena = createArena(count),
         intro = createLevelIntro(scene);
       const camera = createArenaCamera(seat, arena);
-      for (const [width, height] of [
-        [320, 568],
-        [844, 390],
-        [1280, 900],
-      ])
-        for (const level of [1, 100]) {
-          intro.update(level, 0.8, arena, seat, false);
+      for (const level of [1, 5, 8, 95, 100]) {
+        intro.update(
+          level,
+          0.8,
+          arena,
+          seat,
+          false,
+          null,
+          undefined,
+          0,
+          Math.max(1, level - 1),
+          level === 95 ? 90 : undefined,
+        );
+        for (const [width, height] of [
+          [320, 568],
+          [844, 390],
+          [1280, 900],
+        ]) {
           expect(intro.root.parent).toBe(scene);
           const text = intro.root.getObjectByName(
             `neon-text:LEVEL ${String(level).padStart(2, "0")}`,
@@ -41,20 +52,23 @@ it("puts solid level lettering in the reflected world, fits every seat and hides
             new Vector3(p.x * 1.09, 2.34, p.y * 1.09),
           ]);
           fitArenaCamera(camera, new Box3().setFromPoints(corners), width! / height!, corners);
-          const face = text!.children[0] as Mesh;
-          const local = face.geometry.boundingBox!;
-          const projected = [local.min.x, local.max.x].flatMap((x) =>
-            [local.min.y, local.max.y].flatMap((y) =>
-              [local.min.z, local.max.z].map((z) =>
-                new Vector3(x, y, z).applyMatrix4(face.matrixWorld).project(camera),
+          for (const lettering of intro.root.children[0]!.children) {
+            const face = lettering.children[0] as Mesh;
+            const local = face.geometry.boundingBox!;
+            const projected = [local.min.x, local.max.x].flatMap((x) =>
+              [local.min.y, local.max.y].flatMap((y) =>
+                [local.min.z, local.max.z].map((z) =>
+                  new Vector3(x, y, z).applyMatrix4(face.matrixWorld).project(camera),
+                ),
               ),
-            ),
-          );
-          expect(
-            projected.every((p) => Math.abs(p.x) < 0.95 && Math.abs(p.y) < 0.95),
-            JSON.stringify({ count, seat, width, height, level, projected }),
-          ).toBe(true);
+            );
+            expect(
+              projected.every((p) => Math.abs(p.x) < 0.95 && Math.abs(p.y) < 0.95),
+              JSON.stringify({ count, seat, width, height, level, projected }),
+            ).toBe(true);
+          }
         }
+      }
       intro.update(1, 1.5, arena, seat, false);
       expect(new Box3().setFromObject(intro.root).max.y).toBeLessThan(0);
       intro.update(null, 0, arena, seat, false);
@@ -89,4 +103,37 @@ it("raises the Citadel title with the same reflected world geometry and retires 
   intro.update("CITADEL", 1, arena, 0, false, null, 0);
   expect(intro.root.visible).toBe(false);
   disposeScene(root);
+});
+
+it("places challenge changes and loss stakes below the level, replacing stale warnings and keeping the title clean", () => {
+  const scene = new Group(),
+    intro = createLevelIntro(scene),
+    arena = createArena(4);
+  intro.update(8, 0.8, arena, 0, false, null, undefined, 0, 7);
+  const level = intro.root.getObjectByName("neon-text:LEVEL 08")!;
+  const extra = intro.root.getObjectByName("neon-text:EXTRA BALL")!;
+  const warning = intro.root.getObjectByName("neon-text:LOSS DROPS TO LEVEL 07")!;
+  expect(extra.position.y).toBeLessThan(level.position.y);
+  expect(warning.position.y).toBeLessThan(extra.position.y);
+  intro.update(8, 0.8, arena, 0, false, null, undefined, 0, 8);
+  expect(intro.root.getObjectByName("neon-text:LOSS DROPS TO LEVEL 07")).toBeUndefined();
+  expect(intro.root.getObjectByName("neon-text:LOSS RETRIES LEVEL 08")).toBeDefined();
+  intro.update("CITADEL", 1, arena, 0, false, null, 1);
+  expect(intro.root.getObjectByName("neon-text:CITADEL")).toBeDefined();
+  expect(intro.root.children[0]!.children).toHaveLength(1);
+  disposeScene(scene);
+});
+
+it("wraps portrait loss stakes into larger short lines instead of shrinking the whole level sign", () => {
+  const scene = new Group(),
+    intro = createLevelIntro(scene),
+    arena = createArena(6);
+  intro.update(8, 0.8, arena, 0, false, null, undefined, -0.95, 7);
+  expect(intro.root.getObjectByName("neon-text:EXTRA BALL")).toBeDefined();
+  expect(intro.root.getObjectByName("neon-text:LOSS DROPS TO")).toBeDefined();
+  expect(intro.root.getObjectByName("neon-text:LEVEL 07")).toBeDefined();
+  intro.update(8, 0.8, arena, 0, false, null, undefined, 0, 7);
+  expect(intro.root.getObjectByName("neon-text:LOSS DROPS TO LEVEL 07")).toBeDefined();
+  expect(intro.root.getObjectByName("neon-text:LOSS DROPS TO")).toBeUndefined();
+  disposeScene(scene);
 });

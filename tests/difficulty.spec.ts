@@ -24,6 +24,22 @@ for (const [level, balls, pickups, speed, bat] of [
     await expect(page.getByLabel("Round bat scale", { exact: true })).toHaveText(bat);
     await play(page);
     await page.clock.runFor(500);
+    await expect(page.getByLabel("Level changes", { exact: true })).toHaveText(
+      level === 1
+        ? "ONE BALL - WIDE BAT"
+        : level === 5
+          ? "PICKUPS INTRODUCED"
+          : level === 100
+            ? "EXTRA BALL. ELITE BOTS"
+            : level === 50
+              ? "MORE PICKUPS"
+              : "SPEED UP",
+    );
+    await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
+      level === 1
+        ? "LEVEL 01 IS THE FLOOR"
+        : `LOSS RETRIES LEVEL ${String(level).padStart(2, "0")}`,
+    );
     await page.screenshot({ path: testInfo.outputPath(`level-${level}.png`) });
     await page.clock.runFor(5200);
     if (level <= 5)

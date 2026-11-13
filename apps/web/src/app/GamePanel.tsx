@@ -20,10 +20,14 @@ export function GamePanel({
   settings,
   onSettings,
   level,
+  lossLevel,
+  previousLevel,
   demotion,
   onComplete,
 }: {
   level: number;
+  lossLevel: number;
+  previousLevel: number | undefined;
   demotion: Demotion | null;
   onComplete: (result: LevelResult) => void;
   humanSeat: number;
@@ -40,12 +44,14 @@ export function GamePanel({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const callbacks = useRef({ count, onCount, level, onComplete });
   callbacks.current = { count, onCount, level, onComplete };
-  const initialConfig = useRef({ seed, humanSeat, count, level });
+  const initialConfig = useRef({ seed, humanSeat, count, level, lossLevel, previousLevel });
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => ({
     state: createMatch(seed, count, ARENA.startingPieces, undefined, levelDifficulty(level)),
     seed,
     humanSeat,
     level,
+    lossLevel,
+    previousLevel,
     demotion,
     paused: true,
     started: false,
@@ -69,7 +75,7 @@ export function GamePanel({
   useEffect(() => {
     if (!container.current) return;
     try {
-      const { seed, humanSeat, count, level } = initialConfig.current;
+      const { seed, humanSeat, count, level, lossLevel, previousLevel } = initialConfig.current;
       const game = createSession(
         container.current,
         seed,
@@ -87,6 +93,8 @@ export function GamePanel({
         },
         level,
         (result) => callbacks.current.onComplete(result),
+        lossLevel,
+        previousLevel,
       );
       session.current = game;
       return () => {
@@ -101,8 +109,8 @@ export function GamePanel({
     session.current?.configureRoster(count, humanSeat, level);
   }, [count, humanSeat, level]);
   useEffect(() => {
-    session.current?.configureProgress(demotion);
-  }, [demotion]);
+    session.current?.configureProgress(demotion, lossLevel, previousLevel);
+  }, [demotion, lossLevel, previousLevel]);
   useEffect(() => {
     session.current?.configure(settings);
   }, [settings]);

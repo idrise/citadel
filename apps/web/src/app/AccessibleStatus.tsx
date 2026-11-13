@@ -1,3 +1,4 @@
+import { levelHighlights, lossMessage } from "../session/level-briefing";
 import { clampPaddleAngle, fortress } from "../simulation/arena";
 import { SUPPLIES } from "../simulation/supplies";
 import { VICTORY_HOLD_SECONDS } from "../rendering/victory-morph";
@@ -40,9 +41,17 @@ export function AccessibleStatus({
       <output aria-label="Round bat scale">{(state.difficulty?.batScale ?? 1).toFixed(2)}</output>
       <output aria-label="Round level">{snapshot.level}</output>
       {snapshot.started && snapshot.state.phase === "countdown" && (
-        <output aria-label="Level introduction" aria-live="polite">
-          Level {snapshot.level}
-        </output>
+        <>
+          <output aria-label="Level introduction" aria-live="polite">
+            Level {snapshot.level}
+          </output>
+          <output aria-label="Level changes">
+            {levelHighlights(snapshot.level, snapshot.previousLevel).join(". ")}
+          </output>
+          <output aria-label="Loss consequence" aria-live="polite">
+            {lossMessage(snapshot.level, snapshot.lossLevel)}
+          </output>
+        </>
       )}
       <output aria-label="Arena preview">{snapshot.titleMoving ? "moving" : "settled"}</output>
       <output aria-label="Round phase">{state.phase}</output>

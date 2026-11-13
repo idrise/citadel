@@ -84,6 +84,13 @@ export function levelFor(progress: PlayerProgress, count: PlayerCount) {
   );
 }
 
+/** The same challenge test used by recordResult; selecting another arena starts a fresh loss streak. */
+export function levelAfterLoss(progress: PlayerProgress, count: PlayerCount) {
+  const level = levelFor(progress, count);
+  const sameChallenge = progress.level === level && progress.count === count;
+  return level > 1 && sameChallenge && progress.losses >= 2 ? level - 1 : level;
+}
+
 export function recordResult(progress: PlayerProgress, result: LevelResult): PlayerProgress {
   if (!validResult(result)) throw new Error("Invalid progression result");
   const recent = [...progress.recent, { ...result }].slice(-RESULT_WINDOW);

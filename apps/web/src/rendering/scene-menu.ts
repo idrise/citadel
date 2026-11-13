@@ -27,6 +27,8 @@ export interface SceneMenuState {
   touch?: boolean;
   mode: "title" | "victory" | "defeat" | "hidden" | "level";
   level?: number;
+  lossLevel?: number;
+  previousLevel?: number | undefined;
   demotion?: Demotion | null;
   count: number;
   elapsed: number;

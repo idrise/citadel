@@ -1,3 +1,4 @@
+import { levelHighlights, lossMessage } from "../session/level-briefing";
 import { Box3, Group, Mesh, ShaderMaterial, type Object3D, Vector3 } from "three";
 import { fortress, type ArenaGeometry } from "../simulation/arena";
 import type { Demotion } from "../session/progression";
@@ -38,11 +39,14 @@ export function createLevelIntro(parent: Object3D) {
       demotion: Demotion | null = null,
       rise?: number,
       tilt = 0,
+      lossLevel?: number,
+      previousLevel?: number,
     ) {
       root.visible = value !== null && countdown > 0 && rise !== 0;
       if (!root.visible || value === null) return;
       const demoted = demotion?.to === value && demotion.count === arena.count;
-      const nextKey = `${value}:${demoted}`;
+      const compact = Math.abs(tilt) > 0.5;
+      const nextKey = `${value}:${demoted ? demotion.from : ""}:${lossLevel}:${previousLevel}:${compact}`;
       if (key !== nextKey) {
         root.remove(body);
         disposeScene(body);
@@ -54,15 +58,43 @@ export function createLevelIntro(parent: Object3D) {
         );
         body.add(text);
         textWidth = new Box3().setFromObject(text).getSize(new Vector3()).x;
-        if (demoted) {
-          text.position.y = 0.25;
-          const caption = createNeonLettering(
-            `DEMOTED FROM ${String(demotion.from).padStart(2, "0")}`,
-            0.28,
-            0xffab83,
-          );
-          caption.position.y = -0.7;
-          body.add(caption);
+        if (typeof value === "number") {
+          const lines = [
+            ...(demoted
+              ? [
+                  {
+                    text: `DEMOTED FROM ${String(demotion.from).padStart(2, "0")}`,
+                    colour: 0xffab83,
+                  },
+                ]
+              : []),
+            ...levelHighlights(value, previousLevel).map((text) => ({ text, colour: 0x9ceaff })),
+            {
+              text: lossMessage(value, lossLevel),
+              colour: (lossLevel ?? value) < value ? 0xff8d71 : 0xb3c5dc,
+            },
+          ];
+          const fitted = compact
+            ? lines.flatMap((line) => {
+                if (line.text.startsWith("LOSS "))
+                  return line.text
+                    .split(" LEVEL ")
+                    .map((part, i) => ({ ...line, text: i ? `LEVEL ${part}` : part }));
+                if (line.text === "LEVEL 01 IS THE FLOOR")
+                  return ["LEVEL 01", "IS THE FLOOR"].map((text) => ({ ...line, text }));
+                if (line.text === "ONE BALL - WIDE BAT")
+                  return ["ONE BALL", "WIDE BAT"].map((text) => ({ ...line, text }));
+                if (line.text === "PICKUPS INTRODUCED")
+                  return ["PICKUPS", "INTRODUCED"].map((text) => ({ ...line, text }));
+                return [line];
+              })
+            : lines;
+          fitted.forEach((line, index) => {
+            const caption = createNeonLettering(line.text, compact ? 0.72 : 0.6, line.colour);
+            caption.position.y = -1.2 - index * (compact ? 0.94 : 0.82);
+            body.add(caption);
+          });
+          textWidth = Math.max(textWidth, new Box3().setFromObject(body).getSize(new Vector3()).x);
         }
         // World lettering projects much smaller on a phone than the camera-mounted menus.
         body.traverse((node) => {

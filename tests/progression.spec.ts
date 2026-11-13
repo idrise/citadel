@@ -12,6 +12,9 @@ test("introduces the level before play, pauses the introduction and never rates 
   await play(page);
   await page.clock.runFor(400);
   await expect(page.getByLabel("Level introduction", { exact: true })).toHaveText("Level 1");
+  await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
+    "LEVEL 01 IS THE FLOOR",
+  );
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("countdown");
   await page.screenshot({ path: testInfo.outputPath("level-start.png") });
   await pause(page);
@@ -128,6 +131,11 @@ test("a loss retries the played level directly and preserves it after reload", a
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
   await page.getByLabel("Your fortress", { exact: true }).selectOption("1");
   await play(page);
+  await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
+    "LOSS RETRIES LEVEL 02",
+  );
+  await page.clock.runFor(450);
+  await page.screenshot({ path: testInfo.outputPath("safe-retry.png") });
   await page.keyboard.down("KeyD");
   for (
     let seconds = 0;
@@ -209,6 +217,11 @@ test("the third consecutive loss demotes one level, announces it and persists th
   await page.getByRole("checkbox", { name: "Music", exact: true }).uncheck();
   await page.getByLabel("Your fortress", { exact: true }).selectOption("1");
   await play(page);
+  await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
+    "LOSS DROPS TO LEVEL 01",
+  );
+  await page.clock.runFor(450);
+  await page.screenshot({ path: testInfo.outputPath("demotion-warning.png") });
   await page.keyboard.down("KeyD");
   for (
     let seconds = 0;
