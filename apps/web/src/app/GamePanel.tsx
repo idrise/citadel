@@ -61,6 +61,7 @@ export function GamePanel({
     initialSettings: null,
     endingTime: 0,
     titleMoving: false,
+    debug: false,
     ballOwners: new Map(),
     music: {
       status: "idle",

@@ -46,12 +46,13 @@ export function createLevelIntro(parent: Object3D) {
       lossLevel?: number,
       previousLevel?: number,
       introDuration = 1.5,
+      debug = false,
     ) {
       root.visible = value !== null && countdown > 0 && rise !== 0;
       if (!root.visible || value === null) return;
       const demoted = demotion?.to === value && demotion.count === arena.count;
       const compact = Math.abs(tilt) > 0.5;
-      const nextKey = `${value}:${demoted ? demotion.from : ""}:${lossLevel}:${previousLevel}:${compact}`;
+      const nextKey = `${value}:${demoted ? demotion.from : ""}:${lossLevel}:${previousLevel}:${compact}:${debug}`;
       if (key !== nextKey) {
         root.remove(body);
         disposeScene(body);
@@ -69,6 +70,7 @@ export function createLevelIntro(parent: Object3D) {
             lossLevel,
             previousLevel,
             demoted ? demotion.from : undefined,
+            debug,
           );
           const fitted = compact
             ? lines.flatMap((line) => {

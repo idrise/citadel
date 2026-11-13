@@ -39,6 +39,9 @@ export function AccessibleStatus({
       </output>
       <output aria-label="Round pickup budget">{state.difficulty?.pickupCount ?? 7}</output>
       <output aria-label="Round bat scale">{(state.difficulty?.batScale ?? 1).toFixed(2)}</output>
+      <output aria-label="Debug mode">
+        {snapshot.debug ? "Debug - progress not saved" : "Off"}
+      </output>
       <output aria-label="Round level">{snapshot.level}</output>
       {snapshot.started && snapshot.state.phase === "countdown" && (
         <>
@@ -51,7 +54,9 @@ export function AccessibleStatus({
             {levelHighlights(snapshot.level, snapshot.previousLevel).join(". ")}
           </output>
           <output aria-label="Loss consequence" aria-live="polite">
-            {lossMessage(snapshot.level, snapshot.lossLevel)}
+            {snapshot.debug
+              ? "DEBUG - PROGRESS NOT SAVED"
+              : lossMessage(snapshot.level, snapshot.lossLevel)}
           </output>
         </>
       )}

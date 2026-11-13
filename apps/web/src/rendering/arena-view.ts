@@ -193,6 +193,7 @@ export function createArenaView(
         options.menu?.lossLevel,
         options.menu?.previousLevel,
         options.menu?.introDuration,
+        options.menu?.debug,
       );
       supplies.update(state, dt, options.reducedEffects, options.humanSeat, options.portrait);
       for (const group of [

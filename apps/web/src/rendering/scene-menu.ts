@@ -23,6 +23,7 @@ export type SceneAction =
   | "retry"
   | "back";
 export interface SceneMenuState {
+  debug?: boolean;
   spectator?: { level: number; demotion?: Demotion | null };
   touch?: boolean;
   mode: "title" | "victory" | "defeat" | "hidden" | "level";

@@ -464,6 +464,16 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+13 November debug navigation amendment: the owner explicitly requests + and -
+level traversal that cannot change saved progress. Plus/equals/minus and numpad
+Add/Subtract start unranked previews at bounded levels 1–100, with normal reading
+holds and morphs. DEBUG - PROGRESS NOT SAVED is rendered continuously. Backspace
+or the existing Back action exits to the saved level. Editor targets, modifiers
+and key repeats are ignored. All debug results bypass progression recording.
+Checks: 485 units / 83 files, two production browser tests (including a complete
+round and unchanged stored progress/preferences), rendered desktop/phone evidence,
+scoped check and root build. No publication is authorised.
+
 13 November pickup checkpoint: landed supplies now rebound on actual circle
 contact while ownership and awards remain independent. Queries, serve guides and
 bot forecasts see the physical obstacle. Brighter 0.85s pooled flights/streaks

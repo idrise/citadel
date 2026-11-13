@@ -68,6 +68,12 @@ The awarded container is now brighter and spends 0.85 seconds on a higher arcing
 
 [Transfer](reviews/m09/pickup/desktop-4-0.35.png), [arrival](reviews/m09/pickup/desktop-4-0.95.png), [phone award](reviews/m09/pickup/phone-4-0.95.png). Eighteen actual fixed-step 2/4/6 desktop/phone captures each collect once and have zero browser errors or collision caps. All 483 pickup-era unit tests pass; two root pickup-enabled difficulty cases pass, and scoped check/root build pass. The sixteen-ball/ten-simulated-second stress test now has a fifteen-second test deadline: its longer surviving multi-ball flight crossed the old five-second limit; assertions and simulation coverage were retained.
 
+## Debug level navigation — ready for review
+
+Press + (or =) / - to move one level, including numpad Add/Subtract. Levels clamp at 1–100 and each selection starts the proper held-ball reading window, with continuous board transitions. DEBUG - PROGRESS NOT SAVED remains visible during the round. Backspace exits to the real saved challenge on the title screen; the existing Back result action also exits. Debug rematches continue locally, and debug results never reach progression recording. Text fields, sliders, browser modifier shortcuts and held-key repeats are excluded.
+
+[Desktop introduction](reviews/m09/debug-levels/debug-level-01.png), [phone shape change](reviews/m09/debug-levels/debug-level-10-phone.png). All 485 unit tests pass including key filtering, bounds and persistence-independent navigation. Two production browser tests complete a real debug round, prove progress and preferences remain byte-for-byte unchanged, return to the saved level, and retain the same canvas. Scoped check and root build pass.
+
 ## Remaining entries
 
 - Minimal scene-rendered settings.

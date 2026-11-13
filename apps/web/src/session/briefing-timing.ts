@@ -13,10 +13,13 @@ export function levelBriefingTiming(
   lossLevel = level,
   previousLevel?: number,
   demotedFrom?: number,
+  debug = false,
 ) {
   const lines = [
     `LEVEL ${String(level).padStart(2, "0")}`,
-    ...levelBriefingLines(level, lossLevel, previousLevel, demotedFrom).map((line) => line.text),
+    ...levelBriefingLines(level, lossLevel, previousLevel, demotedFrom, debug).map(
+      (line) => line.text,
+    ),
   ];
   const words = lines.reduce((sum, line) => sum + (line.match(/[\p{L}\p{N}]+/gu)?.length ?? 0), 0);
   const readingSeconds = (words * 60) / BRIEFING_WORDS_PER_MINUTE;

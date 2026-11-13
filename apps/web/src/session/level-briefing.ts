@@ -43,12 +43,16 @@ export function levelBriefingLines(
   lossLevel = level,
   previousLevel?: number,
   demotedFrom?: number,
+  debug = false,
 ) {
   return [
     ...(demotedFrom === undefined
       ? []
       : [{ text: `DEMOTED FROM ${String(demotedFrom).padStart(2, "0")}`, colour: 0xffab83 }]),
     ...levelHighlights(level, previousLevel).map((text) => ({ text, colour: 0x9ceaff })),
-    { text: lossMessage(level, lossLevel), colour: lossLevel < level ? 0xff8d71 : 0xb3c5dc },
+    {
+      text: debug ? "DEBUG - PROGRESS NOT SAVED" : lossMessage(level, lossLevel),
+      colour: lossLevel < level ? 0xff8d71 : 0xb3c5dc,
+    },
   ];
 }

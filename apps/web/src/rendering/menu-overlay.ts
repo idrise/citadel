@@ -1,3 +1,4 @@
+import { createDebugLabel } from "./debug-label";
 import { createSpectatorMenu } from "./scene-spectator";
 import { VICTORY_HOLD_SECONDS } from "./victory-morph";
 import {
@@ -25,6 +26,7 @@ export function createMenuOverlay() {
   light.position.set(3, 5, 8);
   scene.add(light);
   const menu = createSceneMenu(camera);
+  const debug = createDebugLabel(camera);
   const spectator = createSpectatorMenu(camera);
   const dimmer = new ShaderPass({
     uniforms: { tDiffuse: { value: null }, gain: { value: 1 } },
@@ -81,7 +83,8 @@ export function createMenuOverlay() {
       veil.opacity = 1 - gain;
       const controls = menu.update(state, width, height);
       const liveControls = spectator.update(state.spectator, width, height);
-      visible ||= liveControls.length > 0;
+      debug.update(state.debug ?? false, width, height);
+      visible ||= liveControls.length > 0 || Boolean(state.debug);
       return [...controls, ...liveControls];
     },
     renderDirect(renderer: WebGLRenderer) {

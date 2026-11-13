@@ -1,3 +1,4 @@
+import { createDebugLevels, debugLevelStep } from "./debug-levels";
 import { levelBriefingTiming } from "./briefing-timing";
 import { levelDifficulty } from "../simulation/difficulty";
 import { roundSeed } from "./round-seed";
@@ -34,6 +35,7 @@ export interface SessionSnapshot {
   initialSettings: GameSettings | null;
   endingTime: number;
   titleMoving: boolean;
+  debug: boolean;
   ballOwners: ReadonlyMap<number, number>;
 }
 export function createSession(
@@ -48,14 +50,19 @@ export function createSession(
   initialLossLevel = level,
   initialPreviousLevel?: number,
 ) {
+  const debug = createDebugLevels();
+  let savedLevel = level;
   let supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
   let state = createMatch(seed, count, ARENA.startingPieces, supplySeed, levelDifficulty(level));
   let demotion: Demotion | null = null;
   let resultFor = createProgressRecorder(humanSeat, level);
   const viewport = createViewport(container, humanSeat, state.arena, (action) => {
     if (action === "start") start();
-    else if (action === "back") resetRound(count, humanSeat, continuationLevel, true);
-    else {
+    else if (action === "back") {
+      const target = debug.active ? savedLevel : continuationLevel;
+      debug.exit();
+      resetRound(count, humanSeat, target, true);
+    } else {
       if (action === "options") {
         menuSuppressed = true;
         setPaused(true);
@@ -92,7 +99,8 @@ export function createSession(
       lossLevel,
       previousLevel,
       introDuration,
-      demotion,
+      demotion: debug.active ? null : demotion,
+      debug: debug.active,
       paused,
       started,
       notice,
@@ -138,6 +146,24 @@ export function createSession(
     );
   let touch = makeTouch();
   const abort = new AbortController();
+  window.addEventListener(
+    "keydown",
+    (event) => {
+      const delta = debugLevelStep(event);
+      if (delta === null) return;
+      if (delta === "exit") {
+        if (!debug.active) return;
+        event.preventDefault();
+        debug.exit();
+        resetRound(count, humanSeat, savedLevel, true);
+        return;
+      }
+      event.preventDefault();
+      resetRound(count, humanSeat, debug.move(delta, level), true);
+      start();
+    },
+    { signal: abort.signal },
+  );
   let hadFullscreen = fullscreenActive();
   const fullscreenChanged = () => {
     const active = fullscreenActive();
@@ -184,7 +210,7 @@ export function createSession(
         }
       });
     const result = started ? resultFor(state) : null;
-    if (result) onComplete(result);
+    if (result && !debug.active) onComplete(result);
     const observed = observer.observe(events, state.balls.length);
     music.observe(
       { elapsed: state.elapsed, balls: state.balls.length, alive: state.players.map(alive) },
@@ -221,6 +247,7 @@ export function createSession(
           ? { spectator: { level: continuationLevel, demotion } }
           : {}),
         touch: touchMode,
+        debug: debug.active,
         mode: menuSuppressed
           ? "hidden"
           : !started
@@ -236,7 +263,7 @@ export function createSession(
         lossLevel,
         previousLevel,
         introDuration,
-        demotion,
+        demotion: debug.active ? null : demotion,
         count,
         elapsed: endingTime,
         reduced: settings.reducedEffects,
@@ -256,13 +283,16 @@ export function createSession(
   const start = () => {
     if (touchMode) void enterMobileFullscreen();
     initialSettings ??= { ...settings };
-    lossLevel = pendingLossLevel;
-    previousLevel = pendingPreviousLevel;
+    lossLevel = debug.active ? level : pendingLossLevel;
+    previousLevel = debug.active ? debug.previous : pendingPreviousLevel;
     introDuration = levelBriefingTiming(
       level,
       lossLevel,
       previousLevel,
-      demotion?.to === level && demotion.count === count ? demotion.from : undefined,
+      !debug.active && demotion?.to === level && demotion.count === count
+        ? demotion.from
+        : undefined,
+      debug.active,
     ).duration;
     state = { ...state, countdown: introDuration };
     started = true;
@@ -293,8 +323,8 @@ export function createSession(
     count = nextCount;
     humanSeat = nextSeat;
     level = nextLevel;
-    lossLevel = pendingLossLevel;
-    previousLevel = pendingPreviousLevel;
+    lossLevel = debug.active ? level : pendingLossLevel;
+    previousLevel = debug.active ? debug.previous : pendingPreviousLevel;
     state = nextState;
     started = false;
     paused = true;
@@ -337,10 +367,16 @@ export function createSession(
     },
     nextRound(nextLevel: number) {
       seed = (seed + 1) >>> 0;
-      resetRound(count, humanSeat, nextLevel, true);
+      resetRound(
+        count,
+        humanSeat,
+        debug.active ? debug.move(state.winner === humanSeat ? 1 : 0, level) : nextLevel,
+        true,
+      );
       start();
     },
     configureRoster(nextCount: PlayerCount, nextSeat: number, nextLevel: number) {
+      savedLevel = nextLevel;
       continuationLevel = nextLevel;
       if (nextCount === count && nextSeat === humanSeat) return false;
       resetRound(nextCount, nextSeat, nextLevel, true);
