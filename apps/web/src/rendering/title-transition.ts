@@ -1,5 +1,5 @@
 import { createArena, fortress, type ArenaGeometry } from "../simulation/arena";
-import { blendOutline, matchOutlines } from "../simulation/outline-transition";
+import { blendPresentationOutline, matchPresentationOutlines } from "./presentation-outline";
 import type { MatchState, PlayerState } from "../simulation/types";
 import { add, angleDifference, scale, type Vec2 } from "../simulation/vector";
 
@@ -9,6 +9,11 @@ export interface TitleFrame {
   scales: number[];
   yaw: number;
   moving: boolean;
+  marks?: Vec2[];
+  lights?: Vec2[];
+  pieceScales?: number[][];
+  railGain?: number;
+  victoryFraming?: number;
 }
 const templates = createArena(6).fortresses;
 const mix = (a: Vec2, b: Vec2, t: number) => add(scale(a, 1 - t), scale(b, t));
@@ -18,7 +23,9 @@ const yawFor = (state: MatchState, seat: number) => {
   return Math.atan2(home.x, home.y);
 };
 const scalesFor = (state: MatchState) =>
-  Array.from({ length: 6 }, (_, id) => (state.players.some((p) => p.id === id) ? 1 : 0));
+  Array.from({ length: 6 }, (_, id) =>
+    state.players.some((p) => p.id === id && p.health.some(Boolean)) ? 1 : 0,
+  );
 
 /** Preview-only geometry/actor interpolation; no simulation steps, RNG or match changes. */
 export function createTitleTransition() {
@@ -29,10 +36,14 @@ export function createTitleTransition() {
         target: MatchState;
         seat: number;
         elapsed: number;
-        outline: ReturnType<typeof matchOutlines>;
+        duration: number;
+        outline: ReturnType<typeof matchPresentationOutlines>;
       }
     | undefined;
   return {
+    capture(frame: TitleFrame) {
+      current = frame;
+    },
     begin(target: MatchState, seat: number, animate: boolean) {
       transition =
         animate && current
@@ -41,7 +52,11 @@ export function createTitleTransition() {
               target,
               seat,
               elapsed: 0,
-              outline: matchOutlines(current.state.arena.vertices, target.arena.vertices),
+              duration: current.state.phase === "finished" ? 1.4 : TITLE_TRANSITION_SECONDS,
+              outline: matchPresentationOutlines(
+                current.state.arena.vertices,
+                target.arena.vertices,
+              ),
             }
           : undefined;
     },
@@ -52,7 +67,7 @@ export function createTitleTransition() {
         return current;
       }
       transition.elapsed += Math.max(0, dt);
-      const time = Math.min(1, transition.elapsed / TITLE_TRANSITION_SECONDS);
+      const time = Math.min(1, transition.elapsed / transition.duration);
       if (time >= 1) {
         transition = undefined;
         current = { state, scales: scalesFor(state), yaw: yawFor(state, seat), moving: false };
@@ -74,7 +89,7 @@ export function createTitleTransition() {
       });
       const arena: ArenaGeometry = {
         ...state.arena,
-        vertices: blendOutline(transition.outline, t),
+        vertices: blendPresentationOutline(transition.outline, t),
         fortresses,
       };
       const players = templates.map((template): PlayerState => {
@@ -86,13 +101,48 @@ export function createTitleTransition() {
         return {
           ...b,
           angle: angle(a.angle, b.angle, t),
-          pieces: b.pieces.map((body, i) => ({
-            ...body,
-            position: mix(a.pieces[i]?.position ?? body.position, body.position, t),
-          })),
+          health: Array.from({ length: Math.max(a.pieces.length, b.pieces.length) }, (_, i) =>
+            Boolean(a.health[i] || b.health[i]),
+          ),
+          pieces: Array.from({ length: Math.max(a.pieces.length, b.pieces.length) }, (_, i) => {
+            const source = a.pieces[i] ?? b.pieces[i]!,
+              target = b.pieces[i] ?? source;
+            return {
+              ...target,
+              radius: source.radius + (target.radius - source.radius) * t,
+              position: mix(source.position, target.position, t),
+            };
+          }),
         };
       });
+      const positions = (distance: number, cached?: Vec2[]) =>
+        templates.map((template) => {
+          const a = before.arena.fortresses.find((f) => f.id === template.id) ?? template;
+          const b = state.arena.fortresses.find((f) => f.id === template.id) ?? a;
+          return mix(
+            cached?.[template.id] ??
+              add(
+                a.anchor,
+                scale({ x: Math.cos(a.direction), y: Math.sin(a.direction) }, distance),
+              ),
+            add(b.anchor, scale({ x: Math.cos(b.direction), y: Math.sin(b.direction) }, distance)),
+            t,
+          );
+        });
       current = {
+        marks: positions(0.9, transition.from.marks),
+        lights: positions(2.7, transition.from.lights),
+        railGain: (transition.from.railGain ?? 1) + (1 - (transition.from.railGain ?? 1)) * t,
+        victoryFraming: (transition.from.victoryFraming ?? 0) * (1 - t),
+        pieceScales: players.map((p) =>
+          p.pieces.map((_, i) => {
+            const source =
+              transition!.from.pieceScales?.[p.id]?.[i] ??
+              (before.players.find((a) => a.id === p.id)?.health[i] ? 1 : 0);
+            const target = state.players.find((a) => a.id === p.id)?.health[i] ? 1 : 0;
+            return source + (target - source) * t;
+          }),
+        ),
         state: { ...state, arena, players, balls: [] },
         scales: scalesFor(state).map(
           (target, id) =>

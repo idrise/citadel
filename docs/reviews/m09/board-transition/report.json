@@ -1,0 +1,132 @@
+{
+  "kind": "Authored completed match through real viewport capture, constant canvas, star to next board",
+  "samples": [
+    {
+      "mobile": false,
+      "count": 2,
+      "elapsed": 0,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": false,
+      "count": 2,
+      "elapsed": 0.7,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": false,
+      "count": 2,
+      "elapsed": 1.4,
+      "moving": false,
+      "sameCanvas": true
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "elapsed": 0,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "elapsed": 0.7,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": false,
+      "count": 4,
+      "elapsed": 1.4,
+      "moving": false,
+      "sameCanvas": true
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "elapsed": 0,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "elapsed": 0.7,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": false,
+      "count": 6,
+      "elapsed": 1.4,
+      "moving": false,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "elapsed": 0,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "elapsed": 0.7,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 2,
+      "elapsed": 1.4,
+      "moving": false,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "elapsed": 0,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "elapsed": 0.7,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 4,
+      "elapsed": 1.4,
+      "moving": false,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "elapsed": 0,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "elapsed": 0.7,
+      "moving": true,
+      "sameCanvas": true
+    },
+    {
+      "mobile": true,
+      "count": 6,
+      "elapsed": 1.4,
+      "moving": false,
+      "sameCanvas": true
+    }
+  ],
+  "errors": []
+}

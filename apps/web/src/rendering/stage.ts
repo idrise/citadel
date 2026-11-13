@@ -26,6 +26,8 @@ export function createStage(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA
       0.035,
       0.15,
     );
+    for (const material of Array.isArray(rail.material) ? rail.material : [rail.material])
+      material.transparent = true;
     rail.userData.halfAngle = seat.halfAngle;
     rail.name = `defence-rail-${seat.id}`;
     rail.position.set(seat.anchor.x, 0.02, seat.anchor.y);

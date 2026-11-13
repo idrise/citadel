@@ -464,6 +464,19 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+13 November board continuity checkpoint: title, Back, Retry and Next Level now
+morph from the actual displayed board, including a partially or fully revealed
+victory star and its central paddle, containers, mark and light. Revived actors
+and health grow from the floor; rails and camera framing interpolate. The same
+canvas stays mounted. A bounded ordered outline matcher preserves concave star
+notches without the simulation matcher convexifying them. All new rounds reset
+effect/event tracking even when animated. Reduced motion retains its opt-out.
+Checks: 474 unit tests / 80 files, eighteen desktop/phone 2/4/6 renders, clean
+format/lint/types and root build; browser coverage is recorded in the tweak review.
+The owner also added curve/spin bounce, bat-size progression, pickup rebound and
+bank transfer clarity, and minimal scene settings. These extend this local M09
+amendment; no publication or later milestone is authorised.
+
 13 November pre-signoff TODO tweaks: the owner authorises the five newly added
 TODO entries, with incremental local review as each lands: elimination spectacle
 and synthesized sound / player-credit fireworks; a more strongly curved paddle

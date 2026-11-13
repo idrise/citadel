@@ -1,6 +1,6 @@
 # Pre-signoff TODO tweaks
 
-The five new TODO entries are authorised for incremental local review. The owner selected symmetrical level-specific shapes. M09 remains awaiting review; these tweaks do not authorise publishing or a later milestone.
+The new TODO entries are authorised for incremental local review. The owner selected symmetrical level-specific shapes. M09 remains awaiting review; these tweaks do not authorise publishing or a later milestone.
 
 ## 1. Elimination feedback — ready for review
 
@@ -32,11 +32,18 @@ Reduced motion uses a static ring and one chevron. The effect is batched into tw
 
 [Rival holding a serve](reviews/m09/ready-charge/desktop-4-rival.png), [phone neighbour](reviews/m09/ready-charge/phone-6-rival.png), [your held serve](reviews/m09/ready-charge/desktop-4-human.png) and [after launch](reviews/m09/ready-charge/desktop-4-launched.png) show the actual renderer. Ten 2/4/6 desktop/phone and reduced poses plus two launch comparisons report zero browser errors. Unit coverage checks aim following, launch clear, pause, reduced mode, sixteen-ball bounds and input-state immutability. Complete mobile 2/6-seat launch/rotation/interruption rounds pass.
 
+## 4. Continuous board presentation — ready for review
+
+Back, Retry, Next Level and roster changes now start with the currently visible outline and actor poses. The victory star retains its notches at the first return frame. The central winner and remaining containers travel back to their next homes; revived players and replacement health emerge from zero scale. Marks, lights, rail visibility and star camera framing interpolate alongside them. The same renderer/canvas remains mounted, and new-round effects/event tracking always reset. Reduced motion intentionally skips the motion.
+
+A presentation-only ordered outline matcher replaces combinatorial corner selection and avoids a convex hull, which would erase star notches immediately. Endpoint boundaries stay exact and all sampled star-to-layout transitions remain ordered. Simulation collision geometry is untouched by this presentation change; the introduction holds play until the target is ready.
+
+[Star](reviews/m09/board-transition/desktop-6-0.png), [returning board](reviews/m09/board-transition/desktop-6-0.7.png), [next arena](reviews/m09/board-transition/desktop-6-1.4.png) and [phone return](reviews/m09/board-transition/phone-6-0.7.png). Eighteen actual viewport captures cover 2/4/6 desktop/phone with zero errors and a constant canvas. Unit checks cover all title pairs, rapid retargeting, pause, reduced mode, star boundaries, actor/light/health continuity and source immutability. All 474 unit tests pass; root build and scoped check pass. Browser title, real win, Back and Retry checks cover the session wiring.
+
 ## Remaining entries
 
-- Continuous transitions between title, live board and victory star.
 - Symmetrical level-specific arena variants.
 
-Local demo: `http://localhost:5177/`.
+Local stable demo: `http://localhost:5179/` (refresh to load the latest completed checkpoint).
 
 **REVIEW REQUIRED — M09**

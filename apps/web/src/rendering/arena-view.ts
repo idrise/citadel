@@ -1,3 +1,5 @@
+import type { TitleFrame } from "./title-transition";
+import type { Vec2 } from "../simulation/vector";
 import { resizePaddle } from "./paddle-shape";
 import { createLevelIntro } from "./level-intro";
 import { createSupplyView } from "./supply-view";
@@ -36,6 +38,10 @@ export interface ViewOptions {
   musicPulse?: number;
   musicWave?: number;
   actorScales?: readonly number[];
+  actorMarks?: readonly Vec2[];
+  actorPieceScales?: readonly (readonly number[])[];
+  railGain?: number;
+  victoryFraming?: number;
   cameraAnchor?: { x: number; y: number };
 }
 export function createArenaView(
@@ -65,6 +71,7 @@ export function createArenaView(
   const effects = createEffects(stage.root);
   const paddleBlur = createPaddleBlur(stage.root, stage.paddles);
   let victory = createVictoryMorph(humanSeat);
+  let lastEnding: ReturnType<typeof victory.update> = null;
   let victorySeat = humanSeat;
   let displayArena = initial;
   let victoryProgress = 0;
@@ -74,6 +81,49 @@ export function createArenaView(
   return {
     root: stage.root,
     dispose: () => reflection.dispose(),
+    captureTransition(frame: TitleFrame): TitleFrame {
+      const ending = lastEnding;
+      if (!ending) return frame;
+      const positions = (distance: number) =>
+        createArena(6).fortresses.map((template) => {
+          const home = frame.state.arena.fortresses.find((f) => f.id === template.id) ?? template;
+          return {
+            x: home.anchor.x + Math.cos(home.direction) * distance,
+            y: home.anchor.y + Math.sin(home.direction) * distance,
+          };
+        });
+      const marks = positions(0.9),
+        lights = positions(2.7);
+      marks[ending.winner] = ending.centre;
+      lights[ending.winner] = ending.light;
+      return {
+        ...frame,
+        railGain: 0,
+        victoryFraming: ending.progress,
+        marks,
+        lights,
+        state: {
+          ...frame.state,
+          arena: {
+            ...displayArena,
+            fortresses: frame.state.arena.fortresses.map((f) =>
+              f.id === ending.winner
+                ? { ...f, anchor: ending.paddle.position, direction: ending.paddle.angle }
+                : f,
+            ),
+          },
+          players: frame.state.players.map((p) =>
+            p.id === ending.winner
+              ? {
+                  ...p,
+                  angle: ending.paddle.angle,
+                  pieces: p.pieces.map((body, i) => ({ ...body, position: ending.pieces[i]! })),
+                }
+              : p,
+          ),
+        },
+      };
+    },
     reset() {
       lastEvent = -1;
       supplies.reset();
@@ -100,6 +150,7 @@ export function createArenaView(
         options.menu?.elapsed ?? endingTime,
         options.reducedEffects,
       );
+      lastEnding = ending;
       displayArena = ending?.arena ?? state.arena;
       victoryProgress = ending?.progress ?? 0;
       victoryLight = ending?.light;
@@ -112,7 +163,7 @@ export function createArenaView(
         ) => void
       )(displayArena, options.humanSeat, options.cameraAnchor, dt);
       reflection.update(displayArena, options.humanSeat, options.cameraAnchor);
-      reflection.setVictory(Boolean(ending));
+      reflection.setVictory(Boolean(ending) || (options.victoryFraming ?? 0) > 0);
       const profile = effectsProfile(options.quality, options.reducedEffects, 1, 4, mobile);
       reflection.setReduced(!profile.reflections);
       const titleMode = options.menu?.mode === "title";
@@ -159,6 +210,9 @@ export function createArenaView(
         rail.rotation.y = -home.direction;
         rail.visible = alive(player) && !ending;
         rail.scale.setScalar(appearance);
+        for (const material of Array.isArray(rail.material) ? rail.material : [rail.material]) {
+          material.opacity = options.railGain ?? 1;
+        }
         if (Math.abs((rail.userData.halfAngle as number) - home.halfAngle) > 1e-7) {
           const replacement = arcMesh(
             ARENA.railRadius,
@@ -186,10 +240,12 @@ export function createArenaView(
           0.15,
           home.anchor.y + Math.sin(home.direction) * 0.9,
         );
+        const markPosition = options.actorMarks?.[player.id];
+        if (markPosition) mark.position.set(markPosition.x, 0.15, markPosition.y);
         if (ending?.winner === player.id) mark.position.set(ending.centre.x, 0.15, ending.centre.y);
         const paddle = stage.paddles[player.id]!;
         resizePaddle(paddle, batHalfAngle(state.arena), SEATS[player.id]!.colour);
-        paddle.position.set(home.anchor.x, 0.95, home.anchor.y);
+        paddle.position.set(home.anchor.x, 0.95 * appearance, home.anchor.y);
         paddle.rotation.y = -player.angle;
         paddle.visible = alive(player);
         paddle.scale.setScalar(appearance);
@@ -202,8 +258,9 @@ export function createArenaView(
           const body = player.pieces[index];
           if (!body) return;
           const position = ending?.winner === player.id ? ending.pieces[index]! : body.position;
-          piece.position.set(position.x, 0, position.y);
-          piece.scale.setScalar((appearance * body.radius) / ARENA.pieceRadius);
+          const gain = options.actorPieceScales?.[player.id]?.[index] ?? 1;
+          piece.position.set(position.x, -(1 - gain) * 1.4, position.y);
+          piece.scale.setScalar((appearance * gain * body.radius) / ARENA.pieceRadius);
         });
       });
       paddleBlur.update(

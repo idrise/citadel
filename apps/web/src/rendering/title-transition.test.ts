@@ -56,3 +56,57 @@ it("retargets from the visible intermediate shape, pauses without moving, and re
     );
   expect(transition.update(c, 0, 0, true).state).toBe(c);
 });
+
+it("returns from the actually displayed victory star and centre actors, then revives the next roster without changing either match", async () => {
+  const { createArenaView } = await import("./arena-view");
+  const { createVictoryMorph } = await import("./victory-morph");
+  for (const count of [2, 4, 6] as PlayerCount[]) {
+    const finished = createMatch(2026, count),
+      target = createMatch(3, 6);
+    finished.phase = "finished";
+    finished.winner = 0;
+    for (const p of finished.players) if (p.id !== 0) p.health.fill(false);
+    finished.players[0]!.health[1] = false;
+    const saved = structuredClone(finished),
+      savedTarget = structuredClone(target);
+    const transition = createTitleTransition(),
+      view = createArenaView(0, finished.arena);
+    const frame = transition.update(finished, 0, 0, false);
+    view.update(finished, 0, {
+      humanSeat: 0,
+      preview: false,
+      slowdown: false,
+      reducedEffects: false,
+      menu: { mode: "victory", count, elapsed: 4, reduced: false },
+    });
+    const ending = createVictoryMorph(0).update(finished, 4, false)!;
+    transition.capture(view.captureTransition(frame));
+    transition.begin(target, 0, true);
+    const first = transition.update(target, 0, 0, false);
+    expect(first.state.arena.vertices).toEqual(
+      ending.arena.vertices.filter((_, i, all) => {
+        const prev = all[(i + all.length - 1) % all.length]!,
+          p = all[i]!,
+          next = all[(i + 1) % all.length]!;
+        return Math.abs((p.x - prev.x) * (next.y - p.y) - (p.y - prev.y) * (next.x - p.x)) > 1e-8;
+      }),
+    );
+    expect(first.state.arena.fortresses[0]!.anchor).toEqual(ending.paddle.position);
+    expect(first.state.players[0]!.pieces.map((p) => p.position)).toEqual(ending.pieces);
+    expect(first.marks?.[0]).toEqual(ending.centre);
+    expect(first.lights?.[0]).toEqual(ending.light);
+    expect(first.scales[1]).toBe(0);
+    expect(first.pieceScales?.[0]?.[1]).toBe(0);
+    expect(first.railGain).toBe(0);
+    expect(first.victoryFraming).toBe(1);
+    const halfway = transition.update(target, 0, 0.7, false);
+    expect(halfway.scales[1]).toBeCloseTo(0.5);
+    expect(halfway.pieceScales?.[0]?.[1]).toBeCloseTo(0.5);
+    expect(halfway.railGain).toBeCloseTo(0.5);
+    expect(halfway.victoryFraming).toBeCloseTo(0.5);
+    expect(transition.update(target, 0, 1, false).state).toBe(target);
+    expect(finished).toEqual(saved);
+    expect(target).toEqual(savedTarget);
+    view.dispose();
+  }
+});

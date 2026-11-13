@@ -333,17 +333,17 @@ export function createSession(
       }
     },
     restart() {
-      resetRound(count, humanSeat, level, false);
+      resetRound(count, humanSeat, level, true);
     },
     nextRound(nextLevel: number) {
       seed = (seed + 1) >>> 0;
-      resetRound(count, humanSeat, nextLevel, false);
+      resetRound(count, humanSeat, nextLevel, true);
       start();
     },
     configureRoster(nextCount: PlayerCount, nextSeat: number, nextLevel: number) {
       continuationLevel = nextLevel;
       if (nextCount === count && nextSeat === humanSeat) return false;
-      resetRound(nextCount, nextSeat, nextLevel, !started);
+      resetRound(nextCount, nextSeat, nextLevel, true);
       return true;
     },
     configureProgress(next: Demotion | null, nextLossLevel = level, nextPreviousLevel?: number) {

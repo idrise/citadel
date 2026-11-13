@@ -1,5 +1,5 @@
 import { creditedPlayerKill } from "./elimination-burst";
-import { createTitleTransition } from "./title-transition";
+import { createTitleTransition, type TitleFrame } from "./title-transition";
 import {
   ACESFilmicToneMapping,
   Box3,
@@ -61,6 +61,7 @@ export function createViewport(
   const camera = createArenaCamera(humanSeat, initial);
   const motion = createCameraMotion(camera);
   const title = createTitleTransition();
+  let lastPresentation: TitleFrame | undefined;
   let titleMoving = false;
   let lastCelebrationEvent = -1;
   let aspect = 1;
@@ -93,10 +94,11 @@ export function createViewport(
       return titleMoving;
     },
     transitionTitle(state: MatchState, seat: number, animate: boolean) {
+      if (lastPresentation) title.capture(arena.captureTransition(lastPresentation));
       title.begin(state, seat, animate);
       fireworks.reset();
       lastCelebrationEvent = -1;
-      if (!animate) arena.reset();
+      arena.reset();
     },
     pointFromClient(x: number, y: number) {
       const rect = canvas.getBoundingClientRect();
@@ -118,12 +120,19 @@ export function createViewport(
         bloom.resize(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1));
       }
       const presentation = title.update(state, options.humanSeat, dt, options.reducedEffects);
+      lastPresentation = presentation;
       titleMoving = presentation.moving;
       const displayed = presentation.state;
       arena.update(displayed, dt, {
         ...options,
         portrait: aspect < 0.85,
         actorScales: presentation.scales,
+        ...(presentation.marks ? { actorMarks: presentation.marks } : {}),
+        ...(presentation.pieceScales ? { actorPieceScales: presentation.pieceScales } : {}),
+        ...(presentation.railGain !== undefined ? { railGain: presentation.railGain } : {}),
+        ...(presentation.victoryFraming !== undefined
+          ? { victoryFraming: presentation.victoryFraming }
+          : {}),
         ...(presentation.moving
           ? { cameraAnchor: { x: Math.sin(presentation.yaw), y: Math.cos(presentation.yaw) } }
           : {}),
@@ -144,6 +153,13 @@ export function createViewport(
             1.8,
             seat.anchor.y + Math.sin(seat.direction) * 2.7,
           );
+          const lightPosition = presentation.lights?.[id];
+          if (lightPosition)
+            light.position.set(
+              lightPosition.x,
+              1.8 + 0.7 * (presentation.victoryFraming ?? 0),
+              lightPosition.y,
+            );
           if (arena.victoryLight && state.winner === seat.id)
             light.position.set(arena.victoryLight.x, 2.5, arena.victoryLight.y);
         }
@@ -160,9 +176,10 @@ export function createViewport(
         cameraDanger(state, options.humanSeat),
       );
       // Acute star tips have longer wall miters; include the plinth during the reveal.
-      const border = (aspect < 0.85 ? 1.03 : 1.09) + arena.victoryProgress * 0.2;
+      const victoryFraming = Math.max(arena.victoryProgress, presentation.victoryFraming ?? 0);
+      const border = (aspect < 0.85 ? 1.03 : 1.09) + victoryFraming * 0.2;
       framingPoints = displayArena.vertices.flatMap((p) => [
-        new Vector3(p.x * border, -2.73 * arena.victoryProgress, p.y * border),
+        new Vector3(p.x * border, -2.73 * victoryFraming, p.y * border),
         new Vector3(p.x * border, 2.34, p.y * border),
       ]);
       const menuState = options.menu ?? {
@@ -174,6 +191,10 @@ export function createViewport(
       if (state.phase === "finished" && state.winner !== null) {
         const reveal = options.reducedEffects ? 1 : 1 - Math.exp(-menuState.elapsed * 4);
         const skyHeight = 2.34 + (10 - 2.34) * reveal;
+        framingPoints.push(new Vector3(-8, skyHeight, 0), new Vector3(8, skyHeight, 0));
+      }
+      if (presentation.victoryFraming) {
+        const skyHeight = 2.34 + (10 - 2.34) * presentation.victoryFraming;
         framingPoints.push(new Vector3(-8, skyHeight, 0), new Vector3(8, skyHeight, 0));
       }
       bounds.makeEmpty();
