@@ -136,10 +136,7 @@
       "time": 0.2,
       "launches": [],
       "damage": [],
-      "health": [
-        3,
-        3
-      ],
+      "health": [3, 3],
       "collisionCaps": 0,
       "phase": "ready"
     },
@@ -154,10 +151,7 @@
         }
       ],
       "damage": [],
-      "health": [
-        3,
-        3
-      ],
+      "health": [3, 3],
       "collisionCaps": 0,
       "phase": "active"
     },
@@ -177,10 +171,7 @@
           "seat": 0
         }
       ],
-      "health": [
-        2,
-        3
-      ],
+      "health": [2, 3],
       "collisionCaps": 0,
       "phase": "ready"
     },
@@ -189,10 +180,7 @@
       "time": 0.2,
       "launches": [],
       "damage": [],
-      "health": [
-        3,
-        3
-      ],
+      "health": [3, 3],
       "collisionCaps": 0,
       "phase": "ready"
     },
@@ -207,10 +195,7 @@
         }
       ],
       "damage": [],
-      "health": [
-        3,
-        3
-      ],
+      "health": [3, 3],
       "collisionCaps": 0,
       "phase": "active"
     },
@@ -230,10 +215,7 @@
           "seat": 0
         }
       ],
-      "health": [
-        2,
-        3
-      ],
+      "health": [2, 3],
       "collisionCaps": 0,
       "phase": "ready"
     }
