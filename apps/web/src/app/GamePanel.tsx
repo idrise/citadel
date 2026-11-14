@@ -45,14 +45,31 @@ export function GamePanel({
   const container = useRef<HTMLDivElement>(null);
   const session = useRef<GameSession | null>(null);
   const [unavailable, setUnavailable] = useState(false);
-  const callbacks = useRef({ count, onCount, level, onComplete, onSettings, onSeat, settings });
-  callbacks.current = { count, onCount, level, onComplete, onSettings, onSeat, settings };
+  const callbacks = useRef({
+    count,
+    onCount,
+    level,
+    onComplete,
+    onSettings,
+    onSeat,
+    settings,
+  });
+  callbacks.current = {
+    count,
+    onCount,
+    level,
+    onComplete,
+    onSettings,
+    onSeat,
+    settings,
+  };
   const initialConfig = useRef({ seed, humanSeat, count, level, lossLevel, previousLevel });
   const [snapshot, setSnapshot] = useState<SessionSnapshot>(() => ({
     state: createMatch(seed, count, ARENA.startingPieces, undefined, levelDifficulty(level)),
     seed,
     humanSeat,
     level,
+    serveGuide: settings.serveGuide,
     lossLevel,
     introDuration: 1.5,
     previousLevel,

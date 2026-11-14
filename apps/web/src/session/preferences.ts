@@ -23,7 +23,14 @@ export function parsePreferences(raw: string | null, reduced = false): SoloPrefe
       : 0;
     const settings = { ...fallback.settings },
       saved = source.settings;
-    for (const key of ["preview", "slowdown", "reducedEffects", "music", "musicLights"] as const)
+    for (const key of [
+      "preview",
+      "serveGuide",
+      "slowdown",
+      "reducedEffects",
+      "music",
+      "musicLights",
+    ] as const)
       if (typeof saved[key] === "boolean") settings[key] = saved[key];
     for (const [key, low, high] of [
       ["mouseSensitivity", 0.5, 2],

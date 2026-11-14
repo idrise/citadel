@@ -7,9 +7,10 @@ import {
   type PerspectiveCamera,
 } from "three";
 import { createNeonLettering } from "./neon-lettering";
+import { disposeScene } from "./dispose-scene";
 import { createFeatureEdges } from "./feature-edges";
 export type SettingKey = "effectsVolume" | "musicVolume" | "mouseSensitivity";
-export type SettingsAction = "pause" | "resume" | "restart" | "sound";
+export type SettingsAction = "pause" | "resume" | "restart" | "sound" | "guide";
 export interface SceneSettingsState {
   open: boolean;
   touch: boolean;
@@ -18,6 +19,7 @@ export interface SceneSettingsState {
   effectsVolume: number;
   musicVolume: number;
   mouseSensitivity: number;
+  serveGuide?: boolean;
 }
 export interface SettingsTarget {
   key: SettingKey | SettingsAction;
@@ -50,6 +52,21 @@ const rows = [
     step: 0.05,
   },
 ] as const;
+/** Shared pixel bounds keep the panel, rendered controls and accessible targets aligned. */
+function settingsPanelLayout(state: SceneSettingsState, width: number, height: number) {
+  const count = state.touch ? 2 : 3,
+    w = Math.min(430, width - 24),
+    h = Math.min(count * 76 + (state.serveGuide === undefined ? 136 : 160), height - 24);
+  return {
+    count,
+    w,
+    h,
+    left: (width - w) / 2,
+    top: (height - h) / 2,
+    rowTop: state.serveGuide === undefined ? 65 : 88,
+    gap: state.serveGuide === undefined ? (h - 132) / count : Math.min(76, (h - 208) / (count - 1)),
+  };
+}
 export function settingsTargets(
   state: SceneSettingsState,
   width: number,
@@ -57,14 +74,14 @@ export function settingsTargets(
 ): SettingsTarget[] {
   if (!state.open)
     return [
-      ...(state.showPause
+      ...(state.showPause && state.touch
         ? [
             {
               key: "pause" as const,
               label: "Pause",
-              left: width - 68,
+              left: width - 106,
               top: 18,
-              width: 50,
+              width: 88,
               height: 44,
             },
           ]
@@ -82,18 +99,26 @@ export function settingsTargets(
           ]
         : []),
     ];
-  const count = state.touch ? 2 : 3,
-    w = Math.min(430, width - 24),
-    h = Math.min(count * 76 + 120, height - 24),
-    left = (width - w) / 2,
-    top = (height - h) / 2,
-    gap = (h - 116) / count;
+  const { count, w, h, left, top, gap, rowTop } = settingsPanelLayout(state, width, height);
   return [
+    ...(state.serveGuide === undefined
+      ? []
+      : [
+          {
+            key: "guide" as const,
+            label: `Ball guide: ${state.serveGuide ? "Serve direction only" : "Off"}`,
+            left: left + w / 2 + 6,
+            top: top + 16,
+            width: w / 2 - 30,
+            height: 44,
+            value: state.serveGuide ? 1 : 0,
+          },
+        ]),
     ...rows.slice(0, count).map((row, i) => ({
       key: row.key,
       label: row.label,
       left: left + 24,
-      top: top + 65 + i * gap,
+      top: top + rowTop + i * gap,
       width: w - 48,
       height: 44,
       value: state[row.key],
@@ -105,7 +130,7 @@ export function settingsTargets(
       key: "resume",
       label: "Resume",
       left: left + 24,
-      top: top + h - 54,
+      top: top + h - 68,
       width: (w - 60) / 2,
       height: 44,
     },
@@ -113,7 +138,7 @@ export function settingsTargets(
       key: "restart",
       label: "Restart",
       left: left + 24 + (w - 60) / 2 + 12,
-      top: top + h - 54,
+      top: top + h - 68,
       width: (w - 60) / 2,
       height: 44,
     },
@@ -143,14 +168,15 @@ export function createSceneSettings(camera: PerspectiveCamera) {
   root.add(title);
   const buttons = (
     [
-      ["pause", "II"],
+      ["pause", "PAUSE"],
+      ["guide", "GUIDE OFF"],
       ["resume", "RESUME"],
       ["restart", "RESTART"],
       ["sound", "ENABLE SOUND"],
     ] as const
   ).map(([key, text]) => {
     const body = box(`settings:${key}`),
-      label = createNeonLettering(text, key === "pause" ? 20 : 16);
+      label = createNeonLettering(text, key === "guide" ? 13 : 16);
     root.add(label);
     return { key, body, label };
   });
@@ -198,17 +224,31 @@ export function createSceneSettings(camera: PerspectiveCamera) {
       });
       panel.visible = title.visible = state.open;
       if (state.open) {
-        const count = state.touch ? 2 : 3,
-          w = Math.min(430, width - 24),
-          h = Math.min(count * 76 + 120, height - 24);
+        const { w, h } = settingsPanelLayout(state, width, height);
         panel.scale.set(w, h, 1);
         panel.position.z = -2;
-        title.position.set(0, h / 2 - 29, 1);
+        title.position.set(state.serveGuide === undefined ? 0 : -w / 4 + 10, h / 2 - 34, 1);
+        title.scale.setScalar(state.serveGuide === undefined ? 1 : 0.8);
       }
       for (const button of buttons) {
         const target = targets.find((t) => t.key === button.key);
         button.body.visible = button.label.visible = Boolean(target);
         if (!target) continue;
+        if (button.key === "guide" && button.label.userData.enabled !== Boolean(state.serveGuide)) {
+          root.remove(button.label);
+          disposeScene(button.label);
+          button.label = createNeonLettering(state.serveGuide ? "GUIDE ON" : "GUIDE OFF", 13);
+          button.label.traverse((node) => {
+            if (
+              node instanceof Mesh &&
+              node.material instanceof ShaderMaterial &&
+              node.material.name === "NeonFeatureEdges"
+            )
+              node.material.uniforms.strokeWidth!.value = 0.85;
+          });
+          button.label.userData.enabled = Boolean(state.serveGuide);
+          root.add(button.label);
+        }
         const p = centre(target.left, target.top, target.width, target.height);
         button.body.scale.set(target.width, target.height, 1);
         button.body.position.set(p.x, p.y, 0);
@@ -221,7 +261,8 @@ export function createSceneSettings(camera: PerspectiveCamera) {
         const p = centre(target.left, target.top, target.width, target.height),
           t = Math.max(0, Math.min(1, (target.value! - row.min) / (row.max - row.min)));
         row.group.position.set(p.x, p.y, 1);
-        row.text.position.set(0, 32, 0);
+        row.text.position.set(0, height < 350 ? 24 : 32, 0);
+        row.text.scale.setScalar(height < 350 ? 0.8 : 1);
         row.track.scale.x = target.width;
         row.fill.scale.x = Math.max(0.001, target.width * t);
         row.fill.position.x = -(target.width * (1 - t)) / 2;

@@ -9,7 +9,7 @@ test("settings render Resume, Restart and the three desktop sliders, persisting 
   await openSettings(page);
   await expect(page.locator(".menu-panel,.touch-hint,.title-display,.enable-sound")).toHaveCount(0);
   const panel = page.getByRole("navigation", { name: "Game settings", exact: true });
-  await expect(panel.getByRole("button")).toHaveCount(2);
+  await expect(panel.getByRole("button")).toHaveCount(3);
   await expect(panel.getByRole("slider")).toHaveCount(3);
   await page.getByLabel("Sound effects volume", { exact: true }).fill("0.8");
   await page.getByLabel("Music volume", { exact: true }).fill("0");

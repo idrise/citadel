@@ -29,6 +29,7 @@ export function createSettingsControls(
   }
   for (const [key, label] of [
     ["pause", "Pause"],
+    ["guide", "Ball guide"],
     ["resume", "Resume"],
     ["restart", "Restart"],
     ["sound", "Enable sound"],
@@ -48,6 +49,10 @@ export function createSettingsControls(
         const target = targets.find((t) => t.key === key);
         element.hidden = !target;
         if (!target) continue;
+        if (key === "guide") {
+          element.setAttribute("aria-label", target.label);
+          element.setAttribute("aria-pressed", String(Boolean(target.value)));
+        }
         if (element instanceof HTMLInputElement) {
           element.min = String(target.min);
           element.max = String(target.max);

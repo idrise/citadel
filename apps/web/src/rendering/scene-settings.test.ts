@@ -1,4 +1,4 @@
-import { PerspectiveCamera } from "three";
+import { PerspectiveCamera, Vector3 } from "three";
 import { expect, it } from "vite-plus/test";
 import { createSceneSettings, settingsTargets, type SceneSettingsState } from "./scene-settings";
 const state: SceneSettingsState = {
@@ -44,9 +44,11 @@ it("keeps panel resources stable as values change, and replaces live buttons wit
   camera.traverse((o) => after.push(o.uuid));
   expect(after).toEqual(ids);
   expect(
-    settingsTargets({ ...state, open: false, showPause: true, needsSound: true }, 390, 844).map(
-      (t) => t.key,
-    ),
+    settingsTargets(
+      { ...state, touch: true, open: false, showPause: true, needsSound: true },
+      390,
+      844,
+    ).map((t) => t.key),
   ).toEqual(["pause", "sound"]);
   expect(view.update(undefined, 390, 844)).toEqual([]);
 });
@@ -102,4 +104,63 @@ it("offers distinct non-overlapping Resume and Restart targets only while settin
         ),
       ).toBe(false);
     }
+});
+
+it("leaves comfortable space below both rendered buttons without crowding sliders on short screens", async () => {
+  const { createMenuOverlay } = await import("./menu-overlay");
+  const menu = createMenuOverlay();
+  for (const [width, height] of [
+    [320, 568],
+    [390, 844],
+    [568, 320],
+    [844, 390],
+    [768, 1024],
+    [1280, 900],
+  ] as const)
+    for (const touch of [false, true]) {
+      menu.update(
+        { mode: "hidden", count: 6, elapsed: 0, reduced: false, settings: { ...state, touch } },
+        0,
+        width,
+        height,
+      );
+      menu.camera.updateMatrixWorld(true);
+      const panel = menu.scene.getObjectByName("settings-panel")!,
+        panelBottom = panel.localToWorld(new Vector3(0, -0.5, 0)).project(menu.camera),
+        panelBottomY = ((1 - panelBottom.y) * height) / 2,
+        sliders = menu.settingsTargets.filter((target) => target.value !== undefined);
+      expect(panelBottomY).toBeLessThanOrEqual(height - 12);
+      for (const key of ["resume", "restart"] as const) {
+        const target = menu.settingsTargets.find((t) => t.key === key)!,
+          button = menu.scene.getObjectByName(`settings:${key}`)!,
+          bottom = button.localToWorld(new Vector3(0, -0.5, 0)).project(menu.camera),
+          buttonBottomY = ((1 - bottom.y) * height) / 2;
+        // The backdrop's shallow depth changes its projected padding by less than a pixel.
+        expect(panelBottomY - buttonBottomY).toBeGreaterThanOrEqual(23);
+        expect(panelBottomY - buttonBottomY).toBeLessThanOrEqual(25);
+        expect(buttonBottomY).toBeCloseTo(target.top + target.height, 6);
+        for (const slider of sliders)
+          expect(target.top - (slider.top + slider.height)).toBeGreaterThanOrEqual(8);
+      }
+    }
+  menu.dispose();
+});
+
+it("offers a labelled touch-only Pause and keeps the guide toggle clear of the sliders and footer", () => {
+  for (const touch of [false, true]) {
+    const live = { ...state, open: false, touch, showPause: true };
+    expect(settingsTargets(live, 390, 844).some((t) => t.key === "pause")).toBe(touch);
+    for (const height of [320, 390, 844]) {
+      const targets = settingsTargets({ ...state, touch, serveGuide: false }, 390, height),
+        guide = targets.find((t) => t.key === "guide")!,
+        resume = targets.find((t) => t.key === "resume")!,
+        sliders = targets.filter((t) => t.min !== undefined);
+      expect(guide.height).toBeGreaterThanOrEqual(44);
+      expect(guide.label).toBe("Ball guide: Off");
+      for (const slider of sliders) {
+        expect(slider.top).toBeGreaterThanOrEqual(guide.top + guide.height);
+        expect(resume.top - slider.top - slider.height).toBeGreaterThanOrEqual(8);
+      }
+    }
+  }
 });

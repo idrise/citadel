@@ -45,7 +45,7 @@ export function createAimGuide(root: Group) {
       dots.visible = false;
       for (const ring of rings) ring.visible = false;
     },
-    show(points: Vec2[], impacts: Vec2[]) {
+    show(points: Vec2[], impacts: Vec2[], markersVisible = true) {
       const samples = trajectoryDots(points);
       dots.count = samples.length;
       dots.visible = samples.length > 0;
@@ -56,7 +56,8 @@ export function createAimGuide(root: Group) {
       dots.instanceMatrix.needsUpdate = true;
       const markers = [...impacts];
       const end = points.at(-1);
-      if (end && (!markers.length || length(sub(end, markers.at(-1)!)) > 0.01)) markers.push(end);
+      if (markersVisible && end && (!markers.length || length(sub(end, markers.at(-1)!)) > 0.01))
+        markers.push(end);
       rings.forEach((ring, index) => {
         const point = markers[index];
         ring.visible = Boolean(point);

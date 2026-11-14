@@ -1,4 +1,3 @@
-import { serveCurve } from "../simulation/flight";
 import { MAX_PLAYERS } from "../simulation/player-count";
 import type { TitleFrame } from "./title-transition";
 import type { Vec2 } from "../simulation/vector";
@@ -18,7 +17,7 @@ import {
 } from "../simulation/arena";
 import { serveDirection } from "../simulation/aim";
 import { alive, type MatchState } from "../simulation/types";
-import { predictReturn, predictServe, traceAimGuide } from "../simulation/return-preview";
+import { add, scale } from "../simulation/vector";
 import { createEffects } from "./effects";
 import { createBallView } from "./ball-view";
 import { createArenaReflections } from "./arena-reflections";
@@ -318,26 +317,10 @@ export function createArenaView(
       const ownServe = state.balls.find(
         (ball) => ball.phase === "ready" && ball.seat === defender.id,
       );
-      if (ownServe) {
-        if (Math.abs(serveCurve(defender.swipe)) > 1e-4) {
-          const curved = predictServe(state, defender.id);
-          if (curved) guide.show(curved.points, curved.impacts);
-          return;
-        }
-        const points = traceAimGuide(
-          state,
-          ownServe.position,
-          serveDirection(defender.id, defender.angle, state.arena),
-          12,
-          defender.id,
-        );
-        guide.show(points, [points[1]!]);
-        return;
+      if (ownServe && options.preview) {
+        const direction = serveDirection(defender.id, defender.angle, state.arena);
+        guide.show([ownServe.position, add(ownServe.position, scale(direction, 2.2))], [], false);
       }
-      if (!options.preview) return;
-      const imminent = predictReturn(state, defender.id, options.slowdown);
-      if (!imminent) return;
-      guide.show(imminent.points, imminent.impacts);
     },
   };
 }

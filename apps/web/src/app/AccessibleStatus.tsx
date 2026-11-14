@@ -42,6 +42,9 @@ export function AccessibleStatus({
       <output aria-label="Debug mode">
         {snapshot.debug ? "Debug - progress not saved" : "Off"}
       </output>
+      <output aria-label="Ball guide">
+        {snapshot.serveGuide ? "Serve direction only" : "Off"}
+      </output>
       <output aria-label="Round level">{snapshot.level}</output>
       {snapshot.started && snapshot.state.phase === "countdown" && (
         <>

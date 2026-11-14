@@ -23,6 +23,7 @@ export interface SessionSnapshot {
   seed: number;
   humanSeat: number;
   level: number;
+  serveGuide: boolean;
   lossLevel: number;
   introDuration: number;
   previousLevel: number | undefined;
@@ -78,7 +79,12 @@ export function createSession(
         if (action === "pause") setPaused(true);
         else if (action === "resume") resume();
         else if (action === "restart") returnToTitle();
-        else music.unlock();
+        else if (action === "guide") {
+          settings = { ...settings, serveGuide: !settings.serveGuide };
+          onSettings(settings);
+          present([], 0);
+          report();
+        } else music.unlock();
       },
       change(key, value) {
         if (!Number.isFinite(value)) return;
@@ -123,6 +129,7 @@ export function createSession(
       seed,
       humanSeat,
       level,
+      serveGuide: settings.serveGuide,
       lossLevel,
       previousLevel,
       introDuration,
@@ -286,6 +293,7 @@ export function createSession(
           effectsVolume: settings.effectsVolume,
           musicVolume: settings.music ? settings.musicVolume : 0,
           mouseSensitivity: settings.mouseSensitivity,
+          serveGuide: settings.serveGuide,
         },
         mode: menuSuppressed
           ? "hidden"
@@ -308,7 +316,7 @@ export function createSession(
         reduced: settings.reducedEffects,
       },
       quality: settings.effectsQuality,
-      preview: settings.preview,
+      preview: settings.serveGuide,
       slowdown: settings.slowdown,
       reducedEffects: settings.reducedEffects,
       musicPulse: settings.musicLights ? musicVisuals.pulse : 0,
