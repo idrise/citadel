@@ -1,0 +1,93 @@
+{
+  "conditions": "30s per sample; native Chromium on this Mac, five optional static idle tabs; not Windows or physical mobile; ordinary simulation, real audio scheduling and rendering",
+  "results": [
+    {
+      "mobile": false,
+      "tabs": 6,
+      "resolutionTimeline": [],
+      "traceSummary": {
+        "mainThreadGcEvents": 5248,
+        "longestGcMs": 2.688,
+        "slowMainEvents": [
+          {
+            "name": "EventDispatch",
+            "durationMs": 194.476
+          },
+          {
+            "name": "v8.callFunction",
+            "durationMs": 194.46
+          },
+          {
+            "name": "FunctionCall",
+            "durationMs": 194.44
+          }
+        ],
+        "note": "Trace instrumentation adds overhead; GC events can nest, so durations are not summed."
+      },
+      "summary": {
+        "level": 7,
+        "count": 6,
+        "mobile": false,
+        "music": "playing",
+        "phase": "playing",
+        "caps": 0
+      },
+      "kind": "Local rolling frame diagnostics; nothing uploaded",
+      "totalFrames": 1793,
+      "totalSpikes": 2,
+      "longestMs": 233.30000000000007,
+      "windowFrames": 1793,
+      "intervalMs": {
+        "median": 16.69999999999891,
+        "p95": 16.700000000000728,
+        "p99": 16.800000000000182
+      },
+      "simulationMs": {
+        "median": 0.10000014305114746,
+        "p95": 0.20000004768371582,
+        "p99": 0.3000001907348633
+      },
+      "audioMs": {
+        "median": 0,
+        "p95": 0.10000014305114746,
+        "p99": 0.10000014305114746
+      },
+      "renderCpuMs": {
+        "median": 8.800000190734863,
+        "p95": 10.5,
+        "p99": 11.200000047683716
+      },
+      "gpuMs": {
+        "median": 11.626916,
+        "p95": 15.403833,
+        "p99": 23.54425
+      },
+      "spikes": [
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0,
+          "renderCpuMs": 10.200000047683716,
+          "gpuMs": null,
+          "resolutionScale": 1,
+          "calls": 2118,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 233.30000000000007
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 9.599999904632568,
+          "gpuMs": null,
+          "resolutionScale": 1,
+          "calls": 2136,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 166.70000000000005
+        }
+      ],
+      "last120FrameP95Ms": 16.700000000000728
+    }
+  ],
+  "errors": []
+}

@@ -10,6 +10,10 @@ external playtesting and public deployment verification remain pending; M06's pa
 Responsive touch controls, phone-sized procedural menus and full mobile match
 checks are delivered in [M09 touch review](docs/M09_TOUCH_REVIEW.md), awaiting review.
 Physical-device validation is pending.
+The latest [playtest feedback review](docs/PLAYTEST_FEEDBACK_REVIEW.md) covers camera centring,
+attentive idle bots, bat profiles, foreground padding and the upright victory star.
+The [Windows playtest review](docs/WINDOWS_FEEDBACK_REVIEW.md) covers the guide toggle,
+current/best level, speed-based trails, local stutter evidence and adaptive resolution.
 The latest [scene title, victory fireworks and shot feedback](docs/SCENE_PRESENTATION_REVIEW.md)
 replace the former landing/result popups.
 
@@ -37,7 +41,7 @@ The lettering and buttons are procedural 3D meshes.
 The title rises from the floor with the same reflected lettering as each level
 introduction. Its controls stay fixed while the board morphs between player counts.
 **Settings** opens a scene-rendered panel with **Resume**, **Restart**, **Sound Effects**,
-**Music**, and desktop **Sensitivity**. **Restart** returns to a fresh title-screen attempt
+**Music**, **Ball guide**, and desktop **Sensitivity**. **Restart** returns to a fresh title-screen attempt
 with the saved level, player count and fortress retained; abandoning a live attempt
 does not record a loss. Touch omits mouse sensitivity. The saved 100-level challenge controls bot skill, ball speed, bat width,
 ball count and pickups (introduced at level 5). A ball unlocks every 6–7 levels,
@@ -51,6 +55,9 @@ Two seats start with a rectangle, then triangle, square, pentagon and hexagon;
 Wide, Faceted, Compact and Spacious arenas between levels. New layouts are
 announced before play and morph into place. The sixteen-player ceiling is for
 hands-on readability/performance review, not a final supported limit.
+Five-level blocks alternate standard, shallow and deeper convex bat profiles.
+Every player uses the same profile, with the existing level-dependent width ramp;
+profile changes appear in the level introduction.
 Eliminations gradually move walls and surviving fortresses to the new layout,
 preserving health and relative steering. Wins celebrate in the arena with neon
 fireworks, a musical closing phrase and a **NEXT** button. Eliminated players can
@@ -66,7 +73,7 @@ React retains state/persistence and hidden accessible status.
 Click **START** to capture the mouse. Move left/right to steer your curved bat;
 click or press Space to serve. Flick while launching to curve the serve; a stationary
 bat serves straight. On touch, drag then tap within the short swipe window. The held-ball
-guide previews the curve. A/D or Left/Right also steer. **Escape/P** pauses
+optional guide shows only the initial straight launch direction; it is off by default. A/D or Left/Right also steer. **Escape/P** pauses
 and releases the cursor. Focus loss or capture loss pauses and clears held input;
 click **Resume** to recapture and continue. Desktop sensitivity spans 0.5–2×.
 Volumes and sensitivity persist locally. Keyboard **+ / =** and **−** (including
@@ -74,6 +81,7 @@ numpad keys) navigate unranked debug levels. Debug attempts are labelled and nev
 save results; **Backspace** returns to the real saved challenge on the title.
 The original music theme returns regularly between variations, with quiet harmony
 and changing bar colours; [audition the latest score](docs/MOTIF_RETURN_REVIEW.md).
+A small scene-rendered status shows your current level, player count and highest real level reached. Best includes unlocked levels, survives demotion and ignores debug navigation. Touch shows a labelled **PAUSE** button; desktop uses Escape/P.
 The reflected level introduction announces challenge changes and whether a loss
 will retry the same level or cause demotion. Its reading time scales with the full
 message before any balls launch. Browser tests use document-local virtual input
@@ -89,25 +97,23 @@ Each hit destroys the actual piece struck. The damaged survivor gets the revenge
 serve, with a quick raised return arc. Lost pieces burst into small neon fragments
 and an expanding ring. Surviving pieces grow slightly and gather into a compact formation using damped springs.
 A ball can pass through any current gap; the outer walls rebound it back into play. Aim toward
-either end of your arc to bank off the walls beside your bat. The serve guide
-shows the first wall bounce; opponents can intercept it.
+either end of your arc to bank off the walls beside your bat. Opponents can intercept bank shots; the optional short serve marker does not predict bounces.
 
 Rounds start with one ball; the saved challenge sets the addition interval and
-limit, reaching sixteen balls at level 100. Preview only is the default: near your fortress, dots forecast the
-ball through your stationary bat's bounce toward the next impact, with bounce
-and end markers. Moving actors can change that forecast. Pressure slowdown
+limit, reaching sixteen balls at level 100. Ball guides default to off. Settings can enable a short **Serve direction only** marker while you hold a ball; no curved or incoming/return forecasts appear during play. Pressure slowdown
 remains optional and off. It only helps with later arrivals when two separated
 shots demand a fast move; ordinary shots and bat input stay at normal speed.
 The same rule applies to humans and bots.
 Bots aim for reachable pickups and use curved returns. Later levels also consider
 exposed banks and wait briefly for a defender to move away before serving; incoming
-defence takes priority. Their decisions use visible poses and ordinary movement.
+defence takes priority. Idle bots gently track distant active balls and return to
+neutral when none are active. Their decisions use visible poses and ordinary movement.
 Brush the bat sideways into an incoming ball for a visible, fading curve. A short
 100ms tolerance lets a quick flick count just before contact. Rotating cyan/pink
 arrow bands show opposite spin directions, with a longer trail tracing the bend.
 Spin does not add speed. Signed spin changes wall and bat rebounds, with a damped
 curve continuing after banks; a stationary bat clears subsequent flight spin.
-The dotted forecast follows curved incoming flight and assumes a stationary bat.
+Trails follow a short time history: faster balls leave longer trails, with the same rule for straight and curved flight.
 The new ball size/speed and bank-shot reach reflect the initial hands-on feedback.
 The live perspective camera sits behind your selected fortress at about 38° over
 solid raised walls and a deep 3D arena. Foreground panels are translucent to keep
@@ -120,10 +126,15 @@ restrained bloom keep the glow concentrated on the edges. An exterior neon grid
 sits below the plinth, stretching into the distance with fading and filtered
 lines. It is a static world surface, so the live camera supplies its perspective
 and parallax.
+Bat steering adds a small symmetric shimmy; centring the bat settles the arena at
+exact neutral without autonomous drift. Approaching danger retains a restrained
+zoom. Framing reserves roughly 6% of screen height below the complete foreground
+wall and plinth, with menu and title anchors fixed. The victory morph ends in a
+viewer-relative upright star.
 Pieces occupy compact staggered rows and grow by 3.5% per loss (up to 24.5%), with
 visible geometry matching the moving collision bodies. Relative mouse input is
 independent of camera motion. Reduced effects/motion disables bloom/reflections
-and holds the current camera pose without a snap.
+and holds the current camera pose without a snap. Sustained graphics pressure gradually reduces render resolution in small steps toward 60fps, with slower recovery and no response to isolated long stalls. Local frame diagnostics are available from `window.__citadelPerformance()`; nothing is uploaded.
 High is the default graphics profile, with a bounded mobile budget and reduced-motion
 default from the operating system. Existing graphics preferences remain compatible.
 Larger rosters retain six point lights and use the single floor reflection. The bloom path

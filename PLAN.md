@@ -14,7 +14,7 @@
 
 ## 1. Product vision and decisions
 
-This takes inspiration from the immediacy of *Warlords*, the luminous geometry and motion of *Geometry Wars*, and the depth, edge treatment and controlled bloom associated with *Tron*. This is a 3D presentation over 2D gameplay. The camera must feel alive through a restrained orbit/tilt/breathing motion, while preserving camera-independent relative input. Camera movement is presentation-only and must never steer a stationary mouse or alter simulation. It must be an **original-looking game**, not a remake using existing franchise assets.
+This takes inspiration from the immediacy of *Warlords*, the luminous geometry and motion of *Geometry Wars*, and the depth, edge treatment and controlled bloom associated with *Tron*. This is a 3D presentation over 2D gameplay. The camera feels alive through a small bat-driven shimmy and danger zoom, returning to exact neutral when the bat is centred. Autonomous orbit/tilt/breathing drift was removed following the 14 November playtest. Camera movement is presentation-only and must never steer a stationary mouse or alter simulation. It must be an **original-looking game**, not a remake using existing franchise assets.
 
 One player occupies each defensive sector of a shared arena. Each player has a **thick, curved paddle** moving along a fixed arc in front of **three initial visible, destructible containers**, with extra containers collected from temporary falling supplies. Balls travel across the arena. Paddles return them to play and can impart spin. A ball must **physically collide with a remaining health piece** to destroy it. That piece disappears with a clear graphical flourish; the ball bursts and returns to the **damaged defender's paddle** for a revenge serve, provided they survive. Passing the paddle or crossing its rail alone causes no damage. Losing all remaining containers eliminates a player. **Last survivor wins.**
 
@@ -30,7 +30,7 @@ The desired game loop is simple: **move → aim a deflection → launch/return �
 | Final platform phase | Online multiplayer, followed by random matchmaking |
 | Player counts | 2–16 total participants for local limit testing; final cap awaits review |
 | Arena topology | 2: rectangle; 3–16: regular polygons; symmetrical level variants |
-| Camera | **Perspective RTS view**, behind the selected human fortress, about 38° down with a gentle live orbit |
+| Camera | **Perspective RTS view**, behind the selected human fortress, about 38° down; centred neutral, symmetric bat shimmy and danger zoom |
 | Artwork | Procedural geometry only; **no surface textures** |
 | Visual style | Dark frosted reflective volumes with saturated neon tracing their edges, localised bloom and softened procedural reflections |
 | Health | Three initial physical containers; hit landed supply containers with the last-struck ball to add health. Supplies arrive during the opening minute, then stop. Survivors grow slightly and spring together after damage |
@@ -38,7 +38,7 @@ The desired game loop is simple: **move → aim a deflection → launch/return �
 | Next serve after damage | Damaged defender receives the ball for a revenge serve if still alive; elimination fallback remains open |
 | Elimination/winner | No health left = eliminated; last survivor wins |
 | Aiming | Captured relative mouse movement; keyboard alternative; touch later |
-| Presentation | Full viewport Three.js scene, no visible HUD or surrounding copy during play; scene title/count/Start and victory/rematch; compact Pause settings |
+| Presentation | Full viewport Three.js scene with quiet current/best level and roster status; no DOM HUD; scene title/count/Start and victory/rematch; compact Settings |
 | Serving | Mouse click / Space / Enter initially; mobile tap later |
 | Pacing | Adrenaline first: start with one ball and add balls over time; roughly two minutes remains a tuning target |
 | Current ball tuning | Radius 0.187 (10% larger), speed 24 units/s (double the first prototype); provisional extra-ball interval 15s and cap four |
@@ -69,9 +69,9 @@ These are starting experiments authorised for the prototype, not permanent desig
 
 - **Feel:** Start with precise, responsive defence and deliberate contact-position aiming, then explore escalating arcade pressure. The balance between precision, survival and targeting rivals is still open.
 - **Movement:** Accumulate captured horizontal mouse deltas into a bounded bat-angle target, with a maximum paddle speed; start without pronounced acceleration lag. A late save should initially feel like moving too late rather than fighting momentum. Keyboard uses the same speed limits.
-- **Aiming and bat curvature:** The bat's curved face is independent of its travel rail: rail radius 4.4, bat-face radius 1.55 and a standard half-angle chosen to retain the original 2.032-unit chord span. Rendering and swept collision use the same shape. Contact normals plus a bounded contact-offset adjustment govern returns. Serve aiming generally doubles the paddle-centre angle relative to the bisector (3.5× in the narrow triangle), capped to an inward ±1.45-rad fan. Bat travel is fitted against the real curved shape and current wall planes in every layout, leaving 0.015 units beyond its physical thickness; no ball-radius margin or two-player corner-sector cap. This permits attacks and wall banks without unreachable rail-end gaps. A short serve guide shows one wall rebound; defenders may intercept it. Actual serve direction has no random spread. The user-requested M03/M04 swipe experiment now uses a maximum 1.4 rad/s curve decaying at 1.8/s (under 45° total), with 100ms of fading recent-motion tolerance and visible spin bands/trail. This replaces the initially imperceptible curve at the user's request; speed and held-bat aim remain intact and it awaits review.
+- **Aiming and bat curvature:** The bat's curved face is independent of its travel rail: rail radius 4.4, bat-face radius 1.55 and a standard half-angle chosen to retain the original 2.032-unit chord span. Rendering and swept collision use the same shape. Contact normals plus a bounded contact-offset adjustment govern returns. Serve aiming generally doubles the paddle-centre angle relative to the bisector (3.5× in the narrow triangle), capped to an inward ±1.45-rad fan. Bat travel is fitted against the real curved shape and current wall planes in every layout, leaving 0.015 units beyond its physical thickness; no ball-radius margin or two-player corner-sector cap. This permits attacks and wall banks without unreachable rail-end gaps. The optional short serve-direction marker shows only the initial direction; defenders may intercept shots. Curved/banked forecasts were removed following 14 November feedback. Actual serve direction has no random spread. The user-requested M03/M04 swipe experiment now uses a maximum 1.4 rad/s curve decaying at 1.8/s (under 45° total), with 100ms of fading recent-motion tolerance and visible spin bands/trail. This replaces the initially imperceptible curve at the user's request; speed and held-bat aim remain intact and it awaits review.
 - **Piece placement and gaps:** User feedback replaces the long fixed health arc with a compact two-row formation inside the fortress. A destroyed piece leaves a real gap, but remaining pieces can subsequently move into that space under damped spring attraction and soft separation. Only an actual collision with a surviving piece causes damage; never substitute nearest-piece damage. Survivors gradually grow by 3.5% of their original size per loss, capped at 24.5%. Visible position and scale must match authoritative moving colliders. Initially paddles can intercept from either side so returning balls do not require an invisible exception. Review whether deeper rebounds are interesting or confusing.
-- **Aim help:** M02 user clarification selects a dotted forecast from the nearby ball through a bounce off the stationary current bat and onward toward the next impact. Use actual fixed-step trajectory samples, show bounce/end markers, and leave room for future curved shots. Consider the earliest incoming ball within 8.4 units of the human fortress anchor, with a 0.45-second incoming horizon and up to 0.9 seconds after contact / one bank. Freeze current actor poses for this conditional forecast; it is not a guaranteed destination. Keep Neither / Preview only / Pressure slowdown only / Both choices. Preview only is the proposed default following this feedback.
+- **Aim help:** Following the 14 November playtest, guides default off. Procedural Settings offers Off / Serve direction only, persisted independently of obsolete preview preferences. While holding a ball, the optional marker shows 2.2 units of its initial straight direction. It disappears on launch; there are no incoming, bat-return, bank or curved-serve forecasts. This supersedes the M02 dotted preview experiment. Pressure slowdown remains independent and off by default.
 - **Approach slowdown:** M02 feedback rejects routine delay. Keep optional **pressure-only relief**, off by default: detect two separated incoming catches within 0.45 seconds which demand a rapid move, and arm only the later arrival. It retains normal speed until the near-defence band, then uses a bounded 55% travel factor. Preserve the first catch's timing and ordinary bat responsiveness; maintain the existing speed cap. Latched relief can survive the first catch, and clears on departure/contact/exit/disable/elimination. Exclude paths already intercepted by another object and avoid triggering for shots one bat pose can cover. Apply equally to humans/bots; compare neither / preview / pressure-only / both. Thresholds remain reviewable and must be revisited with future spin.
 - **Serve rhythm:** Click to launch during a short ready window, followed by automatic launch to prevent indefinite holding. The deadline is tunable; test whether it gives a satisfying revenge opportunity without breaking the rally's rhythm.
 - **Early elimination:** Prototype a clear result with immediate rematch available; spectating bots is optional. Record time until human elimination separately from total match length.
@@ -98,7 +98,7 @@ For 3–6 seats, derive fortress anchors, arc centre, rail radius, allowed paddl
 ### Rendering contract
 
 - **No image textures, decals, sprites, photographed materials, raster skyboxes or HDRIs in the game world.** Use procedural meshes, extrusion, curves, emissive geometry, material properties, optional analytic shaders and instancing. An image atlas is permitted **only** if measured to improve particle performance. Bloom, antialiasing and reflection render targets are technical buffers, not artwork. Procedurally captured neon light cards may provide rough-metal reflections; do not add image/HDRI assets.
-- Use a gently animated **perspective RTS camera** over genuinely extruded 3D geometry. The camera sits behind the selected human fortress, looking toward the arena centre at about 38° above the playing plane. Changing human seat rotates the view and selects the correct translucent foreground walls. Gameplay physics stays 2D in a separate coordinate plane. Captured relative mouse input is independent of camera projection. Motion is bounded to roughly ±1.7° yaw, ±0.9° tilt and ±0.45% zoom, with long smooth cycles. Freeze the current pose on pause or reduced effects/motion without snapping or accumulating a hidden jump. Camera motion cannot change the bat target. This supersedes the earlier orthographic view.
+- Use a responsive **perspective RTS camera** over genuinely extruded 3D geometry. The camera sits behind the selected human fortress, looking toward the arena centre at about 38° above the playing plane. Changing human seat rotates the view and selects the correct translucent foreground walls. Gameplay physics stays 2D in a separate coordinate plane. Captured relative mouse input is independent of camera projection. Bat offset drives a symmetric shimmy up to about ±1°, with a 3% dead zone and damped return to exact neutral; approaching danger adds up to 2% zoom. There is no autonomous yaw, tilt or breathing drift. Reserve roughly 6% viewport height below the complete front wall/plinth through danger zoom; retain fixed menu/title anchors. Freeze the current pose on pause or reduced effects/motion without snapping or accumulating a hidden jump. Camera motion cannot change the bat target. This supersedes the earlier orthographic and autonomous-orbit views.
 - Paddles, arena borders, health pieces and balls have visible **thickness, bevels and height separation**. The M01 baseline includes a deep raised plinth, taller health pieces/bats, directional/contact shadows and **restrained bloom**, not just emissive colours. Use solid, bevelled, full-height outer walls with translucent camera-facing panels so incoming balls stay visible. Rear interior faces and the floor capture softened actual scene reflections. Use a custom antialiased edge shader to boost creases where adjacent face normals differ by at least 35°, initially 3–4.5 CSS pixels wide; do not trace coplanar triangulation or smooth facets. Walls have opaque extruded caps, shoulders, feet and supports around recessed faces, initially 2.22 units high and 0.96 units deep. Keep glow contribution restrained as edge width increases, and preserve ball readability behind opaque structure with a faint occluded-ball ghost. Genuine 3D height is an M01 requirement, not deferred aesthetic polish for M07. Reduced effects disables bloom.
 - Surround the raised arena with a subdued procedural neon ground grid, below the plinth, stretching into the distance. Use finer cells with stronger major lines, distance fading and derivative filtering to suppress distant aliasing. Keep the grid static in world space and outside camera-framing bounds; reduced effects retains it without bloom.
 - Thick edges and high-contrast silhouettes remain crisp under bloom. Strongest visual emphasis: ball → defended opening → paddle → remaining health.
@@ -126,7 +126,7 @@ The previously discussed sketch is a **layout reference**, not a requirement to 
 
 ### Input progression
 
-**Desktop now:** Start/Resume captures the mouse using Pointer Lock. Horizontal relative movement changes a bounded target angle on the curved track, independent of screen edges and camera motion; primary click launches an attached ball. A/D or Left/Right steer; Space/Enter launch. Escape/P pauses and releases capture; focus loss or browser capture loss also pauses and clears input. Resume requires an explicit click. The Three.js canvas fills the viewport with no visible HUD or surrounding text during play. Render the CITADEL title, 2–6-player −/+ controls, Start and win/loss/rematch in the Three.js scene. Retain nonvisual accessible status and the compact Pause settings panel by explicit user choice. A human victory keeps presentation alive with neon-shader fireworks and a finite musical resolution; it never opens an automatic DOM result popup. Pause controls sit in a small corner panel; H hides/restores them for unobstructed screenshots while simulation remains paused. The human can choose a fortress in Settings while testing geometry.
+**Desktop now:** Start/Resume captures the mouse using Pointer Lock. Horizontal relative movement changes a bounded target angle on the curved track, independent of screen edges and camera motion; primary click launches an attached ball. A/D or Left/Right steer; Space/Enter launch. Escape/P pauses and releases capture; focus loss or browser capture loss also pauses and clears input. Resume requires an explicit click. The Three.js canvas fills the viewport during play, with only a quiet scene-rendered current-level/player-count and personal-best indicator; there is no surrounding DOM HUD. Render the CITADEL title, 2–6-player −/+ controls, Start and win/loss/rematch in the Three.js scene. Retain nonvisual accessible status and the compact Pause settings panel by explicit user choice. A human victory keeps presentation alive with neon-shader fireworks and a finite musical resolution; it never opens an automatic DOM result popup. Pause controls sit in a small corner panel; H hides/restores them for unobstructed screenshots while simulation remains paused. The human can choose a fortress in Settings while testing geometry.
 
 **Mobile:** Pointer Events and capture support relative drag and tap-to-launch. Drags, long presses and cancellations do not serve. The procedural title/results use phone-sized layouts, and a safe-area pause button provides settings access. Canvas gestures suppress page scrolling; settings remain scrollable. Rotation clears a held drag, and backgrounding pauses until explicit resume. M09 review determines whether a dedicated launch target is needed.
 
@@ -464,6 +464,110 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 - **Permanent boundary:** Music observes events only. Musical quantisation delays sounds, never collisions, rules, inputs, health, spawning or RNG. No music-driven camera motion. User accepted the detour for now and requested M05; full M06/M07 remain unstarted.
 
 ### Progress / approval ledger
+
+14 November local commit handoff: the owner subsequently authorised splitting
+and committing all reviewed changes. This supersedes the earlier temporary
+no-commit instruction; it does not authorise pushing or deployment. Nine focused
+code commits isolate the reversible camera change, followed by a review/evidence
+commit containing documentation, reproduction tools and the two remaining stale
+browser-assertion corrections.
+
+| Commit | Scope |
+|---|---|
+| `bfa9d1e` | Neutral camera, symmetric shimmy and danger zoom |
+| `5b0975f` | Foreground framing and complete plinth margin |
+| `4866517` | Viewer-relative upright victory star |
+| `098d5d7` | Deterministic idle-bot attention |
+| `9256409` | Authoritative level-specific bat profiles |
+| `53dda95` | Speed-based, bounded ball trails |
+| `156d624` | Touch Pause, Settings spacing and optional serve guide |
+| `9d8cd01` | Current/best level display and save migration |
+| `007ac01` | Gradual adaptive resolution and local frame diagnostics |
+
+Each code commit was checked from an exported staged snapshot, independently of
+uncommitted files, with format/lint/type checks and the full unit suite available
+at that point (523→552 tests). The final evidence commit also passes these checks.
+Source/evidence hashes match the pre-split backup; only review metadata changed
+to record the authorised commits. The earlier native browser and software Pages
+smoke results remain documented below; this commit-only handoff does not claim a
+new browser or physical-device run. M09 remains awaiting owner review. No push,
+manual deployment or remote workflow run was performed.
+
+14 November further playtest feedback: the owner authorised all remaining TODOs,
+including smooth adaptive resolution and hiding the captured-desktop Pause button.
+The touch button now says PAUSE. Procedural Settings exposes a persisted serve-only
+guide toggle, off by default including old preview preferences; rendering no
+longer computes incoming/return or curved-serve forecasts. Quiet scene lettering
+shows current level/player count and Best. Save version 3 preserves and migrates
+progress while counting newly unlocked/real played levels toward the peak;
+debug navigation never raises it. Trails use fixed-size time history and buffers,
+retain spin bands, and encode speed consistently across render frame rates.
+
+Resolution adapts toward 60fps in small 2.5% reductions with warm-up, sustained
+pressure, cooldown and slower 1% recovery. Isolated long stalls, pause and CPU-heavy
+simulation/audio do not cause resolution drops. CSS framing, control targets and
+physics stay fixed. Bounded local frame evidence and asynchronous GPU samples
+are available through `window.__citadelPerformance()`; nothing is uploaded.
+Four 30s native Chromium sessions cover level 7/100, one/six tabs and phone-sized
+rendering. P95 intervals are 16.7–16.8ms; startup spikes remain. A separate GC trace
+finds a roughly 194ms Start dispatch and no recorded V8 GC event over 2.688ms. A DPR2 1920×1080
+pressure run moves scale 1→0.75 in ten 2.5% steps, retains CSS width, and finishes
+with a 16.7ms last-120-frame p95 interval. These Mac measurements do not reproduce
+David's Windows machine or physical mobile; those retests remain open.
+
+See `docs/WINDOWS_FEEDBACK_REVIEW.md` and `docs/reviews/m09/windows-feedback/`.
+552 unit tests / 101 files pass. The first selected browser run passed 20/21;
+its remaining assertion expected the old save schema and was corrected while
+retaining demotion behaviour checks. All twelve corrected progression/settings/feedback
+cases pass on rerun; five final Settings/feedback cases pass again after moving
+current/best text into the short-screen panel header. Root and Pages production
+builds and full-repository format/lint/type checks pass. Final Pages-path software
+viewport/refresh smoke passes with CI software WebGL (31.3s including setup).
+The stable production demo at `http://localhost:5179/` is refreshed. The earlier
+foreground-padding rollback patch was refreshed against adaptive-resolution wiring
+and reverse-checked again; it preserves the new performance code.
+The existing bundle-size advisory remains. No commits, staging, push or deployment;
+M09 still awaits owner review and later milestones remain unstarted.
+
+14 November Settings padding correction: the prior foreground-framing change did
+not address space inside Settings. Resume/Restart now have a 24px bottom inset
+instead of 10px. Shared panel geometry/layout retains 44px controls and slider
+separation down to 320px-high screens. Projected geometry tests cover six sizes
+in both input modes; all four production Settings/Restart browser cases pass,
+with final desktop/phone/landscape captures in
+`docs/reviews/m09/settings-padding/`. The root build passes with the existing
+bundle advisory. A full unit run alongside Chromium hit two simulation timeouts;
+the isolated rerun passes all 540 tests in 95 files. The demo is refreshed at
+`http://localhost:5179/`. No commits, push or publication. The owner's subsequent
+Windows Chrome feedback is recorded only as five unchecked proposals in
+`TODO.md`, awaiting review; those proposals have not been implemented.
+
+14 November playtest feedback: the owner authorised all six TODOs and explicitly
+requested **no commits**, so these changes remain unstaged and uncommitted above
+`02fb6d2`. Camera drift is removed; bat-driven shimmy returns to exact centre and
+danger zoom remains. Foreground framing reserves 6% below the complete plinth,
+including the danger-zoom envelope. Idle bots follow visible distant balls with
+bounded deterministic variation separate from gameplay RNG; interception and
+serve tactics take priority. Five-level blocks introduce standard/shallow/deep
+convex bat profiles with the existing physical width ramp; collision, forecasts,
+bot planning and rendering share their geometry and profile changes are announced.
+The victory star now has an outer point facing screen-top for every viewer.
+The owner confirmed David may share the existing public playtest URL; no message
+was sent and no publication occurred. The camera-centre change and foreground
+framing each have a separate reverse-checked rollback patch in
+`/private/tmp/citadel-playtest-review-2026-11-14/`.
+
+Evidence and review instructions: `docs/PLAYTEST_FEEDBACK_REVIEW.md` and
+`docs/reviews/m09/playtest-feedback/`. 539 unit tests / 95 files pass. The native
+Chromium suite initially passed 83/86 cases; three stale test assumptions were
+corrected and all seven cases in their files pass on rerun. New profile briefing
+and debug-progression coverage passes. Full-repository `vp check`, root/Pages
+production builds and the Pages-path software-WebGL viewport/refresh smoke test
+pass. Final render evidence covers 2/4/6-player profiles and 2/6/16-seat upright
+victory morphs; eight short isolated sixteen-ball stress samples report p95 frame
+intervals 16.7–16.8ms and zero collision caps/errors on this Mac. Physical
+iPad/iPhone Safari and sustained performance remain unverified. M09 awaits owner
+review; M10 has not begun. No commit, push or deployment.
 
 14 November CI formatting correction: `docs/reviews/m09/bot-serving/report.json`
 now follows the repository formatter's compact numeric-array style. Parsed report
@@ -1159,4 +1263,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

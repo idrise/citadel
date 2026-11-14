@@ -49,7 +49,7 @@ for (const touch of [false, true]) {
       if (touch) await page.getByRole("button", { name: "Start", exact: true }).tap();
       else await play(page);
       await expect(page.getByLabel("Introduction duration", { exact: true })).toHaveText(
-        touch ? "3.75" : "4.25",
+        touch ? "3.75" : "4.75",
       );
       await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
         touch ? "LOSS DROPS TO LEVEL 07" : "LOSS RETRIES LEVEL 08",

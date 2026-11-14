@@ -1,0 +1,1238 @@
+{
+  "conditions": "30s 1920x1080 at DPR2 graphics load; native Chromium on this Mac; real session and audio",
+  "results": [
+    {
+      "mobile": false,
+      "tabs": 1,
+      "resolutionTimeline": [
+        {
+          "frames": 19,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 166.60000000000014,
+          "gpuMs": 78.555916
+        },
+        {
+          "frames": 38,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.40000000000009,
+          "gpuMs": 78.555916
+        },
+        {
+          "frames": 57,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.40000000000009,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 76,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.40000000000009,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 95,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.40000000000009,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 114,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.40000000000009,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 133,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.40000000000009,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 152,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 171,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 190,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 210,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 229,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 248,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 267,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 286,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 304,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 322,
+          "scale": 1,
+          "bufferWidth": 3840,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 339,
+          "scale": 0.975,
+          "bufferWidth": 3744,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 359,
+          "scale": 0.975,
+          "bufferWidth": 3744,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 378,
+          "scale": 0.975,
+          "bufferWidth": 3744,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 398,
+          "scale": 0.975,
+          "bufferWidth": 3744,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 415,
+          "scale": 0.95,
+          "bufferWidth": 3648,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 435,
+          "scale": 0.95,
+          "bufferWidth": 3648,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 455,
+          "scale": 0.95,
+          "bufferWidth": 3648,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 476,
+          "scale": 0.95,
+          "bufferWidth": 3648,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 494,
+          "scale": 0.925,
+          "bufferWidth": 3552,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 516,
+          "scale": 0.925,
+          "bufferWidth": 3552,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 538,
+          "scale": 0.925,
+          "bufferWidth": 3552,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 560,
+          "scale": 0.925,
+          "bufferWidth": 3552,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 580,
+          "scale": 0.9,
+          "bufferWidth": 3456,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 603,
+          "scale": 0.9,
+          "bufferWidth": 3456,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 626,
+          "scale": 0.9,
+          "bufferWidth": 3456,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 649,
+          "scale": 0.9,
+          "bufferWidth": 3456,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 670,
+          "scale": 0.875,
+          "bufferWidth": 3360,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 104.644875
+        },
+        {
+          "frames": 694,
+          "scale": 0.875,
+          "bufferWidth": 3360,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 716,
+          "scale": 0.875,
+          "bufferWidth": 3360,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 741,
+          "scale": 0.875,
+          "bufferWidth": 3360,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 763,
+          "scale": 0.85,
+          "bufferWidth": 3264,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 788,
+          "scale": 0.85,
+          "bufferWidth": 3264,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 813,
+          "scale": 0.85,
+          "bufferWidth": 3264,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 838,
+          "scale": 0.85,
+          "bufferWidth": 3264,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 861,
+          "scale": 0.825,
+          "bufferWidth": 3168,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 887,
+          "scale": 0.825,
+          "bufferWidth": 3168,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 914,
+          "scale": 0.825,
+          "bufferWidth": 3168,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 941,
+          "scale": 0.825,
+          "bufferWidth": 3168,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 966,
+          "scale": 0.8,
+          "bufferWidth": 3072,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 995,
+          "scale": 0.8,
+          "bufferWidth": 3072,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1024,
+          "scale": 0.8,
+          "bufferWidth": 3072,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1052,
+          "scale": 0.8,
+          "bufferWidth": 3072,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1079,
+          "scale": 0.775,
+          "bufferWidth": 2976,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1109,
+          "scale": 0.775,
+          "bufferWidth": 2976,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1139,
+          "scale": 0.775,
+          "bufferWidth": 2976,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1169,
+          "scale": 0.775,
+          "bufferWidth": 2976,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1197,
+          "scale": 0.75,
+          "bufferWidth": 2880,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1228,
+          "scale": 0.75,
+          "bufferWidth": 2880,
+          "cssWidth": 1920,
+          "frameMs": 33.400000000000546,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1259,
+          "scale": 0.75,
+          "bufferWidth": 2880,
+          "cssWidth": 1920,
+          "frameMs": 33.40000000000009,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1290,
+          "scale": 0.75,
+          "bufferWidth": 2880,
+          "cssWidth": 1920,
+          "frameMs": 33.40000000000009,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1321,
+          "scale": 0.75,
+          "bufferWidth": 2880,
+          "cssWidth": 1920,
+          "frameMs": 33.40000000000009,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1352,
+          "scale": 0.75,
+          "bufferWidth": 2880,
+          "cssWidth": 1920,
+          "frameMs": 33.40000000000009,
+          "gpuMs": 102.704958
+        },
+        {
+          "frames": 1383,
+          "scale": 0.75,
+          "bufferWidth": 2880,
+          "cssWidth": 1920,
+          "frameMs": 33.40000000000009,
+          "gpuMs": 102.407541
+        }
+      ],
+      "traceSummary": null,
+      "summary": {
+        "level": 7,
+        "count": 6,
+        "mobile": false,
+        "music": "playing",
+        "phase": "playing",
+        "caps": 0
+      },
+      "kind": "Local rolling frame diagnostics; nothing uploaded",
+      "totalFrames": 1383,
+      "totalSpikes": 85,
+      "longestMs": 283.29999999999995,
+      "windowFrames": 1383,
+      "intervalMs": {
+        "median": 16.700000000000728,
+        "p95": 33.40000000000009,
+        "p99": 66.70000000000073
+      },
+      "simulationMs": {
+        "median": 0.20000004768371582,
+        "p95": 0.40000009536743164,
+        "p99": 0.7000000476837158
+      },
+      "audioMs": {
+        "median": 0,
+        "p95": 0.10000014305114746,
+        "p99": 0.40000009536743164
+      },
+      "renderCpuMs": {
+        "median": 20.5,
+        "p95": 28.40000009536743,
+        "p99": 48.09999990463257
+      },
+      "gpuMs": {
+        "median": 65.374916,
+        "p95": 102.407541,
+        "p99": 104.644875
+      },
+      "spikes": [
+        {
+          "simulationMs": 0.10000014305114746,
+          "audioMs": 0,
+          "renderCpuMs": 25.90000009536743,
+          "gpuMs": 100.764583,
+          "resolutionScale": 1,
+          "calls": 2179,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.40000000000009
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 25.59999990463257,
+          "gpuMs": 100.764583,
+          "resolutionScale": 1,
+          "calls": 2179,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.40000000000009
+        },
+        {
+          "simulationMs": 0.19999980926513672,
+          "audioMs": 0,
+          "renderCpuMs": 28.09999990463257,
+          "gpuMs": 100.764583,
+          "resolutionScale": 1,
+          "calls": 2179,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.40000000000009
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 26.200000047683716,
+          "gpuMs": 102.407541,
+          "resolutionScale": 1,
+          "calls": 2179,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 24.59999990463257,
+          "gpuMs": 102.407541,
+          "resolutionScale": 1,
+          "calls": 2179,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.19999980926513672,
+          "audioMs": 0.10000014305114746,
+          "renderCpuMs": 26.899999856948853,
+          "gpuMs": 102.407541,
+          "resolutionScale": 1,
+          "calls": 2179,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 24,
+          "gpuMs": 102.407541,
+          "resolutionScale": 1,
+          "calls": 2179,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 24.40000009536743,
+          "gpuMs": 102.407541,
+          "resolutionScale": 1,
+          "calls": 2179,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 23.59999990463257,
+          "gpuMs": 102.407541,
+          "resolutionScale": 1,
+          "calls": 2179,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 24.59999990463257,
+          "gpuMs": 102.407541,
+          "resolutionScale": 1,
+          "calls": 2179,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.19999980926513672,
+          "audioMs": 0,
+          "renderCpuMs": 25.59999990463257,
+          "gpuMs": 102.407541,
+          "resolutionScale": 1,
+          "calls": 2179,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.7000000476837158,
+          "audioMs": 0,
+          "renderCpuMs": 104.70000004768372,
+          "gpuMs": 102.704958,
+          "resolutionScale": 1,
+          "calls": 2163,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 100.10000000000036
+        },
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0,
+          "renderCpuMs": 27.600000143051147,
+          "gpuMs": 102.704958,
+          "resolutionScale": 1,
+          "calls": 2163,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.19999980926513672,
+          "audioMs": 0,
+          "renderCpuMs": 24.399999856948853,
+          "gpuMs": 102.704958,
+          "resolutionScale": 1,
+          "calls": 2163,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 25.799999952316284,
+          "gpuMs": 93.676999,
+          "resolutionScale": 1,
+          "calls": 2163,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0.10000014305114746,
+          "renderCpuMs": 26.200000047683716,
+          "gpuMs": 93.676999,
+          "resolutionScale": 1,
+          "calls": 2163,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 28,
+          "gpuMs": 93.676999,
+          "resolutionScale": 1,
+          "calls": 2163,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.3000001907348633,
+          "audioMs": 0,
+          "renderCpuMs": 27.299999952316284,
+          "gpuMs": 93.676999,
+          "resolutionScale": 1,
+          "calls": 2163,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 27.299999952316284,
+          "gpuMs": 93.676999,
+          "resolutionScale": 1,
+          "calls": 2163,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 1.7000000476837158,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 87.90000009536743,
+          "gpuMs": 88.020666,
+          "resolutionScale": 1,
+          "calls": 2215,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 83.30000000000018
+        },
+        {
+          "simulationMs": 0.2999999523162842,
+          "audioMs": 0.10000014305114746,
+          "renderCpuMs": 27.59999990463257,
+          "gpuMs": 88.020666,
+          "resolutionScale": 1,
+          "calls": 2265,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000000546
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 25.799999952316284,
+          "gpuMs": 85.48175,
+          "resolutionScale": 1,
+          "calls": 2189,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.5
+        },
+        {
+          "simulationMs": 0.10000014305114746,
+          "audioMs": 0,
+          "renderCpuMs": 27.09999990463257,
+          "gpuMs": 85.48175,
+          "resolutionScale": 1,
+          "calls": 2187,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 29.300000190734863,
+          "gpuMs": 93.643,
+          "resolutionScale": 1,
+          "calls": 2189,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.7000000476837158,
+          "audioMs": 0,
+          "renderCpuMs": 24.899999856948853,
+          "gpuMs": 76.577541,
+          "resolutionScale": 1,
+          "calls": 2199,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.5
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0.10000014305114746,
+          "renderCpuMs": 133.79999995231628,
+          "gpuMs": 76.577541,
+          "resolutionScale": 0.975,
+          "calls": 2468,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 133.29999999999927
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 48.09999990463257,
+          "gpuMs": 76.577541,
+          "resolutionScale": 0.975,
+          "calls": 2217,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 50
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 26.899999856948853,
+          "gpuMs": 76.577541,
+          "resolutionScale": 0.975,
+          "calls": 2201,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 103.70000004768372,
+          "gpuMs": 63.352916,
+          "resolutionScale": 0.95,
+          "calls": 2399,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 100
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 24.700000047683716,
+          "gpuMs": 63.352916,
+          "resolutionScale": 0.95,
+          "calls": 2382,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.10000014305114746,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 96.29999995231628,
+          "gpuMs": 74.478791,
+          "resolutionScale": 0.925,
+          "calls": 2291,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 100
+        },
+        {
+          "simulationMs": 0.19999980926513672,
+          "audioMs": 0,
+          "renderCpuMs": 24.299999952316284,
+          "gpuMs": 64.593875,
+          "resolutionScale": 0.925,
+          "calls": 2423,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 21.90000009536743,
+          "gpuMs": 89.397833,
+          "resolutionScale": 0.925,
+          "calls": 2420,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 22.100000143051147,
+          "gpuMs": 89.397833,
+          "resolutionScale": 0.925,
+          "calls": 2317,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0.10000014305114746,
+          "renderCpuMs": 25.299999952316284,
+          "gpuMs": 89.397833,
+          "resolutionScale": 0.925,
+          "calls": 2311,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 90.40000009536743,
+          "gpuMs": 88.689791,
+          "resolutionScale": 0.9,
+          "calls": 2309,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 100
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 22,
+          "gpuMs": 61.080958,
+          "resolutionScale": 0.9,
+          "calls": 2220,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 20.5,
+          "gpuMs": 61.080958,
+          "resolutionScale": 0.9,
+          "calls": 2417,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 22.600000143051147,
+          "gpuMs": 61.080958,
+          "resolutionScale": 0.9,
+          "calls": 2221,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.19999980926513672,
+          "audioMs": 0,
+          "renderCpuMs": 20.200000047683716,
+          "gpuMs": 59.921,
+          "resolutionScale": 0.9,
+          "calls": 2324,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 1.7000000476837158,
+          "audioMs": 0.20000004768371582,
+          "renderCpuMs": 71.60000014305115,
+          "gpuMs": 59.921,
+          "resolutionScale": 0.9,
+          "calls": 2265,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 66.70000000000073
+        },
+        {
+          "simulationMs": 0.3000001907348633,
+          "audioMs": 0,
+          "renderCpuMs": 85.79999995231628,
+          "gpuMs": 80.036583,
+          "resolutionScale": 0.875,
+          "calls": 2363,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 83.20000000000073
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 22.299999952316284,
+          "gpuMs": 80.036583,
+          "resolutionScale": 0.875,
+          "calls": 2226,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 21.5,
+          "gpuMs": 48.707583,
+          "resolutionScale": 0.875,
+          "calls": 2365,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 22.299999952316284,
+          "gpuMs": 48.707583,
+          "resolutionScale": 0.875,
+          "calls": 2269,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.5,
+          "audioMs": 1.9000000953674316,
+          "renderCpuMs": 70.79999995231628,
+          "gpuMs": 48.707583,
+          "resolutionScale": 0.875,
+          "calls": 2426,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 83.39999999999782
+        },
+        {
+          "simulationMs": 0.19999980926513672,
+          "audioMs": 0,
+          "renderCpuMs": 22.600000143051147,
+          "gpuMs": 66.518125,
+          "resolutionScale": 0.875,
+          "calls": 2234,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 87.5,
+          "gpuMs": 66.518125,
+          "resolutionScale": 0.85,
+          "calls": 2232,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 83.40000000000146
+        },
+        {
+          "simulationMs": 0.10000014305114746,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 20.600000143051147,
+          "gpuMs": 66.518125,
+          "resolutionScale": 0.85,
+          "calls": 2154,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.2999999523162842,
+          "audioMs": 0,
+          "renderCpuMs": 20.5,
+          "gpuMs": 61.684541,
+          "resolutionScale": 0.85,
+          "calls": 2296,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0,
+          "renderCpuMs": 20.800000190734863,
+          "gpuMs": 61.684541,
+          "resolutionScale": 0.85,
+          "calls": 2353,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0,
+          "renderCpuMs": 22.100000143051147,
+          "gpuMs": 61.684541,
+          "resolutionScale": 0.85,
+          "calls": 2290,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.19999980926513672,
+          "audioMs": 0.10000014305114746,
+          "renderCpuMs": 21.09999990463257,
+          "gpuMs": 59.681958,
+          "resolutionScale": 0.85,
+          "calls": 2236,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 25.59999990463257,
+          "gpuMs": 58.060916,
+          "resolutionScale": 0.85,
+          "calls": 2206,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.10000014305114746,
+          "audioMs": 0,
+          "renderCpuMs": 79.90000009536743,
+          "gpuMs": 58.060916,
+          "resolutionScale": 0.825,
+          "calls": 2192,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 83.29999999999927
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 18.200000047683716,
+          "gpuMs": 58.060916,
+          "resolutionScale": 0.825,
+          "calls": 2258,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 20.09999990463257,
+          "gpuMs": 54.301041,
+          "resolutionScale": 0.825,
+          "calls": 2194,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.5
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0,
+          "renderCpuMs": 22.09999990463257,
+          "gpuMs": 70.067708,
+          "resolutionScale": 0.825,
+          "calls": 2143,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0,
+          "renderCpuMs": 17.09999990463257,
+          "gpuMs": 74.279291,
+          "resolutionScale": 0.825,
+          "calls": 2113,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 76.80000019073486,
+          "gpuMs": 74.279291,
+          "resolutionScale": 0.8,
+          "calls": 2113,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 66.59999999999854
+        },
+        {
+          "simulationMs": 0,
+          "audioMs": 0,
+          "renderCpuMs": 20.5,
+          "gpuMs": 74.279291,
+          "resolutionScale": 0.8,
+          "calls": 2341,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0,
+          "renderCpuMs": 18.90000009536743,
+          "gpuMs": 65.374916,
+          "resolutionScale": 0.8,
+          "calls": 2254,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 33.400000000001455
+        },
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0,
+          "renderCpuMs": 72.09999990463257,
+          "gpuMs": 62.285833,
+          "resolutionScale": 0.775,
+          "calls": 2167,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 66.70000000000073
+        },
+        {
+          "simulationMs": 0.2999999523162842,
+          "audioMs": 0,
+          "renderCpuMs": 68.39999985694885,
+          "gpuMs": 64.107124,
+          "resolutionScale": 0.75,
+          "calls": 2194,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 66.70000000000073
+        }
+      ],
+      "last120FrameP95Ms": 16.700000000000728
+    }
+  ],
+  "errors": []
+}

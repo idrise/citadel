@@ -65,9 +65,10 @@ test("a real human win keeps the arena alive for neon fireworks and scene rematc
     let seconds = 0;
     seconds < 120 &&
     (await page.getByLabel("Round phase", { exact: true }).textContent()) !== "finished";
-    seconds += 1
+    seconds += 0.2
   ) {
-    await page.clock.runFor(1000);
+    // Observe the victory before its 0.9s action delay, regardless of when the seeded hit lands.
+    await page.clock.runFor(200);
     const owner = (await page.getByLabel("Ball 0 owner", { exact: true }).allTextContents())[0];
     if (owner) owners.add(owner);
   }

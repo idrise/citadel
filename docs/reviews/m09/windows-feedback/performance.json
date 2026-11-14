@@ -1,0 +1,259 @@
+{
+  "conditions": "30s per sample; native Chromium on this Mac, five optional static idle tabs; not Windows or physical mobile; ordinary simulation, real audio scheduling and rendering",
+  "results": [
+    {
+      "mobile": false,
+      "tabs": 1,
+      "summary": {
+        "level": 7,
+        "count": 6,
+        "mobile": false,
+        "music": "playing",
+        "phase": "playing",
+        "caps": 0
+      },
+      "kind": "Local rolling frame diagnostics; nothing uploaded",
+      "totalFrames": 1793,
+      "totalSpikes": 2,
+      "longestMs": 266.70000000000005,
+      "windowFrames": 1793,
+      "intervalMs": {
+        "median": 16.69999999999891,
+        "p95": 16.700000000000728,
+        "p99": 16.80000000000109
+      },
+      "simulationMs": {
+        "median": 0.10000014305114746,
+        "p95": 0.20000004768371582,
+        "p99": 0.3000001907348633
+      },
+      "audioMs": {
+        "median": 0,
+        "p95": 0.10000014305114746,
+        "p99": 0.20000004768371582
+      },
+      "renderCpuMs": {
+        "median": 9.199999809265137,
+        "p95": 11,
+        "p99": 11.600000143051147
+      },
+      "gpuMs": {
+        "median": 12.889541,
+        "p95": 24.949166,
+        "p99": 31.317416
+      },
+      "spikes": [
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0,
+          "renderCpuMs": 10.400000095367432,
+          "gpuMs": null,
+          "resolutionScale": 1,
+          "calls": 2118,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 266.70000000000005
+        },
+        {
+          "simulationMs": 0.20000004768371582,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 10.399999856948853,
+          "gpuMs": null,
+          "resolutionScale": 1,
+          "calls": 2136,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 150
+        }
+      ]
+    },
+    {
+      "mobile": false,
+      "tabs": 6,
+      "summary": {
+        "level": 7,
+        "count": 6,
+        "mobile": false,
+        "music": "playing",
+        "phase": "playing",
+        "caps": 0
+      },
+      "kind": "Local rolling frame diagnostics; nothing uploaded",
+      "totalFrames": 1795,
+      "totalSpikes": 2,
+      "longestMs": 150.10000000000002,
+      "windowFrames": 1795,
+      "intervalMs": {
+        "median": 16.699999999999818,
+        "p95": 16.700000000000728,
+        "p99": 16.80000000000109
+      },
+      "simulationMs": {
+        "median": 0.10000014305114746,
+        "p95": 0.20000004768371582,
+        "p99": 0.3000001907348633
+      },
+      "audioMs": {
+        "median": 0,
+        "p95": 0.10000014305114746,
+        "p99": 0.10000014305114746
+      },
+      "renderCpuMs": {
+        "median": 9.200000047683716,
+        "p95": 11,
+        "p99": 11.799999952316284
+      },
+      "gpuMs": {
+        "median": 12.26525,
+        "p95": 17.048958,
+        "p99": 22.232125
+      },
+      "spikes": [
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 10.900000095367432,
+          "gpuMs": null,
+          "resolutionScale": 1,
+          "calls": 2118,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 49.89999999999998
+        },
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0.09999990463256836,
+          "renderCpuMs": 12,
+          "gpuMs": null,
+          "resolutionScale": 1,
+          "calls": 2154,
+          "level": 7,
+          "balls": 1,
+          "intervalMs": 150.10000000000002
+        }
+      ]
+    },
+    {
+      "mobile": false,
+      "tabs": 6,
+      "summary": {
+        "level": 100,
+        "count": 6,
+        "mobile": false,
+        "music": "playing",
+        "phase": "playing",
+        "caps": 0
+      },
+      "kind": "Local rolling frame diagnostics; nothing uploaded",
+      "totalFrames": 1793,
+      "totalSpikes": 2,
+      "longestMs": 150,
+      "windowFrames": 1793,
+      "intervalMs": {
+        "median": 16.69999999999891,
+        "p95": 16.700000000000728,
+        "p99": 16.80000000000109
+      },
+      "simulationMs": {
+        "median": 0.3000001907348633,
+        "p95": 1.7000000476837158,
+        "p99": 2.299999952316284
+      },
+      "audioMs": {
+        "median": 0,
+        "p95": 0.5,
+        "p99": 1.3999998569488525
+      },
+      "renderCpuMs": {
+        "median": 6.900000095367432,
+        "p95": 9.200000047683716,
+        "p99": 10.099999904632568
+      },
+      "gpuMs": {
+        "median": 10.347499,
+        "p95": 17.000666,
+        "p99": 23.740124
+      },
+      "spikes": [
+        {
+          "simulationMs": 0.10000014305114746,
+          "audioMs": 0,
+          "renderCpuMs": 7.900000095367432,
+          "gpuMs": null,
+          "resolutionScale": 1,
+          "calls": 1008,
+          "level": 100,
+          "balls": 1,
+          "intervalMs": 49.900000000000034
+        },
+        {
+          "simulationMs": 0.2999999523162842,
+          "audioMs": 0.10000014305114746,
+          "renderCpuMs": 6.599999904632568,
+          "gpuMs": null,
+          "resolutionScale": 1,
+          "calls": 1011,
+          "level": 100,
+          "balls": 1,
+          "intervalMs": 150
+        }
+      ]
+    },
+    {
+      "mobile": true,
+      "tabs": 1,
+      "summary": {
+        "level": 100,
+        "count": 6,
+        "mobile": true,
+        "music": "playing",
+        "phase": "playing",
+        "caps": 0
+      },
+      "kind": "Local rolling frame diagnostics; nothing uploaded",
+      "totalFrames": 1794,
+      "totalSpikes": 1,
+      "longestMs": 133.29999999999995,
+      "windowFrames": 1794,
+      "intervalMs": {
+        "median": 16.69999999999891,
+        "p95": 16.799999999999272,
+        "p99": 16.800000000000182
+      },
+      "simulationMs": {
+        "median": 0.2999999523162842,
+        "p95": 1.7999999523162842,
+        "p99": 2.3999998569488525
+      },
+      "audioMs": {
+        "median": 0,
+        "p95": 0.5,
+        "p99": 1.5999999046325684
+      },
+      "renderCpuMs": {
+        "median": 4.799999952316284,
+        "p95": 6.700000047683716,
+        "p99": 7.400000095367432
+      },
+      "gpuMs": {
+        "median": 2.662499,
+        "p95": 5.593041,
+        "p99": 10.3685
+      },
+      "spikes": [
+        {
+          "simulationMs": 0.09999990463256836,
+          "audioMs": 0.10000014305114746,
+          "renderCpuMs": 5.599999904632568,
+          "gpuMs": null,
+          "resolutionScale": 1,
+          "calls": 513,
+          "level": 100,
+          "balls": 1,
+          "intervalMs": 133.29999999999995
+        }
+      ]
+    }
+  ],
+  "errors": []
+}
