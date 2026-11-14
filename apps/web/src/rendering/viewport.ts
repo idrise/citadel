@@ -1,3 +1,5 @@
+import { createAdaptiveResolution } from "./adaptive-resolution";
+import { createGpuTimer } from "./gpu-timer";
 import { MAX_PLAYERS } from "../simulation/player-count";
 import { seatLights } from "./seat-lights";
 import { createSettingsControls } from "../input/settings-controls";
@@ -46,11 +48,15 @@ export function createViewport(
 ) {
   const mobile = navigator.maxTouchPoints > 0 || matchMedia("(pointer: coarse)").matches;
   const renderer = new WebGLRenderer({ antialias: !mobile, powerPreference: "high-performance" });
+  renderer.info.autoReset = false;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
   renderer.shadowMap.enabled = !mobile;
   renderer.shadowMap.type = PCFSoftShadowMap;
+  const resolution = createAdaptiveResolution();
+  const gpu = createGpuTimer(renderer.getContext() as WebGL2RenderingContext);
+  let renderCpuMs = 0;
   const canvas = renderer.domElement;
   canvas.tabIndex = 0;
   canvas.setAttribute("aria-label", "Citadel arena");
@@ -91,6 +97,7 @@ export function createViewport(
   const resize = () => {
     const width = Math.max(container.clientWidth, 1);
     const height = Math.max(container.clientHeight, 1);
+    resolution.reset();
     aspect = width / height;
     motion.layout(aspect);
     fitArenaCamera(camera, bounds, aspect, framingPoints, FOREGROUND_PADDING);
@@ -102,6 +109,17 @@ export function createViewport(
   resize();
   return {
     canvas,
+    get performance() {
+      return {
+        renderCpuMs,
+        gpuMs: gpu.milliseconds,
+        resolutionScale: resolution.scale,
+        calls: renderer.info.render.calls,
+      };
+    },
+    frameBudget(intervalMs: number, otherCpuMs: number, active: boolean) {
+      resolution.sample(intervalMs, otherCpuMs, renderCpuMs, gpu.milliseconds, active);
+    },
     get titleMoving() {
       return titleMoving;
     },
@@ -120,13 +138,16 @@ export function createViewport(
       );
     },
     render(state: MatchState, dt: number, options: ViewOptions) {
-      const pixelRatio = effectsProfile(
-        options.quality,
-        options.reducedEffects,
-        window.devicePixelRatio,
-        renderer.capabilities.maxSamples,
-        mobile,
-      ).pixelRatio;
+      const renderBegin = performance.now();
+      renderer.info.reset();
+      const pixelRatio =
+        effectsProfile(
+          options.quality,
+          options.reducedEffects,
+          window.devicePixelRatio,
+          renderer.capabilities.maxSamples,
+          mobile,
+        ).pixelRatio * resolution.scale;
       if (renderer.getPixelRatio() !== pixelRatio) {
         renderer.setPixelRatio(pixelRatio);
         bloom.resize(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1));
@@ -248,12 +269,16 @@ export function createViewport(
       worldGrid.material.uniforms.musicWave!.value = options.reducedEffects
         ? -1
         : (options.musicWave ?? -1);
+      gpu.begin();
       bloom.render(dt, options.reducedEffects, pulse, options.quality);
+      gpu.end();
+      renderCpuMs = performance.now() - renderBegin;
     },
     dispose() {
       observer.disconnect();
       controls.dispose();
       settingsControls.dispose();
+      gpu.dispose();
       bloom.dispose();
       menu.dispose();
       arena.dispose();

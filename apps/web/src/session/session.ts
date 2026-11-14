@@ -1,3 +1,4 @@
+import { createFrameDiagnostics, type FrameSample } from "./frame-diagnostics";
 import { createDebugLevels, debugLevelStep } from "./debug-levels";
 import { levelBriefingTiming } from "./briefing-timing";
 import { levelDifficulty } from "../simulation/difficulty";
@@ -54,6 +55,14 @@ export function createSession(
   onSettings: (settings: GameSettings) => void = () => {},
   onReached: (level: number) => void = () => {},
 ) {
+  const diagnostics = createFrameDiagnostics();
+  const host = window as Window & {
+    __citadelPerformance?: () => ReturnType<typeof diagnostics.snapshot>;
+  };
+  const previousDiagnostics = host.__citadelPerformance;
+  const readDiagnostics = () => diagnostics.snapshot();
+  host.__citadelPerformance = readDiagnostics;
+  let previousFrame: Omit<FrameSample, "intervalMs"> | undefined;
   const debug = createDebugLevels();
   let savedLevel = level;
   let bestLevel = level;
@@ -162,6 +171,8 @@ export function createSession(
     if (value) input.release();
     if (value) touch.release();
     clock.reset();
+    previousFrame = undefined;
+    lastTimestamp = 0;
     present([], 0);
     report();
   };
@@ -232,6 +243,9 @@ export function createSession(
     { signal: abort.signal },
   );
   const animate = (timestamp: number) => {
+    const intervalMs = lastTimestamp ? timestamp - lastTimestamp : 0;
+    if (previousFrame && !paused && started) diagnostics.record({ ...previousFrame, intervalMs });
+    const simulationBegin = performance.now();
     const delta = lastTimestamp ? Math.min((timestamp - lastTimestamp) / 1000, 0.1) : 0;
     lastTimestamp = timestamp;
     const events: GameEvent[] = [];
@@ -250,6 +264,8 @@ export function createSession(
             notice = `${SEATS[event.seat]!.name} lost a piece. ${alive(state.players[event.seat]!) ? "Revenge serve." : "Fortress eliminated."}`;
         }
       });
+    const simulationMs = performance.now() - simulationBegin;
+    const audioBegin = performance.now();
     const result = started ? resultFor(state) : null;
     if (result && !debug.active) onComplete(result);
     const observed = observer.observe(events, state.balls.length);
@@ -259,7 +275,16 @@ export function createSession(
     );
     music.setPlaying(started && !paused && state.phase !== "finished");
     if (started && state.phase === "finished" && !paused) endingTime += delta;
+    const audioMs = performance.now() - audioBegin;
     present(observed, paused && started ? 0 : delta);
+    viewport.frameBudget(intervalMs, simulationMs + audioMs, !paused && state.phase === "playing");
+    previousFrame = {
+      simulationMs,
+      audioMs,
+      ...viewport.performance,
+      level,
+      balls: state.balls.length,
+    };
     if (state.phase === "finished" || !alive(state.players[humanSeat]!)) {
       input.release();
       touch.release();
@@ -421,6 +446,8 @@ export function createSession(
     music = createGameMusic(seed, humanSeat);
     music.configure(settings);
     clock.reset();
+    previousFrame = undefined;
+    lastTimestamp = 0;
     present([], 0);
     report();
   }
@@ -472,6 +499,10 @@ export function createSession(
       present([], 0);
     },
     dispose() {
+      if (host.__citadelPerformance === readDiagnostics) {
+        if (previousDiagnostics) host.__citadelPerformance = previousDiagnostics;
+        else delete host.__citadelPerformance;
+      }
       cancelAnimationFrame(frame);
       abort.abort();
       input.dispose();
