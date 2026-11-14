@@ -2,6 +2,7 @@ import { isPlayerCount } from "../simulation/player-count";
 import type { PlayerCount } from "../simulation/arena";
 import { createSettings, type GameSettings } from "./settings";
 export const PREFERENCES_KEY = "citadel.solo.v1";
+export const DEFAULT_PLAYER_COUNT: PlayerCount = 6;
 export interface SoloPreferences {
   count: PlayerCount;
   humanSeat: number;
@@ -10,11 +11,13 @@ export interface SoloPreferences {
 const record = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 export function parsePreferences(raw: string | null, reduced = false): SoloPreferences {
-  const fallback = { count: 4 as PlayerCount, humanSeat: 0, settings: createSettings(reduced) };
+  const fallback = { count: DEFAULT_PLAYER_COUNT, humanSeat: 0, settings: createSettings(reduced) };
   try {
     const source: unknown = JSON.parse(raw ?? "null");
     if (!record(source) || source.version !== 1 || !record(source.settings)) return fallback;
-    const count = isPlayerCount(source.count) ? (Number(source.count) as PlayerCount) : 4;
+    const count = isPlayerCount(source.count)
+      ? (Number(source.count) as PlayerCount)
+      : DEFAULT_PLAYER_COUNT;
     const seat = Number.isInteger(source.humanSeat)
       ? Math.max(0, Math.min(count - 1, Number(source.humanSeat)))
       : 0;

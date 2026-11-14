@@ -42,6 +42,8 @@ ball count and pickups (introduced at level 5). A ball unlocks every 6–7 level
 reaching 16 at level 100. Scoreless rallies gradually accelerate after eight
 active seconds and reset to normal speed when that ball scores. A first win advances to level 2; three consecutive losses
 demote one level with a notice. Earlier losses retry the same challenge.
+The title starts with six players on a fresh visit. Adjust the count with the title's
+player-count buttons; your chosen count is remembered on later visits.
 Two seats start with a rectangle, then triangle, square, pentagon and hexagon;
 7–16 seats use larger regular polygons. A deterministic itinerary mixes Classic,
 Wide, Faceted, Compact and Spacious arenas between levels. New layouts are

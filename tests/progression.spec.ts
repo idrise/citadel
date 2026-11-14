@@ -105,6 +105,7 @@ test("a returning phone player keeps their saved level regardless of time away",
   );
   await page.goto("./");
   await page.clock.pauseAt(now + 1000);
+  await choosePlayers(page, 4);
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText("80");
   await page.reload();
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText("80");

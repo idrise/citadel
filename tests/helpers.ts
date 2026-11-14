@@ -6,6 +6,8 @@ export async function openGame(page: Page, reduced = true, seed = 2026) {
   await page.clock.install();
   await page.goto(`./?seed=${seed}`);
   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 60000));
+  // Keep existing seeded gameplay fixtures at four; fresh-load coverage uses page.goto directly.
+  await choosePlayers(page, 4);
   if (reduced) await configureGame(page, { reducedEffects: true });
 }
 export async function openSettings(page: Page) {

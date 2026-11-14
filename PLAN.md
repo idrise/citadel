@@ -1,7 +1,7 @@
 # CITADEL — PLAN.md
 
 **Status:** Shared design in progress; confirmed rules and provisional prototype experiments distinguished below.  
-**Updated:** 13 November 2026\
+**Updated:** 14 November 2026\
 **Genre:** Fast, competitive, polygon-arena paddle/ball survival  
 **Target:** Understandable, tense matches that usually resolve in approximately **two minutes**. Difficulty is ramped as the game goes on.
 **Players:** 2–16 seats as an experimental local test ceiling, initially **one human and the remaining seats filled by bots**\
@@ -464,6 +464,18 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 - **Permanent boundary:** Music observes events only. Musical quantisation delays sounds, never collisions, rules, inputs, health, spawning or RNG. No music-driven camera motion. User accepted the detour for now and requested M05; full M06/M07 remain unstarted.
 
 ### Progress / approval ledger
+
+14 November default roster amendment: fresh, missing or invalid solo preferences
+start at six players. The owner explicitly chose to remember subsequent player-count
+adjustments, so valid saved rosters (including sixteen) remain intact. Existing
+settings, seat clamping and progression retain their storage contracts. Seeded
+gameplay browser fixtures explicitly select four; fresh-load checks exercise the
+six-player default and actual title controls on desktop and touch.
+Checks: 514 unit tests / 90 files, all 23 selected production Chromium browser checks,
+scoped format/lint/types, diff check and root build pass. Desktop and phone fresh
+title screenshots are in `docs/reviews/m09/default-roster/`. The stable local review
+build at `http://localhost:5179/` is refreshed; existing bundle-size advice remains.
+No physical-device validation or publication is claimed.
 
 13 November serving/tactics checkpoint: moving launches now inherit the same signed,
 100ms remembered swipe curve as returns. A stationary bat launches straight; speed,

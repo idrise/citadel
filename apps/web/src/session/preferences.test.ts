@@ -20,7 +20,7 @@ it("round-trips solo choices without storing a match or audio resources", () => 
 });
 it("validates version/types/ranges and clamps a restored human seat to the roster", () => {
   expect(parsePreferences("broken", true).settings.reducedEffects).toBe(true);
-  expect(parsePreferences('{"version":99}').count).toBe(4);
+  expect(parsePreferences('{"version":99}').count).toBe(6);
   const restored = parsePreferences(
     JSON.stringify({
       version: 1,
@@ -49,6 +49,31 @@ it("validates version/types/ranges and clamps a restored human seat to the roste
   expect(restored.settings).not.toHaveProperty("maxBalls");
   expect(restored.settings).not.toHaveProperty("ballInterval");
 });
+it("starts fresh or invalid preferences at six players, including unavailable storage", () => {
+  for (const raw of [null, "broken", '{"version":99}', '{"version":1,"settings":{}}'])
+    expect(parsePreferences(raw)).toMatchObject({ count: 6, humanSeat: 0 });
+  for (const count of [0, 1, 17, 2.5, "16", null])
+    expect(parsePreferences(JSON.stringify({ version: 1, count, settings: {} })).count).toBe(6);
+  expect(loadPreferences(false, () => ({ getItem: () => null })).count).toBe(6);
+  expect(
+    loadPreferences(false, () => {
+      throw new Error("blocked");
+    }).count,
+  ).toBe(6);
+});
+it.each([2, 6, 16] as const)(
+  "restores a chosen %i-player roster instead of replacing it with the default",
+  (count) => {
+    let raw = "";
+    const preferences = { count, humanSeat: count - 1, settings: createSettings() };
+    savePreferences(preferences, () => ({
+      setItem: (_key, value) => {
+        raw = value;
+      },
+    }));
+    expect(loadPreferences(false, () => ({ getItem: () => raw }))).toEqual(preferences);
+  },
+);
 it("remains playable when storage is blocked, full or unavailable", () => {
   const blocked = () => {
     throw new Error("blocked");

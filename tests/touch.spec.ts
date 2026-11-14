@@ -12,8 +12,10 @@ for (const count of [2, 6]) {
   test(`touch layout starts with ${count} players`, async ({ page }, testInfo) => {
     test.setTimeout(120000);
     await page.goto("./");
-    const action = count < 4 ? "Decrease players" : "Increase players";
-    for (let index = 0; index < 2; index++) await page.getByRole("button", { name: action }).tap();
+    const current = Number(await page.getByLabel("Player count").textContent());
+    const action = count < current ? "Decrease players" : "Increase players";
+    for (let n = current; n !== count; n += Math.sign(count - current))
+      await page.getByRole("button", { name: action }).tap();
     await expect(page.getByLabel("Player count")).toHaveText(String(count));
     await page.getByRole("button", { name: "Start", exact: true }).tap();
     await expect(page.getByRole("button", { name: "Pause", exact: true })).toBeVisible();
