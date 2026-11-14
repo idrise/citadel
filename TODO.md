@@ -1,4 +1,4 @@
-All authored TODO items are implemented locally; awaiting hands-on review. See
+Earlier TODO items are implemented locally; new playtest proposals at the end await review. See
 [the feedback review](docs/MOBILE_FEEDBACK_REVIEW.md) and
 [the triangle/rally review](docs/TRIANGLE_RALLY_REVIEW.md), and
 [the scene Retry and wall-gap correction](docs/SCENE_RETRY_GAP_REVIEW.md) for checks, screenshots,
@@ -25,4 +25,14 @@ audio, measurements and physical-device limits. See also [the pre-signoff tweaks
 - [x] Hitting a pickup should cause the ball to bounce off of it. The transition to the players bank needs to be emphasized a bit more so it's obvious what happened and why.
 - [x] When you press the settings panel it should in game ui withonly resume, soundfx volume, music volume, sensitivity on normal browser. Touch interface may not require this setting. Remove all the other stuff like how to play etc, number of players, time to x' anything like that just pull it out. This should mean we have no react ui at this point. Remove all the react components that we no longer use.
 - [x] Double check the bot code and make sure that it has tactics for getting pickups, sneak attack when holding the ball. these sorts of things.
-- [ ]
+
+## Playtest feedback — 14 November 2026
+
+Proposals for review only; these changes have not been implemented.
+
+- [ ] **Centre the arena when the bat is centred.** Remove autonomous time-driven camera yaw/tilt drift during play. Keep a small, symmetric bat-driven shimmy around the current fortress bisector, with a centre dead zone and damped return to exact neutral. Retain the danger zoom and camera-independent steering. Verify neutral alignment after waiting, restarting, resizing and elimination morphs.
+- [ ] **Make idle bots look attentive.** When no interception or held-serve tactic is active, slowly follow a visible active ball with small, infrequent, seeded variation; return to a neutral guard when no active ball exists. Use the ordinary paddle motor and collision pose, retain level-specific reaction/error/speed limits, and give defensive/serve decisions immediate priority. Keep idle variation separate from the existing gameplay random stream so replays and other decisions stay reproducible.
+- [ ] **Introduce level-specific bat profiles.** Add shallow, standard and deeper convex bows, assigned deterministically across the level ladder and shared by every player in that level. Preserve the existing width/difficulty ramp and announce profile changes in the level introduction. Rendering, collisions, contact aiming, forecasts and bot planning must use the same authoritative profile; check wall clearance and reachable bank shots across all supported rosters.
+- [ ] **Confirm playtest sharing permission.** Confirm with the owner whether David can pass on the existing public playtest link. This is a communication follow-up; no new sharing UI or deployment is needed.
+- [ ] **Give the foreground more breathing room.** Adjust camera framing to reserve roughly 6% of viewport height below the front wall and human fortress as an initial tuning target. Preserve the complete playable board, mobile safe areas and the fixed bottom-menu/title anchors. Check the margin through resize, portrait/landscape rotation, maximum danger zoom and arena morphs; avoid adding an opaque letterbox or changing gameplay geometry.
+- [ ] **Make the victory star upright on screen.** Capture a viewer-relative orientation at victory start, with one outer point facing screen-top, away from the camera. Carry that orientation through the existing continuous morph without a final snap; retain the centred winner's bat/containers and smooth return to the next arena. Verify every selectable human seat across 2–16 players, portrait/landscape and reduced motion.
