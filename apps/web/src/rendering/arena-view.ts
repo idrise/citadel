@@ -10,6 +10,7 @@ import { createSupplyView } from "./supply-view";
 import {
   ARENA,
   batHalfAngle,
+  batRadius,
   SQUARE_ARENA,
   createArena,
   fortress,
@@ -256,7 +257,12 @@ export function createArenaView(
         if (markPosition) mark.position.set(markPosition.x, 0.15, markPosition.y);
         if (ending?.winner === player.id) mark.position.set(ending.centre.x, 0.15, ending.centre.y);
         const paddle = stage.paddles[player.id]!;
-        resizePaddle(paddle, batHalfAngle(state.arena), SEATS[player.id]!.colour);
+        resizePaddle(
+          paddle,
+          batHalfAngle(state.arena),
+          SEATS[player.id]!.colour,
+          batRadius(state.arena),
+        );
         paddle.position.set(home.anchor.x, 0.95 * appearance, home.anchor.y);
         paddle.rotation.y = -player.angle;
         paddle.visible = alive(player);

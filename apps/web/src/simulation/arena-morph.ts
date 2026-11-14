@@ -1,5 +1,13 @@
 import { carrySupplies } from "./supplies";
-import { ARENA, createArena, fortress, type ArenaGeometry, type PlayerCount } from "./arena";
+import {
+  ARENA,
+  batRadius,
+  batHalfAngle,
+  createArena,
+  fortress,
+  type ArenaGeometry,
+  type PlayerCount,
+} from "./arena";
 import { fitDefenceLimits } from "./defence-limits";
 import { carryPoint, containCircle } from "./polygon";
 import { matchOutlines, blendOutline } from "./outline-transition";
@@ -13,8 +21,24 @@ export function beginArenaMorph(state: MatchState): void {
   if (survivors.length < 2 || (state.morph?.to.count ?? state.arena.count) === survivors.length)
     return;
   const count = survivors.length as PlayerCount;
-  const batScale = (state.arena.batHalfAngle ?? ARENA.batHalfAngle) / ARENA.batHalfAngle;
-  const template = createArena(count, survivors, 0, batScale, state.arena.variant);
+  const batScale =
+    state.difficulty?.batScale ??
+    (state.arena.batProfile
+      ? Math.asin(
+          Math.min(
+            1,
+            (batRadius(state.arena) * Math.sin(batHalfAngle(state.arena))) / ARENA.batRadius,
+          ),
+        ) / ARENA.batHalfAngle
+      : (state.arena.batHalfAngle ?? ARENA.batHalfAngle) / ARENA.batHalfAngle);
+  const template = createArena(
+    count,
+    survivors,
+    0,
+    batScale,
+    state.arena.variant,
+    state.arena.batProfile,
+  );
   let alignment = 0,
     turn = 0;
   for (const id of survivors) {
@@ -31,6 +55,7 @@ export function beginArenaMorph(state: MatchState): void {
     Math.atan2(turn, alignment),
     batScale,
     state.arena.variant,
+    state.arena.batProfile,
   );
   // Retain eliminated seat metadata for event consumers/camera; those seats never defend again.
   target.fortresses.push(...state.arena.fortresses.filter((seat) => !survivors.includes(seat.id)));

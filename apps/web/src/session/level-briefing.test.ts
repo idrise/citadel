@@ -52,8 +52,14 @@ it("states both safe retries and imminent demotion without threatening level-one
 
 it("compares the actual previous attempt when wins skip levels, losses retry, or a demotion reverses a milestone", () => {
   expect(levelHighlights(9, 7)).toContain("EXTRA BALL");
-  expect(levelHighlights(21, 18)).toEqual(["EXTRA BALL", "MORE PICKUPS"]);
+  expect(levelHighlights(21, 18)).toEqual(["DEEPER BAT", "EXTRA BALL"]);
   expect(levelHighlights(9, 9)).toEqual([]);
   expect(levelHighlights(7, 8)).toContain("FEWER BALLS");
-  expect(levelHighlights(95, 90)).toEqual(["EXTRA BALL", "MORE PICKUPS"]);
+  expect(levelHighlights(95, 90)).toEqual(["STANDARD BAT", "EXTRA BALL"]);
+});
+
+it("announces a changed physical bat profile before the first launch", () => {
+  expect(levelHighlights(6, 5)).toEqual(["SHALLOW BAT", "SPACIOUS ARENA"]);
+  expect(levelHighlights(11, 10)).toContain("DEEPER BAT");
+  expect(levelHighlights(16, 15)).toContain("STANDARD BAT");
 });

@@ -1,4 +1,5 @@
 import { ARENA } from "./arena-tuning";
+import { BAT_PROFILES } from "./bat-profile";
 import type { ArenaGeometry } from "./arena";
 import { polygonEdges } from "./polygon";
 import { add, angleDifference, angleOf, dot, scale, sub, unit } from "./vector";
@@ -8,20 +9,20 @@ import { add, angleDifference, angleOf, dot, scale, sub, unit } from "./vector";
 export function fitDefenceLimits(arena: ArenaGeometry): ArenaGeometry {
   const edges = polygonEdges(arena.vertices);
   const halfAngle = arena.batHalfAngle ?? ARENA.batHalfAngle;
+  const radius = BAT_PROFILES[arena.batProfile ?? "standard"].radius;
   return {
     ...arena,
     fortresses: arena.fortresses.map((home) => {
       const safe = (offset: number) => {
         const angle = home.direction + offset,
-          centre = add(home.anchor, scale(unit(angle), ARENA.railRadius - ARENA.batRadius));
+          centre = add(home.anchor, scale(unit(angle), ARENA.railRadius - radius));
         return edges.every((edge) => {
           const opposite = angleDifference(angleOf(scale(edge.normal, -1)), angle);
           const samples = [-halfAngle, halfAngle];
           if (Math.abs(opposite) <= halfAngle) samples.push(opposite);
           const distance =
             dot(sub(centre, edge.start), edge.normal) +
-            ARENA.batRadius *
-              Math.min(...samples.map((delta) => dot(unit(angle + delta), edge.normal)));
+            radius * Math.min(...samples.map((delta) => dot(unit(angle + delta), edge.normal)));
           return distance >= ARENA.paddleThickness / 2 + (arena.batWallGap ?? 0.015);
         });
       };

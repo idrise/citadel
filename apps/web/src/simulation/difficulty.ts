@@ -1,5 +1,6 @@
 import { levelArenaShape, type ArenaShape } from "./arena-variant";
 import { clamp } from "./vector";
+import { levelBatProfile, type BatProfile } from "./bat-profile";
 
 /** Frozen for a whole attempt; promotion/demotion only changes the following round. */
 export interface RoundDifficulty {
@@ -10,6 +11,7 @@ export interface RoundDifficulty {
   readonly ballSpeed: number;
   readonly pickupCount: number;
   readonly batScale: number;
+  readonly batProfile: BatProfile;
 }
 
 /** Stagger ball/pickup unlocks, with continuous speed and bat-width ramps between them. */
@@ -20,6 +22,7 @@ export function levelDifficulty(requested: number): RoundDifficulty {
   return {
     level,
     arenaShape: levelArenaShape(level),
+    batProfile: levelBatProfile(level),
     maxBalls,
     ballInterval: Math.min(12, 30 / Math.max(1, maxBalls - 1)),
     ballSpeed: 14 + 20 * t,

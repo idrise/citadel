@@ -1,5 +1,6 @@
 import { levelDifficulty } from "../simulation/difficulty";
 import { botLevelProfile } from "../simulation/bot-level";
+import { BAT_PROFILES } from "../simulation/bat-profile";
 
 /** Describe the challenge, including on retries or when progression skips levels. */
 export function levelHighlights(requested: number, previousLevel = requested - 1): string[] {
@@ -8,6 +9,8 @@ export function levelHighlights(requested: number, previousLevel = requested - 1
   if (current.level === 1) return ["ONE BALL - WIDE BAT"];
   if (current.level === previous.level) return [];
   const messages: string[] = [];
+  if (current.batProfile !== previous.batProfile)
+    messages.push(BAT_PROFILES[current.batProfile].label);
   if (current.maxBalls > previous.maxBalls) messages.push("EXTRA BALL");
   if (current.maxBalls < previous.maxBalls) messages.push("FEWER BALLS");
   if (current.pickupCount < previous.pickupCount) messages.push("FEWER PICKUPS");

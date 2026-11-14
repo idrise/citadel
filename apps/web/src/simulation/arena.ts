@@ -12,6 +12,7 @@ import { add, angleDifference, clamp, scale, unit, type Vec2 } from "./vector";
 
 import { ARENA } from "./arena-tuning";
 import { fitDefenceLimits } from "./defence-limits";
+import { BAT_PROFILES, profileHalfAngle, type BatProfile } from "./bat-profile";
 export { ARENA, FIXED_DT, MAX_BALLS } from "./arena-tuning";
 export const TRIANGLE_FORTRESS_INSET = 2.6;
 export const TRIANGLE_BAT_WALL_GAP = 0.7;
@@ -19,6 +20,7 @@ export interface ArenaGeometry {
   count: PlayerCount;
   variant?: ArenaShape;
   batHalfAngle?: number;
+  batProfile?: BatProfile;
   /** Skin clearance at every legal bat pose; triangle lanes must admit a whole ball. */
   batWallGap?: number;
   vertices: Vec2[];
@@ -40,6 +42,7 @@ export function createArena(
   rotation = 0,
   batScale = 1,
   variant: ArenaShape = "classic",
+  batProfile: BatProfile = "standard",
 ): ArenaGeometry {
   if (!isPlayerCount(count) || ids.length !== count || new Set(ids).size !== count)
     throw new Error("Arena needs 2–16 distinct seats");
@@ -113,7 +116,10 @@ export function createArena(
     ...(variant === "classic" ? {} : { variant }),
     fortresses,
     ...(count === 3 ? { batWallGap: TRIANGLE_BAT_WALL_GAP } : {}),
-    ...(batScale === 1 ? {} : { batHalfAngle: ARENA.batHalfAngle * batScale }),
+    ...(batProfile === "standard" ? {} : { batProfile }),
+    ...(batScale === 1 && batProfile === "standard"
+      ? {}
+      : { batHalfAngle: profileHalfAngle(batProfile, batScale) }),
   });
 }
 export const SQUARE_ARENA = createArena();
@@ -152,7 +158,11 @@ export function railPosition(
 
 /** Bat curvature is independent of the arc along which its midpoint travels. */
 export function batCentre(seat: number, angle: number, arena: ArenaGeometry = SQUARE_ARENA): Vec2 {
-  return railPosition(seat, angle, ARENA.railRadius - ARENA.batRadius, arena);
+  return railPosition(seat, angle, ARENA.railRadius - batRadius(arena), arena);
+}
+
+export function batRadius(arena: ArenaGeometry = SQUARE_ARENA): number {
+  return BAT_PROFILES[arena.batProfile ?? "standard"].radius;
 }
 
 /** Physical arc extent shared by collision, rail limits, previews and rendering. */
