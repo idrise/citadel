@@ -271,6 +271,111 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 - Snapshot/replay tests detect unintended gameplay changes. Use explicit event IDs and deterministic tie-break ordering. Cross-browser determinism is a test target, not assumed guaranteed.
 - Performance and accessibility: reduced bloom, motion and particles, clear health indication, keyboard-only path, muted sound support and contrasting player identifiers. Full mobile quality decisions happen after desktop validation.
 
+### Older-machine optimisation plan — proposed, not started
+
+Older computers are slowing down during play. The cause is not yet established:
+TypeScript's types are removed at build time, so the browser runs JavaScript, and
+rendering, GPU bandwidth, simulation, audio, allocation or startup can each be
+the limiting factor. Profile first; do not rewrite the game in another language or
+lower the simulation rate on the assumption that either will fix it. Preserve
+game rules, responsive controls, procedural art and the visual hierarchy.
+
+This is a separately requested optimisation track, **not** an approval of M09 or
+a change to the normal milestone resume order. P01–P04 are proposed reviewable
+checkpoints; begin one only when the owner requests it, record its results here,
+commit coherent task-related changes and stop for review before proceeding.
+Coordinate physical mobile measurements and accessibility with M10 rather than
+claiming that this track completes M10. M09's existing review and device gates
+remain open.
+
+**Existing evidence and tools:** `window.__citadelPerformance()` records a bounded
+local window of frame intervals, simulation, audio, render CPU submission,
+optional asynchronous GPU duration, resolution scale, level, ball count and draw
+calls. There are Low/Medium/High and reduced-effects profiles, adaptive resolution,
+and `tooling/review-stutter.mjs` and `tooling/mobile-simulation-benchmark.ts`.
+Prior Mac tests did not reproduce the reported Windows slowdown; the earlier
+mobile draw-call reduction and adaptive resolution are starting points, not proof
+that older desktop hardware is fixed. GPU timing may be unavailable; a missing
+sample is unknown, not zero. Diagnostic data stays local.
+
+**P01 — Reproduce and establish a baseline** (Not started). Build a repeatable
+production-build benchmark and a short capture guide for the affected machine.
+Record browser/version, OS, CPU/GPU if available, display and viewport size, DPR,
+refresh rate, power mode, quality settings, build revision, and whether hardware
+acceleration is active. Use fixed seeds and repeatable inputs for menu/start,
+normal 2/4/6-seat play, a sustained six-seat level-100/sixteen-ball stress case,
+impacts/elimination and rematch. Measure warm startup separately from steady play;
+repeat runs and report median, p95/p99 frame intervals, long-frame counts and
+durations, simulation/audio/render CPU, available GPU timings, draw calls,
+resolution scale and allocation/GC or long-task evidence where supported. Record
+sample counts and scenario duration; use at least 60 seconds of active steady play
+per sustained scenario, excluding loading, pauses and background time. Compare
+quality levels, reduced effects and a controlled lower render resolution; isolate
+bloom/reflections/shadows/audio only through reproducible diagnostic experiments.
+Use GPU timers asynchronously without blocking; distinguish CPU submission from
+GPU completion, frame pacing, and browser scheduling. Capture a profiler trace on
+the affected machine when possible. Do not infer a bottleneck from FPS alone.
+
+**Acceptance:** A checked-in procedure and results identify the dominant measured
+costs or explicitly state what remains unknown, with repeatable commands, raw
+local evidence and device limitations. Establish an actual before baseline on the
+reported older machine if available; otherwise mark that gate blocked and use
+available machines only for preliminary investigation. Define the exact scenarios
+and proposed device-specific targets for owner review. **STOP: REVIEW REQUIRED — P01.**
+
+**P02 — Remove measured bottlenecks** (Not started; depends on P01 evidence).
+Prioritise the largest verified causes and compare each change against the same
+baseline. Candidate investigations include expensive reflection/bloom/shadow passes
+and render-target sizes; redundant draw calls, scene updates and geometry work;
+fixed-step collision/bot workload and temporary allocations; audio scheduling;
+and shader compilation or synchronous work at Start. These are hypotheses, not a
+mandate to change every system. Reuse resources and batch work where measurements
+justify it. Keep the fixed-step and collision/replay contracts, simulation and
+rendering separation, visual accessibility, and gameplay timing intact. Any
+quality trade-off or proposed simulation-rate change requires explicit review.
+
+**Acceptance:** Before/after results for each targeted scenario on the same
+hardware, browser, resolution and settings, with a trace or measurement tying the
+gain to the change. Unit-test changed code thoroughly, including resource lifecycle
+and behavioural edge cases; run deterministic simulation/replay regressions and
+relevant browser flows. Capture matched visual evidence for presentation changes.
+Report regressions and costs as well as gains. **STOP: REVIEW REQUIRED — P02.**
+
+**P03 — Graceful quality on constrained hardware** (Not started; depends on P01,
+and on P02 where applicable). Evaluate the existing quality presets and adaptive
+resolution against observed bottlenecks; add or adjust controls or adaptation only
+where measured. GPU-bound and CPU-bound workloads need different remedies. Keep
+player choice persistent and accessible; adaptation must be bounded and stable,
+avoid oscillation and visible jumps, recover gradually, and never change physics,
+input sensitivity, layout, or the meaning of reduced-motion/flash preferences.
+Do not force expensive probing or identify a device by a fragile hardware label.
+
+**Acceptance:** Meaningful unit tests cover thresholds, warm-up, cooldown,
+recovery, pauses, missing GPU timings and user overrides as applicable. Matched
+2/4/6-seat renders and actual gameplay show readable balls, paddles and health at
+each supported quality; measured stress runs show adaptation responding to its
+intended bottleneck without degrading unrelated workloads. **STOP: REVIEW REQUIRED — P03.**
+
+**P04 — Validate and protect the gains** (Not started; depends on P02/P03).
+Retest the original affected older computer and at least one other available
+desktop configuration, including integrated graphics where available; include
+physical mobile results under M10 when devices are available. For the agreed
+normal-play scenarios aim for 60 FPS (16.7 ms per frame), report p95 and p99 as
+well as median, and separately disclose stress-case and startup stalls. Agree
+achievable numerical thresholds against the P01 baseline rather than promising
+unmeasured hardware a fixed result. Verify sustained play, input responsiveness,
+focus/background recovery and repeated rematches; report power/thermal conditions
+where relevant. Keep a reproducible benchmark and useful non-flaky correctness
+tests in the repository. Performance thresholds in automated environments are
+diagnostic unless run on controlled hardware with a justified tolerance.
+
+**Acceptance:** Before/after report, commands, revisions, device details, raw
+results and known gaps; `vp check`, `vp test`, `vp build`, relevant browser tests,
+and visual comparisons pass or failures are clearly reported. Provide a local
+demo and a specific hands-on review path. The original reported slowdown is only
+closed after a real-machine retest confirms it; unavailable hardware remains an
+explicit open gate. **STOP: REVIEW REQUIRED — P04.**
+
 ---
 
 ## 6. Milestone sequence and approval gates
