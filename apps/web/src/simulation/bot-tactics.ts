@@ -1,4 +1,5 @@
 import { serveCurve } from "./flight";
+import { idleBotAngle } from "./bot-idle";
 import { planBotServe, servePlanTarget } from "./bot-serve";
 import { ARENA, clampPaddleAngle, fortress } from "./arena";
 import { aimServeAt, serveDirection } from "./aim";
@@ -148,6 +149,7 @@ export function tacticalBotIntent(state: MatchState, seat: number, level: number
     delete bot.stroke;
     delete bot.servePlan;
     delete bot.serveError;
+    bot.targetAngle = idleBotAngle(state, seat, profile.speed, profile.reaction);
   }
   const targetAngle = bot.stroke
     ? clampPaddleAngle(seat, botStrokeAngle(bot.stroke, state.elapsed), state.arena)

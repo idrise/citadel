@@ -32,6 +32,7 @@ export interface BotState {
   serveTarget: Vec2 | null;
   serveError?: number;
   servePlan?: ServePlan;
+  idleAt?: number;
   stroke?: {
     ballId: number;
     angle: number;
