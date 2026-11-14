@@ -52,7 +52,7 @@ it("shows signed rotating spin bands, holds them on pause/reduced motion, and cl
   disposeScene(root);
 });
 
-it("keeps a distance-spaced curved trail, freezes on pause, and clears it on ball replacement", () => {
+it("keeps a time-based curved trail, freezes on pause, and clears it on ball replacement", () => {
   const root = new Group(),
     view = createBallView(root),
     state = createMatch();
@@ -87,7 +87,7 @@ it("keeps a distance-spaced curved trail, freezes on pause, and clears it on bal
   state.tick++;
   ball.id = 99;
   view.update(state, false);
-  expect(trail()).toHaveLength(1);
+  expect(trail()).toHaveLength(0);
   ball.phase = "ready";
   state.tick++;
   view.update(state, false);

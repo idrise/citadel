@@ -1,3 +1,4 @@
+import { createBallTrail } from "./ball-trail";
 import { createReadyCharge } from "./ready-charge";
 import type { EffectsQuality } from "./quality";
 import {
@@ -9,11 +10,10 @@ import {
   Vector3,
   InstancedMesh,
   Matrix4,
-  Quaternion,
 } from "three";
 import { ARENA, FIXED_DT, MAX_BALLS } from "../simulation/arena";
 import type { MatchState } from "../simulation/types";
-import { createSpinView, spinStrength } from "./spin-view";
+import { createSpinView } from "./spin-view";
 import { SEATS } from "./palette";
 import { createBallAura, createBallMaterial } from "./ball-surface";
 
@@ -65,7 +65,8 @@ export function createBallView(root: Group) {
       spin: createSpinView(root),
       aura,
       rotation: 0,
-      positions: [] as Vector3[],
+      history: createBallTrail(),
+      samples: new Float32Array(40),
       id: -1,
     };
   });
@@ -73,7 +74,6 @@ export function createBallView(root: Group) {
   trailMaterial.dispose();
   const charge = createReadyCharge(root);
   const matrix = new Matrix4(),
-    rotation = new Quaternion(),
     scale = new Vector3();
   let lastTick = -1;
   return {
@@ -88,7 +88,6 @@ export function createBallView(root: Group) {
       charge.update(state, reduced, hide, quality);
       balls.forEach((view, index) => {
         const active = state.phase === "finished" || hide ? undefined : state.balls[index];
-        const strength = spinStrength(active?.spin ?? 0);
         const owner =
           active?.phase === "ready" ? active.seat : active ? owners?.get(active.id) : undefined;
         const colour = owner === undefined ? 0xe4f7ff : SEATS[owner]!.colour;
@@ -98,7 +97,7 @@ export function createBallView(root: Group) {
         view.material.emissive.setHex(colour);
         view.aura.material.uniforms.colour!.value.setHex(colour);
         view.occluded.material.color.setHex(colour);
-        view.tailMaterial.opacity = 0.45 + strength * 0.2;
+        view.tailMaterial.opacity = 0.45;
         view.spin.update(active, state.tick, reduced);
         view.mesh.visible = Boolean(active);
         if (active?.id !== view.id || state.tick < lastTick || active?.phase !== "active")
@@ -111,31 +110,26 @@ export function createBallView(root: Group) {
         view.occluded.visible = view.mesh.visible;
         view.occluded.position.copy(view.mesh.position);
         view.occluded.rotation.copy(view.mesh.rotation);
-        if (!active || active.phase !== "active" || active.id !== view.id)
-          view.positions.length = 0;
+        if (!active || active.phase !== "active" || active.id !== view.id || state.tick < lastTick)
+          view.history.reset();
         view.id = active?.id ?? -1;
-        if (active?.phase === "active" && state.tick !== lastTick) {
-          const head = view.positions[0];
-          if (!head || head.distanceTo(view.mesh.position) > 6) {
-            view.positions.length = 0;
-            view.positions.push(view.mesh.position.clone());
-          } else {
-            const distance = head.distanceTo(view.mesh.position);
-            for (let step = 1; step <= Math.floor(distance / 0.12); step++)
-              view.positions.unshift(
-                head.clone().lerp(view.mesh.position, (step * 0.12) / distance),
+        if (active?.phase === "active")
+          view.history.push(state.tick * FIXED_DT, active.position.x, active.position.y);
+        const count =
+          reduced || active?.phase !== "active"
+            ? 0
+            : view.history.sample(
+                state.tick * FIXED_DT,
+                Math.hypot(active.velocity.x, active.velocity.y),
+                Math.min(trailLimit, 20),
+                view.samples,
               );
-            view.positions.length = Math.min(view.positions.length, 20);
-          }
-        }
-        const count = reduced
-          ? 0
-          : Math.min(trailLimit, strength > 0.025 ? 20 : 8, view.positions.length);
         view.trail.count = count;
         view.trail.visible = count > 0;
         for (let part = 0; part < count; part++) {
-          scale.setScalar(Math.max(0, 1 - part / Math.max(1, count)) * (0.8 + strength * 0.15));
-          matrix.compose(view.positions[part]!, rotation, scale);
+          scale.setScalar(Math.max(0, 1 - part / Math.max(1, count)) * 0.8);
+          matrix.makeTranslation(view.samples[part * 2]!, 0.58, view.samples[part * 2 + 1]!);
+          matrix.scale(scale);
           view.trail.setMatrixAt(part, matrix);
         }
         view.trail.instanceMatrix.needsUpdate = count > 0;
