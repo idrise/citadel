@@ -19,7 +19,7 @@ export function cameraDanger(state: MatchState, seat: number): number {
   return danger;
 }
 
-/** Slow bounded orbit and breathing zoom. Pauses/reduced effects hold the current pose. */
+/** Bat-relative shimmy around a stable neutral view. Pause/reduced effects hold the pose. */
 export function createCameraMotion(camera: PerspectiveCamera) {
   const target = new Vector3(CAMERA_TARGET.x, CAMERA_TARGET.y, CAMERA_TARGET.z);
   const offset = camera.position.clone().sub(target);
@@ -29,7 +29,6 @@ export function createCameraMotion(camera: PerspectiveCamera) {
   let homeTilt = Math.acos(offset.y / radius);
   const desktopTilt = homeTilt;
   const homeZoom = camera.zoom;
-  let seconds = 0;
   let shimmy = 0,
     dangerZoom = 0;
   return {
@@ -73,19 +72,23 @@ export function createCameraMotion(camera: PerspectiveCamera) {
     update(dt: number, reduced: boolean, paddleOffset = 0, danger = 0): void {
       if (reduced || dt <= 0) return;
       const step = Math.min(dt, 0.1);
-      seconds += step;
-      const blend = 1 - Math.exp(-step * 3);
-      shimmy += (Math.max(-1, Math.min(1, paddleOffset)) * 0.018 - shimmy) * blend;
+      const blend = 1 - Math.exp(-step * 8);
+      const offset = Math.max(-1, Math.min(1, paddleOffset));
+      const targetShimmy =
+        Math.sign(offset) * Math.max(0, (Math.abs(offset) - 0.03) / 0.97) * 0.018;
+      shimmy += (targetShimmy - shimmy) * blend;
+      if (Math.abs(shimmy - targetShimmy) < 1e-5) shimmy = targetShimmy;
       dangerZoom += (Math.max(0, Math.min(1, danger)) * 0.02 - dangerZoom) * blend;
-      const yaw = homeYaw + Math.sin(seconds * 0.2) * 0.03 + shimmy;
-      const tilt = homeTilt + Math.sin(seconds * 0.145) * 0.016;
+      if (dangerZoom < 1e-5 && danger <= 0) dangerZoom = 0;
+      const yaw = homeYaw + shimmy;
+      const tilt = homeTilt;
       camera.position.set(
         target.x + radius * Math.sin(tilt) * Math.sin(yaw),
         target.y + radius * Math.cos(tilt),
         target.z + radius * Math.sin(tilt) * Math.cos(yaw),
       );
       camera.lookAt(target);
-      camera.zoom = homeZoom * (1 + Math.sin(seconds * 0.19) * 0.0045 + dangerZoom);
+      camera.zoom = homeZoom * (1 + dangerZoom);
     },
   };
 }

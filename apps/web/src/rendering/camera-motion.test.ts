@@ -11,7 +11,7 @@ import {
 import { cameraDanger, createCameraMotion } from "./camera-motion";
 import { createMatch } from "../simulation/match";
 
-it("moves gently within a bounded orbit and keeps the full arena framed", () => {
+it("holds the exact neutral view indefinitely when the bat is centred", () => {
   const camera = createArenaCamera();
   const home = camera.position.clone();
   const target = new Vector3(CAMERA_TARGET.x, CAMERA_TARGET.y, CAMERA_TARGET.z);
@@ -34,13 +34,13 @@ it("moves gently within a bounded orbit and keeps the full arena framed", () => 
           expect(Math.abs(point.y)).toBeLessThan(0.97);
         }
   }
-  expect(largestDrift).toBeGreaterThan(0.5);
+  expect(largestDrift).toBeLessThan(1e-12);
 });
 
 it("freezes without snapping or accumulating hidden motion during reduced effects or pause", () => {
   const camera = createArenaCamera();
   const motion = createCameraMotion(camera);
-  for (let frame = 0; frame < 100; frame++) motion.update(0.05, false);
+  for (let frame = 0; frame < 100; frame++) motion.update(0.05, false, 0.8, 0.5);
   const held = camera.position.clone();
   const rotation = camera.quaternion.clone();
   for (let frame = 0; frame < 100; frame++) {
@@ -49,7 +49,7 @@ it("freezes without snapping or accumulating hidden motion during reduced effect
   }
   expect(camera.position).toEqual(held);
   expect(camera.quaternion.toArray()).toEqual(rotation.toArray());
-  motion.update(1 / 60, false);
+  motion.update(1 / 60, false, 0.8, 0.5);
   expect(camera.position.distanceTo(held)).toBeLessThan(0.01);
 });
 
@@ -58,7 +58,7 @@ it("inverse projection remains correct at every fortress throughout the live cam
   const motion = createCameraMotion(camera);
   const bounds = new Box3(new Vector3(-10, -3, -10), new Vector3(10, 1.3, 10));
   for (let frame = 0; frame < 700; frame++) {
-    motion.update(0.1, false);
+    motion.update(0.1, false, Math.sin(frame * 0.2), frame % 2);
     if (frame % 70 !== 0) continue;
     fitArenaCamera(camera, bounds, frame % 140 ? 0.65 : 2.4);
     for (const seat of FORTRESSES)
@@ -98,8 +98,25 @@ it("smoothly follows the bat and danger while freezing all cues in reduced motio
   expect(camera.position).toEqual(position);
   expect(camera.zoom).toBe(zoom);
   motion.update(0.016, false, -1, 0);
-  expect(camera.position.distanceTo(position)).toBeLessThan(0.1);
+  expect(camera.position.distanceTo(position)).toBeLessThan(0.15);
   expect(camera.zoom).toBeLessThan(zoom);
+});
+
+it("returns symmetrically to exact neutral and recentres after following a new fortress", () => {
+  for (const side of [-1, 1]) {
+    const camera = createArenaCamera(),
+      motion = createCameraMotion(camera);
+    const home = camera.position.clone();
+    for (let i = 0; i < 20; i++) motion.update(0.1, false, side, 0);
+    expect(camera.position.distanceTo(home)).toBeGreaterThan(0.4);
+    for (let i = 0; i < 40; i++) motion.update(0.1, false, side * 0.02, 0);
+    expect(camera.position.distanceTo(home)).toBeLessThan(1e-10);
+    const yaw = 1.7;
+    motion.follow(yaw);
+    for (let i = 0; i < 80; i++) motion.update(0.1, false, 0, 0);
+    expect(Math.atan2(camera.position.x, camera.position.z)).toBeCloseTo(yaw, 10);
+    expect(camera.zoom).toBe(1);
+  }
 });
 
 it("keeps the arena in frame at maximum danger and paddle movement on phone and desktop", () => {
