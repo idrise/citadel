@@ -171,3 +171,32 @@ it("offers the appropriate direct continuation after a brief result beat", () =>
   }
   disposeScene(camera);
 });
+
+it("keeps title controls centred across tablet ratios and the compact-width boundary", () => {
+  const camera = new PerspectiveCamera(44, 1, 0.1, 200),
+    menu = createSceneMenu(camera);
+  for (const touch of [false, true])
+    for (const [width, height] of [
+      [680, 600],
+      [699, 600],
+      [700, 600],
+      [701, 600],
+      [699, 700],
+      [700, 699],
+      [768, 1024],
+      [1024, 768],
+    ]) {
+      const controls = menu.update(
+        { mode: "title", count: 6, elapsed: 5, reduced: false, touch },
+        width!,
+        height!,
+      );
+      for (const action of ["start", "options"])
+        expect(
+          controls.find((c) => c.action === action)!.left +
+            controls.find((c) => c.action === action)!.width / 2,
+          `${touch} ${width}x${height} ${action}`,
+        ).toBeCloseTo(width! / 2, 6);
+    }
+  disposeScene(camera);
+});

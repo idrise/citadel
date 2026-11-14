@@ -465,6 +465,21 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+14 November responsive menu correction: title controls stay centred through tablet
+aspect ratios and the 700px compact-width boundary. Only short, wide screens use
+the side layout, with continuous height/aspect interpolation instead of an
+orientation switch. The title always uses the actual viewport dimensions, keeping
+both sides of the compact breakpoint consistent. Unit regressions reproduced the
+original 163–168px horizontal jump before the fix, and cover centred projected
+controls, one-pixel resize continuity and reachable short-screen targets.
+Checks: all 517 units / 91 files, twelve selected production browser scenarios
+and both final mouse/touch resize regressions pass. Scoped format/lint/types,
+diff check and the root build pass. Rendered 699/700px, tablet and short-phone
+evidence is in `docs/reviews/m09/responsive-menu/`; the stable review build at
+`http://localhost:5179/` is refreshed. A pickup-seed browser fixture now explicitly
+selects its calibrated four-seat roster after the prior six-player default change.
+Physical-device validation and the existing bundle advisory remain; no publishing.
+
 14 November default roster amendment: fresh, missing or invalid solo preferences
 start at six players. The owner explicitly chose to remember subsequent player-count
 adjustments, so valid saved rosters (including sixteen) remain intact. Existing

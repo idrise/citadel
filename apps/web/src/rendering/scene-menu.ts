@@ -205,11 +205,7 @@ export function createSceneMenu(camera: PerspectiveCamera) {
             : 0.7;
       }
       if (compact || !result) {
-        const layout = mobileMenuLayout(
-          compact ? width : Math.min(width, height * 0.7),
-          height,
-          result,
-        );
+        const layout = mobileMenuLayout(width, height, result);
         demotionText.position.set(
           layout.controls.rematch.x,
           height / 2 - (layout.controls.rematch.y - 61),

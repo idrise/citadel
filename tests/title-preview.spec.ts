@@ -74,6 +74,7 @@ test("ordinary restarted attempts keep their opening seed but vary pickup seeds 
   await page.clock.install();
   await page.goto("./");
   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 60000));
+  await choosePlayers(page, 4);
   await openSettings(page);
   await configureGame(page, { reducedEffects: true });
   await configureGame(page, { music: false, effectsVolume: 0 });
