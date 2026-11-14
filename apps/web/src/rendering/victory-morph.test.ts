@@ -13,6 +13,10 @@ import { createArenaView } from "./arena-view";
 import { disposeScene } from "./dispose-scene";
 import { createMenuOverlay } from "./menu-overlay";
 import type { Vec2 } from "../simulation/vector";
+import { Box3, Vector3 } from "three";
+import { createArenaCamera, fitArenaCamera, FOREGROUND_PADDING } from "./camera";
+import { createCameraMotion } from "./camera-motion";
+import { PLAYER_COUNTS } from "../simulation/arena";
 
 const distance = (p: Vec2, a: Vec2, b: Vec2) => {
   const dx = b.x - a.x,
@@ -32,6 +36,38 @@ function finished(count: PlayerCount, winner = 0) {
   state.players[winner]!.health[1] = false;
   return state;
 }
+
+it("finishes with one star point upright on screen for every selectable viewer and roster", () => {
+  for (const count of PLAYER_COUNTS)
+    for (let viewer = 0; viewer < count; viewer++) {
+      const state = finished(count, viewer),
+        saved = structuredClone(state),
+        morph = createVictoryMorph(viewer),
+        end = morph.update(state, VICTORY_MORPH_SECONDS, false)!;
+      for (const aspect of [390 / 844, 844 / 390, 1280 / 900]) {
+        const camera = createArenaCamera(viewer, state.arena),
+          motion = createCameraMotion(camera);
+        motion.layout(aspect);
+        const points = end.arena.vertices.map((p) => new Vector3(p.x, 0, p.y));
+        fitArenaCamera(
+          camera,
+          new Box3().setFromPoints(points),
+          aspect,
+          points,
+          FOREGROUND_PADDING,
+        );
+        const tips = end.arena.vertices
+          .filter((p) => Math.abs(Math.hypot(p.x, p.y) - 9.2) < 1e-7)
+          .map((p) => new Vector3(p.x, 0, p.y).project(camera));
+        const top = tips.toSorted((a, b) => b.y - a.y)[0]!;
+        expect(tips).toHaveLength(5);
+        expect(top.x).toBeCloseTo(0, 8);
+        expect(top.y).toBeGreaterThan(tips.toSorted((a, b) => b.y - a.y)[1]!.y + 0.05);
+      }
+      expect(morph.update(state, 0, true)!.arena.vertices).toEqual(end.arena.vertices);
+      expect(state).toEqual(saved);
+    }
+});
 
 it.each([2, 3, 4, 5, 6] as const)(
   "preserves every original corner and a five-point star in the %i-seat correspondence",

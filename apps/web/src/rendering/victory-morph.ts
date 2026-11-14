@@ -66,7 +66,7 @@ export function createVictoryMorph(humanSeat: number) {
       if (capturedArena !== state.arena || capturedWinner !== state.winner) {
         capturedArena = state.arena;
         capturedWinner = state.winner;
-        outlines = victoryOutlines(state.arena.vertices, Math.atan2(viewer.y, viewer.x));
+        outlines = victoryOutlines(state.arena.vertices, Math.atan2(-viewer.y, -viewer.x));
         lastProgress = -1;
       }
       const time = clamp(elapsed / VICTORY_MORPH_SECONDS, 0, 1);
