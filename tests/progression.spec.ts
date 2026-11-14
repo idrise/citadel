@@ -61,6 +61,8 @@ test("a first win advances 1 to 2 and one click starts the next round without re
   const progress = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
   expect(progress.rounds).toBe(1);
   expect(progress.level).toBe(2);
+  expect(progress.losses).toBe(0);
+  expect(progress.demotion).toBeNull();
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText("1");
   await expect(page.getByLabel("Round ball speed", { exact: true })).toHaveText("14.00");
   await page.clock.runFor(6000);
@@ -71,6 +73,9 @@ test("a first win advances 1 to 2 and one click starts the next round without re
   await expect(page.getByRole("button", { name: "Start", exact: true })).toBeHidden();
   await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("countdown");
   await expect(page.getByLabel("Level introduction", { exact: true })).toHaveText("Level 2");
+  await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
+    "LOSS RETRIES LEVEL 02",
+  );
   await expect(page.getByLabel("Round ball speed", { exact: true })).toHaveText("14.20");
   await expect(page.locator("canvas")).toHaveAttribute("data-continued", "same");
   await page.screenshot({ path: testInfo.outputPath("level-2-start.png") });
@@ -80,6 +85,66 @@ test("a first win advances 1 to 2 and one click starts the next round without re
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(progress.level));
   await page.reload();
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(progress.level));
+});
+
+test("a restored win discards a stale counter and requires three new played losses before demotion", async ({
+  page,
+}) => {
+  test.setTimeout(120000);
+  await page.addInitScript(
+    ({ key, now }) => {
+      if (!localStorage.getItem(key))
+        localStorage.setItem(
+          key,
+          JSON.stringify({
+            version: 2,
+            level: 2,
+            count: 2,
+            best: 1,
+            rounds: 1,
+            losses: 2,
+            demotion: null,
+            recent: [{ level: 1, count: 2, place: 1, at: now }],
+          }),
+        );
+    },
+    { key, now: Date.now() },
+  );
+  await openGame(page, true, 1);
+  await choosePlayers(page, 2);
+  await selectFortress(page, 1);
+  await configureGame(page, { music: false, effectsVolume: 0 });
+  expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).losses, key)).toBe(0);
+  for (let loss = 1; loss <= 3; loss++) {
+    await play(page);
+    await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
+      loss === 3 ? "LOSS DROPS TO LEVEL 01" : "LOSS RETRIES LEVEL 02",
+    );
+    await page.keyboard.down("KeyD");
+    for (
+      let seconds = 0;
+      seconds < 120 &&
+      (await page.getByLabel("Round phase", { exact: true }).textContent()) !== "finished";
+      seconds++
+    )
+      await page.clock.runFor(1000);
+    await page.keyboard.up("KeyD");
+    await expect(page.getByLabel("Round winner", { exact: true })).toHaveText("Coral wins");
+    expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key)).toMatchObject(
+      {
+        level: loss === 3 ? 1 : 2,
+        losses: loss % 3,
+        rounds: 1 + loss,
+        demotion: loss === 3 ? { from: 2, to: 1, count: 2 } : null,
+      },
+    );
+    await page.clock.runFor(1600);
+    // Reload the same ordinary opening; the saved streak must survive between attempts.
+    await page.reload();
+    await expect(page.getByLabel("Round level", { exact: true })).toHaveText(
+      loss === 3 ? "1" : "2",
+    );
+  }
 });
 
 test("a returning phone player keeps their saved level regardless of time away", async ({

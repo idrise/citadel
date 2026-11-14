@@ -465,6 +465,15 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+14 November win/loss reset check: every win clears the consecutive-loss streak.
+The save loader now also drops a stale loss counter/demotion when the latest saved
+result is a win. Unit sequences cover two losses, a win, reload, then exactly three
+new losses at 2/6/16 seats and levels 1/35/99/100. A production browser fixture
+restores a recorded win with an inconsistent counter, then plays three ordinary
+losses across reloads: the first two retain level 2; only the third demotes to 1.
+The live first-win/Next test checks the reset and the next level's retry warning.
+No health, RNG or results are forced during those played losses.
+
 14 November responsive menu correction: title controls stay centred through tablet
 aspect ratios and the 700px compact-width boundary. Only short, wide screens use
 the side layout, with continuous height/aspect interpolation instead of an

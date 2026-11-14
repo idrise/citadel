@@ -5,6 +5,7 @@ import {
   estimateSkill,
   freshProgress,
   levelFor,
+  levelAfterLoss,
   loadProgress,
   parseProgress,
   PROGRESS_KEY,
@@ -230,6 +231,31 @@ it("rejects malformed version-two counters and demotions", () => {
     expect(parseProgress(JSON.stringify({ version: 2, ...freshProgress(), ...extra }))).toEqual(
       freshProgress(),
     );
+});
+
+it("requires three new losses after a win even after reloading with a stale saved counter", () => {
+  for (const count of [2, 6, 16] as const)
+    for (const level of [1, 35, 99, 100]) {
+      let progress: ReturnType<typeof freshProgress> = { ...freshProgress(), count, level };
+      for (let at = 0; at < 2; at++)
+        progress = recordResult(progress, { count, level, place: count, at });
+      progress = recordResult(progress, { count, level, place: 1, at: 2 });
+      expect(progress.losses).toBe(0);
+      // Older/stale counters must not survive a recorded win on load.
+      progress = parseProgress(JSON.stringify({ version: 2, ...progress, losses: 2 }));
+      expect(progress.losses).toBe(0);
+      const nextLevel = progress.level;
+      for (let loss = 1; loss <= 3; loss++) {
+        expect(levelAfterLoss(progress, count)).toBe(loss === 3 ? nextLevel - 1 : nextLevel);
+        progress = recordResult(progress, { count, level: nextLevel, place: count, at: 2 + loss });
+        expect(progress.level).toBe(loss === 3 ? nextLevel - 1 : nextLevel);
+        expect(progress.losses).toBe(loss % 3);
+        expect(progress.demotion).toEqual(
+          loss === 3 ? { from: nextLevel, to: nextLevel - 1, count } : null,
+        );
+        progress = parseProgress(JSON.stringify({ version: 2, ...progress }));
+      }
+    }
 });
 
 it.each([25, 60, 100])("finds a synthetic threshold of %i without large overshoots", (capacity) => {

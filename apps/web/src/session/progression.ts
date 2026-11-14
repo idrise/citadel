@@ -207,8 +207,8 @@ export function parseProgress(raw: string | null): PlayerProgress {
       }
     return {
       level: retryLevel,
-      losses: legacy ? Math.min(2, legacyLosses) : (value.losses as number),
-      demotion: legacy ? null : (value.demotion as Demotion | null),
+      losses: last?.place === 1 ? 0 : legacy ? Math.min(2, legacyLosses) : (value.losses as number),
+      demotion: legacy || last?.place === 1 ? null : (value.demotion as Demotion | null),
       count: value.count as PlayerCount,
       best: value.best,
       rounds: value.rounds,
