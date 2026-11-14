@@ -4,7 +4,7 @@ import { choosePlayers, openGame } from "./helpers";
 for (const touch of [false, true]) {
   test.describe(touch ? "touch responsive menu" : "mouse responsive menu", () => {
     test.use({ hasTouch: touch, isMobile: touch });
-    test("keeps tablet controls centred without a sideways jump on resize", async ({
+    test("anchors the bottom controls across widths, orientations and camera motion", async ({
       page,
     }, testInfo) => {
       const errors: string[] = [];
@@ -15,8 +15,10 @@ for (const touch of [false, true]) {
         await page.getByRole("button", { name: "Settings", exact: true }).tap();
         await page.getByRole("button", { name: "Resume", exact: true }).tap();
       }
+      await page.clock.runFor(1000);
       const canvas = await page.locator("canvas").elementHandle();
       const start = page.getByRole("button", { name: "Start", exact: true });
+      const positions = new Map<number, number>();
       for (const [width, height] of [
         [680, 600],
         [699, 600],
@@ -34,6 +36,10 @@ for (const touch of [false, true]) {
           expect(Math.abs(box.x + box.width / 2 - width! / 2)).toBeLessThan(1);
           expect(box.y).toBeGreaterThanOrEqual(12);
           expect(box.y + box.height).toBeLessThanOrEqual(height! - 12);
+          if (name === "Start") {
+            if (positions.has(height!)) expect(box.y).toBeCloseTo(positions.get(height!)!, 5);
+            else positions.set(height!, box.y);
+          }
         }
         if ([699, 700, 1024].includes(width!))
           await page.screenshot({
@@ -51,6 +57,8 @@ for (const touch of [false, true]) {
       }
       await page.setViewportSize({ width: 844, height: 390 });
       await page.clock.runFor(80);
+      const shortBox = (await start.boundingBox())!;
+      expect(Math.abs(shortBox.x + shortBox.width / 2 - 422)).toBeLessThan(1);
       await page.screenshot({
         path: testInfo.outputPath(`${touch ? "touch" : "mouse"}-844x390.png`),
       });

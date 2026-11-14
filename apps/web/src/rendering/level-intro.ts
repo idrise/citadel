@@ -30,10 +30,14 @@ export function createLevelIntro(parent: Object3D) {
     body = new Group(),
     textWidth = 1,
     bodyHeight = 1,
-    bodyDepth = 0.1;
+    bodyDepth = 0.1,
+    raisedY = 0;
   root.add(body);
   return {
     root,
+    get raisedY() {
+      return raisedY;
+    },
     update(
       value: number | string | null,
       countdown: number,
@@ -121,10 +125,10 @@ export function createLevelIntro(parent: Object3D) {
       root.scale.setScalar(size);
       root.rotation.set(tilt, yaw, 0, "YXZ");
       const height = (bodyHeight * Math.cos(tilt) + bodyDepth * Math.abs(Math.sin(tilt))) * size;
+      raisedY = height / 2 + 0.07;
       root.position.set(
         0,
-        height / 2 +
-          0.07 -
+        raisedY -
           (1 - (rise ?? levelIntroRise(countdown, reduced, introDuration))) * (height + 0.18),
         0,
       );

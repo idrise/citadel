@@ -135,10 +135,6 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       camera.updateProjectionMatrix();
       const depth = 18,
         halfHeight = Math.tan((camera.fov * Math.PI) / 360) * depth;
-      group.position.set(0, halfHeight * 0.67, -depth);
-      group.rotation.set(-0.35, 0, 0);
-      group.scale.setScalar(Math.min(0.78, (halfHeight * camera.aspect * 1.7) / 16));
-      const compact = state.touch || width < 700 || height < 500;
       const result = state.mode !== "title",
         reveal = state.reduced ? 1 : Math.max(0, Math.min(1, (state.elapsed - 0.15) / 0.6));
       title.visible = false;
@@ -204,52 +200,28 @@ export function createSceneMenu(camera: PerspectiveCamera) {
             ? 1
             : 0.7;
       }
-      if (compact || !result) {
-        const layout = mobileMenuLayout(width, height, result);
-        demotionText.position.set(
-          layout.controls.rematch.x,
-          height / 2 - (layout.controls.rematch.y - 61),
-          0,
-        );
-        demotionText.scale.setScalar(Math.min(width - 36, 300) / demotionWidth);
-        group.position.set(0, 0, -depth);
-        group.rotation.set(0, 0, 0);
-        group.scale.setScalar((2 * halfHeight) / height);
-        heading.position.set(layout.title.x, height / 2 - layout.title.y, 0);
-        heading.scale.setScalar(1);
-        for (const text of [title, victory, defeat])
-          text.scale.setScalar(layout.title.width / textWidths.get(text)!);
-        players.position.set(layout.label.x, height / 2 - layout.label.y, 0);
-        players.scale.setScalar(16 / 0.32);
-        countText.position.set(layout.count.x, height / 2 - layout.count.y, 0);
-        countText.scale.setScalar(34 / 0.9);
-        for (const button of controls) {
-          const placement = layout.controls[button.action];
-          button.item.position.set(placement.x, height / 2 - placement.y, 0);
-          button.item.scale.set(
-            placement.width / button.width,
-            placement.height / button.height,
-            10,
-          );
-        }
-      } else {
-        for (const text of [title, victory, defeat]) text.scale.setScalar(1);
-        players.position.set(0, -1.6, 0);
-        players.scale.setScalar(1);
-        countText.position.set(0, -2.5, 0);
-        countText.scale.setScalar(1);
-        const positions = {
-          decrease: [-2.1, -2.5],
-          increase: [2.1, -2.5],
-          start: [0, -4.05],
-          rematch: [0, -3.4],
-          options: [0, result ? -4.5 : -5.1],
-        };
-        for (const button of controls) {
-          const [x, y] = positions[button.action];
-          button.item.position.set(x!, y!, 0);
-          button.item.scale.setScalar(1);
-        }
+      const layout = mobileMenuLayout(width, height, result);
+      demotionText.position.set(
+        layout.controls.rematch.x,
+        height / 2 - (layout.controls.rematch.y - 61),
+        0,
+      );
+      demotionText.scale.setScalar(Math.min(width - 36, 300) / demotionWidth);
+      group.position.set(0, 0, -depth);
+      group.rotation.set(0, 0, 0);
+      group.scale.setScalar((2 * halfHeight) / height);
+      heading.position.set(layout.title.x, height / 2 - layout.title.y, 0);
+      heading.scale.setScalar(1);
+      for (const text of [title, victory, defeat])
+        text.scale.setScalar(layout.title.width / textWidths.get(text)!);
+      players.position.set(layout.label.x, height / 2 - layout.label.y, 0);
+      players.scale.setScalar(16 / 0.32);
+      countText.position.set(layout.count.x, height / 2 - layout.count.y, 0);
+      countText.scale.setScalar(34 / 0.9);
+      for (const button of controls) {
+        const placement = layout.controls[button.action];
+        button.item.position.set(placement.x, height / 2 - placement.y, 0);
+        button.item.scale.set(placement.width / button.width, placement.height / button.height, 10);
       }
       camera.updateMatrixWorld(true);
       return controls

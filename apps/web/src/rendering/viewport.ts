@@ -78,7 +78,6 @@ export function createViewport(
   let titleMoving = false;
   let lastCelebrationEvent = -1;
   let aspect = 1;
-  let menuLift = 0;
   const bounds = new Box3().setFromObject(arena.root);
   // Frame the playing surface and wall tops; the structural plinth may extend below the view.
   bounds.min.y = 0;
@@ -138,6 +137,7 @@ export function createViewport(
       const displayed = presentation.state;
       arena.update(displayed, dt, {
         ...options,
+        titleTilt: -0.95 * Math.max(0, Math.min(1, (1 - aspect) / 0.4)),
         portrait: aspect < 0.85,
         actorScales: presentation.scales,
         ...(presentation.marks ? { actorMarks: presentation.marks } : {}),
@@ -194,7 +194,8 @@ export function createViewport(
       );
       // Acute star tips have longer wall miters; include the plinth during the reveal.
       const victoryFraming = Math.max(arena.victoryProgress, presentation.victoryFraming ?? 0);
-      const border = (aspect < 0.85 ? 1.03 : 1.09) + victoryFraming * 0.2;
+      const border =
+        1.09 - 0.06 * Math.max(0, Math.min(1, (1 - aspect) / 0.4)) + victoryFraming * 0.2;
       framingPoints = displayArena.vertices.flatMap((p) => [
         new Vector3(p.x * border, -2.73 * victoryFraming, p.y * border),
         new Vector3(p.x * border, 2.34, p.y * border),
@@ -220,14 +221,7 @@ export function createViewport(
         bounds.expandByPoint(new Vector3(p.x * 1.09, 2.34, p.y * 1.09));
       }
       fitArenaCamera(camera, bounds, aspect, framingPoints);
-      const lift = aspect < 0.85 && menuState.mode === "title" ? 1 : 0;
-      menuLift = options.reducedEffects
-        ? lift
-        : menuLift + (lift - menuLift) * (1 - Math.exp(-Math.max(0, dt) * 7));
-      if (camera.view) {
-        camera.view.offsetY += 0.28 * menuLift;
-        camera.updateProjectionMatrix();
-      }
+      arena.placeTitle(camera, container.clientWidth, container.clientHeight);
       for (const event of state.events) {
         if (event.id <= lastCelebrationEvent) continue;
         lastCelebrationEvent = event.id;

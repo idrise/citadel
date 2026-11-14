@@ -465,6 +465,23 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+14 November anchored menu revision: the owner requests a stable bottom control
+stack and title near the middle. One pixel-space layout now serves every width,
+orientation, input mode and result state; there is no side-column switch. Normal
+height screens keep the controls in the bottom third, with tighter gaps/targets
+on short screens to retain readability. World title lettering projects to a stable
+near-centre anchor after camera fitting, retains its floor reflection/rise/sink,
+and fits within a screen-space width budget. Its tilt and arena fit vary continuously;
+the old aspect-ratio title camera lift is removed. This supersedes the prior partial
+tablet fix. See `docs/ANCHORED_MENU_REVIEW.md`.
+Checks: all 521 units / 92 files, scoped format/lint/types and root build pass.
+The final fifteen production browser checks pass, including width/height sweeps,
+natural win/Next, the three-loss reset, pointer responsiveness, title roster morphs
+and mobile control reach. Settings and title-preview checks also passed earlier.
+Five final renders are under `docs/reviews/m09/anchored-menu/`; the stable demo at
+`http://localhost:5179/` is refreshed. Physical-device review and the existing bundle
+advisory remain open. No push or deployment is authorised.
+
 14 November win/loss reset check: every win clears the consecutive-loss streak.
 The save loader now also drops a stale loss counter/demotion when the latest saved
 result is a win. Unit sequences cover two losses, a win, reload, then exactly three

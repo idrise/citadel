@@ -1,30 +1,27 @@
-/** Centre tablet controls; gradually make room beside them on short landscape phones. */
+/** One centred bottom stack, independent of width, orientation, touch mode or arena camera. */
 export function mobileMenuLayout(width: number, height: number, result: boolean) {
-  const landscape =
-    Math.max(0, Math.min(1, (500 - height) / 110)) *
-    Math.max(0, Math.min(1, (width / Math.max(1, height) - 1) / 0.5));
-  const mix = (stacked: number, beside: number) => stacked + (beside - stacked) * landscape;
-  const x = width * 0.24 * landscape;
-  const stackedRow = Math.min(height * 0.72, height - 192);
-  const row = mix(stackedRow, height * 0.35);
+  const density = Math.max(0.92, Math.min(1, height / 600));
+  const bottom = height - 18;
+  const row = bottom - 152 * density;
+  const labelY = row - 43 * density;
   return {
     title: {
-      x: -x,
-      y: height * mix(0.25, 0.43),
-      width: Math.min(mix(width - 40, width * 0.42), 500),
+      x: 0,
+      y: Math.min(height * 0.46, result ? bottom - 87 * density - 110 : labelY - 44),
+      width: Math.min(width - 40, 500, height * 0.65),
     },
-    label: { x, y: row - 49 },
-    count: { x, y: row },
+    label: { x: 0, y: labelY },
+    count: { x: 0, y: row },
     controls: {
-      decrease: { x: x - 76, y: row, width: 52, height: 52 },
-      increase: { x: x + 76, y: row, width: 52, height: 52 },
-      start: { x, y: mix(stackedRow + 85, height * 0.58), width: 210, height: 54 },
-      rematch: { x, y: height * mix(0.55, 0.53), width: 210, height: 54 },
+      decrease: { x: -76, y: row, width: 52, height: 52 * density },
+      increase: { x: 76, y: row, width: 52, height: 52 * density },
+      start: { x: 0, y: bottom - 87 * density, width: 210, height: 54 * density },
+      rematch: { x: 0, y: bottom - 87 * density, width: 210, height: 54 * density },
       options: {
-        x,
-        y: mix(result ? height * 0.55 + 76 : stackedRow + 155, height * 0.77),
+        x: 0,
+        y: bottom - 24 * density,
         width: 180,
-        height: 48,
+        height: 48 * density,
       },
     },
   };

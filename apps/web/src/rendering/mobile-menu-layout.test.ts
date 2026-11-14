@@ -38,3 +38,20 @@ it("keeps title and result buttons inside short landscape screens throughout ref
         }
       }
 });
+
+it("uses identical bottom offsets at every width and keeps normal-height menus in the bottom third", () => {
+  for (const height of [320, 390, 568, 600, 768, 844, 900, 1080]) {
+    const baseline = mobileMenuLayout(320, height, false);
+    for (const width of [320, 390, 600, 699, 700, 844, 1024, 1920]) {
+      const layout = mobileMenuLayout(width, height, false);
+      expect(layout.controls).toEqual(baseline.controls);
+      expect(layout.label).toEqual(baseline.label);
+      expect(layout.title.x).toBe(0);
+      expect(layout.title.y).toBe(baseline.title.y);
+      if (height >= 768) {
+        expect(layout.label.y - 12).toBeGreaterThan((height * 2) / 3);
+        expect(layout.title.y / height).toBeCloseTo(0.46, 8);
+      }
+    }
+  }
+});

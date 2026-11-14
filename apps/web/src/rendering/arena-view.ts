@@ -4,6 +4,8 @@ import type { TitleFrame } from "./title-transition";
 import type { Vec2 } from "../simulation/vector";
 import { resizePaddle } from "./paddle-shape";
 import { createLevelIntro } from "./level-intro";
+import { createWorldTitleAnchor } from "./world-title-anchor";
+import type { PerspectiveCamera } from "three";
 import { createSupplyView } from "./supply-view";
 import {
   ARENA,
@@ -29,6 +31,7 @@ import { createPaddleBlur } from "./paddle-blur";
 import { createVictoryMorph } from "./victory-morph";
 
 export interface ViewOptions {
+  titleTilt?: number;
   portrait?: boolean;
   preview: boolean;
   slowdown: boolean;
@@ -63,6 +66,7 @@ export function createArenaView(
   const stage = createStage(humanSeat, roster);
   const intro = createLevelIntro(stage.root);
   const titleSign = createLevelIntro(stage.root);
+  const placeTitle = createWorldTitleAnchor(titleSign.root);
   titleSign.root.name = "citadel-title";
   let titleRise = 0;
   const reflection = createArenaReflections(humanSeat, initial, mobile);
@@ -82,6 +86,9 @@ export function createArenaView(
   let lastEvent = -1;
   return {
     root: stage.root,
+    placeTitle(camera: PerspectiveCamera, width: number, height: number) {
+      placeTitle(camera, width, height, titleSign.raisedY);
+    },
     dispose: () => reflection.dispose(),
     captureTransition(frame: TitleFrame): TitleFrame {
       const ending = lastEnding;
@@ -183,7 +190,7 @@ export function createArenaView(
         options.reducedEffects,
         null,
         titleRise,
-        options.portrait ? -0.95 : 0,
+        options.titleTilt ?? (options.portrait ? -0.95 : 0),
       );
       intro.update(
         options.menu?.mode === "level" ? (options.menu.level ?? 1) : null,
