@@ -9,7 +9,7 @@ import {
 import { createNeonLettering } from "./neon-lettering";
 import { createFeatureEdges } from "./feature-edges";
 export type SettingKey = "effectsVolume" | "musicVolume" | "mouseSensitivity";
-export type SettingsAction = "pause" | "resume" | "sound";
+export type SettingsAction = "pause" | "resume" | "restart" | "sound";
 export interface SceneSettingsState {
   open: boolean;
   touch: boolean;
@@ -106,7 +106,15 @@ export function settingsTargets(
       label: "Resume",
       left: left + 24,
       top: top + h - 54,
-      width: w - 48,
+      width: (w - 60) / 2,
+      height: 44,
+    },
+    {
+      key: "restart",
+      label: "Restart",
+      left: left + 24 + (w - 60) / 2 + 12,
+      top: top + h - 54,
+      width: (w - 60) / 2,
       height: 44,
     },
   ];
@@ -137,6 +145,7 @@ export function createSceneSettings(camera: PerspectiveCamera) {
     [
       ["pause", "II"],
       ["resume", "RESUME"],
+      ["restart", "RESTART"],
       ["sound", "ENABLE SOUND"],
     ] as const
   ).map(([key, text]) => {

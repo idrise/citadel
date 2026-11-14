@@ -1,6 +1,6 @@
 import { expect, test } from "./fixtures";
 import { openGame, openSettings, play, finishIntroduction, pause } from "./helpers";
-test("settings are rendered in the scene with only Resume and the three requested desktop sliders, persisting real changes", async ({
+test("settings render Resume, Restart and the three desktop sliders, persisting real changes", async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 1280, height: 900 });
@@ -9,7 +9,7 @@ test("settings are rendered in the scene with only Resume and the three requeste
   await openSettings(page);
   await expect(page.locator(".menu-panel,.touch-hint,.title-display,.enable-sound")).toHaveCount(0);
   const panel = page.getByRole("navigation", { name: "Game settings", exact: true });
-  await expect(panel.getByRole("button")).toHaveCount(1);
+  await expect(panel.getByRole("button")).toHaveCount(2);
   await expect(panel.getByRole("slider")).toHaveCount(3);
   await page.getByLabel("Sound effects volume", { exact: true }).fill("0.8");
   await page.getByLabel("Music volume", { exact: true }).fill("0");
@@ -49,9 +49,9 @@ test.describe("touch scene settings", () => {
     ]) {
       await page.setViewportSize(size);
       await page.clock.runFor(50);
-      for (const name of ["Sound effects volume", "Music volume", "Resume"]) {
+      for (const name of ["Sound effects volume", "Music volume", "Resume", "Restart"]) {
         const control =
-          name === "Resume"
+          name === "Resume" || name === "Restart"
             ? page.getByRole("button", { name, exact: true })
             : page.getByLabel(name, { exact: true });
         const box = (await control.boundingBox())!;
@@ -59,6 +59,9 @@ test.describe("touch scene settings", () => {
         expect(box.y).toBeGreaterThanOrEqual(0);
         expect(box.y + box.height).toBeLessThanOrEqual(size.height);
       }
+      // ResizeObserver can clear the WebGL buffer after the first controlled frame.
+      // Draw again after the projected controls have reached their new positions.
+      await page.clock.runFor(150);
       await page.screenshot({ path: testInfo.outputPath(`touch-settings-${size.width}.png`) });
     }
     await page.getByRole("button", { name: "Resume", exact: true }).tap();

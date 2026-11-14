@@ -465,6 +465,29 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+14 November CI formatting correction: `docs/reviews/m09/bot-serving/report.json`
+now follows the repository formatter's compact numeric-array style. Parsed report
+data is unchanged. The full repository `vp check` command used by Pages CI passes;
+this correction is isolated in local commit `e3a738c`. No workflow change, push or
+remote rerun was performed.
+
+14 November Settings restart amendment: the procedural panel now has adjacent
+Resume and Restart buttons on desktop and touch. Restart uses the same return-to-title
+path as Back: it creates a fresh attempt, clears live steering/capture/audio state,
+preserves the mounted board transition, and retains saved level, roster, fortress
+and settings. An unfinished attempt is abandoned without recording a loss. Debug
+navigation returns to the real saved challenge. Both buttons retain distinct
+44px targets and rendered/native alignment on short and rotated screens.
+Checks: 522 unit tests / 92 files, full-repository `vp check`, root production build
+and 21 selected native Chromium browser checks pass. Four final Settings checks
+also cover desktop keyboard activation, touch restart, debug exit and rotated
+targets. The exact Pages viewport/refresh smoke case passes separately with CI's
+software-WebGL renderer. Final desktop/portrait/landscape frames are under
+`docs/reviews/m09/settings-restart/`. A rotated screenshot now waits for a draw
+after the ResizeObserver buffer clear. The stable demo at `http://localhost:5179/`
+is refreshed. Physical-device Safari validation and the existing bundle advisory
+remain open; no push, deployment or remote workflow run was performed.
+
 14 November anchored menu revision: the owner requests a stable bottom control
 stack and title near the middle. One pixel-space layout now serves every width,
 orientation, input mode and result state; there is no side-column switch. Normal

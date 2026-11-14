@@ -30,6 +30,7 @@ export function createSettingsControls(
   for (const [key, label] of [
     ["pause", "Pause"],
     ["resume", "Resume"],
+    ["restart", "Restart"],
     ["sound", "Enable sound"],
   ] as const) {
     const button = document.createElement("button");

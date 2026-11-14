@@ -63,11 +63,8 @@ export function createSession(
     state.arena,
     (action) => {
       if (action === "start") start();
-      else if (action === "back") {
-        const target = debug.active ? savedLevel : continuationLevel;
-        debug.exit();
-        resetRound(count, humanSeat, target, true);
-      } else {
+      else if (action === "back") returnToTitle();
+      else {
         if (action === "options") {
           menuSuppressed = true;
           settingsOpen = true;
@@ -80,6 +77,7 @@ export function createSession(
       action(action) {
         if (action === "pause") setPaused(true);
         else if (action === "resume") resume();
+        else if (action === "restart") returnToTitle();
         else music.unlock();
       },
       change(key, value) {
@@ -359,6 +357,11 @@ export function createSession(
       if (touchMode) touch.capture();
       else input.capture();
     }
+  }
+  function returnToTitle() {
+    const target = debug.active ? savedLevel : continuationLevel;
+    debug.exit();
+    resetRound(count, humanSeat, target, true);
   }
   function resetRound(
     nextCount: PlayerCount,

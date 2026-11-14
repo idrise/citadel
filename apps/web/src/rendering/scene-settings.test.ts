@@ -21,8 +21,8 @@ it("contains only requested controls with reachable targets on portrait, landsca
       const controls = settingsTargets({ ...state, touch }, width!, height!);
       expect(controls.map((t) => t.key)).toEqual(
         touch
-          ? ["effectsVolume", "musicVolume", "resume"]
-          : ["effectsVolume", "musicVolume", "mouseSensitivity", "resume"],
+          ? ["effectsVolume", "musicVolume", "resume", "restart"]
+          : ["effectsVolume", "musicVolume", "mouseSensitivity", "resume", "restart"],
       );
       for (const target of controls) {
         expect(target.left).toBeGreaterThanOrEqual(0);
@@ -67,12 +67,39 @@ it("keeps the rendered settings aligned with the accessible targets when rotatin
       height!,
     );
     menu.camera.updateMatrixWorld(true);
-    const resume = menu.scene.getObjectByName("settings:resume")!;
-    const left = resume.localToWorld(new Vector3(-0.5, 0, 0)).project(menu.camera);
-    const right = resume.localToWorld(new Vector3(0.5, 0, 0)).project(menu.camera);
-    const target = menu.settingsTargets.find((t) => t.key === "resume")!;
-    expect(((left.x + 1) * width!) / 2).toBeCloseTo(target.left, 6);
-    expect(((right.x + 1) * width!) / 2).toBeCloseTo(target.left + target.width, 6);
+    for (const key of ["resume", "restart"] as const) {
+      const button = menu.scene.getObjectByName(`settings:${key}`)!;
+      const left = button.localToWorld(new Vector3(-0.5, 0, 0)).project(menu.camera);
+      const right = button.localToWorld(new Vector3(0.5, 0, 0)).project(menu.camera);
+      const target = menu.settingsTargets.find((t) => t.key === key)!;
+      expect(((left.x + 1) * width!) / 2).toBeCloseTo(target.left, 6);
+      expect(((right.x + 1) * width!) / 2).toBeCloseTo(target.left + target.width, 6);
+    }
   }
   menu.dispose();
+});
+
+it("offers distinct non-overlapping Resume and Restart targets only while settings are open", () => {
+  for (const [width, height] of [
+    [320, 568],
+    [667, 320],
+    [844, 390],
+    [1280, 900],
+  ])
+    for (const touch of [false, true]) {
+      const targets = settingsTargets({ ...state, touch }, width!, height!),
+        resume = targets.find((t) => t.key === "resume")!,
+        restart = targets.find((t) => t.key === "restart")!;
+      expect(resume.left + resume.width + 12).toBeCloseTo(restart.left, 8);
+      expect(restart.top).toBe(resume.top);
+      for (const button of [resume, restart]) {
+        expect(button.width).toBeGreaterThanOrEqual(44);
+        expect(button.height).toBeGreaterThanOrEqual(44);
+      }
+      expect(
+        settingsTargets({ ...state, touch, open: false }, width!, height!).some(
+          (t) => t.key === "restart",
+        ),
+      ).toBe(false);
+    }
 });
