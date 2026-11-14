@@ -19,7 +19,7 @@ import { createArena, fortress, SQUARE_ARENA, type ArenaGeometry } from "../simu
 import type { MatchState } from "../simulation/types";
 import { disposeScene } from "./dispose-scene";
 import { createArenaView, type ViewOptions } from "./arena-view";
-import { createArenaCamera, fitArenaCamera, screenToArena } from "./camera";
+import { createArenaCamera, fitArenaCamera, FOREGROUND_PADDING, screenToArena } from "./camera";
 import { cameraDanger, createCameraMotion } from "./camera-motion";
 import { createBloom } from "./bloom";
 import { createNeonEnvironment } from "./neon-environment";
@@ -79,11 +79,11 @@ export function createViewport(
   let lastCelebrationEvent = -1;
   let aspect = 1;
   const bounds = new Box3().setFromObject(arena.root);
-  // Frame the playing surface and wall tops; the structural plinth may extend below the view.
+  // Explicit framing points include the structural foot; transient effects do not widen the fit.
   bounds.min.y = 0;
   bounds.max.y = Math.max(bounds.max.y, 1.6);
   let framingPoints = initial.vertices.flatMap((p) => [
-    new Vector3(p.x * 1.09, 0, p.y * 1.09),
+    new Vector3(p.x * 1.09, -2.73, p.y * 1.09),
     new Vector3(p.x * 1.09, 2.34, p.y * 1.09),
   ]);
   const bloom = createBloom(renderer, scene, camera, menu, mobile);
@@ -93,7 +93,7 @@ export function createViewport(
     const height = Math.max(container.clientHeight, 1);
     aspect = width / height;
     motion.layout(aspect);
-    fitArenaCamera(camera, bounds, aspect, framingPoints);
+    fitArenaCamera(camera, bounds, aspect, framingPoints, FOREGROUND_PADDING);
     renderer.setSize(width, height);
     bloom.resize(width, height);
   };
@@ -197,7 +197,7 @@ export function createViewport(
       const border =
         1.09 - 0.06 * Math.max(0, Math.min(1, (1 - aspect) / 0.4)) + victoryFraming * 0.2;
       framingPoints = displayArena.vertices.flatMap((p) => [
-        new Vector3(p.x * border, -2.73 * victoryFraming, p.y * border),
+        new Vector3(p.x * border, -2.73, p.y * border),
         new Vector3(p.x * border, 2.34, p.y * border),
       ]);
       const menuState = options.menu ?? {
@@ -220,7 +220,7 @@ export function createViewport(
         bounds.expandByPoint(new Vector3(p.x * 1.09, 0, p.y * 1.09));
         bounds.expandByPoint(new Vector3(p.x * 1.09, 2.34, p.y * 1.09));
       }
-      fitArenaCamera(camera, bounds, aspect, framingPoints);
+      fitArenaCamera(camera, bounds, aspect, framingPoints, FOREGROUND_PADDING);
       arena.placeTitle(camera, container.clientWidth, container.clientHeight);
       for (const event of state.events) {
         if (event.id <= lastCelebrationEvent) continue;

@@ -5,7 +5,15 @@ import { disposeScene } from "./dispose-scene";
 import { lightArena } from "./lighting";
 import { createArenaBase } from "./base";
 import { createStage } from "./stage";
-import { INPUT_PLANE_HEIGHT, createArenaCamera, fitArenaCamera, screenToArena } from "./camera";
+import {
+  INPUT_PLANE_HEIGHT,
+  createArenaCamera,
+  fitArenaCamera,
+  FOREGROUND_PADDING,
+  screenToArena,
+} from "./camera";
+import { createArena } from "../simulation/arena";
+import { createCameraMotion } from "./camera-motion";
 
 it.each([2.6, 1.6, 0.6])(
   "frames the full raised arena at aspect %s, including tall pieces and base",
@@ -28,6 +36,31 @@ it.each([2.6, 1.6, 0.6])(
     disposeScene(stage.root);
   },
 );
+
+it("reserves foreground padding for the full plinth and keeps it through maximum danger zoom and rotation", () => {
+  for (const count of [2, 3, 6, 16] as const)
+    for (const aspect of [390 / 844, 844 / 390, 1, 1280 / 900]) {
+      const arena = createArena(count),
+        camera = createArenaCamera(count - 1, arena),
+        motion = createCameraMotion(camera);
+      motion.layout(aspect);
+      const corners = arena.vertices.flatMap((p) => [
+          new Vector3(p.x * 1.12, -2.73, p.y * 1.12),
+          new Vector3(p.x * 1.12, 2.34, p.y * 1.12),
+        ]),
+        bounds = new Box3().setFromPoints(corners);
+      for (const side of [-1, 0, 1]) {
+        for (let frame = 0; frame < 20; frame++) motion.update(0.1, false, side, 1);
+        fitArenaCamera(camera, bounds, aspect, corners, FOREGROUND_PADDING);
+        for (const point of corners) {
+          const projected = point.clone().project(camera);
+          expect((projected.y + 1) / 2).toBeGreaterThanOrEqual(FOREGROUND_PADDING - 1e-9);
+          expect(projected.y).toBeLessThan(1);
+          expect(Math.abs(projected.x)).toBeLessThan(1);
+        }
+      }
+    }
+});
 
 it("maps the tilted camera back to the actual bat plane at every fortress and arc end", () => {
   const camera = createArenaCamera();

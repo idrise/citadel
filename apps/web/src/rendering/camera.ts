@@ -3,6 +3,7 @@ import { Box3, MathUtils, PerspectiveCamera, Plane, Raycaster, Vector2, Vector3 
 
 export const INPUT_PLANE_HEIGHT = 0.52;
 export const CAMERA_TARGET = { x: 0, y: -0.6, z: 0 } as const;
+export const FOREGROUND_PADDING = 0.06;
 export function createArenaCamera(
   humanSeat = 0,
   arena: ArenaGeometry = SQUARE_ARENA,
@@ -28,6 +29,7 @@ export function fitArenaCamera(
   bounds: Box3,
   aspect: number,
   corners?: readonly Vector3[],
+  bottomPadding = 0,
 ): void {
   camera.updateMatrixWorld();
   let minX = Infinity,
@@ -49,14 +51,22 @@ export function fitArenaCamera(
     minY = Math.min(minY, point.y / depth);
     maxY = Math.max(maxY, point.y / depth);
   }
-  const halfTan = Math.max((maxY - minY) / 2, (maxX - minX) / (2 * aspect)) * 1.04;
+  const padding = Math.max(0, Math.min(0.25, bottomPadding));
+  // Reserve the full danger-zoom envelope without cancelling its live 2% visual cue.
+  const halfTan =
+    Math.max((maxY - minY) / (2 * (1 - padding)), (maxX - minX) / (2 * aspect)) *
+    1.04 *
+    (padding ? 1.02 : 1);
   camera.fov = MathUtils.radToDeg(2 * Math.atan(halfTan));
   // Normalised viewport units preserve aspect and an exact inverse pointer projection.
   camera.setViewOffset(
     2 * aspect,
     2,
     (((minX + maxX) / 2) * camera.zoom) / halfTan,
-    ((-(minY + maxY) / 2) * camera.zoom) / halfTan,
+    ((-(minY + maxY) / 2) * camera.zoom) / halfTan +
+      (padding
+        ? Math.max(0, ((maxY - minY) * camera.zoom) / (2 * halfTan) - (1 - 2 * padding))
+        : 0),
     2 * aspect,
     2,
   );
