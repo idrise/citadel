@@ -23,6 +23,7 @@ export interface SessionSnapshot {
   seed: number;
   humanSeat: number;
   level: number;
+  bestLevel: number;
   serveGuide: boolean;
   lossLevel: number;
   introDuration: number;
@@ -51,9 +52,11 @@ export function createSession(
   initialLossLevel = level,
   initialPreviousLevel?: number,
   onSettings: (settings: GameSettings) => void = () => {},
+  onReached: (level: number) => void = () => {},
 ) {
   const debug = createDebugLevels();
   let savedLevel = level;
+  let bestLevel = level;
   let supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
   let state = createMatch(seed, count, ARENA.startingPieces, supplySeed, levelDifficulty(level));
   let demotion: Demotion | null = null;
@@ -129,6 +132,7 @@ export function createSession(
       seed,
       humanSeat,
       level,
+      bestLevel,
       serveGuide: settings.serveGuide,
       lossLevel,
       previousLevel,
@@ -294,6 +298,8 @@ export function createSession(
           musicVolume: settings.music ? settings.musicVolume : 0,
           mouseSensitivity: settings.mouseSensitivity,
           serveGuide: settings.serveGuide,
+          level,
+          bestLevel,
         },
         mode: menuSuppressed
           ? "hidden"
@@ -307,6 +313,7 @@ export function createSession(
                 ? "level"
                 : "hidden",
         level,
+        bestLevel,
         lossLevel,
         previousLevel,
         introDuration,
@@ -329,6 +336,10 @@ export function createSession(
   report();
   const start = () => {
     if (touchMode) void enterMobileFullscreen();
+    if (!debug.active) {
+      bestLevel = Math.max(bestLevel, level);
+      onReached(level);
+    }
     initialSettings ??= { ...settings };
     lossLevel = debug.active ? level : pendingLossLevel;
     previousLevel = debug.active ? debug.previous : pendingPreviousLevel;
@@ -438,7 +449,13 @@ export function createSession(
       resetRound(nextCount, nextSeat, nextLevel, true);
       return true;
     },
-    configureProgress(next: Demotion | null, nextLossLevel = level, nextPreviousLevel?: number) {
+    configureProgress(
+      next: Demotion | null,
+      nextLossLevel = level,
+      nextPreviousLevel?: number,
+      nextBest = bestLevel,
+    ) {
+      bestLevel = nextBest;
       demotion = next;
       pendingLossLevel = nextLossLevel;
       pendingPreviousLevel = nextPreviousLevel;

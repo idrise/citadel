@@ -24,12 +24,16 @@ export function GamePanel({
   settings,
   onSettings,
   level,
+  bestLevel,
+  onReached,
   lossLevel,
   previousLevel,
   demotion,
   onComplete,
 }: {
   level: number;
+  bestLevel: number;
+  onReached: (level: number) => void;
   lossLevel: number;
   previousLevel: number | undefined;
   demotion: Demotion | null;
@@ -50,6 +54,7 @@ export function GamePanel({
     onCount,
     level,
     onComplete,
+    onReached,
     onSettings,
     onSeat,
     settings,
@@ -59,6 +64,7 @@ export function GamePanel({
     onCount,
     level,
     onComplete,
+    onReached,
     onSettings,
     onSeat,
     settings,
@@ -69,6 +75,7 @@ export function GamePanel({
     seed,
     humanSeat,
     level,
+    bestLevel,
     serveGuide: settings.serveGuide,
     lossLevel,
     introDuration: 1.5,
@@ -122,6 +129,7 @@ export function GamePanel({
         lossLevel,
         previousLevel,
         (value) => callbacks.current.onSettings(value),
+        (reached) => callbacks.current.onReached(reached),
       );
       session.current = game;
       const detach = attachSessionTestPort({
@@ -177,8 +185,8 @@ export function GamePanel({
     session.current?.configureRoster(count, humanSeat, level);
   }, [count, humanSeat, level]);
   useEffect(() => {
-    session.current?.configureProgress(demotion, lossLevel, previousLevel);
-  }, [demotion, lossLevel, previousLevel]);
+    session.current?.configureProgress(demotion, lossLevel, previousLevel, bestLevel);
+  }, [demotion, lossLevel, previousLevel, bestLevel]);
   useEffect(() => {
     session.current?.configure(settings);
   }, [settings]);

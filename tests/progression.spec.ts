@@ -315,7 +315,7 @@ test("the third consecutive loss demotes one level, announces it and persists th
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText("2");
   const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
   expect(saved).toMatchObject({
-    version: 2,
+    version: 3,
     level: 1,
     losses: 0,
     rounds: 4,

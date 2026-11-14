@@ -164,3 +164,26 @@ it("offers a labelled touch-only Pause and keeps the guide toggle clear of the s
     }
   }
 });
+
+it("puts current and best levels inside the short-screen Settings header and reuses them when sliders change", () => {
+  const camera = new PerspectiveCamera(44, 568 / 320, 0.1, 200),
+    view = createSceneSettings(camera),
+    settings = { ...state, touch: true, serveGuide: false, level: 7, bestLevel: 12 };
+  view.update(settings, 568, 320);
+  camera.updateMatrixWorld(true);
+  const progress = camera.getObjectByName("settings-level-status")!,
+    first = progress.getObjectByName("neon-text:LEVEL 07")!,
+    best = progress.getObjectByName("neon-text:BEST 12")!;
+  expect(progress.visible).toBe(true);
+  const guide = settingsTargets(settings, 568, 320).find((t) => t.key === "guide")!;
+  for (const line of [first, best]) {
+    const projected = line.getWorldPosition(new Vector3()).project(camera),
+      x = ((projected.x + 1) * 568) / 2,
+      y = ((1 - projected.y) * 320) / 2;
+    expect(x).toBeLessThan(guide.left);
+    expect(y).toBeGreaterThan(12);
+    expect(y).toBeLessThan(guide.top + guide.height);
+  }
+  view.update({ ...settings, musicVolume: 0.2 }, 568, 320);
+  expect(camera.getObjectByName("settings-level-status")).toBe(progress);
+});

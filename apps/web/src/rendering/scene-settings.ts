@@ -20,6 +20,8 @@ export interface SceneSettingsState {
   musicVolume: number;
   mouseSensitivity: number;
   serveGuide?: boolean;
+  level?: number;
+  bestLevel?: number;
 }
 export interface SettingsTarget {
   key: SettingKey | SettingsAction;
@@ -166,6 +168,10 @@ export function createSceneSettings(camera: PerspectiveCamera) {
   const panel = box("settings-panel"),
     title = createNeonLettering("SETTINGS", 22, 0x9ceaff);
   root.add(title);
+  let progress = new Group(),
+    progressKey = "";
+  progress.name = "settings-level-status";
+  root.add(progress);
   const buttons = (
     [
       ["pause", "PAUSE"],
@@ -223,12 +229,47 @@ export function createSceneSettings(camera: PerspectiveCamera) {
         y: height / 2 - top - h / 2,
       });
       panel.visible = title.visible = state.open;
+      const hasProgress = state.open && state.level !== undefined && state.bestLevel !== undefined;
+      progress.visible = hasProgress;
+      title.visible = state.open && !hasProgress;
+      if (hasProgress) {
+        const key = `${state.level}:${state.bestLevel}`;
+        if (key !== progressKey) {
+          root.remove(progress);
+          disposeScene(progress);
+          progress = new Group();
+          progress.name = "settings-level-status";
+          const level = createNeonLettering(
+              `LEVEL ${String(state.level).padStart(2, "0")}`,
+              16,
+              0x9ceaff,
+            ),
+            best = createNeonLettering(
+              `BEST ${String(state.bestLevel).padStart(2, "0")}`,
+              13,
+              0xffcf79,
+            );
+          best.position.y = -21;
+          progress.add(level, best);
+          progress.traverse((node) => {
+            if (
+              node instanceof Mesh &&
+              node.material instanceof ShaderMaterial &&
+              node.material.name === "NeonFeatureEdges"
+            )
+              node.material.uniforms.strokeWidth!.value = 0.8;
+          });
+          root.add(progress);
+          progressKey = key;
+        }
+      }
       if (state.open) {
         const { w, h } = settingsPanelLayout(state, width, height);
         panel.scale.set(w, h, 1);
         panel.position.z = -2;
         title.position.set(state.serveGuide === undefined ? 0 : -w / 4 + 10, h / 2 - 34, 1);
         title.scale.setScalar(state.serveGuide === undefined ? 1 : 0.8);
+        progress.position.set(-w / 4 + 10, h / 2 - 28, 1);
       }
       for (const button of buttons) {
         const target = targets.find((t) => t.key === button.key);

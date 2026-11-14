@@ -1,5 +1,6 @@
 import { createSceneSettings, type SettingsTarget } from "./scene-settings";
 import { createDebugLabel } from "./debug-label";
+import { createLevelStatus } from "./level-status";
 import { createSpectatorMenu } from "./scene-spectator";
 import { VICTORY_HOLD_SECONDS } from "./victory-morph";
 import {
@@ -28,6 +29,7 @@ export function createMenuOverlay() {
   scene.add(light);
   const menu = createSceneMenu(camera);
   const debug = createDebugLabel(camera);
+  const level = createLevelStatus(camera);
   const settings = createSceneSettings(camera);
   let settingsTargets: SettingsTarget[] = [];
   const spectator = createSpectatorMenu(camera);
@@ -94,6 +96,8 @@ export function createMenuOverlay() {
       const liveControls = spectator.update(state.spectator, width, height);
       settingsTargets = settings.update(state.settings, width, height);
       debug.update(state.debug ?? false, width, height);
+      level.update(state, width, height);
+      visible ||= state.bestLevel !== undefined;
       visible ||= liveControls.length > 0 || Boolean(state.debug) || settingsTargets.length > 0;
       return [...controls, ...liveControls];
     },

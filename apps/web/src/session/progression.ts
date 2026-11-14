@@ -126,7 +126,7 @@ export function recordResult(progress: PlayerProgress, result: LevelResult): Pla
     losses: losses % 3,
     demotion,
     count: result.count,
-    best: result.place === 1 ? Math.max(progress.best, result.level) : progress.best,
+    best: Math.min(100, Math.max(progress.best, progress.level, result.level, level)),
     rounds: progress.rounds + 1,
     recent,
   };
@@ -168,7 +168,7 @@ export function parseProgress(raw: string | null): PlayerProgress {
     const value: unknown = JSON.parse(raw);
     if (
       !record(value) ||
-      (value.version !== 1 && value.version !== 2) ||
+      (value.version !== 1 && value.version !== 2 && value.version !== 3) ||
       !integer(value.level, 1, 100) ||
       !integer(value.count, 2, MAX_PLAYERS) ||
       !integer(value.best, 1, 100) ||
@@ -210,7 +210,7 @@ export function parseProgress(raw: string | null): PlayerProgress {
       losses: last?.place === 1 ? 0 : legacy ? Math.min(2, legacyLosses) : (value.losses as number),
       demotion: legacy || last?.place === 1 ? null : (value.demotion as Demotion | null),
       count: value.count as PlayerCount,
-      best: value.best,
+      best: Math.max(value.best, retryLevel, ...value.recent.map((r: LevelResult) => r.level)),
       rounds: value.rounds,
       recent: value.recent.map((r: LevelResult) => ({ ...r })),
     };
@@ -230,7 +230,7 @@ export function saveProgress(
   storage: () => Pick<Storage, "setItem"> = () => window.localStorage,
 ) {
   try {
-    storage().setItem(PROGRESS_KEY, JSON.stringify({ version: 2, ...progress }));
+    storage().setItem(PROGRESS_KEY, JSON.stringify({ version: 3, ...progress }));
     return true;
   } catch {
     return false;

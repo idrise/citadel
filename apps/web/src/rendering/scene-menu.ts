@@ -31,6 +31,7 @@ export interface SceneMenuState {
   touch?: boolean;
   mode: "title" | "victory" | "defeat" | "hidden" | "level";
   level?: number;
+  bestLevel?: number;
   lossLevel?: number;
   introDuration?: number;
   previousLevel?: number | undefined;

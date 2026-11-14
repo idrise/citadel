@@ -15,6 +15,21 @@ import {
   saveProgress,
 } from "./progression";
 
+it("counts unlocked challenges as personal best and preserves the peak after demotion and migration", () => {
+  let progress = recordResult(freshProgress(), { level: 1, count: 6, place: 1, at: 0 });
+  expect(progress.best).toBe(2);
+  progress = { ...progress, level: 25, best: 25 };
+  for (let at = 1; at <= 3; at++)
+    progress = recordResult(progress, { level: 25, count: 6, place: 6, at });
+  expect(progress.level).toBe(24);
+  expect(progress.best).toBe(25);
+  const legacy = parseProgress(JSON.stringify({ version: 2, ...progress, best: 20 }));
+  expect(legacy.best).toBe(25);
+  expect(legacy.losses).toBe(progress.losses);
+  expect(legacy.demotion).toEqual(progress.demotion);
+  expect(parseProgress(JSON.stringify({ version: 3, ...progress }))).toEqual(progress);
+});
+
 it("advances on every win, accelerates consistent wins, reaches the ceiling quickly and demotes once per three losses", () => {
   let progress = freshProgress();
   expect(levelFor(progress, 6)).toBe(1);

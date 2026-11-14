@@ -31,6 +31,10 @@ export function App() {
       <h1 className="sr-only">Citadel</h1>
       <GamePanel
         level={levelFor(progress, count)}
+        bestLevel={progress.best}
+        onReached={(level) =>
+          setProgress((current) => (level > current.best ? { ...current, best: level } : current))
+        }
         lossLevel={levelAfterLoss(progress, count)}
         previousLevel={
           progress.recent.at(-1)?.count === count ? progress.recent.at(-1)?.level : undefined
