@@ -1,4 +1,5 @@
 import { CylinderGeometry, Group, Mesh } from "three";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { createFeatureEdgeFactory } from "./feature-edges";
 import { frostedMaterial } from "./frosted-material";
 import { ARENA } from "../simulation/arena";
@@ -13,9 +14,16 @@ export function createHealthFactory(colour: number) {
     24,
   );
   const baseGeometry = new CylinderGeometry(ARENA.pieceRadius, ARENA.pieceRadius, 0.08, 24);
+  // Cap and base use the same material and move together. Combining them also
+  // combines their outlines, reducing draws in the main and reflection passes.
+  capGeometry.translate(0, 1.105, 0);
+  baseGeometry.translate(0, 0.05, 0);
+  const trimGeometry = mergeGeometries([capGeometry, baseGeometry])!;
+  capGeometry.dispose();
+  baseGeometry.dispose();
   const bodyMaterial = frostedMaterial(0x283442);
   const capMaterial = frostedMaterial(0x354150);
-  const outlines = [bodyGeometry, capGeometry, baseGeometry].map((geometry) =>
+  const outlines = [bodyGeometry, trimGeometry].map((geometry) =>
     createFeatureEdgeFactory(geometry, colour, { width: 3, power: 1.8 }),
   );
   return () => {
@@ -23,8 +31,7 @@ export function createHealthFactory(colour: number) {
     let index = 0;
     for (const [geometry, material, height] of [
       [bodyGeometry, bodyMaterial, 0.55],
-      [capGeometry, capMaterial, 1.105],
-      [baseGeometry, capMaterial, 0.05],
+      [trimGeometry, capMaterial, 0],
     ] as const) {
       const part = new Mesh(geometry, material);
       part.position.y = height;

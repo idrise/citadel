@@ -358,6 +358,15 @@ and behavioural edge cases; run deterministic simulation/replay regressions and
 relevant browser flows. Capture matched visual evidence for presentation changes.
 Report regressions and costs as well as gains. **STOP: REVIEW REQUIRED — P02.**
 
+**15 November targeted optimisation:** The owner requested low-hanging fixes
+despite the unavailable Windows machine. Health-piece caps and bases now share
+one geometry and outline per piece. On the available M2 Pro, matched desktop
+six-seat p95 draw calls fell 1,089→972; emulated phone 665→619 and tablet
+667→619. Frame pacing was unchanged near 60 Hz and GPU timings were mixed, so no
+Windows or mobile FPS gain is claimed. `docs/PERFORMANCE_OPTIMISATION_REVIEW.md`
+records results, rendered evidence, checks and limitations. P01 remains blocked;
+this scoped fix does not complete or approve P02 or the device gates.
+
 **P03 — Graceful quality on constrained hardware** (Not started; depends on P01,
 and on P02 where applicable). Evaluate the existing quality presets and adaptive
 resolution against observed bottlenecks; add or adjust controls or adaptation only
