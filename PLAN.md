@@ -298,7 +298,8 @@ mobile draw-call reduction and adaptive resolution are starting points, not proo
 that older desktop hardware is fixed. GPU timing may be unavailable; a missing
 sample is unknown, not zero. Diagnostic data stays local.
 
-**P01 — Reproduce and establish a baseline** (Not started). Build a repeatable
+**P01 — Reproduce and establish a baseline** (Blocked: affected Windows machine
+and physical phone/tablet measurements unavailable). Build a repeatable
 production-build benchmark and a short capture guide for the affected machine.
 Record browser/version, OS, CPU/GPU if available, display and viewport size, DPR,
 refresh rate, power mode, quality settings, build revision, and whether hardware
@@ -322,6 +323,22 @@ local evidence and device limitations. Establish an actual before baseline on th
 reported older machine if available; otherwise mark that gate blocked and use
 available machines only for preliminary investigation. Define the exact scenarios
 and proposed device-specific targets for owner review. **STOP: REVIEW REQUIRED — P01.**
+
+**15 November P01 work record:** The owner reports approximately 15 FPS on a
+friend's Windows PC in Chrome; that computer is not currently accessible.
+`docs/PERFORMANCE_BASELINE.md` provides a production-build benchmark and a
+Windows/physical-device capture guide. Preliminary 60-second active-play
+captures on the available M2 Pro cover 2/4/6-seat desktop High/Low and emulated phone/tablet
+level 100. The latter reached 14 balls, not a sustained 16. Desktop High incurred
+more rendering work than Low on this Mac, but both ran at the display limit; the
+Windows bottleneck remains unknown. Raw samples and limitations are recorded in
+`docs/reviews/performance-p01/`. More repeat runs, isolated effects,
+the 16-ball fixture and real-device measurements remain outstanding. Do not claim
+the slowdown is fixed or P01 accepted. M09/M10 status is unchanged.
+Validation: `vp check` passed after correcting a test type error; the full
+`vp test run` passed 554 tests, and the focused summary tests passed after that
+type-only correction. Root production build passed with its existing chunk-size
+advisory. `git diff --check` passed. No game or visual behaviour was changed.
 
 **P02 — Remove measured bottlenecks** (Not started; depends on P01 evidence).
 Prioritise the largest verified causes and compare each change against the same
