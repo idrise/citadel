@@ -385,6 +385,15 @@ remaining limits. Audio and shadow checkpoints were independently validated and
 committed locally. P01's affected-device gate, M09/M10, P02/P03/P04 acceptance,
 push and deployment remain unchanged. **REVIEW REQUIRED — P01.**
 
+**16 November CI timeout follow-up:** The owner supplied a CI failure where the
+arena-variant determinism test exceeded its default five-second limit. Split its
+15 roster/level replay pairs into individually named parameterised tests, keeping
+all seeds, simulation steps, state comparisons and zero-collision-cap assertions.
+The global timeout and game code are unchanged. The focused suite passes with a
+stricter one-second per-case limit (slowest local replay pair: 333 ms). `vp check`,
+all 610 unit tests and the `/citadel/` production build pass; the build retains its
+existing large-chunk advisory. The remote CI rerun remains pending.
+
 **P02 — Remove measured bottlenecks** (Not started; depends on P01 evidence).
 Prioritise the largest verified causes and compare each change against the same
 baseline. Candidate investigations include expensive reflection/bloom/shadow passes

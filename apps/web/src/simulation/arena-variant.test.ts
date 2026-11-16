@@ -84,17 +84,21 @@ it("freezes the level shape through eliminations, retaining identity and bat wid
     expect(state.players.filter((p) => p.health.some(Boolean)).map((p) => p.id)).toEqual([0, 2]);
   }
 });
-it("keeps seeded bot play deterministic with no collision caps across every variant layout", () => {
-  for (const count of [2, 3, 4, 5, 6] as const)
-    for (const level of [3, 10, 20]) {
-      const run = () => {
-        let state = createMatch(2026, count, 3, 2026, levelDifficulty(level));
-        state.phase = "playing";
-        for (let tick = 0; tick < 120 * 8 && state.phase !== "finished"; tick++)
-          state = stepMatch(state, undefined, { ...DEFAULT_OPTIONS, humanSeat: -1 });
-        expect(state.stats.collisionCaps).toBe(0);
-        return state;
-      };
-      expect(run()).toEqual(run());
-    }
-});
+// Give each replay pair its own timeout and failure identity on slower CI runners.
+const replayCases = ([2, 3, 4, 5, 6] as const).flatMap((count) =>
+  [3, 10, 20].map((level) => ({ count, level })),
+);
+it.each(replayCases)(
+  "keeps seeded bot play deterministic with no collision caps for $count seats at level $level",
+  ({ count, level }) => {
+    const run = () => {
+      let state = createMatch(2026, count, 3, 2026, levelDifficulty(level));
+      state.phase = "playing";
+      for (let tick = 0; tick < 120 * 8 && state.phase !== "finished"; tick++)
+        state = stepMatch(state, undefined, { ...DEFAULT_OPTIONS, humanSeat: -1 });
+      expect(state.stats.collisionCaps).toBe(0);
+      return state;
+    };
+    expect(run()).toEqual(run());
+  },
+);
