@@ -119,7 +119,8 @@ it("builds four full-height solid wall panels with translucent near faces", () =
     }
     const panel = wall.getObjectByName("wall-panel") as import("three").Mesh;
     const material = panel.material as import("three").MeshPhysicalMaterial;
-    expect(material.transparent).toBe(wall.name === "near-wall");
+    expect(material.transparent).toBe(true);
+    if (wall.name === "rear-wall") expect(material.opacity).toBe(1);
     if (wall.name === "near-wall") {
       expect(material.opacity).toBeLessThan(0.2);
       expect(material.depthWrite).toBe(false);

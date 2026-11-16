@@ -12,6 +12,7 @@ import {
   saveLevel,
 } from "./helpers";
 import { readFile } from "node:fs/promises";
+import { TITLE_TRANSITION_SECONDS } from "../apps/web/src/rendering/title-transition";
 
 test("player-count previews morph on the same canvas with fixed menu controls and rapid retargeting", async ({
   page,
@@ -28,14 +29,15 @@ test("player-count previews morph on the same canvas with fixed menu controls an
   );
   await choosePlayers(page, 2);
   await expect(page.getByLabel("Arena preview", { exact: true })).toHaveText("moving");
-  await page.clock.runFor(1000);
+  // Include the session's throttled diagnostics report after the final render frame.
+  await page.clock.runFor(TITLE_TRANSITION_SECONDS * 1000 + 200);
   await page.screenshot({ path: testInfo.outputPath("preview-2.png") });
   await choosePlayers(page, 6);
   await page.clock.runFor(400);
   await expect(page.getByLabel("Arena preview", { exact: true })).toHaveText("moving");
   await page.screenshot({ path: testInfo.outputPath("preview-middle.png") });
   await choosePlayers(page, 4);
-  await page.clock.runFor(1000);
+  await page.clock.runFor(TITLE_TRANSITION_SECONDS * 1000 + 200);
   await expect(page.getByLabel("Arena preview", { exact: true })).toHaveText("settled");
   await page.screenshot({ path: testInfo.outputPath("preview-4.png") });
   expect(await canvas.evaluate((node) => node === document.querySelector(".viewport canvas"))).toBe(

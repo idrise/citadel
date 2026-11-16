@@ -1,5 +1,6 @@
 import { MAX_PLAYERS } from "../simulation/player-count";
 import type { TitleFrame } from "./title-transition";
+import { morphPosts, type PostReveal } from "../simulation/arena-transition";
 import type { Vec2 } from "../simulation/vector";
 import { resizePaddle } from "./paddle-shape";
 import { createLevelIntro } from "./level-intro";
@@ -29,8 +30,10 @@ import { createAimGuide } from "./aim-guide";
 import type { SceneMenuState } from "./scene-menu";
 import { createPaddleBlur } from "./paddle-blur";
 import { createVictoryMorph } from "./victory-morph";
+import { visibleCorners } from "./presentation-outline";
 
 export interface ViewOptions {
+  posts?: PostReveal;
   titleTilt?: number;
   portrait?: boolean;
   preview: boolean;
@@ -92,7 +95,8 @@ export function createArenaView(
     dispose: () => reflection.dispose(),
     captureTransition(frame: TitleFrame): TitleFrame {
       const ending = lastEnding;
-      if (!ending) return frame;
+      if (!ending)
+        return frame.state.morph ? { ...frame, posts: morphPosts(frame.state.morph) } : frame;
       const positions = (distance: number) =>
         createArena(MAX_PLAYERS).fortresses.map((template) => {
           const home = frame.state.arena.fortresses.find((f) => f.id === template.id) ?? template;
@@ -107,6 +111,7 @@ export function createArenaView(
       lights[ending.winner] = ending.light;
       return {
         ...frame,
+        posts: ending.posts,
         railGain: 0,
         victoryFraming: ending.progress,
         marks,
@@ -169,11 +174,24 @@ export function createArenaView(
           seat: number,
           anchor?: { x: number; y: number },
           dt?: number,
+          posts?: PostReveal,
         ) => void
-      )(displayArena, options.humanSeat, options.cameraAnchor, dt);
+      )(
+        displayArena,
+        options.humanSeat,
+        options.cameraAnchor,
+        dt,
+        options.reducedEffects
+          ? undefined
+          : (ending?.posts ?? options.posts ?? (state.morph ? morphPosts(state.morph) : undefined)),
+      );
       reflection.update(displayArena, options.humanSeat, options.cameraAnchor);
       reflection.setFloorOnly(
-        Boolean(ending) || (options.victoryFraming ?? 0) > 0 || displayArena.count > 6,
+        Boolean(ending) ||
+          (options.victoryFraming ?? 0) > 0 ||
+          state.arena.variant === "rounded" ||
+          visibleCorners(displayArena.vertices).length > 12,
+        options.reducedEffects ? undefined : dt,
       );
       const profile = effectsProfile(options.quality, options.reducedEffects, 1, 4, mobile);
       reflection.setReduced(!profile.reflections);

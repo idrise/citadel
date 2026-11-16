@@ -35,11 +35,14 @@ export function createArenaReflections(
   }
   let previous: ArenaGeometry | undefined,
     reduced = false,
-    victory = false;
+    wallGain = 1;
   let visible = meshes.map(() => false);
   const apply = () =>
     meshes.forEach((mesh, index) => {
-      mesh.visible = !reduced && visible[index]! && (!victory || index === 0);
+      mesh.visible = !reduced && visible[index]! && (index === 0 || wallGain > 0.001);
+      if (index > 0)
+        (mesh.material as import("three").ShaderMaterial).uniforms.reflectionOpacity!.value =
+          0.25 * wallGain;
     });
   let previousSeat = humanSeat;
   const update = (
@@ -84,8 +87,13 @@ export function createArenaReflections(
   return {
     meshes,
     update,
-    setFloorOnly(value: boolean) {
-      victory = value;
+    setFloorOnly(value: boolean, dt?: number) {
+      const target = value ? 0 : 1;
+      wallGain =
+        dt === undefined
+          ? target
+          : wallGain +
+            Math.max(-Math.max(0, dt) / 0.15, Math.min(Math.max(0, dt) / 0.15, target - wallGain));
       apply();
     },
     setReduced(value: boolean) {

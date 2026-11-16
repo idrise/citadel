@@ -12,11 +12,14 @@ import {
   Sphere,
   Vector2,
   Vector4,
+  Vector3,
+  type Plane,
 } from "three";
 import { edgeFragmentShader, edgeVertexShader } from "./feature-edge-shader";
 
 export const FEATURE_ANGLE = 35;
 export interface EdgeOptions {
+  clippingPlanes?: Plane[];
   width?: number;
   angle?: number;
   opacity?: number;
@@ -27,13 +30,23 @@ export interface EdgeOptions {
 export function featureEdgeGeometry(source: BufferGeometry, angle = FEATURE_ANGLE) {
   const edges = new EdgesGeometry(source, angle);
   const positions = edges.getAttribute("position");
+  const points = Array.from(positions.array);
+  edges.dispose();
+  const geometry = segmentEdgeGeometry(points);
+  if (!source.boundingBox) source.computeBoundingBox();
+  geometry.boundingBox = source.boundingBox?.clone() ?? new Box3();
+  geometry.boundingSphere = geometry.boundingBox.getBoundingSphere(new Sphere());
+  return geometry;
+}
+
+/** Explicit pairs avoid view-dependent crease selection on a changing outline. */
+export function segmentEdgeGeometry(points: readonly number[]) {
   const starts: number[] = [],
     ends: number[] = [];
-  for (let index = 0; index < positions.count; index += 2) {
-    starts.push(positions.getX(index), positions.getY(index), positions.getZ(index));
-    ends.push(positions.getX(index + 1), positions.getY(index + 1), positions.getZ(index + 1));
+  for (let i = 0; i < points.length; i += 6) {
+    starts.push(points[i]!, points[i + 1]!, points[i + 2]!);
+    ends.push(points[i + 3]!, points[i + 4]!, points[i + 5]!);
   }
-  edges.dispose();
   const geometry = new InstancedBufferGeometry();
   geometry.setAttribute(
     "position",
@@ -43,8 +56,9 @@ export function featureEdgeGeometry(source: BufferGeometry, angle = FEATURE_ANGL
   geometry.setAttribute("edgeStart", new InstancedBufferAttribute(new Float32Array(starts), 3));
   geometry.setAttribute("edgeEnd", new InstancedBufferAttribute(new Float32Array(ends), 3));
   geometry.instanceCount = starts.length / 3;
-  if (!source.boundingBox) source.computeBoundingBox();
-  geometry.boundingBox = source.boundingBox?.clone() ?? new Box3();
+  geometry.boundingBox = new Box3();
+  for (let i = 0; i < points.length; i += 3)
+    geometry.boundingBox.expandByPoint(new Vector3(points[i]!, points[i + 1]!, points[i + 2]!));
   geometry.boundingSphere = geometry.boundingBox.getBoundingSphere(new Sphere());
   return geometry;
 }
@@ -55,8 +69,16 @@ export function createFeatureEdgeFactory(
   colour: number,
   options: EdgeOptions = {},
 ) {
-  const geometry = featureEdgeGeometry(source, options.angle);
+  return createStrokeFactory(featureEdgeGeometry(source, options.angle), colour, options);
+}
+
+export function createStrokeFactory(
+  geometry: InstancedBufferGeometry,
+  colour: number,
+  options: EdgeOptions = {},
+) {
   const material = new ShaderMaterial({
+    ...(options.clippingPlanes ? { clipping: true, clippingPlanes: options.clippingPlanes } : {}),
     name: "NeonFeatureEdges",
     uniforms: {
       resolution: { value: new Vector2(1, 1) },

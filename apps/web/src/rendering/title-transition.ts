@@ -1,11 +1,13 @@
 import { MAX_PLAYERS } from "../simulation/player-count";
+import { arenaTransition, transitionPosts, type PostReveal } from "../simulation/arena-transition";
 import { createArena, fortress, type ArenaGeometry } from "../simulation/arena";
 import { blendPresentationOutline, matchPresentationOutlines } from "./presentation-outline";
 import type { MatchState, PlayerState } from "../simulation/types";
 import { add, angleDifference, scale, type Vec2 } from "../simulation/vector";
 
-export const TITLE_TRANSITION_SECONDS = 0.85;
+export const TITLE_TRANSITION_SECONDS = 1.25;
 export interface TitleFrame {
+  posts?: PostReveal;
   state: MatchState;
   scales: number[];
   yaw: number;
@@ -74,7 +76,7 @@ export function createTitleTransition() {
         current = { state, scales: scalesFor(state), yaw: yawFor(state, seat), moving: false };
         return current;
       }
-      const t = time * time * (3 - 2 * time),
+      const t = arenaTransition(time).shape,
         before = transition.from.state;
       const targetScales = scalesFor(state);
       const born = (id: number) => (transition!.from.scales[id] ?? 0) === 0;
@@ -150,6 +152,11 @@ export function createTitleTransition() {
           );
         });
       current = {
+        posts: transitionPosts(
+          time,
+          transition.from.posts ?? { vertices: before.arena.vertices, lift: 1 },
+          state.arena.vertices,
+        ),
         marks: positions(0.9, transition.from.marks),
         lights: positions(2.7, transition.from.lights),
         railGain: (transition.from.railGain ?? 1) + (1 - (transition.from.railGain ?? 1)) * t,

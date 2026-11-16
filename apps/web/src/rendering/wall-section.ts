@@ -2,6 +2,8 @@ import { BoxGeometry, ExtrudeGeometry, Shape } from "three";
 import { ARENA } from "../simulation/arena";
 
 export const WALL_HEIGHT = 2.22;
+export const POST_HEIGHT = WALL_HEIGHT + 0.12;
+export const POST_BASE_HEIGHT = 0.08;
 export const WALL_THICKNESS = 0.96;
 export const WALL_CENTRE = ARENA.halfSize + WALL_THICKNESS / 2;
 export const WALL_PANEL_HEIGHT = 1.56;

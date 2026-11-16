@@ -1,4 +1,10 @@
 import { ARENA, fortress, type ArenaGeometry } from "../simulation/arena";
+import {
+  arenaTransition,
+  morphPosts,
+  transitionPosts,
+  type PostReveal,
+} from "../simulation/arena-transition";
 import { healthFormation } from "../simulation/health-layout";
 import type { MatchState } from "../simulation/types";
 import { add, angleDifference, clamp, scale, sub, unit, type Vec2 } from "../simulation/vector";
@@ -50,6 +56,7 @@ export function createVictoryMorph(humanSeat: number) {
   let outlines: ReturnType<typeof victoryOutlines>;
   let lastProgress = -1;
   let display: ArenaGeometry;
+  let sourcePosts: PostReveal;
   return {
     update(state: MatchState, elapsed: number, reduced: boolean) {
       if (state.phase !== "finished" || state.winner === null) {
@@ -66,11 +73,14 @@ export function createVictoryMorph(humanSeat: number) {
       if (capturedArena !== state.arena || capturedWinner !== state.winner) {
         capturedArena = state.arena;
         capturedWinner = state.winner;
+        sourcePosts = state.morph
+          ? morphPosts(state.morph)
+          : { vertices: state.arena.vertices, lift: 1 };
         outlines = victoryOutlines(state.arena.vertices, Math.atan2(-viewer.y, -viewer.x));
         lastProgress = -1;
       }
       const time = clamp(elapsed / VICTORY_MORPH_SECONDS, 0, 1);
-      const progress = reduced ? 1 : time * time * (3 - 2 * time);
+      const progress = reduced ? 1 : arenaTransition(time).shape;
       if (lastProgress !== progress) {
         display = {
           ...state.arena,
@@ -94,6 +104,7 @@ export function createVictoryMorph(humanSeat: number) {
       );
       const targetPaddle = add(scale(viewer, 1.8), scale(viewer, ARENA.railRadius));
       return {
+        posts: transitionPosts(reduced ? 1 : time, sourcePosts, outlines.to),
         arena: display,
         winner: player.id,
         progress,

@@ -48,6 +48,7 @@ export function createViewport(
 ) {
   const mobile = navigator.maxTouchPoints > 0 || matchMedia("(pointer: coarse)").matches;
   const renderer = new WebGLRenderer({ antialias: !mobile, powerPreference: "high-performance" });
+  renderer.localClippingEnabled = true;
   renderer.info.autoReset = false;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = ACESFilmicToneMapping;
@@ -161,6 +162,7 @@ export function createViewport(
         titleTilt: -0.95 * Math.max(0, Math.min(1, (1 - aspect) / 0.4)),
         portrait: aspect < 0.85,
         actorScales: presentation.scales,
+        ...(presentation.posts ? { posts: presentation.posts } : {}),
         ...(presentation.marks ? { actorMarks: presentation.marks } : {}),
         ...(presentation.pieceScales ? { actorPieceScales: presentation.pieceScales } : {}),
         ...(presentation.railGain !== undefined ? { railGain: presentation.railGain } : {}),

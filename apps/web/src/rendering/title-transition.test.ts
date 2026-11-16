@@ -136,3 +136,54 @@ it("grows new seats from the current board and retires them inward instead of ap
     );
   }
 });
+
+it("retargets during post retraction, underground travel and rebuilding without reviving or moving visible posts", () => {
+  for (const time of [0.075, 0.5, 0.925]) {
+    const a = createMatch(5, 6),
+      b = createMatch(5, 4),
+      c = createMatch(5, 2);
+    const transition = createTitleTransition();
+    transition.update(a, 0, 0, false);
+    transition.begin(b, 0, true);
+    const before = transition.update(b, 0, time * TITLE_TRANSITION_SECONDS, false);
+    expect(before.posts).toBeDefined();
+    transition.begin(c, 0, true);
+    const retarget = transition.update(c, 0, 0, false);
+    expect(retarget.posts).toEqual(before.posts);
+    const retract = transition.update(c, 0, TITLE_TRANSITION_SECONDS * 0.075, false);
+    expect(retract.posts!.vertices).toEqual(before.posts!.vertices);
+    expect(retract.posts!.lift).toBeLessThanOrEqual(before.posts!.lift);
+    const middle = transition.update(c, 0, TITLE_TRANSITION_SECONDS * 0.425, false);
+    expect(middle.posts!.lift).toBe(0);
+    const final = transition.update(c, 0, TITLE_TRANSITION_SECONDS, false);
+    expect(final.posts).toBeUndefined();
+    expect(final.state).toBe(c);
+  }
+});
+
+it("captures the actual post reveal when leaving an unfinished live elimination morph", async () => {
+  const { createArenaView } = await import("./arena-view");
+  const { beginArenaMorph, stepArenaMorph } = await import("../simulation/arena-morph");
+  const { morphPosts } = await import("../simulation/arena-transition");
+  const { disposeScene } = await import("./dispose-scene");
+  for (const progress of [0.075, 0.5, 0.925]) {
+    const state = createMatch(2026, 6);
+    state.phase = "playing";
+    state.players[5]!.health.fill(false);
+    state.eliminations.push({ seat: 5, elapsed: 0 });
+    beginArenaMorph(state);
+    stepArenaMorph(state, state.morph!.duration * progress);
+    const transition = createTitleTransition(),
+      view = createArenaView(0, state.arena);
+    const frame = transition.update(state, 0, 0, false);
+    view.update(state, 0, { humanSeat: 0, preview: false, slowdown: false, reducedEffects: false });
+    const captured = view.captureTransition(frame);
+    expect(captured.posts).toEqual(morphPosts(state.morph!));
+    transition.capture(captured);
+    const target = createMatch(5, 4);
+    transition.begin(target, 0, true);
+    expect(transition.update(target, 0, 0, false).posts).toEqual(captured.posts);
+    view.dispose();
+    disposeScene(view.root);
+  }
+});

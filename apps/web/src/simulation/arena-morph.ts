@@ -1,4 +1,5 @@
 import { carrySupplies } from "./supplies";
+import { arenaTransition, morphPosts } from "./arena-transition";
 import {
   ARENA,
   batRadius,
@@ -67,10 +68,11 @@ export function beginArenaMorph(state: MatchState): void {
   // Reuse the remaining time. Only a large retarget may extend it enough to keep
   // eased fortress translation at or below six units/s (ball speed remains 24).
   const duration = Math.max(
-    travel / 4,
+    travel / 2.2,
     state.morph ? Math.max(0.8, state.morph.duration - state.morph.elapsed) : 2.8,
   );
   state.morph = {
+    ...(state.morph ? { postSource: morphPosts(state.morph) } : {}),
     from: state.arena,
     to: target,
     outline: matchOutlines(state.arena.vertices, target.vertices),
@@ -108,10 +110,9 @@ export function stepArenaMorph(state: MatchState, dt: number): void {
   const morph = state.morph;
   if (!morph) return;
   const elapsed = Math.min(morph.duration, morph.elapsed + dt);
-  const t = elapsed / morph.duration,
-    eased = t * t * (3 - 2 * t);
+  const eased = arenaTransition(elapsed / morph.duration).shape;
   const before = state.arena;
-  const after = elapsed >= morph.duration ? morph.to : interpolate(morph, eased);
+  const after = eased === 0 ? morph.from : eased === 1 ? morph.to : interpolate(morph, eased);
   for (const player of state.players) {
     if (!alive(player)) continue;
     const oldSeat = fortress(player.id, before),

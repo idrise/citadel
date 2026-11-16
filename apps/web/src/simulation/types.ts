@@ -106,6 +106,7 @@ export interface MatchOptions {
   maxBalls: number;
 }
 export interface ArenaMorph {
+  postSource?: { vertices: readonly Vec2[]; lift: number };
   outline: OutlineTransition;
   from: ArenaGeometry;
   to: ArenaGeometry;

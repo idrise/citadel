@@ -50,7 +50,7 @@ it("moves meshes and mirrors with the colliders, hides eliminated actors, and re
   beginArenaMorph(state);
   const base = view.root.children[0]!.children[0] as Mesh;
   const disposed = vi.spyOn(base.geometry, "dispose");
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 30; i++) {
     stepArenaMorph(state, 1 / 30);
     view.update(state, 1 / 30, {
       humanSeat: 5,

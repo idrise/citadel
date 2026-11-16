@@ -19,9 +19,10 @@ it.each([1, 50, 100])(
   (level) => {
     const state = createMatch(7, 3, 3, 7, levelDifficulty(level)),
       arena = state.arena;
-    expect(arena.vertices).toHaveLength(arena.variant ? 6 : 3);
+    const samples = arena.vertices.length / arena.count;
+    expect(Number.isInteger(samples)).toBe(true);
     for (const [index, home] of arena.fortresses.entries()) {
-      const tip = arena.vertices[index * (arena.variant ? 2 : 1)]!;
+      const tip = arena.vertices[index * samples]!;
       expect(length(tip)).toBeCloseTo(13);
       expect(length(home.anchor)).toBeCloseTo(length(arena.vertices[0]!) - TRIANGLE_FORTRESS_INSET);
       expect(length(sub(home.anchor, tip))).toBeCloseTo(TRIANGLE_FORTRESS_INSET);

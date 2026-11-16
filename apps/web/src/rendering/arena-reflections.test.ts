@@ -23,3 +23,25 @@ it("allocates only a small floor capture on mobile and retains geometry when jus
   view.dispose();
   view.meshes.forEach(disposeScene);
 });
+
+it("fades wall captures through a geometry-mode change and holds the gain while paused", () => {
+  const view = createArenaReflections(0, createArena(4));
+  const rear = view.meshes.slice(1).find((mesh) => mesh.visible)!;
+  const opacity = () =>
+    (rear.material as import("three").ShaderMaterial).uniforms.reflectionOpacity!.value as number;
+  expect(opacity()).toBe(0.25);
+  view.setFloorOnly(true, 0);
+  expect(opacity()).toBe(0.25);
+  view.setFloorOnly(true, 0.075);
+  expect(opacity()).toBeCloseTo(0.125);
+  expect(rear.visible).toBe(true);
+  view.setFloorOnly(true, 0.075);
+  expect(opacity()).toBe(0);
+  expect(rear.visible).toBe(false);
+  view.setFloorOnly(false, 0.075);
+  expect(opacity()).toBeCloseTo(0.125);
+  view.setFloorOnly(false, 0.075);
+  expect(opacity()).toBe(0.25);
+  view.dispose();
+  view.meshes.forEach(disposeScene);
+});

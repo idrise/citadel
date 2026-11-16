@@ -8,21 +8,21 @@ import { levelDifficulty } from "./difficulty";
 import { beginArenaMorph, stepArenaMorph } from "./arena-morph";
 import { DEFAULT_OPTIONS } from "./types";
 
-it("mixes five deterministic shapes through the itinerary and keeps the level-100 finale classic", () => {
+it("mixes six deterministic shapes through the itinerary and keeps the level-100 finale classic", () => {
   const shapes = Array.from({ length: 100 }, (_, i) => levelArenaShape(i + 1));
   expect(shapes.slice(0, 10)).toEqual([
     "classic",
     "wide",
-    "faceted",
+    "rounded",
     "compact",
     "wide",
     "spacious",
     "faceted",
-    "classic",
+    "rounded",
     "compact",
     "wide",
   ]);
-  expect(new Set(shapes.slice(0, 10)).size).toBe(5);
+  expect(new Set(shapes.slice(0, 10)).size).toBe(6);
   expect(shapes.filter((shape, i) => i > 0 && shape !== shapes[i - 1]).length).toBeGreaterThan(85);
   expect(levelArenaShape(100)).toBe("classic");
   expect(levelArenaShape(NaN)).toBe("classic");
@@ -30,10 +30,10 @@ it("mixes five deterministic shapes through the itinerary and keeps the level-10
 });
 it("gives every defender symmetric convex walls, keeping actual bats and containers inside in all layouts and shapes", () => {
   for (const count of [2, 3, 4, 5, 6] as const)
-    for (const shape of ["classic", "wide", "faceted"] as ArenaShape[]) {
+    for (const shape of ["classic", "wide", "faceted", "rounded"] as ArenaShape[]) {
       const arena = createArena(count, undefined, 0.27, 0.7, shape),
         edges = polygonEdges(arena.vertices);
-      expect(arena.vertices.length).toBeLessThanOrEqual(12);
+      expect(arena.vertices.length).toBeLessThanOrEqual(32);
       for (const p of arena.vertices) {
         const turn = (2 * Math.PI) / count,
           rotated = {
@@ -67,7 +67,7 @@ it("gives every defender symmetric convex walls, keeping actual bats and contain
     }
 });
 it("freezes the level shape through eliminations, retaining identity and bat width", () => {
-  for (const level of [10, 20]) {
+  for (const level of [3, 10, 20]) {
     const state = createMatch(4, 6, 3, 4, levelDifficulty(level)),
       width = batHalfAngle(state.arena);
     for (const id of [1, 3, 5, 4]) {
@@ -86,7 +86,7 @@ it("freezes the level shape through eliminations, retaining identity and bat wid
 });
 it("keeps seeded bot play deterministic with no collision caps across every variant layout", () => {
   for (const count of [2, 3, 4, 5, 6] as const)
-    for (const level of [10, 20]) {
+    for (const level of [3, 10, 20]) {
       const run = () => {
         let state = createMatch(2026, count, 3, 2026, levelDifficulty(level));
         state.phase = "playing";

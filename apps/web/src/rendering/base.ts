@@ -1,9 +1,10 @@
 import { Group, Mesh } from "three";
-import { createFeatureEdges } from "./feature-edges";
+import type { PostReveal } from "../simulation/arena-transition";
+import { createStrokeFactory } from "./feature-edges";
 import { frostedMaterial } from "./frosted-material";
 import { createArenaWalls } from "./walls";
 import { SQUARE_ARENA, type ArenaGeometry } from "../simulation/arena";
-import { hullGeometry, replaceHull } from "./hull";
+import { hullGeometry, hullEdgeGeometry, replaceHull } from "./hull";
 
 /** The solid plinth, floor and wall colliders share one polygon. */
 export function createArenaBase(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA): Group {
@@ -20,7 +21,14 @@ export function createArenaBase(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
     );
     mesh.receiveShadow = true;
     mesh.castShadow = true;
-    if (spec.margin) mesh.add(createFeatureEdges(mesh.geometry, 0x009dd9, { width: 3, power: 1 }));
+    if (spec.margin)
+      mesh.add(
+        createStrokeFactory(
+          hullEdgeGeometry(initial.vertices, spec.margin, spec.top, spec.depth),
+          0x009dd9,
+          { width: 3, power: 1 },
+        )(),
+      );
     root.add(mesh);
     return mesh;
   });
@@ -32,12 +40,19 @@ export function createArenaBase(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
     seat = humanSeat,
     anchor?: { x: number; y: number },
     dt = 0,
+    posts?: PostReveal,
   ) => {
     if (previous !== arena) {
       previous = arena;
       slabs.forEach((mesh, i) => {
         const spec = specs[i]!;
-        replaceHull(mesh, hullGeometry(arena.vertices, spec.margin, spec.top, spec.depth));
+        replaceHull(
+          mesh,
+          hullGeometry(arena.vertices, spec.margin, spec.top, spec.depth),
+          spec.margin
+            ? hullEdgeGeometry(arena.vertices, spec.margin, spec.top, spec.depth)
+            : undefined,
+        );
       });
     }
     (
@@ -46,8 +61,9 @@ export function createArenaBase(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
         seat: number,
         anchor?: { x: number; y: number },
         dt?: number,
+        posts?: PostReveal,
       ) => void
-    )(arena, seat, anchor, dt);
+    )(arena, seat, anchor, dt, posts);
   };
   return root;
 }

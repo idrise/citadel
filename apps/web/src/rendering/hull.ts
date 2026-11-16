@@ -1,6 +1,6 @@
 import { BufferGeometry, Float32BufferAttribute, Mesh, type Material } from "three";
 import type { Vec2 } from "../simulation/vector";
-import { featureEdgeGeometry } from "./feature-edges";
+import { featureEdgeGeometry, segmentEdgeGeometry } from "./feature-edges";
 
 /** An origin-centred radial fan and bevelled side rings, including the victory star. */
 export function hullGeometry(
@@ -43,15 +43,39 @@ export function hullGeometry(
   geometry.computeBoundingSphere();
   return geometry;
 }
+/** Trace only the four authored rings. Recomputing a crease-angle threshold
+ * would make vertical seams appear abruptly as corners flatten during morphing. */
+export function hullEdgeGeometry(
+  vertices: readonly Vec2[],
+  margin: number,
+  top: number,
+  depth: number,
+) {
+  const points: number[] = [];
+  for (const [y, outset] of [
+    [top, margin],
+    [top - 0.08, margin + 0.08],
+    [top - depth + 0.08, margin + 0.08],
+    [top - depth, margin],
+  ])
+    for (let i = 0; i < vertices.length; i++)
+      for (const p of [vertices[i]!, vertices[(i + 1) % vertices.length]!]) {
+        const gain = 1 + outset! / Math.hypot(p.x, p.y);
+        points.push(p.x * gain, y!, p.y * gain);
+      }
+  return segmentEdgeGeometry(points);
+}
+
 export function replaceHull(
   mesh: Mesh<BufferGeometry, Material | Material[]>,
   geometry: BufferGeometry,
+  outline?: BufferGeometry,
 ): void {
   mesh.geometry.dispose();
   mesh.geometry = geometry;
   const edges = mesh.children.find((child) => child.name === "feature-edges") as Mesh | undefined;
   if (edges) {
     edges.geometry.dispose();
-    edges.geometry = featureEdgeGeometry(geometry);
+    edges.geometry = outline ?? featureEdgeGeometry(geometry);
   }
 }

@@ -1,5 +1,6 @@
 /** Expand qualifying mesh edges in screen pixels; width is stable through perspective and resizing. */
 export const edgeVertexShader = `
+  #include <clipping_planes_pars_vertex>
   uniform vec2 resolution;
   uniform float strokeWidth;
   uniform float pixelRatio;
@@ -20,9 +21,15 @@ export const edgeVertexShader = `
     vec4 clip = mix(start, end, endpoint);
     vec2 offset = (direction * position.x + perpendicular * position.y) * halfWidth;
     clip.xy += offset * 2.0 / resolution * clip.w;
+    // Extending a stroke in screen space also extends its depth slope. Keeping
+    // the unextended endpoint depth lets the wall eat a sloping line midway.
+    float along = endpoint + position.x * halfWidth / lengthPixels;
+    clip.z = mix(start.z / start.w, end.z / end.w, along) * clip.w;
     // Small bias prevents a solid's own surface eating its edge; other solids still occlude it.
     clip.z -= 0.000002 * clip.w;
     gl_Position = clip;
+    vec4 mvPosition = modelViewMatrix * vec4(mix(edgeStart, edgeEnd, endpoint), 1.0);
+    #include <clipping_planes_vertex>
     strokePosition = vec2(mix(-halfWidth, lengthPixels + halfWidth, endpoint), position.y * halfWidth);
     // Multiplying by w and dividing in the fragment shader cancels perspective
     // interpolation, keeping the signed distance truly linear in screen pixels.
@@ -34,6 +41,7 @@ export const edgeVertexShader = `
 
 /** A bright core and softer shoulder feed bloom; analytic round caps hide joins between segments. */
 export const edgeFragmentShader = `
+  #include <clipping_planes_pars_fragment>
   uniform vec3 neonColour;
   uniform float opacity;
   uniform float strokeWidth;
@@ -42,6 +50,7 @@ export const edgeFragmentShader = `
   varying float strokeLength;
   varying float strokeW;
   void main() {
+    #include <clipping_planes_fragment>
     vec2 p = strokePosition / strokeW;
     float lineLength = strokeLength / strokeW;
     float distanceToLine = length(vec2(p.x - clamp(p.x, 0.0, lineLength), p.y));

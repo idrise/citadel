@@ -207,7 +207,9 @@ it("catches up with rapid deaths on the existing transition window instead of re
   eliminate(state, 3);
   beginArenaMorph(state);
   expect(state.morph!.to.count).toBe(4);
-  expect(state.morph!.duration).toBeLessThanOrEqual(2.0);
+  // Retraction/rebuild reserve part of the timeline; large retargets extend it
+  // to retain the six-unit/s bound rather than speeding the defence up.
+  expect(state.morph!.duration).toBeLessThan(3.5);
   stepArenaMorph(state, state.morph!.duration);
   expect(state.morph).toBeNull();
   expect(state.arena.count).toBe(4);
