@@ -19,8 +19,6 @@ export function createArenaBase(humanSeat = 0, initial: ArenaGeometry = SQUARE_A
       hullGeometry(initial.vertices, spec.margin, spec.top, spec.depth),
       frostedMaterial(spec.colour),
     );
-    mesh.receiveShadow = true;
-    mesh.castShadow = true;
     if (spec.margin)
       mesh.add(
         createStrokeFactory(

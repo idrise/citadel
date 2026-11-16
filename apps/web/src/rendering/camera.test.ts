@@ -129,19 +129,16 @@ it("builds four full-height solid wall panels with translucent near faces", () =
   disposeScene(base);
 });
 
-it("fits the directional shadow projection across all four arena corners", () => {
+it("lights the arena without allocating shadow maps", () => {
   const scene = new Scene();
   const dispose = lightArena(scene);
-  scene.updateMatrixWorld(true);
-  const key = scene.children.find(
-    (object) => object instanceof DirectionalLight && object.castShadow,
-  ) as DirectionalLight;
-  key.shadow.updateMatrices(key);
-  for (const seat of FORTRESSES) {
-    const projected = new Vector3(seat.anchor.x, 0, seat.anchor.y).project(key.shadow.camera);
-    expect(Math.abs(projected.x)).toBeLessThan(1);
-    expect(Math.abs(projected.y)).toBeLessThan(1);
-    expect(Math.abs(projected.z)).toBeLessThan(1);
+  const lights = scene.children.filter(
+    (object): object is DirectionalLight => object instanceof DirectionalLight,
+  );
+  expect(lights).toHaveLength(2);
+  for (const light of lights) {
+    expect(light.castShadow).toBe(false);
+    expect(light.shadow.map).toBeNull();
   }
   dispose();
 });

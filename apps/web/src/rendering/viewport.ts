@@ -10,7 +10,6 @@ import {
   ACESFilmicToneMapping,
   Box3,
   Color,
-  PCFSoftShadowMap,
   PointLight,
   Scene,
   Vector2,
@@ -53,8 +52,7 @@ export function createViewport(
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
-  renderer.shadowMap.enabled = !mobile;
-  renderer.shadowMap.type = PCFSoftShadowMap;
+  renderer.shadowMap.enabled = false;
   const resolution = createAdaptiveResolution();
   const gpu = createGpuTimer(renderer.getContext() as WebGL2RenderingContext);
   let renderCpuMs = 0;

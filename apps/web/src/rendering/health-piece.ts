@@ -40,8 +40,6 @@ export function createHealthFactory(colour: number) {
     ] as const) {
       const part = new Mesh(geometry, material);
       part.position.y = height;
-      part.castShadow = true;
-      part.receiveShadow = true;
       part.add(outlines[index++]!());
       root.add(part);
     }

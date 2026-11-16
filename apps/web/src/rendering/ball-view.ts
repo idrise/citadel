@@ -42,7 +42,6 @@ export function createBallView(root: Group) {
     const material = createBallMaterial();
     const mesh = new Mesh(sphere, material);
     mesh.name = "game-ball";
-    mesh.castShadow = true;
     root.add(mesh);
     const aura = createBallAura(sphere);
     mesh.add(aura);

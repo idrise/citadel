@@ -36,8 +36,6 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
     ] as const) {
       const beam = new Mesh(geometry, frameMaterial);
       beam.name = name;
-      beam.castShadow = true;
-      beam.receiveShadow = true;
       beam.add(createFeatureEdges(geometry, 0x00cfff, { width: 4.5, power: 1.7 }));
       wallFits.push(createWallFit(beam));
       wall.add(beam);
@@ -48,11 +46,9 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
     const panel = new Mesh(new BoxGeometry(length, WALL_PANEL_HEIGHT, 0.72), panelMaterial);
     panel.name = "wall-panel";
     panel.position.set(0, WALL_PANEL_CENTRE_Y, 0);
-    panel.receiveShadow = true;
     // Draw translucent faces before neon strokes, avoiding painter-order gaps
     // where adjacent curved panels meet the cap or a paddle silhouette.
     panel.renderOrder = -1;
-    panel.castShadow = false;
     panel.add(
       createFeatureEdges(panel.geometry, 0x00cfff, {
         width: 3,
@@ -73,8 +69,6 @@ export function createArenaWalls(humanSeat: number, initial: ArenaGeometry = SQU
     material.clipShadows = true;
     const post = new Mesh(new BoxGeometry(0.98, POST_HEIGHT, 0.98), material);
     post.name = "corner-post";
-    post.castShadow = true;
-    post.receiveShadow = true;
     post.add(createFeatureEdges(post.geometry, 0x00cfff, { width: 4, power: 1.7, clippingPlanes }));
     posts.push(post);
     root.add(post);

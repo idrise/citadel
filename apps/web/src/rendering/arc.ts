@@ -34,7 +34,5 @@ export function arcMesh(
   }
   const side = frostedMaterial(0x202c3a);
   const mesh = new Mesh(geometry, [cap, side]);
-  mesh.castShadow = height > 0.1;
-  mesh.receiveShadow = true;
   return mesh;
 }
