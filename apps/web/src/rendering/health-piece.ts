@@ -23,6 +23,11 @@ export function createHealthFactory(colour: number) {
   baseGeometry.dispose();
   const bodyMaterial = frostedMaterial(0x283442);
   const capMaterial = frostedMaterial(0x354150);
+  // Broad matte trim keeps a centred point light from reading as a glowing
+  // filled cap on only the middle piece. Neon outlines provide the emphasis.
+  capMaterial.roughness = 0.95;
+  capMaterial.metalness = 0.15;
+  capMaterial.clearcoat = 0;
   const outlines = [bodyGeometry, trimGeometry].map((geometry) =>
     createFeatureEdgeFactory(geometry, colour, { width: 3, power: 1.8 }),
   );

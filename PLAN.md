@@ -367,6 +367,16 @@ Windows or mobile FPS gain is claimed. `docs/PERFORMANCE_OPTIMISATION_REVIEW.md`
 records results, rendered evidence, checks and limitations. P01 remains blocked;
 this scoped fix does not complete or approve P02 or the device gates.
 
+**16 November health-cap follow-up:** The owner requested removal of the bright
+middle-cap highlight. Health trim now uses high roughness, low metalness and no
+clearcoat so all three tops retain a dark face with a neon rim. The combined
+geometry and shared materials remain. Matched 2/4/6-seat renders and reduced
+effects were inspected; a phone-sized production capture is included in
+`docs/reviews/health-caps/`. Seven focused health/supply unit tests, six native
+Chromium presentation/touch tests, `vp check`, root build and `git diff --check`
+passed; the existing build chunk-size advisory remains. Physical-device gates
+and milestone approval status are unchanged.
+
 **P03 — Graceful quality on constrained hardware** (Not started; depends on P01,
 and on P02 where applicable). Evaluate the existing quality presets and adaptive
 resolution against observed bottlenecks; add or adjust controls or adaptation only

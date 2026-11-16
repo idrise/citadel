@@ -1,4 +1,4 @@
-import { Box3, CylinderGeometry, Group, Mesh, Vector3 } from "three";
+import { Box3, CylinderGeometry, Group, Mesh, MeshPhysicalMaterial, Vector3 } from "three";
 import { expect, it, vi } from "vite-plus/test";
 import { ARENA } from "../simulation/arena";
 import { disposeScene } from "./dispose-scene";
@@ -58,4 +58,17 @@ it("shares trim resources across pieces and disposes each once", () => {
   group.add(first, second);
   disposeScene(group);
   expect(disposed).toHaveBeenCalledOnce();
+});
+
+it("keeps trim matte while retaining the body's metal and neon outline", () => {
+  const piece = createHealthFactory(0xff4422)();
+  const body = piece.children[0] as Mesh,
+    trim = piece.children[1] as Mesh;
+  const material = trim.material as MeshPhysicalMaterial;
+  expect(material.roughness).toBeGreaterThanOrEqual(0.9);
+  expect(material.metalness).toBeLessThanOrEqual(0.2);
+  expect(material.clearcoat).toBe(0);
+  expect((body.material as MeshPhysicalMaterial).metalness).toBeGreaterThan(0.8);
+  expect(trim.children[0]!.name).toBe("feature-edges");
+  disposeScene(piece);
 });
