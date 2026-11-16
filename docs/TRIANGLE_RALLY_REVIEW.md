@@ -1,6 +1,6 @@
 # Triangle clearance and scoreless rallies
 
-> The [scene Retry and triangle-gap correction](SCENE_RETRY_GAP_REVIEW.md) supersedes the 1.2-unit inset described below: the current inset is 2.6 with a guaranteed 0.7-unit lane. Rally rules are unchanged.
+> The [triangle reach correction](TRIANGLE_REACH_REVIEW.md) retains the 2.6-unit inset and allows the bat to reach either wall. It supersedes the permanent 0.7-unit lane requirement; centred bats still leave room for balls. Rally rules are unchanged.
 
 The two additional TODO items are implemented locally as M09 feedback follow-ups. Review tuning in play before approval.
 

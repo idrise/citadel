@@ -28,8 +28,10 @@ export function fitDefenceLimits(arena: ArenaGeometry): ArenaGeometry {
       };
       const extent = (side: number) => {
         let low = 0,
-          // The tighter bat bow needs the full sector; actual surface-to-wall clearance is authoritative.
-          high = home.halfAngle;
+          // Inset triangle anchors are no longer at the polygon tip: the old
+          // corner sector ends before the bat reaches a wall. Fit the surface
+          // across the inward half-plane while retaining the same rail/anchor.
+          high = arena.count === 3 ? Math.PI / 2 : home.halfAngle;
         for (let i = 0; i < 18; i++) {
           const mid = (low + high) / 2;
           if (safe(mid * side)) low = mid;

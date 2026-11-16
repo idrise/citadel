@@ -995,6 +995,18 @@ Two actual-graph auditions have nonzero output, peaks below 0.41 and zero browse
 errors. The existing ~967kB main-chunk advisory remains; subjective listening and
 physical-device review remain open. M09 awaits review.
 
+16 November triangle reach correction: the owner reported that three survivors
+could no longer defend the side walls and explicitly required retaining the
+forward player position. Triangle bats now reach the walls with 0.015-unit skin
+clearance rather than a permanent 0.7-unit passage, and travel is fitted beyond
+the old corner-sector cap. The 2.6-unit inset, bat widths and neutral space remain.
+`docs/TRIANGLE_REACH_REVIEW.md` records desktop/phone poses from a four-to-three
+morph, all-level reach coverage and mouse/touch checks. This supersedes the
+permanent-lane requirement in the historical record below. M09 remains awaiting
+review; physical-device and performance gates remain open. Validation passed:
+559 unit tests, three native Chromium checks, `vp check`, root build and
+`git diff --check`; the existing build chunk-size advisory remains.
+
 12 November scene-Retry / triangle-gap correction: the owner rejected the visible
 React retry card and clarified that the triangle bats still almost sealed the
 walls. The earlier inset widened travel but its 0.015-unit fitting margin let the

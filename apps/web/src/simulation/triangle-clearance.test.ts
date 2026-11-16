@@ -3,6 +3,7 @@ import {
   ARENA,
   batCentre,
   batHalfAngle,
+  batRadius,
   fortress,
   TRIANGLE_FORTRESS_INSET,
   TRIANGLE_BAT_WALL_GAP,
@@ -22,7 +23,7 @@ it.each([1, 50, 100])(
     for (const [index, home] of arena.fortresses.entries()) {
       const tip = arena.vertices[index * (arena.variant ? 2 : 1)]!;
       expect(length(tip)).toBeCloseTo(13);
-      expect(length(home.anchor)).toBeCloseTo(13 - TRIANGLE_FORTRESS_INSET);
+      expect(length(home.anchor)).toBeCloseTo(length(arena.vertices[0]!) - TRIANGLE_FORTRESS_INSET);
       expect(length(sub(home.anchor, tip))).toBeCloseTo(TRIANGLE_FORTRESS_INSET);
       const old = fitDefenceLimits({
         ...arena,
@@ -41,7 +42,7 @@ it.each([1, 50, 100])(
               batCentre(home.id, angle, arena),
               scale(
                 unit(angle - batHalfAngle(arena) + (sample / 40) * batHalfAngle(arena) * 2),
-                ARENA.batRadius,
+                batRadius(arena),
               ),
             );
           for (const edge of polygonEdges(arena.vertices))
@@ -71,14 +72,14 @@ it("lands a four-to-three elimination morph on the same inset layout, with survi
   }
 });
 it.each([1, 50, 100])(
-  "leaves a genuine ball corridor beside every triangle bat at level %i",
+  "retains a genuine ball corridor beside centred triangle bats at level %i",
   async (level) => {
     const { sweepPaddle, sweepWalls } = await import("./collision");
     const arena = createMatch(7, 3, 3, 7, levelDifficulty(level)).arena,
       edges = polygonEdges(arena.vertices);
-    expect(TRIANGLE_BAT_WALL_GAP).toBeGreaterThan(ARENA.ballRadius * 2 + 0.2);
+
     for (const home of arena.fortresses)
-      for (const offset of home.angleLimits!) {
+      for (const offset of [0]) {
         const angle = home.direction + offset;
         // Find the bat surface closest to a side wall, then send a real circle along that lane.
         const candidates = edges
@@ -93,6 +94,7 @@ it.each([1, 50, 100])(
           )
           .sort((a, b) => a.distance - b.distance);
         const { edge, point, distance } = candidates[0]!;
+        expect(distance - ARENA.paddleThickness / 2).toBeGreaterThan(ARENA.ballRadius * 2 + 0.2);
         const centre = add(point, scale(edge.normal, ARENA.ballRadius + 0.04 - distance));
         const tangent = scale(sub(edge.end, edge.start), 1 / length(sub(edge.end, edge.start)));
         const start = add(centre, scale(tangent, -0.5)),
@@ -102,34 +104,67 @@ it.each([1, 50, 100])(
       }
   },
 );
-it("interpolates the requested gap through a four-to-three morph rather than snapping it", () => {
-  const state = createMatch(7, 4);
-  state.players[1]!.health.fill(false);
-  state.eliminations.push({ seat: 1, elapsed: 0 });
-  beginArenaMorph(state);
-  let previous = 0.015;
-  while (state.morph) {
-    stepArenaMorph(state, 1 / 120);
-    const gap = state.arena.batWallGap ?? 0.015;
-    expect(gap).toBeGreaterThanOrEqual(previous - 1e-9);
-    expect(gap - previous).toBeLessThan(0.005);
-    previous = gap;
+/** Sample the visible bow independently of the limit solver, including the bat skin. */
+function skinGap(arena: import("./arena").ArenaGeometry, id: number, angle: number) {
+  let gap = Infinity;
+  const centre = batCentre(id, angle, arena);
+  for (let sample = 0; sample <= 512; sample++) {
+    const point = add(
+      centre,
+      scale(unit(angle + batHalfAngle(arena) * (sample / 256 - 1)), batRadius(arena)),
+    );
+    for (const edge of polygonEdges(arena.vertices))
+      gap = Math.min(gap, dot(sub(point, edge.start), edge.normal) - ARENA.paddleThickness / 2);
   }
-  expect(previous).toBeCloseTo(TRIANGLE_BAT_WALL_GAP);
-});
-it("releases the special triangle gap smoothly when the last two defenders reach the rectangle", () => {
-  const state = createMatch(7, 3);
-  state.players[1]!.health.fill(false);
-  state.eliminations.push({ seat: 1, elapsed: 0 });
-  beginArenaMorph(state);
-  let previous = TRIANGLE_BAT_WALL_GAP;
-  while (state.morph) {
-    stepArenaMorph(state, 1 / 120);
-    const gap = state.arena.batWallGap ?? 0.015;
-    expect(gap).toBeLessThanOrEqual(previous + 1e-9);
-    previous = gap;
+  return gap;
+}
+
+it("reaches both triangle walls at every level without moving the forward anchor or changing bat width", () => {
+  for (let level = 1; level <= 100; level++) {
+    const arena = createMatch(7, 3, 3, 7, levelDifficulty(level)).arena;
+    for (const home of arena.fortresses) {
+      expect(length(home.anchor)).toBeCloseTo(length(arena.vertices[0]!) - TRIANGLE_FORTRESS_INSET);
+      for (const offset of home.angleLimits!) {
+        const gap = skinGap(arena, home.id, home.direction + offset);
+        expect(gap, `level ${level}, seat ${home.id}, offset ${offset}`).toBeGreaterThanOrEqual(
+          0.015 - 1e-6,
+        );
+        expect(gap, `level ${level}, seat ${home.id}, offset ${offset}`).toBeLessThan(0.016);
+      }
+    }
   }
-  expect(state.arena.count).toBe(2);
-  expect(state.arena.batWallGap).toBeUndefined();
-  expect(previous).toBeCloseTo(0.015);
 });
+
+it.each([1, 50, 100])(
+  "keeps the bat inside the walls while morphing to three survivors at level %i",
+  (level) => {
+    const state = createMatch(7, 4, 3, 7, levelDifficulty(level));
+    const width = batHalfAngle(state.arena),
+      radius = batRadius(state.arena);
+    state.players[1]!.health.fill(false);
+    state.eliminations.push({ seat: 1, elapsed: 0 });
+    beginArenaMorph(state);
+    let tick = 0;
+    while (state.morph) {
+      stepArenaMorph(state, 1 / 120);
+      if (++tick % 12 && state.morph) continue;
+      for (const player of state.players.filter((p) => p.health.some(Boolean))) {
+        const home = fortress(player.id, state.arena);
+        for (const offset of [home.angleLimits![0], 0, home.angleLimits![1]])
+          expect(skinGap(state.arena, home.id, home.direction + offset)).toBeGreaterThanOrEqual(
+            0.015 - 1e-6,
+          );
+      }
+    }
+    expect(batHalfAngle(state.arena)).toBe(width);
+    expect(batRadius(state.arena)).toBe(radius);
+    for (const player of state.players.filter((p) => p.health.some(Boolean))) {
+      const home = fortress(player.id, state.arena);
+      expect(length(home.anchor)).toBeCloseTo(
+        length(state.arena.vertices[0]!) - TRIANGLE_FORTRESS_INSET,
+      );
+      for (const offset of home.angleLimits!)
+        expect(skinGap(state.arena, home.id, home.direction + offset)).toBeLessThan(0.016);
+    }
+  },
+);

@@ -15,13 +15,13 @@ import { fitDefenceLimits } from "./defence-limits";
 import { BAT_PROFILES, profileHalfAngle, type BatProfile } from "./bat-profile";
 export { ARENA, FIXED_DT, MAX_BALLS } from "./arena-tuning";
 export const TRIANGLE_FORTRESS_INSET = 2.6;
-export const TRIANGLE_BAT_WALL_GAP = 0.7;
+export const TRIANGLE_BAT_WALL_GAP = 0.015;
 export interface ArenaGeometry {
   count: PlayerCount;
   variant?: ArenaShape;
   batHalfAngle?: number;
   batProfile?: BatProfile;
-  /** Skin clearance at every legal bat pose; triangle lanes must admit a whole ball. */
+  /** Skin clearance at every legal bat pose. */
   batWallGap?: number;
   vertices: Vec2[];
   fortresses: Fortress[];
