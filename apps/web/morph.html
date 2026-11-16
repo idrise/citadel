@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Citadel — transition studio</title>
+    <link rel="icon" href="data:," />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #070b14;
+        color: #dceaf4;
+        font:
+          14px system-ui,
+          sans-serif;
+      }
+      #stage {
+        position: fixed;
+        inset: 55px 0 125px;
+      }
+      #stage .scene-controls,
+      #stage .scene-settings-controls {
+        display: none;
+      }
+      header {
+        position: fixed;
+        inset: 20px 26px auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      h1 {
+        font-size: 13px;
+        letter-spacing: 0.2em;
+        font-weight: 500;
+        margin: 0;
+      }
+      #phase {
+        color: #71d9f1;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      footer {
+        position: fixed;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(840px, calc(100% - 32px));
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+      }
+      button,
+      select {
+        color: #cfdfec;
+        background: #152334;
+        border: 1px solid #2a4055;
+        border-radius: 7px;
+        padding: 8px 12px;
+        font: inherit;
+        cursor: pointer;
+      }
+      button:hover,
+      select:hover {
+        border-color: #71d9f1;
+      }
+      button:focus-visible,
+      select:focus-visible,
+      input:focus-visible {
+        outline: 2px solid #71d9f1;
+        outline-offset: 3px;
+      }
+      #play {
+        width: 76px;
+      }
+      .timeline {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-top: 13px;
+      }
+      input {
+        accent-color: #71d9f1;
+        flex: 1;
+        min-width: 0;
+      }
+      #time {
+        font-variant-numeric: tabular-nums;
+        color: #9db3c7;
+        width: 46px;
+      }
+      a {
+        color: #9db3c7;
+        text-decoration: none;
+        font-size: 12px;
+      }
+      @media (max-width: 600px) {
+        #stage {
+          inset: 65px 0 185px;
+        }
+        header {
+          inset: 18px 16px auto;
+        }
+        h1 {
+          max-width: 160px;
+          line-height: 1.7;
+        }
+        button,
+        select {
+          font-size: 12px;
+          padding: 7px 9px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>CITADEL / TRANSITION STUDIO</h1>
+      <span id="phase">Ready</span>
+    </header>
+    <div id="stage"></div>
+    <footer>
+      <div class="controls">
+        <select id="shape" aria-label="Wall profile">
+          <option value="rounded">Curved walls</option>
+          <option value="classic">Classic walls</option>
+          <option value="wide">Wide walls</option>
+          <option value="faceted">Faceted walls</option>
+        </select>
+        <button data-scenario="6-5">6 → 5</button><button data-scenario="4-3">4 → 3</button
+        ><button data-scenario="3-2">3 → 2</button> <button data-scenario="title">2 → 6</button
+        ><button data-scenario="victory">Victory</button
+        ><button data-scenario="next">Next board</button>
+        <select id="speed" aria-label="Playback speed">
+          <option value="1">1× speed</option>
+          <option value="0.35">Slow motion</option>
+        </select>
+      </div>
+      <div class="timeline">
+        <button id="play">Pause</button
+        ><input
+          id="scrub"
+          type="range"
+          min="0"
+          max="1"
+          step="0.001"
+          value="0"
+          aria-label="Transition position"
+        /><output id="time">0.0s</output><a href="./">Play game ↗</a>
+      </div>
+    </footer>
+    <script type="module" src="/src/dev/morph-playground.ts"></script>
+  </body>
+</html>

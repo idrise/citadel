@@ -1,7 +1,7 @@
 # CITADEL — PLAN.md
 
 **Status:** Shared design in progress; confirmed rules and provisional prototype experiments distinguished below.  
-**Updated:** 14 November 2026\
+**Updated:** 16 November 2026\
 **Genre:** Fast, competitive, polygon-arena paddle/ball survival  
 **Target:** Understandable, tense matches that usually resolve in approximately **two minutes**. Difficulty is ramped as the game goes on.
 **Players:** 2–16 seats as an experimental local test ceiling, initially **one human and the remaining seats filled by bots**\
@@ -891,6 +891,61 @@ format/lint/types and root build; browser coverage is recorded in the tweak revi
 The owner also added curve/spin bounce, bat-size progression, pickup rebound and
 bank transfer clarity, and minimal scene settings. These extend this local M09
 amendment; no publication or later milestone is authorised.
+
+16 November transition jam (uncommitted): the owner requested an exploratory
+quality pass and explicitly prohibited commits. Elimination, preview, victory and
+next-board morphs now retract full-size posts vertically, reshape only while they
+are hidden, then raise the new posts after the outline settles. Retargets retain
+the currently visible post pose; floor clipping includes neon and shadows.
+Quintic easing reserves a 15% / 70% / 15% sequence, with bounded fortress speed.
+A symmetrical rounded arena family adds outward wall bows to the itinerary;
+collision and presentation share its convex outline. Continuous wall tracing,
+removed small supports and fading side glazing reduce transition clutter.
+The local studio at `/morph.html` provides selectable scenarios, profiles, slow motion
+and timeline scrubbing. Checks and authored desktop/phone captures are recorded in
+`docs/MORPH_TRANSITION_REVIEW.md`. This remains a local M09 experiment for owner
+review; no commit, push, deployment, or later milestone was authorised.
+
+16 November transition continuity follow-up (still uncommitted): the owner
+reported remaining snaps and edge strokes ending partway along walls. Wall
+sections now share world-space corner joins without length-dependent mitre clamps;
+plinth tracing uses explicit closed rings instead of angle-threshold creases.
+Screen-space neon expansion now extends the stroke depth slope, correcting
+self-occlusion reproduced by a GPU fixture (1,430/1,430 visible stroke pixels
+versus 1,128 previously, with real foreground occlusion retained). Reflections
+fade through mode changes and live-morph captures preserve the actual post lift.
+The studio holds its finished pose and prepares subsequent examples on the same
+canvas. Review evidence and actual checks remain in the morph transition review.
+No commit, push or deployment was authorised or performed.
+
+16 November post-base refinement (uncommitted): the owner liked the reflection
+but wanted the post bases visible above the floor. Every selected corner post
+now rises fully instead of using corner-angle strength as a permanent partial
+retraction. Settled bases sit at Y 0.08, above the Y 0.025 reflective floor; the
+retraction travel still takes the entire post below floor level. The reflection
+is retained. Focused post/camera/transition tests, check/build and refreshed
+rendered evidence are recorded in the morph transition review. No commit made.
+
+16 November small-roster spacing (uncommitted): the owner reported mayhem on
+two- and three-player boards. The owner confirmed the requested final linear
+dimensions: three-player arenas now use 1.6x and two-player arenas 1.3x
+their previous dimensions, across all variants and elimination targets. Four or
+more players retain their previous sizes. Bats, rails, health pieces, ball speed
+and triangle fortress inset retain their existing world-space dimensions; larger
+morphs use the existing bounded-speed extension. Checks: 570 unit tests, clean
+check/root build, three native browser scenarios covering three two-player rounds,
+one three-player round, rematches and two-player input reach, plus refreshed
+morph captures. Review in `docs/MORPH_TRANSITION_REVIEW.md`. No commit made.
+
+16 November local commit authorisation: the owner requested committing the
+current jam, superseding the earlier no-commit hold for this work. The checkpoints
+separate transition/rendering polish, two-/three-player arena spacing, and the
+local studio with rendered evidence. Each code checkpoint is validated from its
+staged snapshot before committing. Code checkpoints are `d86f1c6` (569 tests)
+and `12c65ca` (board spacing, 570 tests); both passed check and build.
+This authorises local history only; no push,
+manual deployment, M09 sign-off or later milestone is implied. Device-validation
+limits remain in `docs/MORPH_TRANSITION_REVIEW.md`.
 
 13 November pre-signoff TODO tweaks: the owner authorises the five newly added
 TODO entries, with incremental local review as each lands: elimination spectacle

@@ -1,0 +1,93 @@
+{
+  "first": {
+    "elapsed": 2.8,
+    "duration": 2.8,
+    "scenario": "6-5",
+    "queuedNext": false,
+    "moving": false,
+    "morph": false,
+    "source": 30,
+    "vertices": 30
+  },
+  "held": {
+    "elapsed": 2.8,
+    "duration": 2.8,
+    "scenario": "6-5",
+    "queuedNext": false,
+    "moving": false,
+    "morph": false,
+    "source": 30,
+    "vertices": 30
+  },
+  "samples": [
+    {
+      "name": "3-2",
+      "preparing": {
+        "elapsed": 0,
+        "duration": 1.25,
+        "scenario": "6-5",
+        "preparing": "3-2",
+        "queuedNext": false,
+        "moving": true,
+        "morph": false,
+        "source": 30,
+        "vertices": 30
+      },
+      "final": {
+        "elapsed": 2.8,
+        "duration": 2.8,
+        "scenario": "3-2",
+        "queuedNext": false,
+        "moving": false,
+        "morph": false,
+        "source": 30,
+        "vertices": 32
+      }
+    },
+    {
+      "name": "victory",
+      "preparing": {
+        "elapsed": 0,
+        "duration": 1.25,
+        "scenario": "3-2",
+        "preparing": "victory",
+        "queuedNext": false,
+        "moving": true,
+        "morph": false,
+        "source": 30,
+        "vertices": 32
+      },
+      "final": {
+        "elapsed": 2.8,
+        "duration": 2.8,
+        "scenario": "victory",
+        "queuedNext": false,
+        "moving": false,
+        "morph": false,
+        "vertices": 32
+      }
+    },
+    {
+      "name": "next",
+      "preparing": {
+        "elapsed": 0,
+        "duration": 1.4,
+        "scenario": "next",
+        "queuedNext": false,
+        "moving": true,
+        "morph": false,
+        "vertices": 30
+      },
+      "final": {
+        "elapsed": 1.4,
+        "duration": 1.4,
+        "scenario": "next",
+        "queuedNext": false,
+        "moving": false,
+        "morph": false,
+        "vertices": 30
+      }
+    }
+  ],
+  "errors": []
+}

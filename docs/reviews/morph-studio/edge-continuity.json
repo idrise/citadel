@@ -1,0 +1,97 @@
+{
+  "samples": [
+    {
+      "cameraX": 0,
+      "reference": {
+        "visible": 100,
+        "coverage": 2970
+      },
+      "depthTested": {
+        "visible": 100,
+        "coverage": 2970
+      },
+      "occluded": {
+        "visible": 74,
+        "coverage": 2240
+      }
+    },
+    {
+      "cameraX": 12,
+      "reference": {
+        "visible": 100,
+        "coverage": 2315
+      },
+      "depthTested": {
+        "visible": 100,
+        "coverage": 2315
+      },
+      "occluded": {
+        "visible": 62,
+        "coverage": 1510
+      }
+    },
+    {
+      "cameraX": 24,
+      "reference": {
+        "visible": 100,
+        "coverage": 1430
+      },
+      "depthTested": {
+        "visible": 100,
+        "coverage": 1430
+      },
+      "occluded": {
+        "visible": 49,
+        "coverage": 759
+      }
+    }
+  ],
+  "legacy": [
+    {
+      "cameraX": 0,
+      "reference": {
+        "visible": 100,
+        "coverage": 2970
+      },
+      "depthTested": {
+        "visible": 100,
+        "coverage": 2970
+      },
+      "occluded": {
+        "visible": 74,
+        "coverage": 2240
+      }
+    },
+    {
+      "cameraX": 12,
+      "reference": {
+        "visible": 100,
+        "coverage": 2315
+      },
+      "depthTested": {
+        "visible": 100,
+        "coverage": 2011
+      },
+      "occluded": {
+        "visible": 62,
+        "coverage": 1207
+      }
+    },
+    {
+      "cameraX": 24,
+      "reference": {
+        "visible": 100,
+        "coverage": 1430
+      },
+      "depthTested": {
+        "visible": 100,
+        "coverage": 1128
+      },
+      "occluded": {
+        "visible": 49,
+        "coverage": 473
+      }
+    }
+  ],
+  "errors": []
+}
