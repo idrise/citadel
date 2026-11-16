@@ -50,7 +50,9 @@ export function createArena(
     x: point.x * Math.cos(rotation) - point.y * Math.sin(rotation),
     y: point.x * Math.sin(rotation) + point.y * Math.cos(rotation),
   });
-  const size = variant === "compact" ? 0.9 : variant === "spacious" ? 1.12 : 1;
+  const size =
+    (count === 3 ? 1.6 : count === 2 ? 1.3 : 1) *
+    (variant === "compact" ? 0.9 : variant === "spacious" ? 1.12 : 1);
   const radius =
     (count === 3
       ? 13

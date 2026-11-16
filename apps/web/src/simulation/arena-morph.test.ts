@@ -26,7 +26,8 @@ it.each([3, 4, 5, 6] as const)(
       before = structuredClone(state);
     beginArenaMorph(state);
     expect(state.morph!.duration).toBeGreaterThanOrEqual(2.8);
-    expect(state.morph!.duration).toBeLessThan(4);
+    // Larger final arenas may need longer to retain the bounded defender speed.
+    expect(state.morph!.duration).toBeLessThan(8);
     expect(state.arena).toEqual(before.arena);
     let maxTravel = 0;
     for (let i = 0; i < 2400 && state.morph; i++) {

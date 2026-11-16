@@ -44,7 +44,10 @@ it("uses spin grip in real wall and bat impacts, with mirrored returns and no co
       ball.phase = "active";
       ball.spin = side * MAX_SWIPE_CURVE;
       const base = fortress(0, state.arena).direction;
-      ball.position = kind === "wall" ? { x: 5.7, y: 0 } : railPosition(0, base, 4.77, state.arena);
+      ball.position =
+        kind === "wall"
+          ? { x: Math.max(...state.arena.vertices.map((p) => p.x)) - 0.3, y: 0 }
+          : railPosition(0, base, 4.77, state.arena);
       ball.velocity = kind === "wall" ? { x: 24, y: 0 } : scale(unit(base), -24);
       advanceBall(
         state,
