@@ -239,3 +239,62 @@ it("applies either volume immediately during the result tail while leaving the o
   expect(engine.setMix).toHaveBeenLastCalledWith(0, 0.6);
   music.dispose();
 });
+it("exports bounded context changes, optional native underruns, and scheduling counters without changing playback", async () => {
+  const { engine } = fixture();
+  const events = new EventTarget();
+  const host = {
+    state: "suspended",
+    currentTime: 1,
+    sampleRate: 48000,
+    baseLatency: 0.01,
+    outputLatency: 0.02,
+    playbackStats: { underrunEvents: 2, underrunDuration: 0.004, totalDuration: 10 },
+    addEventListener: events.addEventListener.bind(events),
+    removeEventListener: events.removeEventListener.bind(events),
+    resume: async () => {
+      host.state = "running";
+      events.dispatchEvent(new Event("statechange"));
+    },
+    close: async () => {},
+  };
+  engine.diagnostics = () => ({
+    accepted: 10,
+    late: 1,
+    duplicate: 0,
+    invalid: 0,
+    minHeadroomMs: -3,
+    lastHeadroomMs: 100,
+    maxCallbackGapMs: 140,
+    lookAheadMs: 200,
+    updateIntervalMs: 15,
+    running: true,
+  });
+  const music = createGameMusic(1, 0, {
+    createContext: () => host as unknown as AudioContext,
+    load: async () => engine,
+  });
+  expect(music.diagnostics()).toMatchObject({
+    contextState: "unavailable",
+    playback: null,
+    schedule: null,
+  });
+  music.unlock();
+  music.setPlaying(true);
+  await flush();
+  const report = music.diagnostics();
+  expect(report).toMatchObject({
+    contextState: "running",
+    sampleRate: 48000,
+    playback: { underrunEvents: 2 },
+    schedule: { late: 1 },
+  });
+  expect(report.contextChanges.map((change) => change.state)).toEqual(["suspended", "running"]);
+  report.contextChanges[0]!.state = "mutated";
+  expect(music.diagnostics().contextChanges[0]?.state).toBe("suspended");
+  for (let i = 0; i < 100; i++) {
+    host.state = i % 2 ? "running" : "suspended";
+    events.dispatchEvent(new Event("statechange"));
+  }
+  expect(music.diagnostics().contextChanges).toHaveLength(64);
+  music.dispose();
+});

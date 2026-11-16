@@ -64,3 +64,18 @@ it("primes with one silent sample synchronously and disconnects after completion
   source.onended!();
   expect(source.disconnect).toHaveBeenCalledOnce();
 });
+it("keeps interactive latency in gameplay and forwards explicit diagnostic latency requests", () => {
+  vi.stubGlobal("navigator", {});
+  const hints: AudioContextOptions[] = [];
+  vi.stubGlobal(
+    "AudioContext",
+    class {
+      constructor(options: AudioContextOptions) {
+        hints.push(options);
+      }
+    },
+  );
+  createPlaybackContext();
+  createPlaybackContext("balanced");
+  expect(hints).toEqual([{ latencyHint: "interactive" }, { latencyHint: "balanced" }]);
+});

@@ -4,7 +4,7 @@ import { createInstruments } from "./tone-instruments";
 import type { MusicEngine } from "./ports";
 import { createBeatEnvelope } from "./beat-envelope";
 import { createEventConductor, type GridAnchor } from "./event-grid";
-import { createScheduleWindow } from "./schedule-window";
+import { createScheduleWindow, MUSIC_LOOK_AHEAD, MUSIC_TICK_INTERVAL } from "./schedule-window";
 import { arrangementAt } from "./arrangement";
 import { VICTORY_TAIL_SECONDS, victoryOutro } from "./victory-outro";
 
@@ -13,6 +13,7 @@ let replacedDefaultContext = false;
 export function createToneEngine(
   native: AudioContext,
   onStep: (step: number) => readonly MusicCue[],
+  options: { lookAhead?: number } = {},
 ): MusicEngine {
   // Tone's public entrypoint creates a default context. Replace it with our gesture-unlocked
   // owned context, and close the unused default rather than leaving a second worker/context alive.
@@ -20,7 +21,12 @@ export function createToneEngine(
     Tone.getContext().dispose();
     replacedDefaultContext = true;
   }
-  const context = new Tone.Context({ context: native, lookAhead: 0.04, updateInterval: 0.015 });
+  const lookAhead = options.lookAhead ?? MUSIC_LOOK_AHEAD;
+  const context = new Tone.Context({
+    context: native,
+    lookAhead,
+    updateInterval: MUSIC_TICK_INTERVAL,
+  });
   Tone.setContext(context);
   const gate = native.createGain();
   gate.gain.value = 0;
@@ -36,7 +42,7 @@ export function createToneEngine(
   let outroStart: number | null = null;
   const beats = createBeatEnvelope();
   const conductor = createEventConductor();
-  let anchor: GridAnchor = { time: native.currentTime + 0.05, step: 0 };
+  let anchor: GridAnchor = { time: native.currentTime + lookAhead, step: 0 };
   const acceptStep = createScheduleWindow();
   const event = transport.scheduleRepeat((time) => {
     anchor = { time, step };
@@ -57,6 +63,12 @@ export function createToneEngine(
     if (scoreAudible) instruments.play(cues, time, "music");
   }, "16n");
   return {
+    diagnostics: () => ({
+      ...acceptStep.snapshot(),
+      lookAheadMs: lookAhead * 1000,
+      updateIntervalMs: MUSIC_TICK_INTERVAL * 1000,
+      running,
+    }),
     steer: (velocity, position) => instruments.steer(effectsAudible ? velocity : 0, position),
     setMix(music, effects) {
       scoreAudible = music > 0;
@@ -79,9 +91,10 @@ export function createToneEngine(
       if (value === running) return;
       running = value;
       if (value) {
-        anchor = { time: now + 0.05, step };
+        acceptStep.resume();
+        anchor = { time: now + lookAhead, step };
         conductor.reset();
-        transport.start(now + 0.05);
+        transport.start(now + lookAhead);
       } else transport.pause(now);
     },
     finish(won = false) {

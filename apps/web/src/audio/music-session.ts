@@ -1,3 +1,4 @@
+import { playbackStats } from "./playback-stats";
 import {
   createPlaybackContext,
   releasePlaybackContext,
@@ -36,6 +37,14 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
   let applied = "";
   let appliedMix = "";
   let endingUntil = 0;
+  const contextChanges: { atMs: number; state: string }[] = [];
+  const rememberContext = () => {
+    const state = context?.state ?? "unavailable";
+    if (contextChanges.at(-1)?.state !== state) {
+      contextChanges.push({ atMs: performance.now(), state });
+      if (contextChanges.length > 64) contextChanges.shift();
+    }
+  };
   const sync = () => {
     if (!engine || disposed) return;
     if (!wanted) engine.steer?.(0, 0);
@@ -70,6 +79,7 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
     }
   };
   const stateChanged = () => {
+    rememberContext();
     if (!contextRunning(context)) {
       unlocked = false;
       endingUntil = 0;
@@ -92,6 +102,7 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
         // Native resume runs inside the Play/Resume click, before any dynamic import awaits.
         context ??= dependencies.createContext();
         const host = context;
+        rememberContext();
         host.addEventListener?.("statechange", stateChanged);
         primeContext(host);
         failed = false;
@@ -99,6 +110,7 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
           .resume()
           .then(() => {
             if (!disposed) {
+              rememberContext();
               unlocked = contextRunning(host);
               sync();
             }
@@ -173,6 +185,21 @@ export function createGameMusic(seed: number, humanSeat: number, dependencies = 
         } catch {
           fail();
         }
+    },
+    diagnostics() {
+      return {
+        kind: "Audio scheduling and context state; optional native playback statistics reported separately",
+        playback: playbackStats(context),
+        contextChanges: contextChanges.map((change) => ({ ...change })),
+        contextState: context?.state ?? "unavailable",
+        sampleRate: context?.sampleRate ?? null,
+        baseLatency: context?.baseLatency ?? null,
+        outputLatency: context?.outputLatency ?? null,
+        clockTime: context?.currentTime ?? null,
+        musicEnabled: scoreEnabled,
+        effectsEnabled: effectsVolume > 0,
+        schedule: engine?.diagnostics?.() ?? null,
+      };
     },
     snapshot() {
       const status: MusicStatus = !enabled

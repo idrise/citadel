@@ -1,6 +1,12 @@
+import type { ScheduleDiagnostics } from "./schedule-window";
 import type { MusicCue, MusicVisuals } from "./music-types";
 
 export interface MusicEngine {
+  diagnostics?: () => ScheduleDiagnostics & {
+    lookAheadMs: number;
+    updateIntervalMs: number;
+    running: boolean;
+  };
   setMix?: (music: number, effects: number) => void;
   steer?: (velocity: number, position: number) => void;
   play: (cues: readonly MusicCue[]) => void;

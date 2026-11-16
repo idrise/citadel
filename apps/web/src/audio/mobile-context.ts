@@ -6,7 +6,9 @@ interface AudioSession {
 let owners = 0;
 let previous = "auto";
 const sessions = new WeakMap<AudioContext, AudioSession>();
-export function createPlaybackContext(): AudioContext {
+export function createPlaybackContext(
+  latencyHint: AudioContextLatencyCategory = "interactive",
+): AudioContext {
   const nav = navigator as Navigator & { audioSession?: AudioSession };
   const session = nav.audioSession;
   if (session) {
@@ -24,7 +26,7 @@ export function createPlaybackContext(): AudioContext {
   let context: AudioContext;
   try {
     if (!ctor) throw new Error("Web Audio unavailable");
-    context = new ctor({ latencyHint: "interactive" });
+    context = new ctor({ latencyHint });
   } catch (error) {
     if (session && owners === 0)
       try {
