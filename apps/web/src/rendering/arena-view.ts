@@ -33,6 +33,8 @@ import { createVictoryMorph } from "./victory-morph";
 import { visibleCorners } from "./presentation-outline";
 
 export interface ViewOptions {
+  floorReflection?: boolean;
+  wallReflections?: boolean;
   posts?: PostReveal;
   titleTilt?: number;
   portrait?: boolean;
@@ -187,7 +189,8 @@ export function createArenaView(
       );
       reflection.update(displayArena, options.humanSeat, options.cameraAnchor);
       reflection.setFloorOnly(
-        Boolean(ending) ||
+        options.wallReflections === false ||
+          Boolean(ending) ||
           (options.victoryFraming ?? 0) > 0 ||
           state.arena.variant === "rounded" ||
           visibleCorners(displayArena.vertices).length > 12,
@@ -195,6 +198,7 @@ export function createArenaView(
       );
       const profile = effectsProfile(options.quality, options.reducedEffects, 1, 4, mobile);
       reflection.setReduced(!profile.reflections);
+      reflection.meshes[0]!.visible &&= options.floorReflection ?? true;
       const titleMode = options.menu?.mode === "title";
       titleRise = titleMode
         ? Math.min(1, titleRise + Math.max(0, dt) / 0.55)

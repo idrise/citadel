@@ -271,7 +271,7 @@ Only create a package when it reduces real coupling. **Do not create an `apps/se
 - Snapshot/replay tests detect unintended gameplay changes. Use explicit event IDs and deterministic tie-break ordering. Cross-browser determinism is a test target, not assumed guaranteed.
 - Performance and accessibility: reduced bloom, motion and particles, clear health indication, keyboard-only path, muted sound support and contrasting player identifiers. Full mobile quality decisions happen after desktop validation.
 
-### Older-machine optimisation plan — proposed, not started
+### Older-machine optimisation track
 
 Older computers are slowing down during play. The cause is not yet established:
 TypeScript's types are removed at build time, so the browser runs JavaScript, and
@@ -339,6 +339,51 @@ Validation: `vp check` passed after correcting a test type error; the full
 `vp test run` passed 554 tests, and the focused summary tests passed after that
 type-only correction. Root production build passed with its existing chunk-size
 advisory. `git diff --check` passed. No game or visual behaviour was changed.
+
+**16 November diagnosis-plan refinement (proposal only):** players still report
+serious performance problems that the owner cannot reproduce. The owner requested
+a plan, not another optimisation implementation. `docs/PERFORMANCE_DIAGNOSIS_PLAN.md`
+refines P01 around a one-click local report, build identity from the served bundle,
+phase/event-aware evidence, paired diagnostic workloads and affected-player
+captures. First proposed checkpoint: accessible report export with bounded,
+validated context and instrumentation overhead checks. Follow with the smallest
+scripted comparison supported by a real report, then a measured fix. Access to
+one particular unavailable Windows PC does not block this tooling or reports from
+other affected volunteers; that original device remains unverified. Existing
+P01 evidence, the scoped rendering fix and P03/P04 gates remain as recorded.
+No runtime work, commit, push, deployment or milestone advance is authorised by
+this planning request.
+
+**16 November audio symptom refinement (planning only):** the owner reports a
+player seeing about 70 FPS with stuttering audio. Treat this as a separate symptom
+from sustained low graphics FPS. Source inspection shows 40 ms music look-ahead,
+a 15 ms ticker and a late-step rejection guard; scheduler starvation is a concrete
+hypothesis, not a diagnosis. The diagnosis plan now prioritises music/effects and
+output-path comparisons, audio scheduling headroom and rejected-step evidence,
+and native audio-render/output profiling. Any look-ahead or latency change is a
+proposed measured experiment that must retain responsive live effects and musical
+timing. No runtime audio change, release or milestone progression was performed.
+
+**16 November implementation work record (owner authorised):** The owner requested
+implementation of the diagnostic plan and an audio-stutter improvement, then
+explicitly requested shadow removal and confirmed 200 ms music look-ahead. This
+supersedes the planning-only scope above. Accessible REPORT/TEST actions now
+provide preserved pre-pause evidence and a separate seeded diagnostic page with
+quality/audio/individual-pass comparisons, 2/3/4/6-seat and rounded-board choices,
+sustained sixteen-ball and scripted-morph fixtures, and Stop/background cleanup.
+Music schedules 200 ms ahead while live effects retain their short native-clock
+path. Shadow rendering/casting/receiving is disabled; reflections remain. Optional
+native underrun counters are distinct from late score-step counters. Under 54
+controlled 80 ms interruptions, the old 40 ms schedule dropped 28 steps; 200 ms
+dropped zero. Neither run reported native underruns on this Mac. This protects an
+observed scheduling weakness without claiming the player's output dropouts fixed.
+The isolated sixty-second sixteen-ball High/Low capture completed, but a short
+rounded three-player morph run exposed a 200–250 ms render-submission stall on this
+Mac. That remains an explicit P02 investigation lead, not a fixed transition.
+See `docs/PERFORMANCE_DIAGNOSTICS_REVIEW.md` for evidence, commands, checks and
+remaining limits. Audio and shadow checkpoints were independently validated and
+committed locally. P01's affected-device gate, M09/M10, P02/P03/P04 acceptance,
+push and deployment remain unchanged. **REVIEW REQUIRED — P01.**
 
 **P02 — Remove measured bottlenecks** (Not started; depends on P01 evidence).
 Prioritise the largest verified causes and compare each change against the same

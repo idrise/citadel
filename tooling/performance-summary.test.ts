@@ -30,3 +30,14 @@ it("handles an empty capture and ignores non-finite metrics", () => {
   });
   expect(summariseFrames([frame(16, NaN)]).metrics.gpuMs!.samples).toBe(0);
 });
+it("deduplicates asynchronous GPU samples and excludes stale or invalid query results", () => {
+  const base = frame(16, 5);
+  const frames = [
+    { ...base, gpuSampleId: 0 },
+    { ...base, gpuSampleId: 1, gpuAgeMs: 0 },
+    { ...base, gpuSampleId: 1, gpuAgeMs: 16 },
+    { ...base, gpuSampleId: 2, gpuAgeMs: 1001, gpuMs: 1000 },
+    { ...base, gpuSampleId: 3, gpuAgeMs: 10, gpuMs: 9 },
+  ];
+  expect(summariseFrames(frames).metrics.gpuMs).toMatchObject({ samples: 2, median: 5, max: 9 });
+});

@@ -34,6 +34,14 @@ import { createSceneControls } from "../input/scene-controls";
 import { createVictoryFireworks } from "./victory-fireworks";
 import { SEATS } from "./palette";
 
+/** Explicit benchmark overrides; never read from or written to player preferences. */
+export interface DiagnosticRendering {
+  fixedScale: number;
+  bloom: boolean;
+  floorReflection: boolean;
+  wallReflections: boolean;
+}
+
 /** Owns camera, projection and graphics resources. Gameplay stays in the simulation. */
 export function createViewport(
   container: HTMLElement,
@@ -44,6 +52,7 @@ export function createViewport(
     action: (action: SettingsAction) => void;
     change: (key: SettingKey, value: number) => void;
   },
+  diagnostic?: DiagnosticRendering,
 ) {
   const mobile = navigator.maxTouchPoints > 0 || matchMedia("(pointer: coarse)").matches;
   const renderer = new WebGLRenderer({ antialias: !mobile, powerPreference: "high-performance" });
@@ -108,16 +117,38 @@ export function createViewport(
   resize();
   return {
     canvas,
+    environment() {
+      const gl = renderer.getContext();
+      const debug = gl.getExtension("WEBGL_debug_renderer_info");
+      return {
+        renderer: debug ? String(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL)) : null,
+        vendor: debug ? String(gl.getParameter(debug.UNMASKED_VENDOR_WEBGL)) : null,
+        shadows: renderer.shadowMap.enabled,
+        webglVersion: String(gl.getParameter(gl.VERSION)),
+        maxTextureSize: Number(gl.getParameter(gl.MAX_TEXTURE_SIZE)),
+        viewport: { width: container.clientWidth, height: container.clientHeight },
+        devicePixelRatio: window.devicePixelRatio,
+        drawingBuffer: { width: canvas.width, height: canvas.height },
+      };
+    },
     get performance() {
       return {
         renderCpuMs,
         gpuMs: gpu.milliseconds,
-        resolutionScale: resolution.scale,
+        gpuSampleId: gpu.sampleId,
+        gpuAgeMs: gpu.ageMs,
+        geometries: renderer.info.memory.geometries,
+        textures: renderer.info.memory.textures,
+        triangles: renderer.info.render.triangles,
+        drawingWidth: canvas.width,
+        drawingHeight: canvas.height,
+        resolutionScale: diagnostic?.fixedScale ?? resolution.scale,
         calls: renderer.info.render.calls,
       };
     },
     frameBudget(intervalMs: number, otherCpuMs: number, active: boolean) {
-      resolution.sample(intervalMs, otherCpuMs, renderCpuMs, gpu.milliseconds, active);
+      if (!diagnostic)
+        resolution.sample(intervalMs, otherCpuMs, renderCpuMs, gpu.milliseconds, active);
     },
     get titleMoving() {
       return titleMoving;
@@ -146,7 +177,7 @@ export function createViewport(
           window.devicePixelRatio,
           renderer.capabilities.maxSamples,
           mobile,
-        ).pixelRatio * resolution.scale;
+        ).pixelRatio * (diagnostic?.fixedScale ?? resolution.scale);
       if (renderer.getPixelRatio() !== pixelRatio) {
         renderer.setPixelRatio(pixelRatio);
         bloom.resize(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1));
@@ -157,6 +188,12 @@ export function createViewport(
       const displayed = presentation.state;
       arena.update(displayed, dt, {
         ...options,
+        ...(diagnostic
+          ? {
+              floorReflection: diagnostic.floorReflection,
+              wallReflections: diagnostic.wallReflections,
+            }
+          : {}),
         titleTilt: -0.95 * Math.max(0, Math.min(1, (1 - aspect) / 0.4)),
         portrait: aspect < 0.85,
         actorScales: presentation.scales,
@@ -270,7 +307,7 @@ export function createViewport(
         ? -1
         : (options.musicWave ?? -1);
       gpu.begin();
-      bloom.render(dt, options.reducedEffects, pulse, options.quality);
+      bloom.render(dt, options.reducedEffects, pulse, options.quality, diagnostic?.bloom ?? true);
       gpu.end();
       renderCpuMs = performance.now() - renderBegin;
     },

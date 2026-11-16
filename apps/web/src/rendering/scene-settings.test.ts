@@ -187,3 +187,31 @@ it("puts current and best levels inside the short-screen Settings header and reu
   view.update({ ...settings, musicVolume: 0.2 }, 568, 320);
   expect(camera.getObjectByName("settings-level-status")).toBe(progress);
 });
+
+it("keeps report and diagnostic-test actions finger-sized without overlapping the pause controls", () => {
+  for (const [width, height] of [
+    [320, 568],
+    [568, 320],
+    [390, 844],
+    [1280, 900],
+  ] as const)
+    for (const touch of [true, false]) {
+      const targets = settingsTargets(
+        { ...state, touch, serveGuide: false, diagnostics: true },
+        width,
+        height,
+      );
+      const footer = targets.filter((t) =>
+        ["resume", "restart", "report", "benchmark"].includes(t.key),
+      );
+      expect(footer).toHaveLength(4);
+      for (let i = 0; i < footer.length; i++) {
+        const target = footer[i]!;
+        expect(target.width).toBeGreaterThanOrEqual(44);
+        expect(target.height).toBeGreaterThanOrEqual(44);
+        expect(target.left + target.width).toBeLessThanOrEqual(width);
+        expect(target.top + target.height).toBeLessThanOrEqual(height);
+        if (i) expect(target.left).toBeGreaterThan(footer[i - 1]!.left + footer[i - 1]!.width);
+      }
+    }
+});

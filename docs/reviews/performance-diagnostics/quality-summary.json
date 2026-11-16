@@ -1,0 +1,1092 @@
+{
+  "schema": "citadel.benchmark",
+  "version": 1,
+  "build": {
+    "version": "0.1.0",
+    "revision": "ae50b5d21275b1948d723b0a1708485854b993bf",
+    "buildId": "c023e8bde9bfc3cb",
+    "dirty": true
+  },
+  "capturedAt": "2026-11-16T17:57:33.556Z",
+  "config": {
+    "comparison": "quality",
+    "change": "scale",
+    "seats": 6,
+    "shape": "classic",
+    "workload": "sixteen",
+    "reverse": false,
+    "staticAudio": false
+  },
+  "seed": 202878433,
+  "supplySeed": 334353,
+  "browser": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+    "language": "en-US",
+    "hardwareConcurrency": 12,
+    "path": "http://127.0.0.1:4175/diagnostics.html",
+    "visibility": "visible",
+    "reportedDeviceModel": null,
+    "powerMode": null,
+    "audioOutputConnection": null,
+    "refreshRate": null
+  },
+  "complete": true,
+  "comparableWorkload": true,
+  "minimumDurationMet": true,
+  "notes": [
+    "Local authored fixture, not a player replay. Defences repaired; resets every 24 simulated seconds.",
+    "Adaptive resolution disabled. Same tick sequence and seeds per pass; wall time may differ.",
+    "Audio counts detect late scheduling, not native audio-buffer underruns. Muting is not engine-off.",
+    "CPU and GPU work overlap. GPU summaries deduplicate fresh asynchronous results.",
+    "A shortened developer run is not a 60-second performance baseline."
+  ],
+  "results": [
+    {
+      "id": "high-reference",
+      "settings": {
+        "id": "high-reference",
+        "quality": "high",
+        "draw": true,
+        "audio": true,
+        "lookAhead": 0.2,
+        "latencyHint": "interactive",
+        "stallMs": 0,
+        "warmupSeconds": 5,
+        "seconds": 60,
+        "rendering": {
+          "fixedScale": 1,
+          "bloom": true,
+          "floorReflection": true,
+          "wallReflections": true
+        }
+      },
+      "complete": true,
+      "reason": "completed",
+      "audioAvailable": true,
+      "wallMs": 65314.700000047684,
+      "activeWallMs": 59997.600000000006,
+      "simulationSeconds": 60,
+      "cycles": 3,
+      "finalState": {
+        "ticks": 7800,
+        "rng": 889819087,
+        "balls": [
+          {
+            "id": 0,
+            "position": {
+              "x": -4.227418732025567,
+              "y": 10.014723010467964
+            },
+            "velocity": {
+              "x": 22.87535902325058,
+              "y": 7.260712744447909
+            },
+            "phase": "active"
+          },
+          {
+            "id": 1,
+            "position": {
+              "x": 8.256418838582366,
+              "y": 2.767710667381626
+            },
+            "velocity": {
+              "x": -3.9870391259703597,
+              "y": 23.666506269578118
+            },
+            "phase": "active"
+          },
+          {
+            "id": 2,
+            "position": {
+              "x": 8.595470350046394,
+              "y": 0.559014135808224
+            },
+            "velocity": {
+              "x": 16.384528586073568,
+              "y": -17.537024348849467
+            },
+            "phase": "active"
+          },
+          {
+            "id": 3,
+            "position": {
+              "x": -5.2982667080612265,
+              "y": -9.90249472488808
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0
+            },
+            "phase": "ready"
+          },
+          {
+            "id": 4,
+            "position": {
+              "x": -5.42514450840669,
+              "y": -9.491534831736086
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0
+            },
+            "phase": "ready"
+          },
+          {
+            "id": 5,
+            "position": {
+              "x": -4.180903127353717,
+              "y": 6.275230882316963
+            },
+            "velocity": {
+              "x": -6.377864330524599,
+              "y": 23.137044897337702
+            },
+            "phase": "active"
+          },
+          {
+            "id": 6,
+            "position": {
+              "x": 9.674813749558723,
+              "y": 0.5550565106770811
+            },
+            "velocity": {
+              "x": 23.93245892340979,
+              "y": -1.7992803781796276
+            },
+            "phase": "active"
+          },
+          {
+            "id": 7,
+            "position": {
+              "x": -2.4961010383595066,
+              "y": -0.5602278732850284
+            },
+            "velocity": {
+              "x": 12.488856387896908,
+              "y": 20.494596022427164
+            },
+            "phase": "active"
+          },
+          {
+            "id": 8,
+            "position": {
+              "x": 3.7279871561823414,
+              "y": -0.6237888115071684
+            },
+            "velocity": {
+              "x": 3.190956996696806,
+              "y": 23.786924842131896
+            },
+            "phase": "active"
+          },
+          {
+            "id": 9,
+            "position": {
+              "x": 1.4522474314704288,
+              "y": 0.7471657018556231
+            },
+            "velocity": {
+              "x": 23.024062258536453,
+              "y": 6.774404557969442
+            },
+            "phase": "active"
+          },
+          {
+            "id": 10,
+            "position": {
+              "x": 5.160555950110013,
+              "y": 1.5346071504232692
+            },
+            "velocity": {
+              "x": -22.213513491993137,
+              "y": -9.086243356912508
+            },
+            "phase": "active"
+          },
+          {
+            "id": 11,
+            "position": {
+              "x": -4.180903127353717,
+              "y": 6.275230882316963
+            },
+            "velocity": {
+              "x": -6.377864330524599,
+              "y": 23.137044897337702
+            },
+            "phase": "active"
+          },
+          {
+            "id": 12,
+            "position": {
+              "x": 10.545772028742938,
+              "y": -6.046819368971445
+            },
+            "velocity": {
+              "x": 17.332004021552272,
+              "y": 16.601254066994333
+            },
+            "phase": "active"
+          },
+          {
+            "id": 13,
+            "position": {
+              "x": 3.557686576360466,
+              "y": -2.2630325534419415
+            },
+            "velocity": {
+              "x": 1.070680385879463,
+              "y": 23.976105678597865
+            },
+            "phase": "active"
+          },
+          {
+            "id": 14,
+            "position": {
+              "x": 8.460356875095648,
+              "y": -1.3654157169809322
+            },
+            "velocity": {
+              "x": -23.439471510290808,
+              "y": -5.156663196124251
+            },
+            "phase": "active"
+          },
+          {
+            "id": 15,
+            "position": {
+              "x": -5.703682406211172,
+              "y": -8.950193901470866
+            },
+            "velocity": {
+              "x": -18.19921169508229,
+              "y": 15.645724453587313
+            },
+            "phase": "active"
+          }
+        ],
+        "botAngles": [
+          -0.023081617167716728, -1.0702791683643142, -3.440719115352452, 1.8747588575873053,
+          1.8702477096462777, -0.11812819833672278
+        ]
+      },
+      "workload": {
+        "minBalls": 16,
+        "maxBalls": 16,
+        "morphFrames": 0
+      },
+      "controlledStalls": 0,
+      "audio": {
+        "start": {
+          "kind": "Audio scheduling and context state; optional native playback statistics reported separately",
+          "playback": {
+            "underrunEvents": 0,
+            "underrunDuration": 0,
+            "totalDuration": 4.984,
+            "averageLatency": 0.02,
+            "minimumLatency": 0,
+            "maximumLatency": 0.0222
+          },
+          "contextChanges": [
+            {
+              "atMs": 529.5999999046326,
+              "state": "running"
+            }
+          ],
+          "contextState": "running",
+          "sampleRate": 32000,
+          "baseLatency": 0.008,
+          "outputLatency": 0.016,
+          "clockTime": 5.032,
+          "musicEnabled": true,
+          "effectsEnabled": true,
+          "schedule": {
+            "accepted": 44,
+            "late": 0,
+            "duplicate": 0,
+            "invalid": 0,
+            "minHeadroomMs": 172,
+            "lastHeadroomMs": 186.64705882352985,
+            "maxCallbackGapMs": 128.0000000000001,
+            "lookAheadMs": 200,
+            "updateIntervalMs": 15,
+            "running": true
+          }
+        },
+        "end": {
+          "kind": "Audio scheduling and context state; optional native playback statistics reported separately",
+          "playback": {
+            "underrunEvents": 0,
+            "underrunDuration": 0,
+            "totalDuration": 64.116,
+            "averageLatency": 0.0201,
+            "minimumLatency": 0,
+            "maximumLatency": 0.0222
+          },
+          "contextChanges": [
+            {
+              "atMs": 529.5999999046326,
+              "state": "running"
+            }
+          ],
+          "contextState": "running",
+          "sampleRate": 32000,
+          "baseLatency": 0.008,
+          "outputLatency": 0.016,
+          "clockTime": 65.04,
+          "musicEnabled": true,
+          "effectsEnabled": true,
+          "schedule": {
+            "accepted": 588,
+            "late": 0,
+            "duplicate": 0,
+            "invalid": 0,
+            "minHeadroomMs": 170.29411764706026,
+            "lastHeadroomMs": 186.6470588235387,
+            "maxCallbackGapMs": 136.00000000000279,
+            "lookAheadMs": 200,
+            "updateIntervalMs": 15,
+            "running": true
+          }
+        },
+        "states": [
+          {
+            "atMs": 187.51600004768375,
+            "state": "running"
+          }
+        ]
+      },
+      "graphics": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)",
+        "shadows": false,
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "maxTextureSize": 16384,
+        "viewport": {
+          "width": 1080,
+          "height": 580
+        },
+        "devicePixelRatio": 1,
+        "drawingBuffer": {
+          "width": 1080,
+          "height": 580
+        }
+      },
+      "frames": {
+        "kind": "Local rolling frame diagnostics; nothing uploaded",
+        "totalFrames": 3599,
+        "totalSpikes": 1,
+        "longestMs": 33.400000000000546,
+        "windowFrames": 3599,
+        "intervalMs": {
+          "samples": 3599,
+          "median": 16.69999999999709,
+          "p95": 16.700000000004366,
+          "p99": 16.80000000000291,
+          "max": 33.400000000000546
+        },
+        "simulationMs": {
+          "samples": 3599,
+          "median": 0.20000004768371582,
+          "p95": 0.2999999523162842,
+          "p99": 0.3000001907348633,
+          "max": 1.1999998092651367
+        },
+        "audioMs": {
+          "samples": 3599,
+          "median": 0,
+          "p95": 0.5999999046325684,
+          "p99": 1.7000000476837158,
+          "max": 3.299999952316284
+        },
+        "renderCpuMs": {
+          "samples": 3599,
+          "median": 5.900000095367432,
+          "p95": 6.799999952316284,
+          "p99": 7.200000047683716,
+          "max": 8
+        },
+        "gpuMs": {
+          "samples": 121,
+          "median": 10.398083,
+          "p95": 14.320333,
+          "p99": 14.769833,
+          "max": 16.7585
+        },
+        "summary": {
+          "frames": 3599,
+          "capturedMs": 59997.600000000006,
+          "metrics": {
+            "intervalMs": {
+              "samples": 3599,
+              "median": 16.69999999999709,
+              "p95": 16.700000000004366,
+              "p99": 16.80000000000291,
+              "max": 33.400000000000546
+            },
+            "simulationMs": {
+              "samples": 3599,
+              "median": 0.20000004768371582,
+              "p95": 0.2999999523162842,
+              "p99": 0.3000001907348633,
+              "max": 1.1999998092651367
+            },
+            "audioMs": {
+              "samples": 3599,
+              "median": 0,
+              "p95": 0.5999999046325684,
+              "p99": 1.7000000476837158,
+              "max": 3.299999952316284
+            },
+            "renderCpuMs": {
+              "samples": 3599,
+              "median": 5.900000095367432,
+              "p95": 6.799999952316284,
+              "p99": 7.200000047683716,
+              "max": 8
+            },
+            "frameCpuMs": {
+              "samples": 3599,
+              "median": 6.200000047683716,
+              "p95": 7.300000190734863,
+              "p99": 8.199999809265137,
+              "max": 10.399999856948853
+            },
+            "gpuMs": {
+              "samples": 121,
+              "median": 10.398083,
+              "p95": 14.320333,
+              "p99": 14.769833,
+              "max": 16.7585
+            }
+          },
+          "stalls": {
+            "50": {
+              "frames": 0,
+              "totalMs": 0
+            },
+            "100": {
+              "frames": 0,
+              "totalMs": 0
+            },
+            "250": {
+              "frames": 0,
+              "totalMs": 0
+            },
+            "33.4": {
+              "frames": 1,
+              "totalMs": 33.400000000000546
+            }
+          }
+        },
+        "phases": {
+          "playing": {
+            "frames": 3599,
+            "capturedMs": 59997.600000000006,
+            "metrics": {
+              "intervalMs": {
+                "samples": 3599,
+                "median": 16.69999999999709,
+                "p95": 16.700000000004366,
+                "p99": 16.80000000000291,
+                "max": 33.400000000000546
+              },
+              "simulationMs": {
+                "samples": 3599,
+                "median": 0.20000004768371582,
+                "p95": 0.2999999523162842,
+                "p99": 0.3000001907348633,
+                "max": 1.1999998092651367
+              },
+              "audioMs": {
+                "samples": 3599,
+                "median": 0,
+                "p95": 0.5999999046325684,
+                "p99": 1.7000000476837158,
+                "max": 3.299999952316284
+              },
+              "renderCpuMs": {
+                "samples": 3599,
+                "median": 5.900000095367432,
+                "p95": 6.799999952316284,
+                "p99": 7.200000047683716,
+                "max": 8
+              },
+              "frameCpuMs": {
+                "samples": 3599,
+                "median": 6.200000047683716,
+                "p95": 7.300000190734863,
+                "p99": 8.199999809265137,
+                "max": 10.399999856948853
+              },
+              "gpuMs": {
+                "samples": 121,
+                "median": 10.398083,
+                "p95": 14.320333,
+                "p99": 14.769833,
+                "max": 16.7585
+              }
+            },
+            "stalls": {
+              "50": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "100": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "250": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "33.4": {
+                "frames": 1,
+                "totalMs": 33.400000000000546
+              }
+            }
+          }
+        },
+        "totalMarkers": 0,
+        "markers": [],
+        "spikes": [
+          {
+            "atMs": 7437.100000047683,
+            "phase": "playing",
+            "tick": 863,
+            "simulationSeconds": 7.191666666666666,
+            "simulationMs": 0.19999980926513672,
+            "audioMs": 0,
+            "renderCpuMs": 5.700000047683716,
+            "gpuMs": 7.915124,
+            "resolutionScale": 1,
+            "calls": 1129,
+            "gpuSampleId": 14,
+            "gpuAgeMs": 38.5,
+            "geometries": 190,
+            "textures": 18,
+            "triangles": 466108,
+            "drawingWidth": 1080,
+            "drawingHeight": 580,
+            "level": 0,
+            "balls": 16,
+            "seats": 6,
+            "frameCpuMs": 5.8999998569488525,
+            "intervalMs": 33.400000000000546
+          }
+        ]
+      }
+    },
+    {
+      "id": "low",
+      "settings": {
+        "id": "low",
+        "quality": "low",
+        "draw": true,
+        "audio": true,
+        "lookAhead": 0.2,
+        "latencyHint": "interactive",
+        "stallMs": 0,
+        "warmupSeconds": 5,
+        "seconds": 60,
+        "rendering": {
+          "fixedScale": 1,
+          "bloom": true,
+          "floorReflection": true,
+          "wallReflections": true
+        }
+      },
+      "complete": true,
+      "reason": "completed",
+      "audioAvailable": true,
+      "wallMs": 65077.200000047684,
+      "activeWallMs": 59997.59999999999,
+      "simulationSeconds": 60,
+      "cycles": 3,
+      "finalState": {
+        "ticks": 7800,
+        "rng": 889819087,
+        "balls": [
+          {
+            "id": 0,
+            "position": {
+              "x": -4.227418732025567,
+              "y": 10.014723010467964
+            },
+            "velocity": {
+              "x": 22.87535902325058,
+              "y": 7.260712744447909
+            },
+            "phase": "active"
+          },
+          {
+            "id": 1,
+            "position": {
+              "x": 8.256418838582366,
+              "y": 2.767710667381626
+            },
+            "velocity": {
+              "x": -3.9870391259703597,
+              "y": 23.666506269578118
+            },
+            "phase": "active"
+          },
+          {
+            "id": 2,
+            "position": {
+              "x": 8.595470350046394,
+              "y": 0.559014135808224
+            },
+            "velocity": {
+              "x": 16.384528586073568,
+              "y": -17.537024348849467
+            },
+            "phase": "active"
+          },
+          {
+            "id": 3,
+            "position": {
+              "x": -5.2982667080612265,
+              "y": -9.90249472488808
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0
+            },
+            "phase": "ready"
+          },
+          {
+            "id": 4,
+            "position": {
+              "x": -5.42514450840669,
+              "y": -9.491534831736086
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0
+            },
+            "phase": "ready"
+          },
+          {
+            "id": 5,
+            "position": {
+              "x": -4.180903127353717,
+              "y": 6.275230882316963
+            },
+            "velocity": {
+              "x": -6.377864330524599,
+              "y": 23.137044897337702
+            },
+            "phase": "active"
+          },
+          {
+            "id": 6,
+            "position": {
+              "x": 9.674813749558723,
+              "y": 0.5550565106770811
+            },
+            "velocity": {
+              "x": 23.93245892340979,
+              "y": -1.7992803781796276
+            },
+            "phase": "active"
+          },
+          {
+            "id": 7,
+            "position": {
+              "x": -2.4961010383595066,
+              "y": -0.5602278732850284
+            },
+            "velocity": {
+              "x": 12.488856387896908,
+              "y": 20.494596022427164
+            },
+            "phase": "active"
+          },
+          {
+            "id": 8,
+            "position": {
+              "x": 3.7279871561823414,
+              "y": -0.6237888115071684
+            },
+            "velocity": {
+              "x": 3.190956996696806,
+              "y": 23.786924842131896
+            },
+            "phase": "active"
+          },
+          {
+            "id": 9,
+            "position": {
+              "x": 1.4522474314704288,
+              "y": 0.7471657018556231
+            },
+            "velocity": {
+              "x": 23.024062258536453,
+              "y": 6.774404557969442
+            },
+            "phase": "active"
+          },
+          {
+            "id": 10,
+            "position": {
+              "x": 5.160555950110013,
+              "y": 1.5346071504232692
+            },
+            "velocity": {
+              "x": -22.213513491993137,
+              "y": -9.086243356912508
+            },
+            "phase": "active"
+          },
+          {
+            "id": 11,
+            "position": {
+              "x": -4.180903127353717,
+              "y": 6.275230882316963
+            },
+            "velocity": {
+              "x": -6.377864330524599,
+              "y": 23.137044897337702
+            },
+            "phase": "active"
+          },
+          {
+            "id": 12,
+            "position": {
+              "x": 10.545772028742938,
+              "y": -6.046819368971445
+            },
+            "velocity": {
+              "x": 17.332004021552272,
+              "y": 16.601254066994333
+            },
+            "phase": "active"
+          },
+          {
+            "id": 13,
+            "position": {
+              "x": 3.557686576360466,
+              "y": -2.2630325534419415
+            },
+            "velocity": {
+              "x": 1.070680385879463,
+              "y": 23.976105678597865
+            },
+            "phase": "active"
+          },
+          {
+            "id": 14,
+            "position": {
+              "x": 8.460356875095648,
+              "y": -1.3654157169809322
+            },
+            "velocity": {
+              "x": -23.439471510290808,
+              "y": -5.156663196124251
+            },
+            "phase": "active"
+          },
+          {
+            "id": 15,
+            "position": {
+              "x": -5.703682406211172,
+              "y": -8.950193901470866
+            },
+            "velocity": {
+              "x": -18.19921169508229,
+              "y": 15.645724453587313
+            },
+            "phase": "active"
+          }
+        ],
+        "botAngles": [
+          -0.023081617167716728, -1.0702791683643142, -3.440719115352452, 1.8747588575873053,
+          1.8702477096462777, -0.11812819833672278
+        ]
+      },
+      "workload": {
+        "minBalls": 16,
+        "maxBalls": 16,
+        "morphFrames": 0
+      },
+      "controlledStalls": 0,
+      "audio": {
+        "start": {
+          "kind": "Audio scheduling and context state; optional native playback statistics reported separately",
+          "playback": {
+            "underrunEvents": 0,
+            "underrunDuration": 0,
+            "totalDuration": 4.96,
+            "averageLatency": 0.02,
+            "minimumLatency": 0,
+            "maximumLatency": 0.0222
+          },
+          "contextChanges": [
+            {
+              "atMs": 65832.89999985695,
+              "state": "running"
+            }
+          ],
+          "contextState": "running",
+          "sampleRate": 32000,
+          "baseLatency": 0.008,
+          "outputLatency": 0.016,
+          "clockTime": 4.968,
+          "musicEnabled": true,
+          "effectsEnabled": true,
+          "schedule": {
+            "accepted": 44,
+            "late": 0,
+            "duplicate": 0,
+            "invalid": 0,
+            "minHeadroomMs": 176.88235294117672,
+            "lastHeadroomMs": 198.6470588235303,
+            "maxCallbackGapMs": 132.00000000000057,
+            "lookAheadMs": 200,
+            "updateIntervalMs": 15,
+            "running": true
+          }
+        },
+        "end": {
+          "kind": "Audio scheduling and context state; optional native playback statistics reported separately",
+          "playback": {
+            "underrunEvents": 0,
+            "underrunDuration": 0,
+            "totalDuration": 64.084,
+            "averageLatency": 0.0201,
+            "minimumLatency": 0,
+            "maximumLatency": 0.0222
+          },
+          "contextChanges": [
+            {
+              "atMs": 65832.89999985695,
+              "state": "running"
+            }
+          ],
+          "contextState": "running",
+          "sampleRate": 32000,
+          "baseLatency": 0.008,
+          "outputLatency": 0.016,
+          "clockTime": 64.968,
+          "musicEnabled": true,
+          "effectsEnabled": true,
+          "schedule": {
+            "accepted": 588,
+            "late": 0,
+            "duplicate": 0,
+            "invalid": 0,
+            "minHeadroomMs": 176.00000000000017,
+            "lastHeadroomMs": 190.64705882350097,
+            "maxCallbackGapMs": 132.00000000000057,
+            "lookAheadMs": 200,
+            "updateIntervalMs": 15,
+            "running": true
+          }
+        },
+        "states": [
+          {
+            "atMs": -7.2999998092709575,
+            "state": "running"
+          }
+        ]
+      },
+      "graphics": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)",
+        "shadows": false,
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "maxTextureSize": 16384,
+        "viewport": {
+          "width": 1080,
+          "height": 580
+        },
+        "devicePixelRatio": 1,
+        "drawingBuffer": {
+          "width": 1080,
+          "height": 580
+        }
+      },
+      "frames": {
+        "kind": "Local rolling frame diagnostics; nothing uploaded",
+        "totalFrames": 3600,
+        "totalSpikes": 0,
+        "longestMs": 16.80000000000291,
+        "windowFrames": 3600,
+        "intervalMs": {
+          "samples": 3600,
+          "median": 16.69999999999709,
+          "p95": 16.70000000001164,
+          "p99": 16.80000000000291,
+          "max": 16.80000000000291
+        },
+        "simulationMs": {
+          "samples": 3600,
+          "median": 0.20000004768371582,
+          "p95": 0.3000001907348633,
+          "p99": 0.40000009536743164,
+          "max": 1
+        },
+        "audioMs": {
+          "samples": 3600,
+          "median": 0,
+          "p95": 0.7999999523162842,
+          "p99": 2.1999998092651367,
+          "max": 5.200000047683716
+        },
+        "renderCpuMs": {
+          "samples": 3600,
+          "median": 2.200000047683716,
+          "p95": 3.299999952316284,
+          "p99": 3.8999998569488525,
+          "max": 5.099999904632568
+        },
+        "gpuMs": {
+          "samples": 121,
+          "median": 2.598999,
+          "p95": 4.205125,
+          "p99": 5.712375,
+          "max": 7.823375
+        },
+        "summary": {
+          "frames": 3600,
+          "capturedMs": 59997.59999999999,
+          "metrics": {
+            "intervalMs": {
+              "samples": 3600,
+              "median": 16.69999999999709,
+              "p95": 16.70000000001164,
+              "p99": 16.80000000000291,
+              "max": 16.80000000000291
+            },
+            "simulationMs": {
+              "samples": 3600,
+              "median": 0.20000004768371582,
+              "p95": 0.3000001907348633,
+              "p99": 0.40000009536743164,
+              "max": 1
+            },
+            "audioMs": {
+              "samples": 3600,
+              "median": 0,
+              "p95": 0.7999999523162842,
+              "p99": 2.1999998092651367,
+              "max": 5.200000047683716
+            },
+            "renderCpuMs": {
+              "samples": 3600,
+              "median": 2.200000047683716,
+              "p95": 3.299999952316284,
+              "p99": 3.8999998569488525,
+              "max": 5.099999904632568
+            },
+            "frameCpuMs": {
+              "samples": 3600,
+              "median": 2.5999999046325684,
+              "p95": 4,
+              "p99": 5.099999904632568,
+              "max": 8.200000047683716
+            },
+            "gpuMs": {
+              "samples": 121,
+              "median": 2.598999,
+              "p95": 4.205125,
+              "p99": 5.712375,
+              "max": 7.823375
+            }
+          },
+          "stalls": {
+            "50": {
+              "frames": 0,
+              "totalMs": 0
+            },
+            "100": {
+              "frames": 0,
+              "totalMs": 0
+            },
+            "250": {
+              "frames": 0,
+              "totalMs": 0
+            },
+            "33.4": {
+              "frames": 0,
+              "totalMs": 0
+            }
+          }
+        },
+        "phases": {
+          "playing": {
+            "frames": 3600,
+            "capturedMs": 59997.59999999999,
+            "metrics": {
+              "intervalMs": {
+                "samples": 3600,
+                "median": 16.69999999999709,
+                "p95": 16.70000000001164,
+                "p99": 16.80000000000291,
+                "max": 16.80000000000291
+              },
+              "simulationMs": {
+                "samples": 3600,
+                "median": 0.20000004768371582,
+                "p95": 0.3000001907348633,
+                "p99": 0.40000009536743164,
+                "max": 1
+              },
+              "audioMs": {
+                "samples": 3600,
+                "median": 0,
+                "p95": 0.7999999523162842,
+                "p99": 2.1999998092651367,
+                "max": 5.200000047683716
+              },
+              "renderCpuMs": {
+                "samples": 3600,
+                "median": 2.200000047683716,
+                "p95": 3.299999952316284,
+                "p99": 3.8999998569488525,
+                "max": 5.099999904632568
+              },
+              "frameCpuMs": {
+                "samples": 3600,
+                "median": 2.5999999046325684,
+                "p95": 4,
+                "p99": 5.099999904632568,
+                "max": 8.200000047683716
+              },
+              "gpuMs": {
+                "samples": 121,
+                "median": 2.598999,
+                "p95": 4.205125,
+                "p99": 5.712375,
+                "max": 7.823375
+              }
+            },
+            "stalls": {
+              "50": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "100": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "250": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "33.4": {
+                "frames": 0,
+                "totalMs": 0
+              }
+            }
+          }
+        },
+        "totalMarkers": 0,
+        "markers": [],
+        "spikes": []
+      }
+    }
+  ],
+  "description": "",
+  "errors": []
+}

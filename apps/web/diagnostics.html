@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>Citadel performance test</title>
+  </head>
+  <body>
+    <main>
+      <header><a href="./">Back to Citadel</a><span id="build"></span></header>
+      <h1>Performance test</h1>
+      <p>
+        This separate test leaves your match, progress and preferences alone. Nothing is uploaded.
+      </p>
+      <form id="options">
+        <label
+          >Comparison<select name="comparison">
+            <option value="quality">High / Low graphics · about 2½ minutes</option>
+            <option value="audio">Audio scheduling · about 1 minute</option>
+            <option value="custom">Custom / reference · about 2½ minutes</option>
+            <option value="soak">Repeated matches · 10 minutes</option>
+          </select></label
+        >
+        <label
+          >Players<select name="seats">
+            <option>6</option>
+            <option>4</option>
+            <option>3</option>
+            <option>2</option>
+          </select></label
+        >
+        <label
+          >Board<select name="shape">
+            <option value="classic">Classic</option>
+            <option value="rounded">Rounded</option>
+          </select></label
+        >
+        <label
+          >Workload<select name="workload">
+            <option value="play">Four balls</option>
+            <option value="sixteen">Sustained sixteen balls</option>
+            <option value="morph">Scripted elimination / morph</option>
+          </select></label
+        >
+        <label><input name="reverse" type="checkbox" /> Reverse comparison order</label>
+        <details>
+          <summary>Controlled comparisons</summary>
+          <p>
+            Custom compares one changed feature with the same High reference. Adaptive resolution
+            stays off. Audio tests deliberately interrupt this page for 80 ms at a time; avoid using
+            the game while a test runs.
+          </p>
+          <label
+            >Change<select name="change">
+              <option value="scale">Half render scale</option>
+              <option value="bloom">Bloom off</option>
+              <option value="floorReflection">Floor reflection off</option>
+              <option value="wallReflections">Wall reflections off</option>
+              <option value="drawing">Drawing off</option>
+              <option value="audio">Audio engine off</option>
+              <option value="balanced">Balanced audio latency request</option>
+            </select></label
+          >
+          <label><input name="staticAudio" type="checkbox" /> Audio test without drawing</label>
+        </details>
+        <button id="start" type="submit">Start test</button>
+      </form>
+      <div class="actions">
+        <button id="stop" disabled>Stop test</button
+        ><button id="save" disabled>Save test report</button>
+      </div>
+      <p id="status" role="status" aria-live="polite">
+        Ready. Keep this tab visible during the test.
+      </p>
+      <div id="arena"></div>
+      <pre id="results" aria-label="Test results"></pre>
+      <p>
+        These are diagnostic fixtures using real game physics and rendering, with repaired defences
+        and repeatable resets. They do not reproduce a complete player match. Audio counters measure
+        late scheduling; they cannot detect native audio-buffer starvation or Bluetooth/output
+        glitches. Note what you hear when sharing the saved report.
+      </p>
+      <label
+        >What did you notice? (optional)<textarea
+          id="description"
+          rows="2"
+          placeholder="Audio cut-outs, freezes, device, power mode, speakers or headphones…"
+        ></textarea>
+      </label>
+    </main>
+    <script type="module" src="/src/diagnostics/main.ts"></script>
+  </body>
+</html>

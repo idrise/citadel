@@ -44,7 +44,13 @@ export function createBloom(
       composer.setPixelRatio(renderer.getPixelRatio());
       composer.setSize(width, height);
     },
-    render(dt: number, reduced: boolean, pulse = 0, quality: EffectsQuality = "high") {
+    render(
+      dt: number,
+      reduced: boolean,
+      pulse = 0,
+      quality: EffectsQuality = "high",
+      enabled = true,
+    ) {
       const profile = effectsProfile(
         quality,
         reduced,
@@ -61,7 +67,7 @@ export function createBloom(
       }
       bloom.strength = musicLight(pulse, reduced).bloomStrength;
       if (foreground) foreground.enabled = overlay!.visible;
-      if (!profile.bloom) {
+      if (!profile.bloom || !enabled) {
         renderer.render(scene, camera);
         overlay?.renderDirect(renderer);
       } else composer.render(dt);

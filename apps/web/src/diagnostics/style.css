@@ -1,0 +1,122 @@
+:root {
+  color-scheme: dark;
+  font:
+    16px/1.5 system-ui,
+    sans-serif;
+  background: #080f1c;
+  color: #dce7f5;
+}
+body {
+  margin: 0;
+}
+main {
+  max-width: 1080px;
+  margin: auto;
+  padding: 24px;
+}
+header,
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+a {
+  color: #80e3f0;
+}
+#build {
+  color: #9badc5;
+  font-size: 13px;
+}
+h1 {
+  margin-bottom: 8px;
+}
+p {
+  max-width: 80ch;
+}
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: end;
+}
+label {
+  display: block;
+}
+label select,
+textarea {
+  display: block;
+}
+select,
+button,
+textarea {
+  font: inherit;
+  color: inherit;
+  background: #142237;
+  border: 1px solid #516782;
+  border-radius: 6px;
+  padding: 10px;
+  min-height: 44px;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+#start {
+  background: #154857;
+}
+:focus-visible {
+  outline: 3px solid #80e3f0;
+  outline-offset: 3px;
+}
+details {
+  width: 100%;
+}
+summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+details label {
+  margin: 12px 0;
+}
+.actions {
+  justify-content: start;
+  margin-top: 16px;
+}
+#arena {
+  width: 100%;
+  height: min(55vw, 580px);
+  min-height: 280px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #293c55;
+}
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+textarea {
+  width: 100%;
+}
+@media (max-width: 600px) {
+  main {
+    padding: 16px;
+  }
+  select {
+    width: 100%;
+  }
+  form > label {
+    width: 100%;
+  }
+}

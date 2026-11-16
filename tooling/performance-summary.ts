@@ -4,6 +4,8 @@ export interface BenchmarkFrame {
   audioMs: number;
   renderCpuMs: number;
   gpuMs: number | null;
+  gpuSampleId?: number;
+  gpuAgeMs?: number | null;
   resolutionScale: number;
   balls: number;
   calls: number;
@@ -21,9 +23,18 @@ export function summariseFrames(frames: readonly BenchmarkFrame[]) {
     "balls",
     "calls",
   ] as const;
+  const seen = new Set<number>();
   const summary = Object.fromEntries(
     metrics.map((key) => {
       const values = frames
+        .filter((frame) => {
+          if (key !== "gpuMs") return true;
+          if (frame.gpuMs === null || (frame.gpuAgeMs ?? 0) > 1000) return false;
+          if (frame.gpuSampleId === undefined) return true;
+          if (!frame.gpuSampleId || seen.has(frame.gpuSampleId)) return false;
+          seen.add(frame.gpuSampleId);
+          return true;
+        })
         .map((frame) => frame[key])
         .filter((value): value is number => value !== null && Number.isFinite(value))
         .sort((a, b) => a - b);

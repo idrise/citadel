@@ -1,3 +1,4 @@
+import { downloadJSON } from "./download-json";
 import type { MatchState } from "../simulation/types";
 import type { GameSettings } from "./settings";
 import type { RoundTotals } from "./round-observer";
@@ -44,14 +45,5 @@ export function createRoundExport(
   };
 }
 export function downloadRound(report: ReturnType<typeof createRoundExport>) {
-  const url = URL.createObjectURL(
-    new Blob([JSON.stringify(report, null, 2) + "\n"], { type: "application/json" }),
-  );
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `citadel-${report.seed}-${report.tick}.json`;
-  document.body.append(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  downloadJSON(report, `citadel-${report.seed}-${report.tick}.json`);
 }

@@ -10,8 +10,16 @@ import { createNeonLettering } from "./neon-lettering";
 import { disposeScene } from "./dispose-scene";
 import { createFeatureEdges } from "./feature-edges";
 export type SettingKey = "effectsVolume" | "musicVolume" | "mouseSensitivity";
-export type SettingsAction = "pause" | "resume" | "restart" | "sound" | "guide";
+export type SettingsAction =
+  | "pause"
+  | "resume"
+  | "restart"
+  | "sound"
+  | "guide"
+  | "report"
+  | "benchmark";
 export interface SceneSettingsState {
+  diagnostics?: boolean;
   open: boolean;
   touch: boolean;
   showPause: boolean;
@@ -128,22 +136,29 @@ export function settingsTargets(
       max: row.max,
       step: row.step,
     })),
-    {
-      key: "resume",
-      label: "Resume",
-      left: left + 24,
+    ...(state.diagnostics
+      ? (["resume", "restart", "report", "benchmark"] as const)
+      : (["resume", "restart"] as const)
+    ).map((key, i, all) => ({
+      key,
+      label:
+        key === "report"
+          ? "Save performance report"
+          : key === "benchmark"
+            ? "Run performance test"
+            : key === "resume"
+              ? "Resume"
+              : "Restart",
+      left:
+        left +
+        24 +
+        i *
+          ((w - 48 - (all.length - 1) * (state.diagnostics ? 8 : 12)) / all.length +
+            (state.diagnostics ? 8 : 12)),
       top: top + h - 68,
-      width: (w - 60) / 2,
+      width: (w - 48 - (all.length - 1) * (state.diagnostics ? 8 : 12)) / all.length,
       height: 44,
-    },
-    {
-      key: "restart",
-      label: "Restart",
-      left: left + 24 + (w - 60) / 2 + 12,
-      top: top + h - 68,
-      width: (w - 60) / 2,
-      height: 44,
-    },
+    })),
   ];
 }
 /** Procedural camera-mounted panel; transparent DOM controls supply semantics and gestures only. */
@@ -179,10 +194,15 @@ export function createSceneSettings(camera: PerspectiveCamera) {
       ["resume", "RESUME"],
       ["restart", "RESTART"],
       ["sound", "ENABLE SOUND"],
+      ["report", "REPORT"],
+      ["benchmark", "TEST"],
     ] as const
   ).map(([key, text]) => {
     const body = box(`settings:${key}`),
-      label = createNeonLettering(text, key === "guide" ? 13 : 16);
+      label = createNeonLettering(
+        text,
+        key === "guide" || key === "report" || key === "benchmark" ? 13 : 16,
+      );
     root.add(label);
     return { key, body, label };
   });
@@ -291,6 +311,11 @@ export function createSceneSettings(camera: PerspectiveCamera) {
           root.add(button.label);
         }
         const p = centre(target.left, target.top, target.width, target.height);
+        button.label.scale.setScalar(
+          state.diagnostics && ["resume", "restart", "report", "benchmark"].includes(button.key)
+            ? Math.min(1, target.width / 105)
+            : 1,
+        );
         button.body.scale.set(target.width, target.height, 1);
         button.body.position.set(p.x, p.y, 0);
         button.label.position.set(p.x, p.y, 1);

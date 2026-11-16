@@ -33,6 +33,8 @@ export function createSettingsControls(
     ["resume", "Resume"],
     ["restart", "Restart"],
     ["sound", "Enable sound"],
+    ["report", "Save performance report"],
+    ["benchmark", "Run performance test"],
   ] as const) {
     const button = document.createElement("button");
     button.setAttribute("aria-label", label);

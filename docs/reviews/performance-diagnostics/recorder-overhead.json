@@ -1,0 +1,95 @@
+{
+  "kind": "Isolated Node recorder microbenchmark; not whole-game or affected-device performance",
+  "results": [
+    {
+      "round": 0,
+      "enabled": false,
+      "iterations": 500000,
+      "totalMs": 3.8257500000000064,
+      "microsecondsPerFrame": 0.0076515000000000125,
+      "snapshotMs": 0.20791599999999733,
+      "checksum": 124999750000
+    },
+    {
+      "round": 0,
+      "enabled": true,
+      "iterations": 500000,
+      "totalMs": 25.588500000000003,
+      "microsecondsPerFrame": 0.05117700000000001,
+      "snapshotMs": 1.948291999999995,
+      "checksum": 124999750000
+    },
+    {
+      "round": 1,
+      "enabled": true,
+      "iterations": 500000,
+      "totalMs": 23.65825000000001,
+      "microsecondsPerFrame": 0.047316500000000025,
+      "snapshotMs": 0.9916249999999991,
+      "checksum": 124999750000
+    },
+    {
+      "round": 1,
+      "enabled": false,
+      "iterations": 500000,
+      "totalMs": 2.366500000000002,
+      "microsecondsPerFrame": 0.004733000000000004,
+      "snapshotMs": 0.015416000000001873,
+      "checksum": 124999750000
+    },
+    {
+      "round": 2,
+      "enabled": false,
+      "iterations": 500000,
+      "totalMs": 1.7800840000000022,
+      "microsecondsPerFrame": 0.003560168000000004,
+      "snapshotMs": 0.008709000000010292,
+      "checksum": 124999750000
+    },
+    {
+      "round": 2,
+      "enabled": true,
+      "iterations": 500000,
+      "totalMs": 23.170541,
+      "microsecondsPerFrame": 0.046341082,
+      "snapshotMs": 1.062624999999997,
+      "checksum": 124999750000
+    },
+    {
+      "round": 3,
+      "enabled": true,
+      "iterations": 500000,
+      "totalMs": 19.962792000000007,
+      "microsecondsPerFrame": 0.039925584000000014,
+      "snapshotMs": 0.9891250000000014,
+      "checksum": 124999750000
+    },
+    {
+      "round": 3,
+      "enabled": false,
+      "iterations": 500000,
+      "totalMs": 1.8638329999999996,
+      "microsecondsPerFrame": 0.0037276659999999993,
+      "snapshotMs": 0.016583999999994603,
+      "checksum": 124999750000
+    },
+    {
+      "round": 4,
+      "enabled": false,
+      "iterations": 500000,
+      "totalMs": 1.8397500000000093,
+      "microsecondsPerFrame": 0.0036795000000000187,
+      "snapshotMs": 0.011499999999983856,
+      "checksum": 124999750000
+    },
+    {
+      "round": 4,
+      "enabled": true,
+      "iterations": 500000,
+      "totalMs": 20.489082999999994,
+      "microsecondsPerFrame": 0.04097816599999999,
+      "snapshotMs": 1.018749999999983,
+      "checksum": 124999750000
+    }
+  ]
+}

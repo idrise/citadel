@@ -1,7 +1,6 @@
 import { chromium } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
 import os from "node:os";
-import { execFileSync } from "node:child_process";
 import { installVirtualBrowserControls } from "../tests/virtual-input.ts";
 import { summariseFrames } from "./performance-summary.ts";
 
@@ -44,7 +43,7 @@ if (
   !Number.isInteger(seed) ||
   seed < 0 ||
   seed > 0xffffffff ||
-  ![2, 4, 6].includes(seats) ||
+  ![2, 3, 4, 6].includes(seats) ||
   !["low", "medium", "high"].includes(quality)
 )
   throw new Error("Invalid device, seconds, level, seats, seed or quality");
@@ -88,16 +87,12 @@ try {
   await page.goto(`${origin}?seed=${seed}`);
   await page.getByRole("button", { name: "Start", exact: true }).waitFor();
   const menuMs = Date.now() - before;
-  const metadata = await page.evaluate(() => {
-    const gl = document.createElement("canvas").getContext("webgl2");
-    const ext = gl?.getExtension("WEBGL_debug_renderer_info");
-    return {
-      userAgent: navigator.userAgent,
-      dpr: devicePixelRatio,
-      viewport: [innerWidth, innerHeight],
-      renderer: ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : null,
-    };
-  });
+  const metadata = await page.evaluate(() => ({
+    userAgent: navigator.userAgent,
+    dpr: devicePixelRatio,
+    viewport: [innerWidth, innerHeight],
+    build: window.__citadelPerformance().build,
+  }));
   const start = Date.now();
   await page.getByRole("button", { name: "Start", exact: true }).click();
   const startDispatchMs = Date.now() - start;
@@ -121,11 +116,12 @@ try {
     if (cursor) {
       dropped += Math.max(0, delta - recent.length);
       const newFrames = delta ? recent.slice(-Math.min(delta, recent.length)) : [];
-      phases[capture.phase] = (phases[capture.phase] ?? 0) + newFrames.length;
-      if (capture.phase === "playing") {
-        frames.push(...newFrames);
-        activeMs += newFrames.reduce((sum, frame) => sum + frame.intervalMs, 0);
-      }
+      for (const frame of newFrames) phases[frame.phase] = (phases[frame.phase] ?? 0) + 1;
+      const activeFrames = newFrames.filter(
+        (frame) => frame.phase === "playing" || frame.phase === "morph",
+      );
+      frames.push(...activeFrames);
+      activeMs += activeFrames.reduce((sum, frame) => sum + frame.intervalMs, 0);
     }
     cursor = totalFrames;
     if (capture.phase === "finished") {
@@ -136,7 +132,7 @@ try {
   }
   const info = {
     created: new Date().toISOString(),
-    revision: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+    build: metadata.build,
     platform: os.platform(),
     arch: os.arch(),
     cpu: os.cpus()[0]?.model,
@@ -160,7 +156,7 @@ try {
     frames,
     errors,
     limitations:
-      "Playing phase is sampled once per second; phase boundary frames may be included. Emulation uses the host GPU and is not physical-device performance. GPU values are asynchronous, sampled and may repeat. Restarts preserve the seed and requested level.",
+      "Phase comes from each frame. Emulation uses the host GPU and is not physical-device performance. GPU summaries use unique fresh asynchronous samples. Restarts preserve the seed and requested level.",
   };
   await writeFile(output, JSON.stringify(info, null, 2) + "\n");
   console.log(JSON.stringify({ output, ...info, frames: undefined }, null, 2));

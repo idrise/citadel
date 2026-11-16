@@ -1,4 +1,12 @@
-import { createFrameDiagnostics, type FrameSample } from "./frame-diagnostics";
+import { BUILD_INFO } from "../app/build-info";
+import { createPerformanceReport, browserEnvironment } from "./performance-report";
+import { downloadJSON } from "./download-json";
+import {
+  createFrameDiagnostics,
+  type FrameSample,
+  type FrameDiagnostics,
+  type FramePhase,
+} from "./frame-diagnostics";
 import { createDebugLevels, debugLevelStep } from "./debug-levels";
 import { levelBriefingTiming } from "./briefing-timing";
 import { levelDifficulty } from "../simulation/difficulty";
@@ -60,8 +68,49 @@ export function createSession(
     __citadelPerformance?: () => ReturnType<typeof diagnostics.snapshot>;
   };
   const previousDiagnostics = host.__citadelPerformance;
-  const readDiagnostics = () => diagnostics.snapshot();
+  const readDiagnostics = () => ({
+    ...diagnostics.snapshot(),
+    audio: music.diagnostics(),
+    build: BUILD_INFO,
+  });
   host.__citadelPerformance = readDiagnostics;
+  let pausedEvidence: {
+    frames: FrameDiagnostics;
+    audio: ReturnType<ReturnType<typeof createGameMusic>["diagnostics"]>;
+    graphics: ReturnType<ReturnType<typeof createViewport>["environment"]>;
+    context: ReturnType<typeof reportContext>;
+  } | null = null;
+  const mark = (type: string, detail?: string) =>
+    diagnostics.mark({
+      atMs: performance.now(),
+      type,
+      ...(detail === undefined ? {} : { detail }),
+    });
+  function performanceReport() {
+    return createPerformanceReport({
+      build: BUILD_INFO,
+      frames: pausedEvidence?.frames ?? diagnostics.snapshot(),
+      audio: pausedEvidence?.audio ?? music.diagnostics(),
+      graphics: pausedEvidence?.graphics ?? viewport.environment(),
+      browser: browserEnvironment(),
+      context: { ...(pausedEvidence?.context ?? reportContext()), paused },
+    });
+  }
+  function reportContext() {
+    return {
+      seed,
+      supplySeed,
+      tick: state.tick,
+      simulationSeconds: state.elapsed,
+      level,
+      initialSeats: count,
+      liveSeats: state.players.filter(alive).length,
+      arenaShape: state.arena.variant ?? "classic",
+      phase: state.phase,
+      paused,
+      settings: { ...settings },
+    };
+  }
   let previousFrame: Omit<FrameSample, "intervalMs"> | undefined;
   const debug = createDebugLevels();
   let savedLevel = level;
@@ -91,8 +140,20 @@ export function createSession(
         if (action === "pause") setPaused(true);
         else if (action === "resume") resume();
         else if (action === "restart") returnToTitle();
-        else if (action === "guide") {
+        else if (action === "report") {
+          downloadJSON(
+            performanceReport(),
+            `citadel-performance-${BUILD_INFO.buildId}-${state.tick}.json`,
+          );
+        } else if (action === "benchmark") {
+          window.open(
+            new URL(`${import.meta.env.BASE_URL}diagnostics.html`, window.location.href),
+            "_blank",
+            "noopener,noreferrer",
+          );
+        } else if (action === "guide") {
           settings = { ...settings, serveGuide: !settings.serveGuide };
+          mark("settings", JSON.stringify(settings));
           onSettings(settings);
           present([], 0);
           report();
@@ -108,6 +169,7 @@ export function createSession(
           ...(key === "musicVolume" ? { music: value > 0 } : {}),
         };
         music.configure(settings);
+        mark("settings", JSON.stringify(settings));
         onSettings(settings);
         present([], 0);
         report();
@@ -159,6 +221,15 @@ export function createSession(
       music: music.snapshot(),
     });
   const setPaused = (value: boolean) => {
+    if (value && !paused)
+      pausedEvidence = {
+        frames: diagnostics.snapshot(),
+        audio: music.diagnostics(),
+        graphics: viewport.environment(),
+        context: reportContext(),
+      };
+    if (!value) pausedEvidence = null;
+    mark(value ? "pause" : "resume");
     paused = value;
     if (started && state.phase !== "finished") {
       menuSuppressed = value;
@@ -243,8 +314,16 @@ export function createSession(
     { signal: abort.signal },
   );
   const animate = (timestamp: number) => {
+    const frameBegin = performance.now();
     const intervalMs = lastTimestamp ? timestamp - lastTimestamp : 0;
-    if (previousFrame && !paused && started) diagnostics.record({ ...previousFrame, intervalMs });
+    if (previousFrame) {
+      diagnostics.record({ ...previousFrame, intervalMs });
+      if (
+        previousFrame.drawingWidth !== viewport.canvas.width ||
+        previousFrame.drawingHeight !== viewport.canvas.height
+      )
+        mark("drawing-buffer", `${viewport.canvas.width}x${viewport.canvas.height}`);
+    }
     const simulationBegin = performance.now();
     const delta = lastTimestamp ? Math.min((timestamp - lastTimestamp) / 1000, 0.1) : 0;
     lastTimestamp = timestamp;
@@ -278,13 +357,6 @@ export function createSession(
     const audioMs = performance.now() - audioBegin;
     present(observed, paused && started ? 0 : delta);
     viewport.frameBudget(intervalMs, simulationMs + audioMs, !paused && state.phase === "playing");
-    previousFrame = {
-      simulationMs,
-      audioMs,
-      ...viewport.performance,
-      level,
-      balls: state.balls.length,
-    };
     if (state.phase === "finished" || !alive(state.players[humanSeat]!)) {
       input.release();
       touch.release();
@@ -293,6 +365,39 @@ export function createSession(
       lastReport = timestamp;
       report();
     }
+    const phase: FramePhase = document.hidden
+      ? "hidden"
+      : !started
+        ? "title"
+        : paused
+          ? "paused"
+          : state.phase === "playing" && state.morph
+            ? "morph"
+            : state.phase;
+    if (previousFrame?.phase !== phase) mark("phase", phase);
+    for (const event of events)
+      if (
+        ["damage", "elimination", "victory", "arrival", "supply", "collection"].includes(event.type)
+      )
+        diagnostics.mark({
+          atMs: performance.now(),
+          tick: event.tick,
+          type: event.type,
+          detail: String(event.seat),
+        });
+    previousFrame = {
+      simulationMs,
+      audioMs,
+      ...viewport.performance,
+      level,
+      balls: state.balls.length,
+      atMs: timestamp,
+      phase,
+      tick: state.tick,
+      simulationSeconds: state.elapsed,
+      seats: state.players.filter(alive).length,
+      frameCpuMs: performance.now() - frameBegin,
+    };
     frame = requestAnimationFrame(animate);
   };
   function present(events: GameEvent[], dt: number) {
@@ -316,6 +421,7 @@ export function createSession(
         debug: debug.active,
         settings: {
           open: settingsOpen,
+          diagnostics: true,
           touch: touchMode,
           showPause: started && !paused && state.phase !== "finished",
           needsSound: started && !paused && music.snapshot().needsGesture,
@@ -365,6 +471,7 @@ export function createSession(
       bestLevel = Math.max(bestLevel, level);
       onReached(level);
     }
+    mark("start");
     initialSettings ??= { ...settings };
     lossLevel = debug.active ? level : pendingLossLevel;
     previousLevel = debug.active ? debug.previous : pendingPreviousLevel;
@@ -413,6 +520,8 @@ export function createSession(
     nextLevel: number,
     animate: boolean,
   ) {
+    mark("reset");
+    pausedEvidence = null;
     supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
     const nextState = createMatch(
       seed,
@@ -452,6 +561,7 @@ export function createSession(
     report();
   }
   return {
+    performanceReport,
     start,
     unlockAudio: () => music.unlock(),
     pause: () => setPaused(true),
@@ -494,6 +604,7 @@ export function createSession(
       report();
     },
     configure(next: GameSettings) {
+      mark("settings", JSON.stringify(next));
       settings = next;
       music.configure(next);
       present([], 0);
