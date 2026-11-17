@@ -23,7 +23,7 @@ it.each([1, 50, 100])(
     expect(Number.isInteger(samples)).toBe(true);
     for (const [index, home] of arena.fortresses.entries()) {
       const tip = arena.vertices[index * samples]!;
-      expect(length(tip)).toBeCloseTo(13 * 1.6);
+      expect(length(tip)).toBeCloseTo(13 * 1.3);
       expect(length(home.anchor)).toBeCloseTo(length(arena.vertices[0]!) - TRIANGLE_FORTRESS_INSET);
       expect(length(sub(home.anchor, tip))).toBeCloseTo(TRIANGLE_FORTRESS_INSET);
       const old = fitDefenceLimits({
@@ -67,7 +67,7 @@ it("lands a four-to-three elimination morph on the same inset layout, with survi
   expect(state.arena.count).toBe(3);
   for (const p of state.players.filter((p) => p.health.some(Boolean))) {
     expect(length(fortress(p.id, state.arena).anchor)).toBeCloseTo(
-      13 * 1.6 - TRIANGLE_FORTRESS_INSET,
+      13 * 1.3 - TRIANGLE_FORTRESS_INSET,
     );
     for (const b of p.pieces)
       for (const edge of polygonEdges(state.arena.vertices))

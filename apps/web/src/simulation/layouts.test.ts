@@ -71,8 +71,8 @@ it.each(counts)(
 it("places two defenders at the midpoints of opposite short rectangle ends, and preserves regular symmetry", () => {
   const rectangle = createArena(2);
   expect(rectangle.fortresses.map((s) => s.anchor)).toEqual([
-    { x: 0, y: 11 * 1.3 },
-    { x: 0, y: -11 * 1.3 },
+    { x: 0, y: 11 * 1.15 },
+    { x: 0, y: -11 * 1.15 },
   ]);
   for (const count of [3, 4, 5, 6] as PlayerCount[]) {
     const arena = createArena(count),
@@ -88,12 +88,12 @@ it("enlarges the two- and three-player boundaries while retaining physical defen
   for (const variant of ["classic", "compact", "spacious", "wide", "faceted", "rounded"] as const) {
     const variantSize = variant === "compact" ? 0.9 : variant === "spacious" ? 1.12 : 1;
     const rectangle = createArena(2, undefined, 0, 1, variant);
-    expect(rectangle.vertices[0]!.x).toBeCloseTo(-6 * 1.3 * variantSize);
-    expect(rectangle.vertices[0]!.y).toBeCloseTo(11 * 1.3 * variantSize);
-    expect(rectangle.fortresses[0]!.anchor.y).toBeCloseTo(11 * 1.3 * variantSize);
+    expect(rectangle.vertices[0]!.x).toBeCloseTo(-6 * 1.15 * variantSize);
+    expect(rectangle.vertices[0]!.y).toBeCloseTo(11 * 1.15 * variantSize);
+    expect(rectangle.fortresses[0]!.anchor.y).toBeCloseTo(11 * 1.15 * variantSize);
     const triangle = createArena(3, undefined, 0, 1, variant);
-    expect(length(triangle.vertices[0]!)).toBeCloseTo(13 * 1.6 * variantSize);
-    expect(length(triangle.fortresses[0]!.anchor)).toBeCloseTo(13 * 1.6 * variantSize - 2.6);
+    expect(length(triangle.vertices[0]!)).toBeCloseTo(13 * 1.3 * variantSize);
+    expect(length(triangle.fortresses[0]!.anchor)).toBeCloseTo(13 * 1.3 * variantSize - 2.6);
     for (const arena of [rectangle, triangle])
       for (const home of arena.fortresses) {
         expect(
