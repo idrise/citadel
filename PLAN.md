@@ -690,6 +690,35 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+17 November debug-key capture follow-up: the owner requests quick +/− level stepping
+without Settings opening. A document-local browser reproduction rejected an immediate
+pointer re-capture and showed the previous code opening Resume/Settings. Debug resets
+now reuse the input adapters and active capture, clear held controls, and rebase to the
+new fortress, including when a smaller roster clamps the human seat. Pending/active
+capture requests are idempotent. Ordinary resets release capture intentionally; real
+unexpected capture loss still pauses. Browser coverage verifies repeated forward/back
+steps make only one capture request and leave saved progress unchanged.
+Authored-roster tests now use configuration rather than fixing the first level at six;
+the owner's concurrent level 1–3 overrides are preserved outside these commits.
+Implementation checkpoints: `28d58f5` (elite bots), `b2488ce` (debug capture).
+Final checks: all 637 unit tests / 115 files, lint/types/format, root/Pages builds,
+33 root browser integration checks and 13 final Pages checks pass. Existing chunk-size
+advice and physical-device limits remain. The live review stays at
+`http://127.0.0.1:5179/`; see `docs/ELITE_BOTS_REVIEW.md` for evidence. M09 awaits review.
+
+17 November elite-bot fairness amendment: the owner reported level 100 felt
+impossible because bots could aim them out within seconds, and requested a hard
+but fallible ceiling. Levels 1–60 retain their tuning; the 80/100 bot anchors now
+ramp toward finite reactions, nonzero jitter/aim error, a shorter forecast and
+4.8 rad/s maximum movement. Level 100 reacts in 110–190ms and has a 0.45-rad
+catch-error range. Human pointer/touch movement remains 16 rad/s. Full tactics,
+34-unit/s initial ball speed, sixteen-ball cap, bat sizes and arena itinerary remain.
+Seeded collision trials now include real goals against the strongest defenders;
+a legal, fallible bot proxy wins the authored twelve-player finale at seed 20.
+This is a possibility regression, not proof of human balance or a pacing study.
+See `docs/ELITE_BOTS_REVIEW.md` for measurements, checks and rendered evidence.
+M09 still awaits owner review; M06 pacing and physical-device validation remain open.
+
 17 November won-level Best / Reset progress amendment: the owner clarified that Best
 means the highest level actually won, superseding the earlier reached/unlocked-level
 rule. The initial display-only subtraction is completed in the progression model:

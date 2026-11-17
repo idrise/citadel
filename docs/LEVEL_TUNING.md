@@ -45,10 +45,13 @@ The resolved values are frozen for the entire attempt, including its result scre
 | `bots.speed`      | Bot paddle movement cap, radians/second; does not change ball speed                       |
 | `bots.tactics`    | Tactical sophistication, 0–1                                                              |
 
-The existing bot speed curve remains unchanged: 2 rad/s at level 1, 3.2 rad/s at
-level 35–80, then smoothly rising to the human mouse cap of 16 rad/s at level 100.
-Level 100 reacts each physics tick with no jitter or aiming error. These are tuning
-choices, and all can be overridden.
+Levels 1–60 keep the original bot tuning. The upper anchors now ramp toward
+fallible elite opponents: level 100 reacts after 110–190ms, retains random aiming
+error, predicts up to half a second ahead and moves at 4.8 rad/s. Human mouse/touch
+movement still caps at 16 rad/s. Its unchanged full tactics budget still plans banks,
+curved returns and exposed targets, but execution can miss. Serve delays are less
+aggressive too. See [the elite-bot review](ELITE_BOTS_REVIEW.md) for exact values,
+seeded scoring/win regressions and the remaining human playtest requirement.
 
 `PLAYER_WEIGHTS` favours six with weight 3 versus weight 1 for every other count.
 `ROSTER_SEED` deterministically disperses those choices across levels without using

@@ -80,7 +80,8 @@ optional guide shows only the initial straight launch direction; it is off by de
 and releases the cursor. Focus loss or capture loss pauses and clears held input;
 click **Resume** to recapture and continue. Desktop sensitivity spans 0.5–2×.
 Volumes and sensitivity persist locally. Keyboard **+ / =** and **−** (including
-numpad keys) navigate unranked debug levels. Debug attempts are labelled and never
+numpad keys) navigate unranked debug levels directly without opening Settings or
+releasing the active mouse capture. Debug attempts are labelled and never
 save results; **Backspace** returns to the real saved challenge on the title.
 The original music theme returns regularly between variations, with quiet harmony
 and changing bar colours; [audition the latest score](docs/MOTIF_RETURN_REVIEW.md).
@@ -110,7 +111,9 @@ The same rule applies to humans and bots.
 Bots aim for reachable pickups and use curved returns. Later levels also consider
 exposed banks and wait briefly for a defender to move away before serving; incoming
 defence takes priority. Idle bots gently track distant active balls and return to
-neutral when none are active. Their decisions use visible poses and ordinary movement.
+neutral when none are active. Their decisions use visible poses and ordinary movement. The strongest bots retain
+imperfect aim and 110–190ms reactions, with a 4.8 rad/s movement cap; the upper
+levels ramp toward this fallible ceiling. See [the elite-bot review](docs/ELITE_BOTS_REVIEW.md).
 Brush the bat sideways into an incoming ball for a visible, fading curve. A short
 100ms tolerance lets a quick flick count just before contact. Rotating cyan/pink
 arrow bands show opposite spin directions, with a longer trail tracing the bend.
