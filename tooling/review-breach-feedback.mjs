@@ -1,4 +1,5 @@
 import { chromium } from "@playwright/test";
+import { installVirtualBrowserControls } from "../tests/virtual-input.ts";
 import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 const directory = process.argv[2] ?? "/tmp/citadel-breaches",
@@ -10,6 +11,7 @@ const browser = await chromium.launch({ channel: "chromium" }),
 try {
   for (const human of [0, 5]) {
     const page = await browser.newPage();
+    await page.addInitScript(installVirtualBrowserControls);
     page.on("pageerror", (e) => errors.push(e.message));
     await page.addInitScript(() => {
       const connect = Object.getOwnPropertyDescriptor(AudioNode.prototype, "connect").value;

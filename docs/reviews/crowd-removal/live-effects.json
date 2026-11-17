@@ -1,0 +1,62 @@
+{
+  "kind": "Actual rule events, observer, music session and native Tone engine; score silent for isolated review; master 45%",
+  "samples": [
+    {
+      "human": 0,
+      "name": "success",
+      "peakRms": 0.016556316458513607,
+      "contextState": "running",
+      "status": "playing"
+    },
+    {
+      "human": 0,
+      "name": "loss",
+      "peakRms": 0.03380551808251207,
+      "contextState": "running",
+      "status": "playing"
+    },
+    {
+      "human": 0,
+      "name": "enemy",
+      "peakRms": 0.012807679552551235,
+      "contextState": "running",
+      "status": "playing"
+    },
+    {
+      "human": 0,
+      "name": "overlap",
+      "peakRms": 0.10116784340713002,
+      "contextState": "running",
+      "status": "playing"
+    },
+    {
+      "human": 5,
+      "name": "success",
+      "peakRms": 0.016889984376074148,
+      "contextState": "running",
+      "status": "playing"
+    },
+    {
+      "human": 5,
+      "name": "loss",
+      "peakRms": 0.03378239940961294,
+      "contextState": "running",
+      "status": "playing"
+    },
+    {
+      "human": 5,
+      "name": "enemy",
+      "peakRms": 0.012697463079108288,
+      "contextState": "running",
+      "status": "playing"
+    },
+    {
+      "human": 5,
+      "name": "overlap",
+      "peakRms": 0.10321849760412234,
+      "contextState": "running",
+      "status": "playing"
+    }
+  ],
+  "errors": []
+}

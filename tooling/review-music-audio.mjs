@@ -46,10 +46,9 @@ try {
     },
     { name: "club-preview", options: { duration: 74, hits: true } },
     { name: "no-hit-preview", options: { duration: 34, hits: false } },
-    { name: "cheer", options: { duration: 4.5, demo: "cheer", voices: ["cheer"], hits: false } },
     {
       name: "success",
-      options: { duration: 4.5, demo: "success", voices: ["success", "cheer"], hits: false },
+      options: { duration: 4.5, demo: "success", voices: ["success"], hits: false },
     },
     { name: "loss", options: { duration: 3, demo: "loss", voices: ["damage"], hits: false } },
     {
@@ -63,6 +62,7 @@ try {
     { name: "layers", options: { duration: (256 * 60) / 136 / 4, demo: "layers", hits: false } },
   ];
   for (const { name, options } of cases) {
+    console.log(`Rendering ${name} (${options.duration}s)`);
     const { wav, ...stats } = await page.evaluate(
       async ({ path, options }) => {
         const { renderMusicPreview } = await import(`/@fs${path}`);
@@ -82,9 +82,8 @@ try {
     melodyToDrumsDb < -6 ||
     bassToDrumsDb < -9 ||
     stems["club-preview"].peak >= 0.98 ||
-    stems.cheer.rms < 0.004 ||
-    stems.cheer.peak >= 0.98 ||
-    stems.success.rms < 0.004 ||
+    !Number.isFinite(stems.success.peakWindowRms) ||
+    stems.success.peakWindowRms < 0.004 ||
     stems.success.peak >= 0.98 ||
     stems.loss.rms < 0.004 ||
     stems.loss.peak >= 0.98 ||

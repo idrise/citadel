@@ -1,3 +1,5 @@
+> **Later on 17 November:** the crowd graph was removed after owner feedback. This audit records the graph before removal. See [crowd removal review](CROWD_REMOVAL_REVIEW.md) for the current change and its comparison.
+
 # Audio resource audit — 17 November 2026
 
 The question is whether the sound engine has enough time to render each native

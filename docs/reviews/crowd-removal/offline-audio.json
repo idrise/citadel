@@ -1,0 +1,147 @@
+{
+  "stems": {
+    "drums": {
+      "peak": 0.14806455373764038,
+      "rms": 0.01834116855487017,
+      "peakWindowRms": 0.03939716872281258,
+      "channels": 2,
+      "duration": 7.0588235294117645,
+      "bpm": 136,
+      "sections": []
+    },
+    "bass": {
+      "peak": 0.15306109189987183,
+      "rms": 0.014357779432267693,
+      "peakWindowRms": 0.025232571014195345,
+      "channels": 2,
+      "duration": 7.0588235294117645,
+      "bpm": 136,
+      "sections": []
+    },
+    "melody": {
+      "peak": 0.09610973298549652,
+      "rms": 0.010056072382968564,
+      "peakWindowRms": 0.016850642254914158,
+      "channels": 2,
+      "duration": 7.0588235294117645,
+      "bpm": 136,
+      "sections": []
+    },
+    "club-preview": {
+      "peak": 0.4047984778881073,
+      "rms": 0.026008851039174566,
+      "peakWindowRms": 0.06287615720536457,
+      "channels": 2,
+      "duration": 74,
+      "bpm": 136,
+      "sections": [
+        {
+          "section": "intro",
+          "rms": 0.0056173189386057665
+        },
+        {
+          "section": "groove",
+          "rms": 0.025644856708561047
+        },
+        {
+          "section": "breakdown",
+          "rms": 0.02123847692305719
+        },
+        {
+          "section": "build",
+          "rms": 0.026158696588759495
+        },
+        {
+          "section": "drop",
+          "rms": 0.03656757784139122
+        },
+        {
+          "section": "melodic",
+          "rms": 0.022407181222085272
+        }
+      ]
+    },
+    "no-hit-preview": {
+      "peak": 0.4066683053970337,
+      "rms": 0.023040609402358737,
+      "peakWindowRms": 0.05913277883681138,
+      "channels": 2,
+      "duration": 34,
+      "bpm": 136,
+      "sections": [
+        {
+          "section": "intro",
+          "rms": 0.003348606051529954
+        },
+        {
+          "section": "groove",
+          "rms": 0.025115947240865667
+        },
+        {
+          "section": "breakdown",
+          "rms": 0.020244898525953445
+        },
+        {
+          "section": "build",
+          "rms": 0.02559721151365065
+        },
+        {
+          "section": "drop",
+          "rms": 0.03598093865144121
+        },
+        {
+          "section": "melodic",
+          "rms": 0
+        }
+      ]
+    },
+    "success": {
+      "peak": 0.025743745267391205,
+      "rms": 0.0015629922790726337,
+      "peakWindowRms": 0.008321145536437206,
+      "channels": 2,
+      "duration": 4.5,
+      "bpm": 136,
+      "sections": []
+    },
+    "loss": {
+      "peak": 0.1238853856921196,
+      "rms": 0.006984410823697599,
+      "peakWindowRms": 0.03819675347849872,
+      "channels": 2,
+      "duration": 3,
+      "bpm": 136,
+      "sections": []
+    },
+    "success-mix": {
+      "peak": 0.40781864523887634,
+      "rms": 0.035515339469011975,
+      "peakWindowRms": 0.061376064239095966,
+      "channels": 2,
+      "duration": 5,
+      "bpm": 136,
+      "sections": []
+    },
+    "loss-mix": {
+      "peak": 0.40872305631637573,
+      "rms": 0.03575161287332391,
+      "peakWindowRms": 0.06770379796236016,
+      "channels": 2,
+      "duration": 5,
+      "bpm": 136,
+      "sections": []
+    },
+    "layers": {
+      "peak": 0.2393231987953186,
+      "rms": 0.02801984862372921,
+      "peakWindowRms": 0.05127858653470107,
+      "channels": 2,
+      "duration": 28.235294117647058,
+      "bpm": 136,
+      "sections": []
+    }
+  },
+  "melodyToDrumsDb": -5.2199722265547654,
+  "bassToDrumsDb": -2.1267944946206003,
+  "errors": []
+}

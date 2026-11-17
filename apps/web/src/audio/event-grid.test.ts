@@ -26,20 +26,20 @@ it("uses the current transport anchor after resume and does not drift to wall-cl
   expect(next.step).toBe(99.5);
   expect(next.time).toBeCloseTo(anchor.time + SIXTEENTH / 2);
 });
-it("places breach cheers and arrivals on eighths and coalesces rapid crowd bursts", () => {
+it("places success and arrivals on eighths and coalesces rapid duplicate successes", () => {
   const c = createEventConductor(),
     anchor = { time: 0, step: 0 };
-  const cheer: MusicCue = { voice: "cheer", note: 50, duration: 1.15, velocity: 0.68 };
-  const a = c.plan([cheer, { ...cheer, voice: "unlock" }], 0.013, anchor);
+  const success: MusicCue = { voice: "success", note: 81, duration: 0.55, velocity: 0.8 };
+  const a = c.plan([success, { ...success, voice: "unlock" }], 0.013, anchor);
   expect(a).toHaveLength(2);
   for (const n of a) {
     expect(n.step % 2).toBe(0);
     expect(n.cue.notes!.length).toBeGreaterThanOrEqual(3);
   }
-  expect(c.plan([cheer], 0.02, anchor)).toHaveLength(0);
-  expect(c.plan([cheer], 1.1, anchor)).toHaveLength(1);
+  expect(c.plan([success], 0.02, anchor)).toHaveLength(0);
+  expect(c.plan([success], 1.1, anchor)).toHaveLength(1);
   c.reset();
-  expect(c.plan([cheer], 0.02, anchor)).toHaveLength(1);
+  expect(c.plan([success], 0.02, anchor)).toHaveLength(1);
 });
 
 it("keeps success gestures strictly rising in each harmony and bounds dense ricochet feedback", () => {
@@ -64,13 +64,13 @@ it("keeps success gestures strictly rising in each harmony and bounds dense rico
   expect(conductor.plan(cues, 0.02, { time: 0, step: 0 })).toHaveLength(0);
 });
 
-it("keeps simultaneous personal losses audible as one bounded gesture without suppressing a cheer", () => {
+it("keeps simultaneous personal losses audible as one bounded gesture without suppressing victory", () => {
   const loss: MusicCue = { voice: "damage", note: 50, velocity: 0.95, duration: 0.65 },
-    cheer: MusicCue = { voice: "cheer", note: 62, velocity: 0.9, duration: 1.15 },
+    victory: MusicCue = { voice: "victory", note: 86, velocity: 0.8, duration: 1.2 },
     conductor = createEventConductor(),
     anchor = { time: 0, step: 0 };
-  const planned = conductor.plan([...Array<MusicCue>(8).fill(loss), cheer], 0.01, anchor);
-  expect(planned.map((p) => p.cue.voice)).toEqual(["damage", "cheer"]);
+  const planned = conductor.plan([...Array<MusicCue>(8).fill(loss), victory], 0.01, anchor);
+  expect(planned.map((p) => p.cue.voice)).toEqual(["damage", "victory"]);
   expect(planned[0]!.cue.note).toBeGreaterThanOrEqual(46);
   expect(conductor.plan([loss], 0.2, anchor)).toHaveLength(1);
   conductor.reset();
@@ -106,12 +106,12 @@ it("never lets a wall ricochet suppress a capsule breach, and protects outcomes 
     [
       ...Array<MusicCue>(100).fill(hit),
       breach,
-      { voice: "cheer", note: 62, velocity: 0.9, duration: 1.15 },
+      { voice: "victory", note: 86, velocity: 0.8, duration: 1.2 },
     ],
     0.01,
     anchor,
   );
   expect(dense).toHaveLength(32);
   expect(dense.some((p) => p.cue.voice === "breach")).toBe(true);
-  expect(dense.some((p) => p.cue.voice === "cheer")).toBe(true);
+  expect(dense.some((p) => p.cue.voice === "victory")).toBe(true);
 });

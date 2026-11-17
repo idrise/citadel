@@ -37,7 +37,6 @@ export async function renderSettingsMix(
           "unlock",
           "tic",
           "answer",
-          "cheer",
         ];
         effects.forEach((voice, index) =>
           instruments!.play(

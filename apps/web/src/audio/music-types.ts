@@ -24,7 +24,6 @@ export type Voice =
   | "harmony"
   | "acid"
   | "brass"
-  | "cheer"
   | "tic"
   | "answer"
   | "unlock"

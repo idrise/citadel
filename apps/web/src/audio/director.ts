@@ -51,7 +51,6 @@ export function createMusicDirector(humanSeat: number, seed: number) {
           cues.push(cue("serve", 69, event.seat === humanSeat ? 0.38 : 0.12, 0.1));
         if (event.type === "victory" && event.seat === humanSeat) {
           cues.push(cue("victory", 86, 0.8, 1.2));
-          cues.push(cue("cheer", 62, 0.9, 1.15));
         }
         if (event.type === "elimination")
           cues.push(
@@ -96,7 +95,6 @@ export function createMusicDirector(humanSeat: number, seed: number) {
             cues.push(cue("breach", 79, event.attackerSeat === humanSeat ? 0.85 : 0.6, 0.12));
             if (event.attackerSeat === humanSeat) {
               cues.push(cue("success", 81, 0.8, 0.55));
-              cues.push(cue("cheer", 62, 0.9, 1.15));
             }
           }
         }

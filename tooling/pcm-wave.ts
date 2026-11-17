@@ -1,3 +1,4 @@
+import { peakWindowRms } from "./pcm-level";
 /** Browser-side PCM audition encoder, outside the shipped game. */
 export function encodeWave(channels: readonly Float32Array[], sampleRate: number) {
   const length = channels[0]!.length,
@@ -35,5 +36,11 @@ export function encodeWave(channels: readonly Float32Array[], sampleRate: number
   let encoded = "";
   for (let i = 0; i < pcm.length; i += 16384)
     encoded += String.fromCharCode(...pcm.subarray(i, i + 16384));
-  return { wav: btoa(encoded), peak, rms: Math.sqrt(energy / (length * count)), channels: count };
+  return {
+    wav: btoa(encoded),
+    peak,
+    rms: Math.sqrt(energy / (length * count)),
+    peakWindowRms: peakWindowRms(channels, sampleRate),
+    channels: count,
+  };
 }

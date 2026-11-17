@@ -1,7 +1,7 @@
 # CITADEL — PLAN.md
 
 **Status:** Shared design in progress; confirmed rules and provisional prototype experiments distinguished below.  
-**Updated:** 16 November 2026\
+**Updated:** 17 November 2026\
 **Genre:** Fast, competitive, polygon-arena paddle/ball survival  
 **Target:** Understandable, tense matches that usually resolve in approximately **two minutes**. Difficulty is ramped as the game goes on.
 **Players:** 2–16 seats as an experimental local test ceiling, initially **one human and the remaining seats filled by bots**\
@@ -408,6 +408,21 @@ changed. `docs/AUDIO_RESOURCE_REVIEW.md` records measurements, limitations and
 commands for the missing Windows DSP-capacity capture. All 613 unit tests passed.
 The original large Windows input is not staged or committed. This audit does not
 complete P01/P02 or approve later milestones.
+
+**17 November crowd removal (owner feedback):** The owner reports never hearing
+the synthetic crowd and considers its cost unjustified. Removed its full native
+graph, cheer generation and crowd-only score ducking, plus obsolete helpers and
+audition cases. Damage drums, live feedback, success/victory gestures, layered
+score and 200 ms scheduling remain. Matched shortened M2 Pro captures show native
+filters 96→20 and sampled median audio capacity 18.8%→9.9% with graphics, and
+16.9%→12.0% without drawing; both before/after captures had zero native underruns.
+This does not establish that the Windows output fault is fixed. All 618 unit
+tests, eight live feedback auditions, ten offline auditions and five native
+browser checks passed.
+`docs/CROWD_REMOVAL_REVIEW.md` retains evidence and limits. Also corrected absolute
+HTML build-entry resolution so local development dependency scanning works.
+The original Windows input remains excluded from commits; no push/deployment or
+milestone advancement is authorised.
 
 **P02 — Remove measured bottlenecks** (Not started; depends on P01 evidence).
 Prioritise the largest verified causes and compare each change against the same

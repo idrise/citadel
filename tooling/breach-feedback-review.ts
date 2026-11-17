@@ -6,7 +6,7 @@ import { damagePiece, launchBall } from "../apps/web/src/simulation/serving";
 import { DEFAULT_OPTIONS } from "../apps/web/src/simulation/types";
 
 /** Live native-clock review of actual rule events through the session's audio path.
- * The arranged score is silent here so neither a missing cue nor a falling cheer can hide in it. */
+ * The arranged score is silent so damage and success cues can be checked independently. */
 export function mountBreachReview(human = 5) {
   const state = createMatch(2026, 6),
     observer = createRoundObserver(6),

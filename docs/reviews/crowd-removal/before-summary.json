@@ -1,0 +1,935 @@
+{
+  "validCapture": true,
+  "schema": "citadel.audio-resources",
+  "version": 1,
+  "browser": "158.0.8127.18",
+  "comparison": "custom",
+  "change": "drawing",
+  "benchmark": {
+    "schema": "citadel.benchmark",
+    "version": 1,
+    "build": {
+      "version": "0.1.0",
+      "revision": "d4b68bd0b09cf6014e461b97e605c77edca553c6",
+      "buildId": "96221715a88c41d9",
+      "dirty": false
+    },
+    "capturedAt": "2026-11-17T01:33:43.062Z",
+    "config": {
+      "comparison": "custom",
+      "change": "drawing",
+      "seats": 6,
+      "shape": "classic",
+      "workload": "play",
+      "reverse": false,
+      "staticAudio": false
+    },
+    "seed": 202878433,
+    "supplySeed": 334353,
+    "browser": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+      "language": "en-US",
+      "hardwareConcurrency": 12,
+      "path": "http://127.0.0.1:4181/diagnostics.html",
+      "visibility": "visible",
+      "reportedDeviceModel": null,
+      "powerMode": null,
+      "audioOutputConnection": null,
+      "refreshRate": null
+    },
+    "complete": true,
+    "comparableWorkload": true,
+    "minimumDurationMet": false,
+    "notes": [
+      "Local authored fixture, not a player replay. Defences repaired; resets every 24 simulated seconds.",
+      "Adaptive resolution disabled. Same tick sequence and seeds per pass; wall time may differ.",
+      "Audio counts detect late scheduling, not native audio-buffer underruns. Muting is not engine-off.",
+      "CPU and GPU work overlap. GPU summaries deduplicate fresh asynchronous results.",
+      "A shortened developer run is not a 60-second performance baseline."
+    ],
+    "results": [
+      {
+        "id": "high-reference",
+        "settings": {
+          "id": "high-reference",
+          "quality": "high",
+          "draw": true,
+          "audio": true,
+          "lookAhead": 0.2,
+          "latencyHint": "interactive",
+          "stallMs": 0,
+          "warmupSeconds": 0.5,
+          "seconds": 30,
+          "rendering": {
+            "fixedScale": 1,
+            "bloom": true,
+            "floorReflection": true,
+            "wallReflections": true
+          }
+        },
+        "complete": true,
+        "reason": "completed",
+        "audioAvailable": true,
+        "wallMs": 31011.10000014305,
+        "activeWallMs": 30015.6,
+        "simulationSeconds": 30,
+        "cycles": 2,
+        "finalState": {
+          "ticks": 3660,
+          "rng": 1884763675,
+          "balls": [
+            {
+              "id": 0,
+              "position": {
+                "x": -9.706675560985893,
+                "y": -4.2951415605530165
+              },
+              "velocity": {
+                "x": 0,
+                "y": 0
+              },
+              "phase": "ready"
+            },
+            {
+              "id": 1,
+              "position": {
+                "x": -5.231284943979561,
+                "y": 3.745624958083223
+              },
+              "velocity": {
+                "x": -17.100338775676487,
+                "y": -16.83978663039099
+              },
+              "phase": "active"
+            },
+            {
+              "id": 2,
+              "position": {
+                "x": -9.340224280453254,
+                "y": 2.266155431487095
+              },
+              "velocity": {
+                "x": -18.86364655159819,
+                "y": 14.83788525283763
+              },
+              "phase": "active"
+            },
+            {
+              "id": 3,
+              "position": {
+                "x": -1.981712929547597,
+                "y": 9.217377694880811
+              },
+              "velocity": {
+                "x": 20.841879867108336,
+                "y": 11.900253930274925
+              },
+              "phase": "active"
+            }
+          ],
+          "botAngles": [
+            -0.8314194052549764, -2.541578927490444, -2.462974680177432, 3.1185110364220767,
+            2.0713134852254793, -0.08611804951804775
+          ]
+        },
+        "workload": {
+          "minBalls": 4,
+          "maxBalls": 4,
+          "morphFrames": 0
+        },
+        "controlledStalls": 0,
+        "audio": {
+          "start": {
+            "kind": "Audio scheduling and context state; optional native playback statistics reported separately",
+            "playback": {
+              "underrunEvents": 0,
+              "underrunDuration": 0,
+              "totalDuration": 0.004,
+              "averageLatency": 0,
+              "minimumLatency": 0,
+              "maximumLatency": 0
+            },
+            "contextChanges": [
+              {
+                "atMs": 856.2000000476837,
+                "state": "running"
+              }
+            ],
+            "contextState": "running",
+            "sampleRate": 32000,
+            "baseLatency": 0.008,
+            "outputLatency": 0.016,
+            "clockTime": 0.596,
+            "musicEnabled": true,
+            "effectsEnabled": true,
+            "schedule": {
+              "accepted": 3,
+              "late": 0,
+              "duplicate": 0,
+              "invalid": 0,
+              "minHeadroomMs": 68,
+              "lastHeadroomMs": 188.58823529411762,
+              "maxCallbackGapMs": 80.00000000000001,
+              "lookAheadMs": 200,
+              "updateIntervalMs": 15,
+              "running": true
+            }
+          },
+          "end": {
+            "kind": "Audio scheduling and context state; optional native playback statistics reported separately",
+            "playback": {
+              "underrunEvents": 0,
+              "underrunDuration": 0,
+              "totalDuration": 30.072,
+              "averageLatency": 0.0201,
+              "minimumLatency": 0,
+              "maximumLatency": 0.0221
+            },
+            "contextChanges": [
+              {
+                "atMs": 856.2000000476837,
+                "state": "running"
+              }
+            ],
+            "contextState": "running",
+            "sampleRate": 32000,
+            "baseLatency": 0.008,
+            "outputLatency": 0.016,
+            "clockTime": 30.616,
+            "musicEnabled": true,
+            "effectsEnabled": true,
+            "schedule": {
+              "accepted": 275,
+              "late": 0,
+              "duplicate": 0,
+              "invalid": 0,
+              "minHeadroomMs": 68,
+              "lastHeadroomMs": 188.5882352941195,
+              "maxCallbackGapMs": 128.0000000000001,
+              "lookAheadMs": 200,
+              "updateIntervalMs": 15,
+              "running": true
+            }
+          },
+          "states": [
+            {
+              "atMs": 253.04400009536744,
+              "state": "running"
+            }
+          ]
+        },
+        "graphics": {
+          "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+          "vendor": "Google Inc. (Apple)",
+          "shadows": false,
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "maxTextureSize": 16384,
+          "viewport": {
+            "width": 1080,
+            "height": 580
+          },
+          "devicePixelRatio": 1,
+          "drawingBuffer": {
+            "width": 1080,
+            "height": 580
+          }
+        },
+        "frames": {
+          "kind": "Local rolling frame diagnostics; nothing uploaded",
+          "totalFrames": 1800,
+          "totalSpikes": 0,
+          "longestMs": 33.39999999999782,
+          "windowFrames": 1800,
+          "intervalMs": {
+            "samples": 1800,
+            "median": 16.69999999999891,
+            "p95": 16.799999999999272,
+            "p99": 16.800000000000182,
+            "max": 33.39999999999782
+          },
+          "simulationMs": {
+            "samples": 1800,
+            "median": 0.10000014305114746,
+            "p95": 0.20000004768371582,
+            "p99": 0.3000001907348633,
+            "max": 0.9000000953674316
+          },
+          "audioMs": {
+            "samples": 1800,
+            "median": 0,
+            "p95": 0.5,
+            "p99": 1.9000000953674316,
+            "max": 4.8999998569488525
+          },
+          "renderCpuMs": {
+            "samples": 1800,
+            "median": 5.3999998569488525,
+            "p95": 6.300000190734863,
+            "p99": 6.8999998569488525,
+            "max": 14.5
+          },
+          "gpuMs": {
+            "samples": 60,
+            "median": 11.897374,
+            "p95": 18.129625,
+            "p99": 18.676833,
+            "max": 19.115291
+          },
+          "summary": {
+            "frames": 1800,
+            "capturedMs": 30015.6,
+            "metrics": {
+              "intervalMs": {
+                "samples": 1800,
+                "median": 16.69999999999891,
+                "p95": 16.799999999999272,
+                "p99": 16.800000000000182,
+                "max": 33.39999999999782
+              },
+              "simulationMs": {
+                "samples": 1800,
+                "median": 0.10000014305114746,
+                "p95": 0.20000004768371582,
+                "p99": 0.3000001907348633,
+                "max": 0.9000000953674316
+              },
+              "audioMs": {
+                "samples": 1800,
+                "median": 0,
+                "p95": 0.5,
+                "p99": 1.9000000953674316,
+                "max": 4.8999998569488525
+              },
+              "renderCpuMs": {
+                "samples": 1800,
+                "median": 5.3999998569488525,
+                "p95": 6.300000190734863,
+                "p99": 6.8999998569488525,
+                "max": 14.5
+              },
+              "frameCpuMs": {
+                "samples": 1800,
+                "median": 5.599999904632568,
+                "p95": 6.700000047683716,
+                "p99": 7.599999904632568,
+                "max": 15.799999952316284
+              },
+              "gpuMs": {
+                "samples": 60,
+                "median": 11.897374,
+                "p95": 18.129625,
+                "p99": 18.676833,
+                "max": 19.115291
+              }
+            },
+            "stalls": {
+              "50": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "100": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "250": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "33.4": {
+                "frames": 0,
+                "totalMs": 0
+              }
+            }
+          },
+          "phases": {
+            "playing": {
+              "frames": 1800,
+              "capturedMs": 30015.6,
+              "metrics": {
+                "intervalMs": {
+                  "samples": 1800,
+                  "median": 16.69999999999891,
+                  "p95": 16.799999999999272,
+                  "p99": 16.800000000000182,
+                  "max": 33.39999999999782
+                },
+                "simulationMs": {
+                  "samples": 1800,
+                  "median": 0.10000014305114746,
+                  "p95": 0.20000004768371582,
+                  "p99": 0.3000001907348633,
+                  "max": 0.9000000953674316
+                },
+                "audioMs": {
+                  "samples": 1800,
+                  "median": 0,
+                  "p95": 0.5,
+                  "p99": 1.9000000953674316,
+                  "max": 4.8999998569488525
+                },
+                "renderCpuMs": {
+                  "samples": 1800,
+                  "median": 5.3999998569488525,
+                  "p95": 6.300000190734863,
+                  "p99": 6.8999998569488525,
+                  "max": 14.5
+                },
+                "frameCpuMs": {
+                  "samples": 1800,
+                  "median": 5.599999904632568,
+                  "p95": 6.700000047683716,
+                  "p99": 7.599999904632568,
+                  "max": 15.799999952316284
+                },
+                "gpuMs": {
+                  "samples": 60,
+                  "median": 11.897374,
+                  "p95": 18.129625,
+                  "p99": 18.676833,
+                  "max": 19.115291
+                }
+              },
+              "stalls": {
+                "50": {
+                  "frames": 0,
+                  "totalMs": 0
+                },
+                "100": {
+                  "frames": 0,
+                  "totalMs": 0
+                },
+                "250": {
+                  "frames": 0,
+                  "totalMs": 0
+                },
+                "33.4": {
+                  "frames": 0,
+                  "totalMs": 0
+                }
+              }
+            }
+          },
+          "totalMarkers": 0,
+          "markers": []
+        }
+      },
+      {
+        "id": "drawing",
+        "settings": {
+          "id": "drawing",
+          "quality": "high",
+          "draw": false,
+          "audio": true,
+          "lookAhead": 0.2,
+          "latencyHint": "interactive",
+          "stallMs": 0,
+          "warmupSeconds": 0.5,
+          "seconds": 30,
+          "rendering": {
+            "fixedScale": 1,
+            "bloom": true,
+            "floorReflection": true,
+            "wallReflections": true
+          }
+        },
+        "complete": true,
+        "reason": "completed",
+        "audioAvailable": true,
+        "wallMs": 30814.299999952316,
+        "activeWallMs": 29998.800000000003,
+        "simulationSeconds": 30,
+        "cycles": 2,
+        "finalState": {
+          "ticks": 3660,
+          "rng": 1884763675,
+          "balls": [
+            {
+              "id": 0,
+              "position": {
+                "x": -9.706675560985893,
+                "y": -4.2951415605530165
+              },
+              "velocity": {
+                "x": 0,
+                "y": 0
+              },
+              "phase": "ready"
+            },
+            {
+              "id": 1,
+              "position": {
+                "x": -5.231284943979561,
+                "y": 3.745624958083223
+              },
+              "velocity": {
+                "x": -17.100338775676487,
+                "y": -16.83978663039099
+              },
+              "phase": "active"
+            },
+            {
+              "id": 2,
+              "position": {
+                "x": -9.340224280453254,
+                "y": 2.266155431487095
+              },
+              "velocity": {
+                "x": -18.86364655159819,
+                "y": 14.83788525283763
+              },
+              "phase": "active"
+            },
+            {
+              "id": 3,
+              "position": {
+                "x": -1.981712929547597,
+                "y": 9.217377694880811
+              },
+              "velocity": {
+                "x": 20.841879867108336,
+                "y": 11.900253930274925
+              },
+              "phase": "active"
+            }
+          ],
+          "botAngles": [
+            -0.8314194052549764, -2.541578927490444, -2.462974680177432, 3.1185110364220767,
+            2.0713134852254793, -0.08611804951804775
+          ]
+        },
+        "workload": {
+          "minBalls": 4,
+          "maxBalls": 4,
+          "morphFrames": 0
+        },
+        "controlledStalls": 0,
+        "audio": {
+          "start": {
+            "kind": "Audio scheduling and context state; optional native playback statistics reported separately",
+            "playback": {
+              "underrunEvents": 0,
+              "underrunDuration": 0,
+              "totalDuration": 0.004,
+              "averageLatency": 0,
+              "minimumLatency": 0,
+              "maximumLatency": 0
+            },
+            "contextChanges": [
+              {
+                "atMs": 31610.599999904633,
+                "state": "running"
+              }
+            ],
+            "contextState": "running",
+            "sampleRate": 32000,
+            "baseLatency": 0.008,
+            "outputLatency": 0.016,
+            "clockTime": 0.752,
+            "musicEnabled": true,
+            "effectsEnabled": true,
+            "schedule": {
+              "accepted": 4,
+              "late": 0,
+              "duplicate": 0,
+              "invalid": 0,
+              "minHeadroomMs": 64.00000000000006,
+              "lastHeadroomMs": 186.8823529411765,
+              "maxCallbackGapMs": 103.99999999999999,
+              "lookAheadMs": 200,
+              "updateIntervalMs": 15,
+              "running": true
+            }
+          },
+          "end": {
+            "kind": "Audio scheduling and context state; optional native playback statistics reported separately",
+            "playback": {
+              "underrunEvents": 0,
+              "underrunDuration": 0,
+              "totalDuration": 30.068,
+              "averageLatency": 0.0201,
+              "minimumLatency": 0,
+              "maximumLatency": 0.0221
+            },
+            "contextChanges": [
+              {
+                "atMs": 31610.599999904633,
+                "state": "running"
+              }
+            ],
+            "contextState": "running",
+            "sampleRate": 32000,
+            "baseLatency": 0.008,
+            "outputLatency": 0.016,
+            "clockTime": 30.744,
+            "musicEnabled": true,
+            "effectsEnabled": true,
+            "schedule": {
+              "accepted": 276,
+              "late": 0,
+              "duplicate": 0,
+              "invalid": 0,
+              "minHeadroomMs": 64.00000000000006,
+              "lastHeadroomMs": 194.88235294117828,
+              "maxCallbackGapMs": 128.0000000000001,
+              "lookAheadMs": 200,
+              "updateIntervalMs": 15,
+              "running": true
+            }
+          },
+          "states": [
+            {
+              "atMs": -10.699999904631113,
+              "state": "running"
+            }
+          ]
+        },
+        "graphics": null,
+        "frames": {
+          "kind": "Local rolling frame diagnostics; nothing uploaded",
+          "totalFrames": 1800,
+          "totalSpikes": 0,
+          "longestMs": 16.80000000000291,
+          "windowFrames": 1800,
+          "intervalMs": {
+            "samples": 1800,
+            "median": 16.69999999999709,
+            "p95": 16.799999999995634,
+            "p99": 16.80000000000291,
+            "max": 16.80000000000291
+          },
+          "simulationMs": {
+            "samples": 1800,
+            "median": 0.10000014305114746,
+            "p95": 0.2999999523162842,
+            "p99": 0.40000009536743164,
+            "max": 1.5999999046325684
+          },
+          "audioMs": {
+            "samples": 1800,
+            "median": 0,
+            "p95": 0.5,
+            "p99": 1.7999999523162842,
+            "max": 5
+          },
+          "renderCpuMs": {
+            "samples": 1800,
+            "median": 0,
+            "p95": 0,
+            "p99": 0,
+            "max": 0
+          },
+          "gpuMs": {
+            "samples": 0,
+            "median": null,
+            "p95": null,
+            "p99": null,
+            "max": null
+          },
+          "summary": {
+            "frames": 1800,
+            "capturedMs": 29998.800000000003,
+            "metrics": {
+              "intervalMs": {
+                "samples": 1800,
+                "median": 16.69999999999709,
+                "p95": 16.799999999995634,
+                "p99": 16.80000000000291,
+                "max": 16.80000000000291
+              },
+              "simulationMs": {
+                "samples": 1800,
+                "median": 0.10000014305114746,
+                "p95": 0.2999999523162842,
+                "p99": 0.40000009536743164,
+                "max": 1.5999999046325684
+              },
+              "audioMs": {
+                "samples": 1800,
+                "median": 0,
+                "p95": 0.5,
+                "p99": 1.7999999523162842,
+                "max": 5
+              },
+              "renderCpuMs": {
+                "samples": 1800,
+                "median": 0,
+                "p95": 0,
+                "p99": 0,
+                "max": 0
+              },
+              "frameCpuMs": {
+                "samples": 1800,
+                "median": 0.20000004768371582,
+                "p95": 0.6000001430511475,
+                "p99": 2,
+                "max": 5.099999904632568
+              },
+              "gpuMs": {
+                "samples": 0,
+                "median": null,
+                "p95": null,
+                "p99": null,
+                "max": null
+              }
+            },
+            "stalls": {
+              "50": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "100": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "250": {
+                "frames": 0,
+                "totalMs": 0
+              },
+              "33.4": {
+                "frames": 0,
+                "totalMs": 0
+              }
+            }
+          },
+          "phases": {
+            "playing": {
+              "frames": 1800,
+              "capturedMs": 29998.800000000003,
+              "metrics": {
+                "intervalMs": {
+                  "samples": 1800,
+                  "median": 16.69999999999709,
+                  "p95": 16.799999999995634,
+                  "p99": 16.80000000000291,
+                  "max": 16.80000000000291
+                },
+                "simulationMs": {
+                  "samples": 1800,
+                  "median": 0.10000014305114746,
+                  "p95": 0.2999999523162842,
+                  "p99": 0.40000009536743164,
+                  "max": 1.5999999046325684
+                },
+                "audioMs": {
+                  "samples": 1800,
+                  "median": 0,
+                  "p95": 0.5,
+                  "p99": 1.7999999523162842,
+                  "max": 5
+                },
+                "renderCpuMs": {
+                  "samples": 1800,
+                  "median": 0,
+                  "p95": 0,
+                  "p99": 0,
+                  "max": 0
+                },
+                "frameCpuMs": {
+                  "samples": 1800,
+                  "median": 0.20000004768371582,
+                  "p95": 0.6000001430511475,
+                  "p99": 2,
+                  "max": 5.099999904632568
+                },
+                "gpuMs": {
+                  "samples": 0,
+                  "median": null,
+                  "p95": null,
+                  "p99": null,
+                  "max": null
+                }
+              },
+              "stalls": {
+                "50": {
+                  "frames": 0,
+                  "totalMs": 0
+                },
+                "100": {
+                  "frames": 0,
+                  "totalMs": 0
+                },
+                "250": {
+                  "frames": 0,
+                  "totalMs": 0
+                },
+                "33.4": {
+                  "frames": 0,
+                  "totalMs": 0
+                }
+              }
+            }
+          },
+          "totalMarkers": 0,
+          "markers": []
+        }
+      }
+    ],
+    "description": ""
+  },
+  "contexts": [
+    {
+      "atMs": 1794879161505,
+      "contextId": "12cb2078-9f1a-4166-b09c-a23c6e1ba0a2",
+      "contextType": "realtime",
+      "contextState": "suspended",
+      "callbackBufferSize": 256,
+      "maxOutputChannelCount": 2,
+      "sampleRate": 32000,
+      "renderQuantumSize": 128
+    },
+    {
+      "atMs": 1794879161520,
+      "contextId": "12cb2078-9f1a-4166-b09c-a23c6e1ba0a2",
+      "contextType": "realtime",
+      "contextState": "running",
+      "callbackBufferSize": 256,
+      "maxOutputChannelCount": 2,
+      "sampleRate": 32000,
+      "renderQuantumSize": 128
+    },
+    {
+      "atMs": 1794879161832,
+      "contextId": "e9680bcc-470a-4679-8175-66969dc70c8f",
+      "contextType": "realtime",
+      "contextState": "suspended",
+      "callbackBufferSize": 256,
+      "maxOutputChannelCount": 2,
+      "sampleRate": 32000,
+      "renderQuantumSize": 128
+    },
+    {
+      "atMs": 1794879161833,
+      "contextId": "e9680bcc-470a-4679-8175-66969dc70c8f",
+      "contextType": "realtime",
+      "contextState": "running",
+      "callbackBufferSize": 256,
+      "maxOutputChannelCount": 2,
+      "sampleRate": 32000,
+      "renderQuantumSize": 128
+    },
+    {
+      "atMs": 1794879161833,
+      "contextId": "e9680bcc-470a-4679-8175-66969dc70c8f",
+      "contextType": "realtime",
+      "contextState": "closed",
+      "callbackBufferSize": 256,
+      "maxOutputChannelCount": 2,
+      "sampleRate": 32000,
+      "renderQuantumSize": 128
+    },
+    {
+      "atMs": 1794879192529,
+      "contextId": "12cb2078-9f1a-4166-b09c-a23c6e1ba0a2",
+      "contextType": "realtime",
+      "contextState": "closed",
+      "callbackBufferSize": 256,
+      "maxOutputChannelCount": 2,
+      "sampleRate": 32000,
+      "renderQuantumSize": 128
+    },
+    {
+      "atMs": 1794879192529,
+      "contextId": "6ff064c9-9f56-4274-8f3f-a9b3e82a5858",
+      "contextType": "realtime",
+      "contextState": "suspended",
+      "callbackBufferSize": 256,
+      "maxOutputChannelCount": 2,
+      "sampleRate": 32000,
+      "renderQuantumSize": 128
+    },
+    {
+      "atMs": 1794879192529,
+      "contextId": "6ff064c9-9f56-4274-8f3f-a9b3e82a5858",
+      "contextType": "realtime",
+      "contextState": "running",
+      "callbackBufferSize": 256,
+      "maxOutputChannelCount": 2,
+      "sampleRate": 32000,
+      "renderQuantumSize": 128
+    },
+    {
+      "atMs": 1794879223402,
+      "contextId": "6ff064c9-9f56-4274-8f3f-a9b3e82a5858",
+      "contextType": "realtime",
+      "contextState": "closed",
+      "callbackBufferSize": 256,
+      "maxOutputChannelCount": 2,
+      "sampleRate": 32000,
+      "renderQuantumSize": 128
+    }
+  ],
+  "summary": [
+    {
+      "contextId": "12cb2078-9f1a-4166-b09c-a23c6e1ba0a2",
+      "samples": 30,
+      "callbackBufferMs": {
+        "samples": 30,
+        "median": 8,
+        "p95": 8,
+        "max": 8
+      },
+      "renderCapacityPercent": {
+        "samples": 30,
+        "median": 18.75233936369308,
+        "p95": 26.002990281584847,
+        "max": 30.552451893234018
+      },
+      "callbackIntervalMs": {
+        "samples": 30,
+        "median": 8.00010524911468,
+        "p95": 8.001154408444345,
+        "max": 8.005272895456804
+      },
+      "callbackJitterMs": {
+        "samples": 30,
+        "median": 0.04920442147396907,
+        "p95": 0.06281793852987282,
+        "max": 0.12389953140793322
+      },
+      "samplesAtOrAboveCapacity": 0,
+      "peakInspectedNodes": 10026,
+      "peakInspectedParams": 12221
+    },
+    {
+      "contextId": "6ff064c9-9f56-4274-8f3f-a9b3e82a5858",
+      "samples": 31,
+      "callbackBufferMs": {
+        "samples": 31,
+        "median": 8,
+        "p95": 8,
+        "max": 8
+      },
+      "renderCapacityPercent": {
+        "samples": 31,
+        "median": 16.922496225465526,
+        "p95": 56.566791510611736,
+        "max": 59.55864121001736
+      },
+      "callbackIntervalMs": {
+        "samples": 31,
+        "median": 8.000142391918029,
+        "p95": 8.004264522011963,
+        "max": 8.029805195043352
+      },
+      "callbackJitterMs": {
+        "samples": 31,
+        "median": 0.04092751036970651,
+        "p95": 0.17134821909762898,
+        "max": 0.45094774235444884
+      },
+      "samplesAtOrAboveCapacity": 0,
+      "peakInspectedNodes": 10942,
+      "peakInspectedParams": 13397
+    }
+  ],
+  "errors": [],
+  "notes": [
+    "Audio-thread samples include warm-up; benchmark audio start/end counters delimit the measured window.",
+    "Developer inspection adds overhead. Repeat without inspection before attributing a regression.",
+    "Chromium renderCapacity is a ratio; displayed percent matches Chromium DevTools (ratio × 100).",
+    "One-second samples cannot establish that every native audio deadline was met; compare native underrun counters too.",
+    "Inspected node/parameter counts include retained/stopped objects awaiting garbage collection; they are not simultaneous voices or proof of a leak.",
+    "Native callback buffer, render quantum and 200 ms music scheduling look-ahead are separate quantities.",
+    "No game preferences/progress are changed and nothing is uploaded."
+  ]
+}

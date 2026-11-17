@@ -1,3 +1,5 @@
+> **17 November follow-up:** the synthetic crowd and its score ducking were removed after owner feedback that the effect was inaudible. The crowd audition below is historical. Success, damage, victory and the adaptive score remain; see [crowd removal review](CROWD_REMOVAL_REVIEW.md).
+
 > Latest musical follow-up: [returning original melody and subtle bar colour](MOTIF_RETURN_REVIEW.md).
 
 # Music detour — play builds the arrangement

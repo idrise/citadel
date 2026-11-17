@@ -23,10 +23,9 @@ function inHarmony(note: number, step: number) {
   );
 }
 
-/** Short impacts snap to 32nds (<=55ms); vocal/arrival responses use the following eighth. */
+/** Short impacts snap to 32nds (<=55ms); success/arrival responses use the following eighth. */
 export function createEventConductor() {
-  let lastCrowd = -Infinity,
-    lastTic = -Infinity;
+  let lastTic = -Infinity;
   const lastGesture = new Map<string, number>();
   return {
     plan(cues: readonly MusicCue[], now: number, anchor: GridAnchor): TimedCue[] {
@@ -35,7 +34,7 @@ export function createEventConductor() {
         const grid = nextGrid(
           now + 0.005,
           anchor,
-          ["cheer", "unlock", "success", "victory"].includes(source.voice) ? 2 : 0.5,
+          ["unlock", "success", "victory"].includes(source.voice) ? 2 : 0.5,
         );
         const spacing =
           source.voice === "damage" || source.voice === "breach"
@@ -54,18 +53,7 @@ export function createEventConductor() {
           continue;
         if (spacing) lastGesture.set(source.voice, grid.time);
         const chord = HARMONY[((Math.floor(grid.step / 16) % 4) + 4) % 4]!;
-        if (source.voice === "cheer") {
-          if (grid.time - lastCrowd < SIXTEENTH * 8) continue;
-          lastCrowd = grid.time;
-          result.push({
-            cue: {
-              ...source,
-              note: chord.bass + 12,
-              notes: [chord.bass + 12, chord.bass + 19, chord.bass + 24],
-            },
-            ...grid,
-          });
-        } else if (source.voice === "success" || source.voice === "victory") {
+        if (source.voice === "success" || source.voice === "victory") {
           result.push({
             cue: {
               ...source,
@@ -116,14 +104,13 @@ export function createEventConductor() {
         }
       }
       // Dense collisions become a bounded musical gesture, never an unbounded future queue.
-      const outcomes = new Set(["damage", "breach", "success", "cheer", "eliminate", "victory"]);
+      const outcomes = new Set(["damage", "breach", "success", "eliminate", "victory"]);
       const important = result.filter((p) => outcomes.has(p.cue.voice));
       const incidental = result.filter((p) => !outcomes.has(p.cue.voice));
       return [...important, ...incidental].slice(0, 32).sort((a, b) => a.time - b.time);
     },
     reset() {
       lastGesture.clear();
-      lastCrowd = -Infinity;
       lastTic = -Infinity;
     },
   };

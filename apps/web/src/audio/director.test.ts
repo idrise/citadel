@@ -133,11 +133,13 @@ it("celebrates only the human's credited attack, keeping own losses and bot-only
   const own = director.observe(frame, [{ ...event(0, "damage", 0), attackerSeat: 1 }]);
   expect(own.map((c) => c.voice)).toEqual(["damage"]);
   const success = director.observe(frame, [{ ...event(1, "damage", 1), attackerSeat: 0 }]);
-  expect(success.map((c) => c.voice)).toEqual(["breach", "success", "cheer"]);
+  expect(success.map((c) => c.voice)).toEqual(["breach", "success"]);
   expect(success.some((c) => c.voice === "damage")).toBe(false);
   const neutral = director.observe(frame, [{ ...event(2, "damage", 2), attackerSeat: 1 }]);
   expect(neutral.map((c) => c.voice)).toEqual(["breach"]);
-  expect(director.observe(frame, [event(3, "victory", 0)])[0]!.voice).toBe("victory");
+  expect(director.observe(frame, [event(3, "victory", 0)]).map((cue) => cue.voice)).toEqual([
+    "victory",
+  ]);
 });
 
 it.each([0, 1, 2, 3, 4, 5])("routes real piece damage correctly for human fortress %s", (human) => {
@@ -150,7 +152,7 @@ it.each([0, 1, 2, 3, 4, 5])("routes real piece damage correctly for human fortre
   launchBall(state, ball, DEFAULT_OPTIONS);
   damagePiece(state, ball, (human + 1) % 6, 0);
   const scored = director.observe(view, observer.observe(state.events));
-  expect(scored.map((cue) => cue.voice)).toContain("cheer");
+  expect(scored.map((cue) => cue.voice)).toContain("success");
   expect(scored.map((cue) => cue.voice)).not.toContain("damage");
   damagePiece(state, ball, human, 0);
   const lost = director.observe(view, observer.observe(state.events));

@@ -114,7 +114,7 @@ it("contains unsupported audio, rejected imports and playback errors", async () 
   missing.dispose();
 });
 
-it("lets the final breach cheer resolve without delaying results, while mute can still cut it", async () => {
+it("lets the final victory phrase resolve without delaying results, while mute can still cut it", async () => {
   const { music, engine, host } = fixture();
   music.unlock();
   music.setPlaying(true);
@@ -134,7 +134,7 @@ it("lets the final breach cheer resolve without delaying results, while mute can
   music.dispose();
 });
 
-it("can mute the final crowd tail immediately", async () => {
+it("can mute the final victory tail immediately", async () => {
   const { music, engine } = fixture();
   music.unlock();
   music.setPlaying(true);
@@ -150,7 +150,7 @@ it("can mute the final crowd tail immediately", async () => {
   music.dispose();
 });
 
-it("cuts the final crowd tail on explicit pause or focus loss", async () => {
+it("cuts the final victory tail on explicit pause or focus loss", async () => {
   const { music, engine } = fixture();
   music.unlock();
   music.setPlaying(true);

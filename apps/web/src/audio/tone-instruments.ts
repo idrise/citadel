@@ -2,7 +2,6 @@ import { createPaddleSwish } from "./tone-swish";
 import * as Tone from "tone";
 import type { MusicCue } from "./music-types";
 import { createMelodic } from "./tone-melodic";
-import { createCrowd } from "./tone-crowd";
 import { createReactiveVoices } from "./tone-reactive";
 import { createFeedback } from "./tone-feedback";
 import { createDrums } from "./tone-drums";
@@ -19,14 +18,12 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
   }).connect(output);
   const scoreLevel = new Tone.Gain({ context, gain: 1 }).connect(compressor);
   const effectsLevel = new Tone.Gain({ context, gain: 1 }).connect(compressor);
-  const duck = new Tone.Gain({ context, gain: 1 }).connect(scoreLevel);
-  const arranged = new Tone.Gain({ context, gain: 1 }).connect(duck);
+  const arranged = new Tone.Gain({ context, gain: 1 }).connect(scoreLevel);
   const swish = createPaddleSwish(context, effectsLevel);
   const melodic = createMelodic(context, arranged);
   const drums = createDrums(context, arranged, effectsLevel);
   const feedback = createFeedback(context, effectsLevel);
   const impacts = createImpactFeedback(context, effectsLevel);
-  const crowd = createCrowd(context, effectsLevel);
   const reactive = createReactiveVoices(context, arranged, effectsLevel);
   return {
     steer: swish.steer,
@@ -48,13 +45,7 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
           arranged.gain.setTargetAtTime(1, at, 0.01);
         } else {
           if (cue.voice === "kick") melodic.duck(at);
-          if (cue.voice === "cheer" || cue.voice === "damage") {
-            duck.gain.cancelScheduledValues(at);
-            duck.gain.setValueAtTime(0.4, at);
-            duck.gain.linearRampToValueAtTime(1, at + cue.duration + 0.25);
-            crowd.play(cue, at);
-            if (cue.voice === "damage") drums.play(cue, at);
-          } else if (
+          if (
             !impacts.play(cue, at) &&
             !feedback.play(cue, at) &&
             !reactive.play(cue, at, source === "effects") &&
@@ -76,12 +67,10 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
       swish.dispose();
       feedback.dispose();
       impacts.dispose();
-      crowd.dispose();
       reactive.dispose();
       melodic.dispose();
       drums.dispose();
       arranged.dispose();
-      duck.dispose();
       scoreLevel.dispose();
       effectsLevel.dispose();
       compressor.dispose();

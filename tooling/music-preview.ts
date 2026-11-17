@@ -14,7 +14,7 @@ export async function renderMusicPreview(
     hits?: boolean;
     balls?: number;
     startStep?: number;
-    demo?: "layers" | "cheer" | "success" | "loss";
+    demo?: "layers" | "success" | "loss";
   } = {},
 ) {
   const duration = options.duration ?? 74;
@@ -59,7 +59,7 @@ export async function renderMusicPreview(
             position: { x: 0, y: 0 },
           });
         if (
-          (["cheer", "success", "loss"].includes(options.demo ?? "") && step === 8) ||
+          (["success", "loss"].includes(options.demo ?? "") && step === 8) ||
           (options.hits !== false && [144, 304].includes(step))
         )
           events.push({
