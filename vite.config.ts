@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { buildIdentity } from "./tooling/build-identity";
 import packageInfo from "./package.json";
 import { defineConfig } from "vite-plus";
@@ -15,7 +16,10 @@ export default defineConfig({
     outDir: "../../dist",
     emptyOutDir: true,
     rolldownOptions: {
-      input: { game: "apps/web/index.html", diagnostics: "apps/web/diagnostics.html" },
+      input: {
+        game: fileURLToPath(new URL("./apps/web/index.html", import.meta.url)),
+        diagnostics: fileURLToPath(new URL("./apps/web/diagnostics.html", import.meta.url)),
+      },
     },
   },
   lint: {
