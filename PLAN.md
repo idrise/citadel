@@ -394,6 +394,21 @@ stricter one-second per-case limit (slowest local replay pair: 333 ms). `vp chec
 all 610 unit tests and the `/citadel/` production build pass; the build retains its
 existing large-chunk advisory. The remote CI rerun remains pending.
 
+**17 November audio resource audit (owner requested):** The supplied Windows
+benchmark reported native underruns despite zero late music steps and at least
+144 ms of score scheduling headroom. Low graphics reduced the native counters
+(2,019 to 76 events after warm-up) but the owner heard no improvement. Audited the
+native interactive context, Tone worker/graph and bounded instrument ownership.
+Added a developer Chromium probe for actual callback-buffer size, sampled native
+audio render capacity, context/graph counts and existing benchmark counters.
+Short isolated M2 Pro probes had no underruns; sampled capacity peaked at 71.8%
+with drawing disabled. Balanced changed the actual callback buffer from 8 to
+10 ms here. No music, live feedback latency, driver policy or game setting was
+changed. `docs/AUDIO_RESOURCE_REVIEW.md` records measurements, limitations and
+commands for the missing Windows DSP-capacity capture. All 613 unit tests passed.
+The original large Windows input is not staged or committed. This audit does not
+complete P01/P02 or approve later milestones.
+
 **P02 — Remove measured bottlenecks** (Not started; depends on P01 evidence).
 Prioritise the largest verified causes and compare each change against the same
 baseline. Candidate investigations include expensive reflection/bloom/shadow passes
