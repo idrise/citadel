@@ -98,6 +98,6 @@ it("preserves the actual saved level when a win or demotion changes the next ros
       at,
     });
   expect(progress.level).toBe(20);
-  expect(progress.best).toBe(21);
+  expect(progress.best).toBe(20);
   expect(levelFor(progress, levelFeatures(20).playerCount)).toBe(20);
 });

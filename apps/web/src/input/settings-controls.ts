@@ -32,6 +32,7 @@ export function createSettingsControls(
     ["guide", "Ball guide"],
     ["resume", "Resume"],
     ["restart", "Restart"],
+    ["resetProgress", "Reset progress"],
     ["sound", "Enable sound"],
     ["report", "Save performance report"],
     ["benchmark", "Run performance test"],

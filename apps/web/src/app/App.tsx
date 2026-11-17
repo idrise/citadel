@@ -1,6 +1,7 @@
 import { levelDifficulty } from "../simulation/difficulty";
 import { roundSeed } from "../session/round-seed";
 import {
+  freshProgress,
   levelFor,
   levelAfterLoss,
   loadProgress,
@@ -36,9 +37,10 @@ export function App() {
       <GamePanel
         level={levelFor(progress)}
         bestLevel={progress.best}
-        onReached={(level) =>
-          setProgress((current) => (level > current.best ? { ...current, best: level } : current))
-        }
+        onResetProgress={() => {
+          setCount(null);
+          setProgress(freshProgress());
+        }}
         lossLevel={levelAfterLoss(progress, count)}
         previousLevel={progress.recent.at(-1)?.level}
         demotion={progress.demotion}

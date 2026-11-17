@@ -1,5 +1,7 @@
 import {
   BoxGeometry,
+  Box3,
+  Vector3,
   Group,
   Mesh,
   MeshStandardMaterial,
@@ -14,6 +16,7 @@ export type SettingsAction =
   | "pause"
   | "resume"
   | "restart"
+  | "resetProgress"
   | "sound"
   | "guide"
   | "report"
@@ -65,16 +68,21 @@ const rows = [
 /** Shared pixel bounds keep the panel, rendered controls and accessible targets aligned. */
 function settingsPanelLayout(state: SceneSettingsState, width: number, height: number) {
   const count = state.touch ? 2 : 3,
-    w = Math.min(430, width - 24),
-    h = Math.min(count * 76 + (state.serveGuide === undefined ? 136 : 160), height - 24);
+    columns = height < 420 ? (width >= 500 ? count : 2) : 1,
+    rowCount = Math.ceil(count / columns),
+    w = Math.min(height < 420 ? 620 : 430, width - 24),
+    h = Math.min(count * 76 + (state.serveGuide === undefined ? 188 : 212), height - 24),
+    rowTop = state.serveGuide === undefined ? 65 : height < 420 ? 80 : 88;
   return {
     count,
+    columns,
     w,
     h,
     left: (width - w) / 2,
     top: (height - h) / 2,
-    rowTop: state.serveGuide === undefined ? 65 : 88,
-    gap: state.serveGuide === undefined ? (h - 132) / count : Math.min(76, (h - 208) / (count - 1)),
+    rowTop,
+    rowWidth: (w - 48 - (columns - 1) * 20) / columns,
+    gap: Math.min(76, (h - 120 - 8 - 44 - rowTop) / Math.max(1, rowCount - 1)),
   };
 }
 export function settingsTargets(
@@ -109,7 +117,11 @@ export function settingsTargets(
           ]
         : []),
     ];
-  const { count, w, h, left, top, gap, rowTop } = settingsPanelLayout(state, width, height);
+  const { count, columns, w, h, left, top, gap, rowTop, rowWidth } = settingsPanelLayout(
+    state,
+    width,
+    height,
+  );
   return [
     ...(state.serveGuide === undefined
       ? []
@@ -127,38 +139,41 @@ export function settingsTargets(
     ...rows.slice(0, count).map((row, i) => ({
       key: row.key,
       label: row.label,
-      left: left + 24,
-      top: top + rowTop + i * gap,
-      width: w - 48,
+      left: left + 24 + (i % columns) * (rowWidth + 20),
+      top: top + rowTop + Math.floor(i / columns) * gap,
+      width: rowWidth,
       height: 44,
       value: state[row.key],
       min: row.min,
       max: row.max,
       step: row.step,
     })),
-    ...(state.diagnostics
-      ? (["resume", "restart", "report", "benchmark"] as const)
-      : (["resume", "restart"] as const)
-    ).map((key, i, all) => ({
+    ...(["resume", "restart"] as const).map((key, i, all) => ({
       key,
-      label:
-        key === "report"
-          ? "Save performance report"
-          : key === "benchmark"
-            ? "Run performance test"
-            : key === "resume"
-              ? "Resume"
-              : "Restart",
-      left:
-        left +
-        24 +
-        i *
-          ((w - 48 - (all.length - 1) * (state.diagnostics ? 8 : 12)) / all.length +
-            (state.diagnostics ? 8 : 12)),
+      label: key === "resume" ? "Resume" : "Restart",
+      left: left + 24 + i * ((w - 48 - (all.length - 1) * 12) / all.length + 12),
       top: top + h - 68,
-      width: (w - 48 - (all.length - 1) * (state.diagnostics ? 8 : 12)) / all.length,
+      width: (w - 48 - (all.length - 1) * 12) / all.length,
       height: 44,
     })),
+    ...(
+      ["resetProgress", ...(state.diagnostics ? (["report", "benchmark"] as const) : [])] as const
+    ).map((key, i) => {
+      const unit = (w - 48 - 16) / 4;
+      return {
+        key,
+        label:
+          key === "resetProgress"
+            ? "Reset progress"
+            : key === "report"
+              ? "Save performance report"
+              : "Run performance test",
+        left: left + 24 + (i === 0 ? 0 : (i + 1) * unit + i * 8),
+        top: top + h - 120,
+        width: state.diagnostics ? (i === 0 ? 2 * unit : unit) : w - 48,
+        height: 44,
+      };
+    }),
   ];
 }
 /** Procedural camera-mounted panel; transparent DOM controls supply semantics and gestures only. */
@@ -193,6 +208,7 @@ export function createSceneSettings(camera: PerspectiveCamera) {
       ["guide", "GUIDE OFF"],
       ["resume", "RESUME"],
       ["restart", "RESTART"],
+      ["resetProgress", "RESET"],
       ["sound", "ENABLE SOUND"],
       ["report", "REPORT"],
       ["benchmark", "TEST"],
@@ -203,8 +219,18 @@ export function createSceneSettings(camera: PerspectiveCamera) {
         text,
         key === "guide" || key === "report" || key === "benchmark" ? 13 : 16,
       );
+    if (key === "resetProgress") {
+      const detail = createNeonLettering("PROGRESS", 13);
+      detail.position.y = -18;
+      label.add(detail);
+    }
     root.add(label);
-    return { key, body, label };
+    return {
+      key,
+      body,
+      label,
+      textWidth: new Box3().setFromObject(label).getSize(new Vector3()).x,
+    };
   });
   const sliders = rows.map((row) => {
     const group = new Group();
@@ -311,14 +337,10 @@ export function createSceneSettings(camera: PerspectiveCamera) {
           root.add(button.label);
         }
         const p = centre(target.left, target.top, target.width, target.height);
-        button.label.scale.setScalar(
-          state.diagnostics && ["resume", "restart", "report", "benchmark"].includes(button.key)
-            ? Math.min(1, target.width / 105)
-            : 1,
-        );
+        button.label.scale.setScalar(Math.min(1, (target.width - 16) / button.textWidth));
         button.body.scale.set(target.width, target.height, 1);
         button.body.position.set(p.x, p.y, 0);
-        button.label.position.set(p.x, p.y, 1);
+        button.label.position.set(p.x, p.y + (button.key === "resetProgress" ? 9 : 0), 1);
       }
       for (const row of sliders) {
         const target = targets.find((t) => t.key === row.key);
@@ -327,8 +349,8 @@ export function createSceneSettings(camera: PerspectiveCamera) {
         const p = centre(target.left, target.top, target.width, target.height),
           t = Math.max(0, Math.min(1, (target.value! - row.min) / (row.max - row.min)));
         row.group.position.set(p.x, p.y, 1);
-        row.text.position.set(0, height < 350 ? 24 : 32, 0);
-        row.text.scale.setScalar(height < 350 ? 0.8 : 1);
+        row.text.position.set(0, height < 420 ? 24 : 32, 0);
+        row.text.scale.setScalar(height < 420 && width < 500 ? 0.7 : height < 420 ? 0.85 : 1);
         row.track.scale.x = target.width;
         row.fill.scale.x = Math.max(0.001, target.width * t);
         row.fill.position.x = -(target.width * (1 - t)) / 2;

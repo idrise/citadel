@@ -24,7 +24,7 @@ export function GamePanel({
   onSettings,
   level,
   bestLevel,
-  onReached,
+  onResetProgress,
   lossLevel,
   previousLevel,
   demotion,
@@ -32,7 +32,7 @@ export function GamePanel({
 }: {
   level: number;
   bestLevel: number;
-  onReached: (level: number) => void;
+  onResetProgress: () => void;
   lossLevel: number;
   previousLevel: number | undefined;
   demotion: Demotion | null;
@@ -53,7 +53,7 @@ export function GamePanel({
     onCount,
     level,
     onComplete,
-    onReached,
+    onResetProgress,
     onSettings,
     onSeat,
     settings,
@@ -63,7 +63,7 @@ export function GamePanel({
     onCount,
     level,
     onComplete,
-    onReached,
+    onResetProgress,
     onSettings,
     onSeat,
     settings,
@@ -122,7 +122,7 @@ export function GamePanel({
         lossLevel,
         previousLevel,
         (value) => callbacks.current.onSettings(value),
-        (reached) => callbacks.current.onReached(reached),
+        () => callbacks.current.onResetProgress(),
       );
       session.current = game;
       const detach = attachSessionTestPort({

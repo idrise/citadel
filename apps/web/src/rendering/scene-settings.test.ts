@@ -21,8 +21,15 @@ it("contains only requested controls with reachable targets on portrait, landsca
       const controls = settingsTargets({ ...state, touch }, width!, height!);
       expect(controls.map((t) => t.key)).toEqual(
         touch
-          ? ["effectsVolume", "musicVolume", "resume", "restart"]
-          : ["effectsVolume", "musicVolume", "mouseSensitivity", "resume", "restart"],
+          ? ["effectsVolume", "musicVolume", "resume", "restart", "resetProgress"]
+          : [
+              "effectsVolume",
+              "musicVolume",
+              "mouseSensitivity",
+              "resume",
+              "restart",
+              "resetProgress",
+            ],
       );
       for (const target of controls) {
         expect(target.left).toBeGreaterThanOrEqual(0);
@@ -211,7 +218,46 @@ it("keeps report and diagnostic-test actions finger-sized without overlapping th
         expect(target.height).toBeGreaterThanOrEqual(44);
         expect(target.left + target.width).toBeLessThanOrEqual(width);
         expect(target.top + target.height).toBeLessThanOrEqual(height);
-        if (i) expect(target.left).toBeGreaterThan(footer[i - 1]!.left + footer[i - 1]!.width);
+        for (const other of footer.slice(0, i))
+          expect(
+            target.left >= other.left + other.width ||
+              other.left >= target.left + target.width ||
+              target.top >= other.top + other.height ||
+              other.top >= target.top + target.height,
+          ).toBe(true);
       }
+    }
+});
+
+it("keeps Reset progress reachable and separate from every slider and action on short screens", () => {
+  for (const [width, height] of [
+    [320, 320],
+    [320, 568],
+    [568, 320],
+    [844, 390],
+    [1280, 900],
+  ])
+    for (const touch of [false, true]) {
+      const targets = settingsTargets(
+        { ...state, touch, serveGuide: false, diagnostics: true },
+        width!,
+        height!,
+      );
+      const reset = targets.find((t) => t.key === "resetProgress")!;
+      expect(reset.label).toBe("Reset progress");
+      expect(reset.width).toBeGreaterThanOrEqual(44);
+      expect(reset.height).toBeGreaterThanOrEqual(44);
+      for (const other of targets.filter((t) => t !== reset))
+        expect(
+          reset.left >= other.left + other.width ||
+            other.left >= reset.left + reset.width ||
+            reset.top >= other.top + other.height ||
+            other.top >= reset.top + reset.height,
+        ).toBe(true);
+      expect(
+        settingsTargets({ ...state, open: false }, width!, height!).some(
+          (t) => t.key === "resetProgress",
+        ),
+      ).toBe(false);
     }
 });

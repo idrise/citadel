@@ -30,13 +30,13 @@ test("current/best status migrates older progress and debug navigation cannot ra
 }, info) => {
   await saveLevel(page, 7, 4);
   await openGame(page, false);
-  await expect(page.getByLabel("Highest achieved level", { exact: true })).toHaveText("7");
+  await expect(page.getByLabel("Highest won level", { exact: true })).toHaveText("6");
   const before = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("citadel.progress.v1")!),
   );
   await page.keyboard.press("+");
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText("8");
-  await expect(page.getByLabel("Highest achieved level", { exact: true })).toHaveText("7");
+  await expect(page.getByLabel("Highest won level", { exact: true })).toHaveText("6");
   expect(
     await page.evaluate(() => JSON.parse(localStorage.getItem("citadel.progress.v1")!)),
   ).toEqual(before);

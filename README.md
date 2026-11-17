@@ -40,7 +40,9 @@ Press **START** on the procedural 3D title. Each saved level chooses its own pla
 there is no player-count selector. The title and level introductions rise from the floor
 with reflected lettering. Controls stay fixed as the board changes between levels.
 **Settings** opens a scene-rendered panel with **Resume**, **Restart**, **Sound Effects**,
-**Music**, **Ball guide**, and desktop **Sensitivity**. **Restart** returns to a fresh title-screen attempt
+**Music**, **Ball guide**, **Reset progress**, and desktop **Sensitivity**. **Reset progress**
+clears the current level, Best, results and loss streak, then returns to level 1.
+Your sound, guide and control settings are retained. **Restart** returns to a fresh title-screen attempt
 with the saved level and its authored player count; the fortress is clamped to that roster. Abandoning a live attempt
 does not record a loss. Touch omits mouse sensitivity. The saved 100-level challenge controls bot skill, ball speed, bat width,
 ball count and pickups (introduced at level 5). A ball unlocks every 6–7 levels,
@@ -82,7 +84,7 @@ numpad keys) navigate unranked debug levels. Debug attempts are labelled and nev
 save results; **Backspace** returns to the real saved challenge on the title.
 The original music theme returns regularly between variations, with quiet harmony
 and changing bar colours; [audition the latest score](docs/MOTIF_RETURN_REVIEW.md).
-A small scene-rendered status shows your current level, player count and highest real level reached. Best includes unlocked levels, survives demotion and ignores debug navigation. Touch shows a labelled **PAUSE** button; desktop uses Escape/P.
+A small scene-rendered status shows your current level, player count and highest level won. Best starts at zero until your first win, survives demotion and ignores debug navigation; opening or unlocking a level does not raise it. Touch shows a labelled **PAUSE** button; desktop uses Escape/P.
 The reflected level introduction announces challenge changes and whether a loss
 will retry the same level or cause demotion. Its reading time scales with the full
 message before any balls launch. Browser tests use document-local virtual input

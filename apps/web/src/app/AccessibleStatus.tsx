@@ -42,7 +42,7 @@ export function AccessibleStatus({
       <output aria-label="Debug mode">
         {snapshot.debug ? "Debug - progress not saved" : "Off"}
       </output>
-      <output aria-label="Highest achieved level">{snapshot.bestLevel}</output>
+      <output aria-label="Highest won level">{snapshot.bestLevel}</output>
       <output aria-label="Ball guide">
         {snapshot.serveGuide ? "Serve direction only" : "Off"}
       </output>

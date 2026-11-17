@@ -15,19 +15,69 @@ import {
   saveProgress,
 } from "./progression";
 
-it("counts unlocked challenges as personal best and preserves the peak after demotion and migration", () => {
-  let progress = recordResult(freshProgress(), { level: 1, count: 6, place: 1, at: 0 });
-  expect(progress.best).toBe(2);
-  progress = { ...progress, level: 25, best: 25 };
-  for (let at = 1; at <= 3; at++)
-    progress = recordResult(progress, { level: 25, count: 6, place: 6, at });
-  expect(progress.level).toBe(24);
-  expect(progress.best).toBe(25);
-  const legacy = parseProgress(JSON.stringify({ version: 2, ...progress, best: 20 }));
-  expect(legacy.best).toBe(25);
-  expect(legacy.losses).toBe(progress.losses);
-  expect(legacy.demotion).toEqual(progress.demotion);
-  expect(parseProgress(JSON.stringify({ version: 3, ...progress }))).toEqual(progress);
+it("records only actual wins, including skipped promotions and a win at the ceiling", () => {
+  expect(freshProgress().best).toBe(0);
+  let progress = recordResult(freshProgress(), { level: 1, count: 6, place: 6, at: 0 });
+  expect(progress.best).toBe(0);
+  progress = recordResult(progress, { level: 1, count: 6, place: 1, at: 1 });
+  expect(progress).toMatchObject({ level: 2, best: 1 });
+  progress = recordResult(progress, { level: 5, count: 6, place: 1, at: 2 });
+  expect(progress.level).toBeGreaterThanOrEqual(6);
+  const strong = {
+    ...freshProgress(),
+    level: 70,
+    rounds: 2,
+    recent: [0, 1].map((at) => ({ level: 70, count: 6 as const, place: 1, at })),
+  };
+  const skipped = recordResult(strong, { level: 70, count: 6, place: 1, at: 2 });
+  expect(skipped.level).toBeGreaterThan(71);
+  expect(skipped.best).toBe(70);
+  expect(progress.best).toBe(5);
+  const unlocked = progress.level;
+  for (let at = 3; at <= 5; at++)
+    progress = recordResult(progress, { level: unlocked, count: 6, place: 6, at });
+  expect(progress.level).toBe(unlocked - 1);
+  expect(progress.best).toBe(5);
+  progress = recordResult(progress, { level: 100, count: 6, place: 1, at: 6 });
+  expect(progress).toMatchObject({ level: 100, best: 100 });
+});
+
+it("migrates reached-level records from retained wins without inventing victories", () => {
+  const old = {
+    ...freshProgress(),
+    level: 25,
+    best: 40,
+    rounds: 2,
+    recent: [
+      { level: 20, count: 4, place: 1, at: 0 },
+      { level: 25, count: 4, place: 4, at: 1 },
+    ],
+  };
+  const migrated = parseProgress(JSON.stringify({ version: 3, ...old }));
+  expect(migrated).toMatchObject({ level: 25, best: 20, rounds: 2, recent: old.recent });
+  const lossOnly = { ...old, recent: old.recent.map((r) => ({ ...r, place: 4 })) };
+  expect(parseProgress(JSON.stringify({ version: 3, ...lossOnly })).best).toBe(0);
+  for (const version of [1, 2, 4])
+    expect(parseProgress(JSON.stringify({ version, ...old })).best).toBe(40);
+  expect(parseProgress(JSON.stringify({ version: 4, ...freshProgress() }))).toEqual(
+    freshProgress(),
+  );
+});
+
+it("retains won peaks after their history rolls off and saves the new semantics as version four", () => {
+  let progress = recordResult(freshProgress(), { level: 30, count: 4, place: 1, at: 0 });
+  for (let at = 1; at <= RESULT_WINDOW + 3; at++)
+    progress = recordResult(progress, { level: progress.level, count: 4, place: 4, at });
+  expect(progress.best).toBe(30);
+  expect(progress.recent.every((r) => r.place > 1)).toBe(true);
+  let raw = "";
+  saveProgress(progress, () => ({
+    setItem: (_key, value) => {
+      raw = value;
+    },
+  }));
+  expect(JSON.parse(raw).version).toBe(4);
+  expect(parseProgress(raw)).toEqual(progress);
 });
 
 it("advances on every win, accelerates consistent wins, reaches the ceiling quickly and demotes once per three losses", () => {

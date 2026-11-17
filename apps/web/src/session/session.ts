@@ -61,7 +61,7 @@ export function createSession(
   initialLossLevel = level,
   initialPreviousLevel?: number,
   onSettings: (settings: GameSettings) => void = () => {},
-  onReached: (level: number) => void = () => {},
+  onResetProgress: () => void = () => {},
 ) {
   const diagnostics = createFrameDiagnostics();
   const host = window as Window & {
@@ -115,7 +115,7 @@ export function createSession(
   const debug = createDebugLevels();
   let rosterOverride: PlayerCount | null = null;
   let savedLevel = level;
-  let bestLevel = level;
+  let bestLevel = 0;
   let supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
   let state = createMatch(seed, count, ARENA.startingPieces, supplySeed, levelDifficulty(level));
   let demotion: Demotion | null = null;
@@ -141,7 +141,17 @@ export function createSession(
         if (action === "pause") setPaused(true);
         else if (action === "resume") resume();
         else if (action === "restart") returnToTitle();
-        else if (action === "report") {
+        else if (action === "resetProgress") {
+          debug.exit();
+          rosterOverride = null;
+          savedLevel = 1;
+          pendingLossLevel = 1;
+          pendingPreviousLevel = undefined;
+          bestLevel = 0;
+          demotion = null;
+          resetRound(levelDifficulty(1).playerCount, humanSeat, 1, true);
+          onResetProgress();
+        } else if (action === "report") {
           downloadJSON(
             performanceReport(),
             `citadel-performance-${BUILD_INFO.buildId}-${state.tick}.json`,
@@ -468,10 +478,6 @@ export function createSession(
   report();
   const start = () => {
     if (touchMode) void enterMobileFullscreen();
-    if (!debug.active) {
-      bestLevel = Math.max(bestLevel, level);
-      onReached(level);
-    }
     mark("start");
     initialSettings ??= { ...settings };
     lossLevel = debug.active ? level : pendingLossLevel;

@@ -33,7 +33,7 @@ export const freshProgress = (): PlayerProgress => ({
   losses: 0,
   demotion: null,
   count: 4,
-  best: 1,
+  best: 0,
   rounds: 0,
   recent: [],
 });
@@ -121,7 +121,7 @@ export function recordResult(progress: PlayerProgress, result: LevelResult): Pla
     losses: losses % 3,
     demotion,
     count: result.count,
-    best: Math.min(100, Math.max(progress.best, progress.level, result.level, level)),
+    best: result.place === 1 ? Math.max(progress.best, result.level) : progress.best,
     rounds: progress.rounds + 1,
     recent,
   };
@@ -163,10 +163,10 @@ export function parseProgress(raw: string | null): PlayerProgress {
     const value: unknown = JSON.parse(raw);
     if (
       !record(value) ||
-      (value.version !== 1 && value.version !== 2 && value.version !== 3) ||
+      (value.version !== 1 && value.version !== 2 && value.version !== 3 && value.version !== 4) ||
       !integer(value.level, 1, 100) ||
       !integer(value.count, 2, MAX_PLAYERS) ||
-      !integer(value.best, 1, 100) ||
+      !integer(value.best, 0, 100) ||
       !integer(value.rounds, 0, 1e9) ||
       !Array.isArray(value.recent) ||
       value.recent.length > RESULT_WINDOW ||
@@ -205,7 +205,12 @@ export function parseProgress(raw: string | null): PlayerProgress {
       losses: last?.place === 1 ? 0 : legacy ? Math.min(2, legacyLosses) : (value.losses as number),
       demotion: legacy || last?.place === 1 ? null : (value.demotion as Demotion | null),
       count: value.count as PlayerCount,
-      best: Math.max(value.best, retryLevel, ...value.recent.map((r: LevelResult) => r.level)),
+      // V3 stored reached/unlocked levels. Only its retained wins prove a completed level.
+      // V1/V2 stored wins; V4 preserves that explicit record even after recent history rolls off.
+      best: Math.max(
+        value.version === 3 || value.rounds === 0 ? 0 : value.best,
+        ...value.recent.filter((r: LevelResult) => r.place === 1).map((r: LevelResult) => r.level),
+      ),
       rounds: value.rounds,
       recent: value.recent.map((r: LevelResult) => ({ ...r })),
     };
@@ -225,7 +230,7 @@ export function saveProgress(
   storage: () => Pick<Storage, "setItem"> = () => window.localStorage,
 ) {
   try {
-    storage().setItem(PROGRESS_KEY, JSON.stringify({ version: 3, ...progress }));
+    storage().setItem(PROGRESS_KEY, JSON.stringify({ version: 4, ...progress }));
     return true;
   } catch {
     return false;

@@ -28,3 +28,22 @@ it("keeps status readable and stable across level updates, resize and debug with
   status.update({ mode: "hidden", count: 6, level: 7, elapsed: 0, reduced: false }, 390, 844);
   expect(root.visible).toBe(false);
 });
+
+it("shows zero before any wins and the literal highest win at level 100", () => {
+  const camera = new PerspectiveCamera(44, 1, 0.1, 200),
+    status = createLevelStatus(camera);
+  for (const [level, bestLevel] of [
+    [1, 0],
+    [10, 5],
+    [100, 100],
+  ] as const) {
+    status.update(
+      { mode: "title", count: 6, level, bestLevel, elapsed: 0, reduced: false },
+      390,
+      844,
+    );
+    expect(camera.getObjectByName("level-status")!.userData.text).toContain(
+      `BEST ${String(bestLevel).padStart(2, "0")}`,
+    );
+  }
+});

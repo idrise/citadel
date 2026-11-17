@@ -690,6 +690,26 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+17 November won-level Best / Reset progress amendment: the owner clarified that Best
+means the highest level actually won, superseding the earlier reached/unlocked-level
+rule. The initial display-only subtraction is completed in the progression model:
+Best starts at zero and changes only on a real win, including skipped promotions and
+level 100. Starting a challenge, losing, demotion and debug navigation cannot raise it.
+Version 4 saves preserve explicit won peaks after results leave the recent window.
+Older reached-level version 3 saves rebuild Best from their retained winning results;
+wins older than that bounded history cannot be recovered reliably. Current level,
+results and existing settings are retained during migration.
+Settings now includes Reset progress: it clears the level, Best, results, loss streak
+and demotion, exits debug mode, abandons the active attempt and returns to the level-1
+title. Sound/control/guide preferences remain unchanged. Short screens use slider
+columns and two button rows so all controls remain reachable. See
+`docs/PROGRESS_RESET_REVIEW.md` for checks, rendered evidence and remaining limits.
+All 627 unit tests / 114 files, lint/types/format, root/Pages builds, 16 selected
+root browser scenarios and five Pages checks pass. Reviewed Settings/reset frames
+cover desktop, phone, short landscape and a 320px square. The live demo remains
+`http://127.0.0.1:5179/`. Existing chunk-size advice and physical-device limits remain.
+M09 still awaits owner review; no push or deployment is authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,
