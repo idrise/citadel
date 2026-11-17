@@ -6,7 +6,7 @@ import { planIntercept } from "./bot-planner";
 import { DEFAULT_OPTIONS } from "./types";
 import { angleDifference, scale, unit } from "./vector";
 
-it("ramps all 100 levels continuously up to zero-error physics-tick reaction and the human pointer speed cap", () => {
+it("ramps all 100 levels smoothly while preserving elite reaction, aim and movement limits", () => {
   let previous = botLevelProfile(1);
   for (let level = 2; level <= 100; level++) {
     const next = botLevelProfile(level);
@@ -18,12 +18,14 @@ it("ramps all 100 levels continuously up to zero-error physics-tick reaction and
     previous = next;
   }
   expect(previous).toMatchObject({
-    reaction: FIXED_DT,
-    jitter: 0,
-    error: 0,
-    speed: ARENA.pointerPaddleSpeed,
+    reaction: 0.11,
+    jitter: 0.08,
+    error: 0.45,
+    speed: 4.8,
     tactics: 1,
   });
+  expect(previous.reaction).toBeGreaterThan(FIXED_DT * 10);
+  expect(previous.speed).toBeLessThan(ARENA.pointerPaddleSpeed / 2);
   expect(botLevelProfile(NaN)).toEqual(botLevelProfile(1));
 });
 it("forecasts visible curved flight without changing health, clocks, balls or RNG", () => {
@@ -54,7 +56,7 @@ it("keeps level-100 bots inside ordinary legal movement and preserves seeded rep
     replay = stepMatch(replay, undefined, options);
     state.players.forEach((p, i) =>
       expect(Math.abs(angleDifference(p.angle, before[i]!))).toBeLessThanOrEqual(
-        ARENA.pointerPaddleSpeed * FIXED_DT + 1e-8,
+        botLevelProfile(100).speed * FIXED_DT + 1e-8,
       ),
     );
   }

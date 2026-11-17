@@ -1,6 +1,6 @@
 import type { ArenaShape } from "./arena-variant";
 import type { BatProfile } from "./bat-profile";
-import { ARENA, FIXED_DT } from "./arena-tuning";
+import { ARENA } from "./arena-tuning";
 import { isPlayerCount, type PlayerCount } from "./player-count";
 
 export interface LevelBots {
@@ -64,7 +64,7 @@ function playerCount(level: number): LevelFeatures["playerCount"] {
 }
 
 // Seconds for reaction/jitter/horizon; error in radians; speed in radians/second.
-// Anchors preserve the existing bot curve, with linear interpolation between them.
+// Levels 1–60 retain their original curve. Elite bots improve gradually but stay fallible.
 export const BOT_ANCHORS = [
   { level: 1, reaction: 0.65, jitter: 0.3, error: 2.8, horizon: 0.1, serveScale: 1.7, speed: 2 },
   {
@@ -87,21 +87,22 @@ export const BOT_ANCHORS = [
   },
   {
     level: 80,
-    reaction: 0.1,
-    jitter: 0.08,
-    error: 0.38,
-    horizon: 0.42,
-    serveScale: 0.8,
+    reaction: 0.16,
+    jitter: 0.1,
+    error: 0.65,
+    horizon: 0.34,
+    serveScale: 0.95,
     speed: ARENA.paddleSpeed,
   },
   {
     level: 100,
-    reaction: FIXED_DT,
-    jitter: 0,
-    error: 0,
-    horizon: 1,
-    serveScale: 0.45,
-    speed: ARENA.pointerPaddleSpeed,
+    // 110–190ms reactions and ±0.225-rad catch error leave real scoring chances.
+    reaction: 0.11,
+    jitter: 0.08,
+    error: 0.45,
+    horizon: 0.5,
+    serveScale: 0.85,
+    speed: 4.8,
   },
 ] as const;
 function botCurve(level: number, key: Exclude<keyof LevelBots, "tactics">) {
