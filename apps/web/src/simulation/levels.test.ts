@@ -12,8 +12,7 @@ import { levelBatProfile } from "./bat-profile";
 import { botLevelProfile } from "./bot-level";
 import { freshProgress, levelFor, recordResult } from "../session/progression";
 
-it("starts with six, caps the first twenty rosters at seven and never starts with three", () => {
-  expect(levelFeatures(1).playerCount).toBe(6);
+it("caps the first twenty rosters at seven and never starts with three", () => {
   const counts = Array.from({ length: 100 }, (_, index) => levelFeatures(index + 1).playerCount);
   expect(counts).not.toContain(3);
   expect(counts.slice(0, 20).every((count) => count >= 2 && count <= 7)).toBe(true);

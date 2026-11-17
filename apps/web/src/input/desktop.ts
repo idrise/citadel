@@ -119,7 +119,8 @@ export function createDesktopInput(
   );
   return {
     capture() {
-      if (disposed) return;
+      if (disposed || (captureWanted && (capturePending || document.pointerLockElement === canvas)))
+        return;
       captureWanted = true;
       const epoch = ++captureEpoch;
       capturePending = false;
@@ -160,6 +161,11 @@ export function createDesktopInput(
       captureEpoch++;
       clear();
       if (document.pointerLockElement === canvas) document.exitPointerLock();
+    },
+    resetSeat(next: number) {
+      clear();
+      seat = next;
+      base = fortress(seat, geometry()).direction;
     },
     read(): PlayerIntent {
       rebase();

@@ -164,3 +164,16 @@ it("covers full legal travel in a comfortable short drag on each arena and table
       input.dispose();
     }
 });
+
+it("resets a debug seat without disabling touch or serving a cancelled drag", () => {
+  const { input, send } = fixture();
+  send("pointerdown", 100);
+  send("pointermove", 160);
+  input.resetSeat(1);
+  send("pointerup", 160);
+  expect(input.read()).toMatchObject({ targetAngle: null, launch: false });
+  send("pointerdown", 100);
+  send("pointerup", 100);
+  expect(input.read().launch).toBe(true);
+  input.dispose();
+});

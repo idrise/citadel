@@ -270,7 +270,7 @@ export function createSession(
       () => settings.mouseSensitivity,
       () => state.arena,
     );
-  let input = makeInput();
+  const input = makeInput();
   const makeTouch = () =>
     createTouchInput(
       viewport.canvas,
@@ -278,7 +278,7 @@ export function createSession(
       () => state.players[humanSeat]!.angle,
       () => state.arena,
     );
-  let touch = makeTouch();
+  const touch = makeTouch();
   const abort = new AbortController();
   window.addEventListener(
     "keydown",
@@ -293,7 +293,7 @@ export function createSession(
         return;
       }
       event.preventDefault();
-      resetRound(count, humanSeat, debug.move(delta, level), true);
+      resetRound(count, humanSeat, debug.move(delta, level), true, true);
       start();
     },
     { signal: abort.signal },
@@ -524,6 +524,7 @@ export function createSession(
     nextSeat: number,
     nextLevel: number,
     animate: boolean,
+    keepCapture = false,
   ) {
     nextCount = rosterOverride ?? levelDifficulty(nextLevel).playerCount;
     nextSeat = Math.min(nextSeat, nextCount - 1);
@@ -538,8 +539,11 @@ export function createSession(
       levelDifficulty(nextLevel),
     );
     viewport.transitionTitle(nextState, nextSeat, animate);
-    input.dispose();
-    touch.dispose();
+    // Debug navigation keeps the current lock: browsers can reject an immediate re-lock.
+    if (!keepCapture) {
+      input.release();
+      touch.release();
+    }
     music.dispose();
     count = nextCount;
     humanSeat = nextSeat;
@@ -557,8 +561,8 @@ export function createSession(
     notice = "Defend your three containers. Last fortress standing wins.";
     observer = createRoundObserver(count);
     resultFor = createProgressRecorder(humanSeat, level);
-    input = makeInput();
-    touch = makeTouch();
+    input.resetSeat(humanSeat);
+    touch.resetSeat(humanSeat);
     music = createGameMusic(seed, humanSeat);
     music.configure(settings);
     clock.reset();

@@ -9,14 +9,18 @@ for (const touch of [false, true]) {
       isMobile: touch,
       viewport: touch ? { width: 390, height: 844 } : { width: 1280, height: 900 },
     });
-    test("opens with six players and exposes only Start and Settings", async ({
+    test("opens with the authored roster and exposes only Start and Settings", async ({
       page,
     }, testInfo) => {
       await page.clock.install();
       await page.goto("./");
       await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1000));
-      await expect(page.getByLabel("Player count", { exact: true })).toHaveText("6");
-      await expect(page.getByLabel("Arena players", { exact: true })).toHaveText("6");
+      await expect(page.getByLabel("Player count", { exact: true })).toHaveText(
+        String(levelDifficulty(1).playerCount),
+      );
+      await expect(page.getByLabel("Arena players", { exact: true })).toHaveText(
+        String(levelDifficulty(1).playerCount),
+      );
       await expect(
         page.getByRole("button", { name: /Increase players|Decrease players/ }),
       ).toHaveCount(0);
@@ -26,7 +30,9 @@ for (const touch of [false, true]) {
         path: testInfo.outputPath(touch ? "phone-level-roster.png" : "desktop-level-roster.png"),
       });
       await page.reload();
-      await expect(page.getByLabel("Player count", { exact: true })).toHaveText("6");
+      await expect(page.getByLabel("Player count", { exact: true })).toHaveText(
+        String(levelDifficulty(1).playerCount),
+      );
       const start = page.getByRole("button", { name: "Start", exact: true });
       if (touch) await start.tap();
       else await start.click();

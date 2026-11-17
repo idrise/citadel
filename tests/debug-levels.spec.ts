@@ -49,3 +49,80 @@ test("debug keys do not alter preferences and show shape changes before play", a
   expect(await page.evaluate(() => localStorage.getItem("citadel.solo.v1"))).toBe(before);
   expect(await page.getByLabel("Ball 0 phase", { exact: true }).textContent()).toBe("ready");
 });
+
+test("rapid debug steps retain capture and never open Settings when recapture would be rejected", async ({
+  page,
+}) => {
+  await openGame(page);
+  await page.evaluate(() => {
+    const canvas = document.querySelector("canvas")!;
+    const request = canvas.requestPointerLock.bind(canvas);
+    canvas.dataset.captureRequests = "0";
+    canvas.requestPointerLock = (options) => {
+      const requests = Number(canvas.dataset.captureRequests) + 1;
+      canvas.dataset.captureRequests = String(requests);
+      // Model a browser rejecting immediate recapture after a programmatic unlock.
+      if (requests > 1) return Promise.reject(new Error("Immediate recapture denied"));
+      return request(options);
+    };
+  });
+  await page.getByRole("button", { name: "Start", exact: true }).click();
+  const progress = await page.evaluate(() => localStorage.getItem("citadel.progress.v1"));
+  for (const [key, level] of [
+    ["+", 2],
+    ["+", 3],
+    ["-", 2],
+    ["-", 1],
+    ["+", 2],
+  ] as const) {
+    await page.keyboard.press(key);
+    await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(level));
+    await expect(page.getByRole("button", { name: "Resume", exact: true })).toBeHidden();
+    await expect(page.locator(".scene-settings-controls")).toBeHidden();
+    expect(await page.evaluate(() => document.pointerLockElement?.tagName)).toBe("CANVAS");
+  }
+  expect(await page.locator("canvas").getAttribute("data-capture-requests")).toBe("1");
+  await page.evaluate(() => document.exitPointerLock());
+  await expect(page.getByRole("button", { name: "Resume", exact: true })).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem("citadel.progress.v1"))).toBe(progress);
+});
+
+test("debug steps stay captured when the next roster clamps the human fortress", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "citadel.progress.v1",
+      JSON.stringify({
+        version: 4,
+        level: 3,
+        best: 2,
+        count: 6,
+        rounds: 1,
+        losses: 0,
+        demotion: null,
+        recent: [{ level: 2, count: 6, place: 1, at: 0 }],
+      }),
+    );
+    localStorage.setItem(
+      "citadel.solo.v1",
+      JSON.stringify({ version: 1, count: 6, humanSeat: 5, settings: {} }),
+    );
+  });
+  await page.clock.install();
+  await page.goto("./?seed=2026");
+  await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1000));
+  await page.getByRole("button", { name: "Start", exact: true }).click();
+  const saved = await page.evaluate(() => localStorage.getItem("citadel.progress.v1"));
+  await page.keyboard.press("+");
+  await expect(page.getByLabel("Round level", { exact: true })).toHaveText("4");
+  await expect(page.getByLabel("Player count", { exact: true })).toHaveText("2");
+  await expect(page.getByRole("button", { name: "Resume", exact: true })).toBeHidden();
+  expect(await page.evaluate(() => document.pointerLockElement?.tagName)).toBe("CANVAS");
+  await page.evaluate(() => window.__citadelTestInput.move(8, 0));
+  await page.clock.runFor(100);
+  await page.keyboard.press("-");
+  await expect(page.getByLabel("Round level", { exact: true })).toHaveText("3");
+  await expect(page.getByRole("button", { name: "Resume", exact: true })).toBeHidden();
+  expect(await page.evaluate(() => localStorage.getItem("citadel.progress.v1"))).toBe(saved);
+});

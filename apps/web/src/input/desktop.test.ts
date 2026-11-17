@@ -368,3 +368,48 @@ it("pauses only for unexpected lock loss, not intentional release after eliminat
   expect(input.lost).toHaveBeenCalledOnce();
   input.controls.dispose();
 });
+
+it("reuses capture through rapid seat resets, clears held input and rebases to the new fortress", async () => {
+  const input = inputFixture();
+  const request = vi.spyOn(input.canvas, "requestPointerLock");
+  input.controls.capture();
+  await Promise.resolve();
+  input.move(20);
+  input.windowEvents.dispatchEvent(Object.assign(new Event("keydown"), { code: "KeyD" }));
+  for (const seat of [1, 2, 0, 3]) {
+    input.setAngle(fortress(seat).direction);
+    input.controls.resetSeat(seat);
+    input.controls.capture();
+    expect(input.controls.read()).toMatchObject({ targetAngle: null, steer: 0, launch: false });
+    input.move(10);
+    expect(input.controls.read().targetAngle).toBeCloseTo(
+      fortress(seat).direction + 10 * MOUSE_RADIANS_PER_PIXEL,
+    );
+  }
+  expect(request).toHaveBeenCalledOnce();
+  expect(input.documentEvents.exitPointerLock).not.toHaveBeenCalled();
+  expect(input.lost).not.toHaveBeenCalled();
+  input.controls.dispose();
+});
+
+it("does not duplicate a pending capture while debug navigation resets the seat", async () => {
+  const input = inputFixture();
+  let complete!: () => void;
+  const request = vi.fn(
+    () =>
+      new Promise<void>((resolve) => {
+        complete = resolve;
+      }),
+  );
+  input.canvas.requestPointerLock = request;
+  input.controls.capture();
+  input.controls.resetSeat(1);
+  input.controls.capture();
+  expect(request).toHaveBeenCalledOnce();
+  input.documentEvents.pointerLockElement = input.canvas;
+  complete();
+  await Promise.resolve();
+  expect(input.documentEvents.pointerLockElement).toBe(input.canvas);
+  expect(input.lost).not.toHaveBeenCalled();
+  input.controls.dispose();
+});

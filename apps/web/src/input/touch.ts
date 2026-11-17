@@ -102,6 +102,11 @@ export function createTouchInput(
       clear();
     },
     clear,
+    resetSeat(next: number) {
+      clear();
+      seat = next;
+      base = fortress(seat, geometry()).direction;
+    },
     read(): PlayerIntent {
       rebase();
       const intent = { ...IDLE_INTENT, targetAngle: target, launch };
