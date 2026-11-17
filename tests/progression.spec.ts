@@ -116,6 +116,9 @@ test("a restored win discards a stale counter and requires three new played loss
   await configureGame(page, { music: false, effectsVolume: 0 });
   expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).losses, key)).toBe(0);
   for (let loss = 1; loss <= 3; loss++) {
+    // Geometry fixtures are explicit after reload; real saved levels now own their roster.
+    await choosePlayers(page, 2);
+    await selectFortress(page, 1);
     await play(page);
     await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
       loss === 3 ? "LOSS DROPS TO LEVEL 01" : "LOSS RETRIES LEVEL 02",

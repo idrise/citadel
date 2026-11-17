@@ -54,7 +54,7 @@ export function createLevelIntro(parent: Object3D) {
     ) {
       root.visible = value !== null && countdown > 0 && rise !== 0;
       if (!root.visible || value === null) return;
-      const demoted = demotion?.to === value && demotion.count === arena.count;
+      const demoted = demotion?.to === value;
       const compact = Math.abs(tilt) > 0.5;
       const nextKey = `${value}:${demoted ? demotion.from : ""}:${lossLevel}:${previousLevel}:${compact}:${debug}`;
       if (key !== nextKey) {

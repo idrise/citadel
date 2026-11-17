@@ -1,7 +1,7 @@
 # Citadel
 
 A local-first paddle arena, built with strict TypeScript, React, Three.js and Vite+.
-Choose 2–16 fortresses (an experimental local ceiling): one human versus 1–15 bots, with physical health pieces,
+Levels choose 2–16 fortresses (excluding three-player starts): one human versus bots, with physical health pieces,
 revenge serves, timed ball additions and rematch. The arena gradually changes
 shape as players fall, normally over 2.8 seconds. M01–M05 are approved.
 The [M07 effects/edge review](docs/M07_REVIEW.md) and
@@ -36,25 +36,26 @@ Touch Start/Resume requests fullscreen on supporting browsers. On iPhone, use
 Share → Add to Home Screen, enable Open as Web App if offered, then launch the
 Citadel icon to play without Safari's browser bars.
 
-Use the floating title's **− / +** buttons to choose 2–16 players, then **START**.
-The lettering and buttons are procedural 3D meshes.
-The title rises from the floor with the same reflected lettering as each level
-introduction. Its controls stay fixed while the board morphs between player counts.
+Press **START** on the procedural 3D title. Each saved level chooses its own player count;
+there is no player-count selector. The title and level introductions rise from the floor
+with reflected lettering. Controls stay fixed as the board changes between levels.
 **Settings** opens a scene-rendered panel with **Resume**, **Restart**, **Sound Effects**,
 **Music**, **Ball guide**, and desktop **Sensitivity**. **Restart** returns to a fresh title-screen attempt
-with the saved level, player count and fortress retained; abandoning a live attempt
+with the saved level and its authored player count; the fortress is clamped to that roster. Abandoning a live attempt
 does not record a loss. Touch omits mouse sensitivity. The saved 100-level challenge controls bot skill, ball speed, bat width,
 ball count and pickups (introduced at level 5). A ball unlocks every 6–7 levels,
 reaching 16 at level 100. Scoreless rallies gradually accelerate after eight
 active seconds and reset to normal speed when that ball scores. A first win advances to level 2; three consecutive losses
 demote one level with a notice. Earlier losses retry the same challenge.
-The title starts with six players on a fresh visit. Adjust the count with the title's
-player-count buttons; your chosen count is remembered on later visits.
-Two seats start with a rectangle, then triangle, square, pentagon and hexagon;
-7–16 seats use larger regular polygons. A deterministic itinerary mixes Classic,
-Wide, Faceted, Compact and Spacious arenas between levels. New layouts are
-announced before play and morph into place. The sixteen-player ceiling is for
-hands-on readability/performance review, not a final supported limit.
+Level 1 starts with six players. Levels 1–20 use at most seven players; later levels
+randomly disperse the full 2–16 range, excluding three. Six has three times the selection
+weight of each other count. This seeded itinerary is repeatable across retries and reloads.
+Two seats use a rectangle; larger rosters use polygons. Eliminations can still pass
+through a triangle. Classic, Wide, Faceted, Compact, Spacious and Rounded variants
+provide further variety. The sixteen-player ceiling remains experimental.
+Tune the formulas, roster weights/seed and individual level overrides in
+[`apps/web/src/simulation/levels.ts`](apps/web/src/simulation/levels.ts).
+See [the tuning guide](docs/LEVEL_TUNING.md) for fields, units and examples.
 Five-level blocks alternate standard, shallow and deeper convex bat profiles.
 Every player uses the same profile, with the existing level-dependent width ramp;
 profile changes appear in the level introduction.
@@ -62,7 +63,7 @@ Eliminations gradually move walls and surviving fortresses to the new layout,
 preserving health and relative steering. Wins celebrate in the arena with neon
 fireworks, a musical closing phrase and a **NEXT** button. Eliminated players can
 choose scene-rendered **Back** to return to the title screen, or **Retry** to start
-the next attempt immediately. Your saved level and selected fortress are retained.
+the next attempt immediately. Your saved level is retained and the fortress is clamped to its next roster.
 Triangle defences sit forward of their corners and retain a ball-sized passage
 beside the bats, including at their travel limits.
 Other results show **ROUND OVER** in the scene.

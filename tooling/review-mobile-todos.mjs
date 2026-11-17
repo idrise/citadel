@@ -1,3 +1,4 @@
+import { installVirtualBrowserControls } from "../tests/virtual-input.ts";
 import assert from "node:assert/strict";
 import { chromium, webkit } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -46,18 +47,10 @@ try {
       return result;
     };
   });
+  await page.addInitScript(installVirtualBrowserControls);
   await page.goto(`${origin}/?seed=2026`);
   const choose = async (count) => {
-    let current = Number(await page.getByLabel("Player count", { exact: true }).textContent());
-    while (current !== count) {
-      await page
-        .getByRole("button", {
-          name: count > current ? "Increase players" : "Decrease players",
-          exact: true,
-        })
-        .tap();
-      current += Math.sign(count - current);
-    }
+    await page.evaluate((count) => window.__citadelTestInput.session.roster(count, 0), count);
   };
   for (const count of [2, 4, 6]) {
     await choose(count);

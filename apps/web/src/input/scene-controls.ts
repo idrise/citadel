@@ -13,8 +13,6 @@ export function createSceneControls(
   const buttons = new Map<SceneAction, HTMLButtonElement>();
   for (const [action, label] of [
     ["start", "Start"],
-    ["decrease", "Decrease players"],
-    ["increase", "Increase players"],
     ["options", "Settings"],
     ["rematch", "Rematch"],
     ["retry", "Retry"],

@@ -28,7 +28,7 @@ The desired game loop is simple: **move → aim a deflection → launch/return �
 | First platform | Desktop web, primarily mouse input |
 | Next platform | Mobile web, touch drag and tap-to-launch |
 | Final platform phase | Online multiplayer, followed by random matchmaking |
-| Player counts | 2–16 total participants for local limit testing; final cap awaits review |
+| Player counts | Level-owned 2–16 participants, never three at the start; levels 1–20 cap at seven; seeded weighted variety favours six; final cap awaits review |
 | Arena topology | 2: rectangle; 3–16: regular polygons; symmetrical level variants |
 | Camera | **Perspective RTS view**, behind the selected human fortress, about 38° down; centred neutral, symmetric bat shimmy and danger zoom |
 | Artwork | Procedural geometry only; **no surface textures** |
@@ -38,7 +38,7 @@ The desired game loop is simple: **move → aim a deflection → launch/return �
 | Next serve after damage | Damaged defender receives the ball for a revenge serve if still alive; elimination fallback remains open |
 | Elimination/winner | No health left = eliminated; last survivor wins |
 | Aiming | Captured relative mouse movement; keyboard alternative; touch later |
-| Presentation | Full viewport Three.js scene with quiet current/best level and roster status; no DOM HUD; scene title/count/Start and victory/rematch; compact Settings |
+| Presentation | Full viewport Three.js scene with quiet current/best level and roster status; no DOM HUD; scene title/Start and victory/rematch; compact Settings |
 | Serving | Mouse click / Space / Enter initially; mobile tap later |
 | Pacing | Adrenaline first: start with one ball and add balls over time; roughly two minutes remains a tuning target |
 | Current ball tuning | Radius 0.187 (10% larger), speed 24 units/s (double the first prototype); provisional extra-ball interval 15s and cap four |
@@ -122,11 +122,11 @@ The previously discussed sketch is a **layout reference**, not a requirement to 
 - Elimination at zero health; removed players can spectate. Edge cases include last piece lost simultaneously, serve recipient eliminated while another ball is active/returning, balls trapped near geometry and no survivors.
 - No random competitive power-ups in the default rule set; randomness (including bots/serves if needed) uses a seed and can be replayed.
 - Start each round with **one ball**, then add one every **15 playing seconds** to a provisional default cap of **four**, as requested during M01 hands-on feedback. Ball radius is **0.187** and speed **24 units/s**, respectively 10% larger and twice the initial prototype values. Expose arrival interval (5–30s) and cap (1–8) in the experiment panel. Pausing/countdown never advance arrivals. Balls do not collide with each other in this prototype. One click launches at most one queued ball, while each ball still has an automatic deadline; eliminating a defender reassigns their pending serves. Keep zero-spin behaviour and all ball IDs deterministic.
-- Keep player count and assistance choices compact. Bot strength follows saved adaptive levels 1–100, with a level card before the opening ball; there is no difficulty selector. Starting health is three containers, augmented by temporary collectible supplies. Keep pacing experiments in the existing advanced panel.
+- Player count follows the level tuning file; keep assistance choices compact. Bot strength follows saved adaptive levels 1–100, with a level card before the opening ball; there is no difficulty selector. Starting health is three containers, augmented by temporary collectible supplies. Keep pacing experiments in the existing advanced panel.
 
 ### Input progression
 
-**Desktop now:** Start/Resume captures the mouse using Pointer Lock. Horizontal relative movement changes a bounded target angle on the curved track, independent of screen edges and camera motion; primary click launches an attached ball. A/D or Left/Right steer; Space/Enter launch. Escape/P pauses and releases capture; focus loss or browser capture loss also pauses and clears input. Resume requires an explicit click. The Three.js canvas fills the viewport during play, with only a quiet scene-rendered current-level/player-count and personal-best indicator; there is no surrounding DOM HUD. Render the CITADEL title, 2–6-player −/+ controls, Start and win/loss/rematch in the Three.js scene. Retain nonvisual accessible status and the compact Pause settings panel by explicit user choice. A human victory keeps presentation alive with neon-shader fireworks and a finite musical resolution; it never opens an automatic DOM result popup. Pause controls sit in a small corner panel; H hides/restores them for unobstructed screenshots while simulation remains paused. The human can choose a fortress in Settings while testing geometry.
+**Desktop now:** Start/Resume captures the mouse using Pointer Lock. Horizontal relative movement changes a bounded target angle on the curved track, independent of screen edges and camera motion; primary click launches an attached ball. A/D or Left/Right steer; Space/Enter launch. Escape/P pauses and releases capture; focus loss or browser capture loss also pauses and clears input. Resume requires an explicit click. The Three.js canvas fills the viewport during play, with only a quiet scene-rendered current-level/player-count and personal-best indicator; there is no surrounding DOM HUD. Render the CITADEL title, Start and win/loss/rematch in the Three.js scene. Starting rosters come from level formulas/overrides; there is no player-count selector. Retain nonvisual accessible status and the compact Pause settings panel by explicit user choice. A human victory keeps presentation alive with neon-shader fireworks and a finite musical resolution; it never opens an automatic DOM result popup. Pause controls sit in a small corner panel; H hides/restores them for unobstructed screenshots while simulation remains paused. The human can choose a fortress in Settings while testing geometry.
 
 **Mobile:** Pointer Events and capture support relative drag and tap-to-launch. Drags, long presses and cancellations do not serve. The procedural title/results use phone-sized layouts, and a safe-area pause button provides settings access. Canvas gestures suppress page scrolling; settings remain scrollable. Rotation clears a held drag, and backgrounding pauses until explicit resume. M09 review determines whether a dedicated launch target is needed.
 
@@ -689,6 +689,23 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 - **Permanent boundary:** Music observes events only. Musical quantisation delays sounds, never collisions, rules, inputs, health, spawning or RNG. No music-driven camera motion. User accepted the detour for now and requested M05; full M06/M07 remain unstarted.
 
 ### Progress / approval ledger
+
+17 November level-owned roster amendment: the owner requested removal of player-count
+selection, then refined the tuning format from JSON to TypeScript formulas with per-level
+overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,
+including nested bot parameters, with the previous non-roster curves preserved.
+The first 20 levels never exceed seven players; all starting rosters exclude three.
+Later levels use a deterministic weighted itinerary over 2 and 4–16, with six weighted
+three times each other count. Level 1 remains six. Retries/reloads retain the same
+roster. Saved levels/history/bests survive legacy roster preferences; pending results
+change only the following attempt, and debug rosters never write progression.
+See `docs/LEVEL_TUNING.md` for tuning instructions and review evidence.
+Checks: 623 unit tests / 114 files, formatting/lint/types, root/Pages builds,
+36 selected root browser scenarios across corrected runs and seven final Pages-path
+checks pass. Existing chunk-size advice and physical-device limits remain. Rendered
+2/4/6 desktop/phone evidence is in `docs/reviews/m09/level-tuning/`; the live local
+demo runs at `http://127.0.0.1:5179/`. Tuning checkpoint: `b04e794`; UI/evidence
+follow separately. M09 still awaits owner review; no push or deployment occurred.
 
 14 November local commit handoff: the owner subsequently authorised splitting
 and committing all reviewed changes. This supersedes the earlier temporary

@@ -1,3 +1,4 @@
+import { levelDifficulty } from "../simulation/difficulty";
 import { roundSeed } from "../session/round-seed";
 import {
   levelFor,
@@ -17,8 +18,11 @@ export function App() {
   );
   const [progress, setProgress] = useState(loadProgress);
   const [seed] = useState(roundSeed);
-  const [count, setCount] = useState<PlayerCount>(initial.count);
-  const [humanSeat, setHumanSeat] = useState(initial.humanSeat);
+  // Only the injected browser-test port can override authored progression for geometry fixtures.
+  const [testCount, setCount] = useState<PlayerCount | null>(null);
+  const count = testCount ?? levelDifficulty(progress.level).playerCount;
+  const [seat, setHumanSeat] = useState(initial.humanSeat);
+  const humanSeat = Math.min(seat, count - 1);
   const [settings, setSettings] = useState(initial.settings);
   useEffect(() => {
     savePreferences({ count, humanSeat, settings });
@@ -30,16 +34,14 @@ export function App() {
     <main className="game-root">
       <h1 className="sr-only">Citadel</h1>
       <GamePanel
-        level={levelFor(progress, count)}
+        level={levelFor(progress)}
         bestLevel={progress.best}
         onReached={(level) =>
           setProgress((current) => (level > current.best ? { ...current, best: level } : current))
         }
         lossLevel={levelAfterLoss(progress, count)}
-        previousLevel={
-          progress.recent.at(-1)?.count === count ? progress.recent.at(-1)?.level : undefined
-        }
-        demotion={progress.demotion?.count === count ? progress.demotion : null}
+        previousLevel={progress.recent.at(-1)?.level}
+        demotion={progress.demotion}
         onComplete={(result) => setProgress((current) => recordResult(current, result))}
         count={count}
         onCount={(value) => {

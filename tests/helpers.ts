@@ -47,14 +47,10 @@ export async function exportRound(page: Page) {
 export async function choosePlayers(page: Page, count: number) {
   if (await page.getByRole("button", { name: "Resume", exact: true }).isVisible())
     await page.getByRole("button", { name: "Resume", exact: true }).click();
-  const current = Number(await page.getByLabel("Player count", { exact: true }).textContent());
-  for (let n = current; n !== count; n += Math.sign(count - current))
-    await page
-      .getByRole("button", {
-        name: count > current ? "Increase players" : "Decrease players",
-        exact: true,
-      })
-      .click();
+  await page.evaluate((count) => {
+    const seat = JSON.parse(localStorage.getItem("citadel.solo.v1")!).humanSeat;
+    window.__citadelTestInput.session!.roster(count as PlayerCount, Math.min(seat, count - 1));
+  }, count);
   await expect(page.getByLabel("Player count", { exact: true })).toHaveText(String(count));
 }
 export async function play(page: Page) {

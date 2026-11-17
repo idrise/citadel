@@ -13,8 +13,6 @@ export function mobileMenuLayout(width: number, height: number, result: boolean)
     label: { x: 0, y: labelY },
     count: { x: 0, y: row },
     controls: {
-      decrease: { x: -76, y: row, width: 52, height: 52 * density },
-      increase: { x: 76, y: row, width: 52, height: 52 * density },
       start: { x: 0, y: bottom - 87 * density, width: 210, height: 54 * density },
       rematch: { x: 0, y: bottom - 87 * density, width: 210, height: 54 * density },
       options: {

@@ -62,9 +62,7 @@ for (const touch of [false, true]) {
       await page.screenshot({
         path: testInfo.outputPath(`${touch ? "touch" : "mouse"}-844x390.png`),
       });
-      const increase = page.getByRole("button", { name: "Increase players", exact: true });
-      if (touch) await increase.tap();
-      else await increase.click();
+      await choosePlayers(page, 7);
       await expect(page.getByLabel("Player count", { exact: true })).toHaveText("7");
       expect(await canvas!.evaluate((node) => node.isConnected)).toBe(true);
       expect(errors).toEqual([]);

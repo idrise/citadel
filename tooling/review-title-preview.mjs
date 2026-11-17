@@ -1,3 +1,4 @@
+import { installVirtualBrowserControls } from "../tests/virtual-input.ts";
 import { chromium } from "@playwright/test";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
@@ -13,6 +14,7 @@ try {
   page.on("console", (m) => {
     if (m.type() === "error") errors.push(m.text());
   });
+  await page.addInitScript(installVirtualBrowserControls);
   await page.goto(`${origin}/?seed=2026`);
   await page.getByRole("button", { name: "Start", exact: true }).waitFor();
   await page.evaluate(() => {
@@ -21,7 +23,7 @@ try {
   });
   const controls = async () =>
     Promise.all(
-      ["Start", "Decrease players", "Increase players", "Settings"].map((name) =>
+      ["Start", "Settings"].map((name) =>
         page.getByRole("button", { name, exact: true }).boundingBox(),
       ),
     );
@@ -36,11 +38,8 @@ try {
     recorder.start();
     window.titleRecording = { recorder, chunks };
   });
-  const choose = async (target) => {
-    const current = Number(await page.getByLabel("Player count", { exact: true }).textContent());
-    const action = current < target ? "Increase players" : "Decrease players";
-    for (let i = 0; i < Math.abs(target - current); i++)
-      await page.getByRole("button", { name: action, exact: true }).click();
+  const choose = async (count) => {
+    await page.evaluate((count) => window.__citadelTestInput.session.roster(count, 0), count);
   };
   for (const count of [2, 4, 6]) {
     await choose(count);

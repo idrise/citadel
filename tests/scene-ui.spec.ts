@@ -1,7 +1,7 @@
 import { expect, test } from "./fixtures";
 import { configureGame, choosePlayers, openGame, openSettings, play, pause } from "./helpers";
 
-test("the procedural title uses bounded 3D count controls and keyboard Start, with settings confined to pause", async ({
+test("the procedural title offers keyboard Start without roster controls, with settings confined to pause", async ({
   page,
 }, testInfo) => {
   test.setTimeout(120000);
@@ -10,7 +10,7 @@ test("the procedural title uses bounded 3D count controls and keyboard Start, wi
   page.on("pageerror", (e) => errors.push(e.message));
   await openGame(page, false);
   await expect(page.locator(".menu-panel")).toHaveCount(0);
-  const buttons = ["Start", "Decrease players", "Increase players", "Settings"];
+  const buttons = ["Start", "Settings"];
   const original = await Promise.all(
     buttons.map((name) => page.getByRole("button", { name, exact: true }).boundingBox()),
   );
@@ -23,7 +23,7 @@ test("the procedural title uses bounded 3D count controls and keyboard Start, wi
   await page.screenshot({ path: testInfo.outputPath("title-4.png") });
   await choosePlayers(page, 2);
   await expectAnchored();
-  await expect(page.getByRole("button", { name: "Decrease players", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Decrease players", exact: true })).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath("title-2.png") });
   for (const count of [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]) {
     await choosePlayers(page, count);
@@ -31,7 +31,7 @@ test("the procedural title uses bounded 3D count controls and keyboard Start, wi
   }
   await page.clock.runFor(800);
   await expectAnchored();
-  await expect(page.getByRole("button", { name: "Increase players", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Increase players", exact: true })).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath("title-16.png") });
   await page.getByRole("button", { name: "Start", exact: true }).focus();
   await page.keyboard.press("Enter");

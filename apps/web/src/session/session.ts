@@ -113,6 +113,7 @@ export function createSession(
   }
   let previousFrame: Omit<FrameSample, "intervalMs"> | undefined;
   const debug = createDebugLevels();
+  let rosterOverride: PlayerCount | null = null;
   let savedLevel = level;
   let bestLevel = level;
   let supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
@@ -479,9 +480,7 @@ export function createSession(
       level,
       lossLevel,
       previousLevel,
-      !debug.active && demotion?.to === level && demotion.count === count
-        ? demotion.from
-        : undefined,
+      !debug.active && demotion?.to === level ? demotion.from : undefined,
       debug.active,
     ).duration;
     state = { ...state, countdown: introDuration };
@@ -520,6 +519,8 @@ export function createSession(
     nextLevel: number,
     animate: boolean,
   ) {
+    nextCount = rosterOverride ?? levelDifficulty(nextLevel).playerCount;
+    nextSeat = Math.min(nextSeat, nextCount - 1);
     mark("reset");
     pausedEvidence = null;
     supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
@@ -579,10 +580,18 @@ export function createSession(
       );
       start();
     },
-    configureRoster(nextCount: PlayerCount, nextSeat: number, nextLevel: number) {
+    configureRoster(
+      nextCount: PlayerCount,
+      nextSeat: number,
+      nextLevel: number,
+      testOverride = false,
+    ) {
       savedLevel = nextLevel;
       continuationLevel = nextLevel;
-      if (nextCount === count && nextSeat === humanSeat) return false;
+      if (testOverride) rosterOverride = nextCount;
+      // Results update the saved next challenge while the current attempt keeps playing/celebrating.
+      if (!testOverride && started) return false;
+      if (nextCount === count && nextSeat === humanSeat && nextLevel === level) return false;
       resetRound(nextCount, nextSeat, nextLevel, true);
       return true;
     },

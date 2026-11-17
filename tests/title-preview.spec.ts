@@ -23,7 +23,7 @@ test("player-count previews morph on the same canvas with fixed menu controls an
   await openGame(page, false);
   const canvas = (await page.locator(".viewport canvas").elementHandle())!;
   const controls = (await page.locator(".scene-controls").elementHandle())!;
-  const names = ["Start", "Decrease players", "Increase players", "Settings"];
+  const names = ["Start", "Settings"];
   const boxes = await Promise.all(
     names.map((name) => page.getByRole("button", { name, exact: true }).boundingBox()),
   );

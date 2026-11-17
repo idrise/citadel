@@ -80,7 +80,8 @@ it("adds reflected demotion lettering and leaves the world bright with no foregr
   const root = new Group(),
     intro = createLevelIntro(root),
     arena = createArena(4);
-  intro.update(7, 1, arena, 0, false, { from: 8, to: 7, count: 4 });
+  // The previous level can have a different roster from the demoted-to level.
+  intro.update(7, 1, arena, 0, false, { from: 8, to: 7, count: 6 });
   expect(intro.root.getObjectByName("neon-text:DEMOTED FROM 08")).toBeDefined();
   const overlay = createMenuOverlay();
   expect(

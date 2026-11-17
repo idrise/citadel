@@ -1,4 +1,3 @@
-import { MAX_PLAYERS } from "../simulation/player-count";
 import type { SceneSettingsState } from "./scene-settings";
 import type { Demotion } from "../session/progression";
 export const RESULT_ACTION_SECONDS = 0.9;
@@ -16,14 +15,7 @@ import { createFeatureEdges } from "./feature-edges";
 import { disposeScene } from "./dispose-scene";
 import { mobileMenuLayout } from "./mobile-menu-layout";
 
-export type SceneAction =
-  | "start"
-  | "decrease"
-  | "increase"
-  | "options"
-  | "rematch"
-  | "retry"
-  | "back";
+export type SceneAction = "start" | "options" | "rematch" | "retry" | "back";
 export interface SceneMenuState {
   debug?: boolean;
   settings?: SceneSettingsState;
@@ -73,16 +65,8 @@ export function createSceneMenu(camera: PerspectiveCamera) {
     demotionKey = "",
     demotionWidth = 1;
   group.add(demotionText);
-  const players = createNeonLettering("PLAYERS", 0.32);
-  players.position.y = -1.6;
-  group.add(players);
-  let countText = createNeonLettering("4", 0.9, 0xffab83);
-  countText.position.y = -2.5;
-  group.add(countText);
   const controls = (
     [
-      ["decrease", "Decrease players", "-", -2.1, -2.5, 1.15, 0.95],
-      ["increase", "Increase players", "+", 2.1, -2.5, 1.15, 0.95],
       ["start", "Start", "START", 0, -4.05, 5.2, 1.05],
       ["rematch", "Rematch", "AGAIN", 0, -3.4, 5.2, 1.05],
       ["options", "Settings", "SETTINGS", 0, -5.1, 3.1, 0.6],
@@ -123,8 +107,7 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       disabled: false,
     };
   });
-  let count = 4,
-    hover: SceneAction | null = null;
+  let hover: SceneAction | null = null;
   return {
     hover(action: SceneAction | null) {
       hover = action;
@@ -143,7 +126,6 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       defeat.visible = state.mode === "defeat" && reveal > 0;
       heading.scale.setScalar(result ? 0.85 + 0.15 * reveal : 1);
       heading.position.set(0, result ? (1 - reveal) * -0.4 : 0, 0);
-      players.visible = countText.visible = !result;
       const changedLevel = state.demotion;
       const nextDemotionKey = changedLevel ? String(changedLevel.to) : "";
       if (nextDemotionKey !== demotionKey) {
@@ -163,14 +145,6 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       demotionText.visible = result && Boolean(changedLevel) && reveal > 0;
       demotionText.position.set(0, -1.9, 0);
       demotionText.scale.setScalar(1);
-      if (count !== state.count) {
-        group.remove(countText);
-        disposeScene(countText);
-        countText = createNeonLettering(String(state.count), 0.9, 0xffab83);
-        countText.position.y = -2.5;
-        group.add(countText);
-        count = state.count;
-      }
       const available = state.elapsed >= RESULT_ACTION_SECONDS;
       for (const button of controls) {
         if (button.action === "rematch") {
@@ -190,9 +164,6 @@ export function createSceneMenu(camera: PerspectiveCamera) {
           ? (button.action === "rematch" || button.action === "options") && available
           : button.action !== "rematch";
         if (button.action === "options") button.item.position.y = result ? -4.5 : -5.1;
-        button.disabled =
-          (button.action === "decrease" && state.count <= 2) ||
-          (button.action === "increase" && state.count >= MAX_PLAYERS);
         button.material.emissiveIntensity =
           hover === button.action && !button.disabled ? 0.6 : 0.12;
         button.glow.material.uniforms.opacity!.value = button.disabled
@@ -215,10 +186,6 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       heading.scale.setScalar(1);
       for (const text of [title, victory, defeat])
         text.scale.setScalar(layout.title.width / textWidths.get(text)!);
-      players.position.set(layout.label.x, height / 2 - layout.label.y, 0);
-      players.scale.setScalar(16 / 0.32);
-      countText.position.set(layout.count.x, height / 2 - layout.count.y, 0);
-      countText.scale.setScalar(34 / 0.9);
       for (const button of controls) {
         const placement = layout.controls[button.action];
         button.item.position.set(placement.x, height / 2 - placement.y, 0);

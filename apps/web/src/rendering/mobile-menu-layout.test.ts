@@ -17,7 +17,7 @@ it("changes compact title placement continuously around width, height and orient
       [0, 1],
     ]) {
       const resized = mobileMenuLayout(width! + dx!, height! + dy!, false);
-      for (const key of ["start", "options", "decrease", "increase"] as const) {
+      for (const key of ["start", "options"] as const) {
         expect(Math.abs(resized.controls[key].x - original.controls[key].x)).toBeLessThan(3);
         expect(Math.abs(resized.controls[key].y - original.controls[key].y)).toBeLessThan(3);
       }

@@ -34,7 +34,7 @@ test("phone menus stay readable, finger-sized and reachable through rotation", a
           requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
         ),
     );
-    for (const name of ["Start", "Settings", "Decrease players", "Increase players"]) {
+    for (const name of ["Start", "Settings"]) {
       const box = (await page.getByRole("button", { name, exact: true }).boundingBox())!;
       expect(box.width).toBeGreaterThanOrEqual(44);
       expect(box.height).toBeGreaterThanOrEqual(44);

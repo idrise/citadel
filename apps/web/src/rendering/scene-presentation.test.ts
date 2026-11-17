@@ -22,7 +22,7 @@ it("builds CITADEL as low-polygon solid bevelled geometry with the arena neon sh
   disposeScene(text);
 });
 
-it("projects accessible scene controls, bounds player count, and waits before offering rematch", () => {
+it("projects Start and Settings without a roster selector, and waits before offering rematch", () => {
   const root = new Group(),
     camera = new PerspectiveCamera(44, 1280 / 900, 0.1, 180),
     menu = createSceneMenu(camera);
@@ -32,17 +32,14 @@ it("projects accessible scene controls, bounds player count, and waits before of
   camera.updateMatrixWorld(true);
   const state = { mode: "title" as const, count: 2, elapsed: 0, reduced: false };
   const controls = menu.update(state, 1280, 900);
-  expect(controls.find((c) => c.action === "decrease")!.disabled).toBe(true);
-  expect(controls.find((c) => c.action === "increase")!.disabled).toBe(false);
+  expect(controls.map((c) => c.action)).toEqual(["start", "options"]);
   expect(
     controls.every(
       (c) =>
         [c.left, c.top, c.width, c.height].every(Number.isFinite) && c.width > 0 && c.height > 0,
     ),
   ).toBe(true);
-  expect(
-    menu.update({ ...state, count: 16 }, 1280, 900).find((c) => c.action === "increase")!.disabled,
-  ).toBe(true);
+  expect(menu.update({ ...state, count: 16 }, 1280, 900)).toEqual(controls);
   expect(menu.update({ ...state, mode: "victory", elapsed: 0.8 }, 1280, 900)).toEqual([]);
   expect(
     menu.update({ ...state, mode: "victory", elapsed: 5 }, 1280, 900).map((c) => c.action),
