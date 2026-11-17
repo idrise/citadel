@@ -75,17 +75,12 @@ export function estimateSkill(recent: readonly LevelResult[]) {
   return { posterior, deviation };
 }
 
-/** Arena-size adjustment only; calendar time does not alter progress. */
-export function levelFor(progress: PlayerProgress, count: PlayerCount) {
-  if (!progress.rounds) return 1;
-  return clamp(
-    progress.level + Math.round(SKILL_SCALE * Math.log((progress.count - 1) / (count - 1))),
-    1,
-    100,
-  );
+/** A level now owns its roster; historical counts must never shift the saved level. */
+export function levelFor(progress: PlayerProgress, _count?: PlayerCount) {
+  return progress.level;
 }
 
-/** The same challenge test used by recordResult; selecting another arena starts a fresh loss streak. */
+/** The same challenge test used by recordResult; a new level starts a fresh loss streak. */
 export function levelAfterLoss(progress: PlayerProgress, count: PlayerCount) {
   const level = levelFor(progress, count);
   const sameChallenge = progress.level === level && progress.count === count;

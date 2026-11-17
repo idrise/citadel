@@ -1,13 +1,8 @@
+import { levelFeatures } from "./levels";
 import { add, scale, type Vec2 } from "./vector";
 export type ArenaShape = "classic" | "wide" | "faceted" | "compact" | "spacious" | "rounded";
-/** A deterministic mixed itinerary: geometry varies between attempts without consuming match RNG. */
-export function levelArenaShape(requested: number): ArenaShape {
-  const level = Math.max(1, Math.min(100, Math.floor(Number.isFinite(requested) ? requested : 1)));
-  if (level >= 99) return "classic";
-  const families: ArenaShape[] = ["classic", "wide", "faceted", "compact", "spacious", "rounded"];
-  const pattern = [0, 1, 5, 3, 1, 4, 2, 5, 3, 1];
-  return families[(pattern[(level - 1) % 10]! + Math.floor((level - 1) / 10)) % families.length]!;
-}
+/** Read the shared tuning formulas and per-level overrides. */
+export const levelArenaShape = (level: number): ArenaShape => levelFeatures(level).arenaShape;
 /** Convex outlines only: authoritative wall sweeps and all derived consumers use these same edges.
  * Original corners/fortress anchors remain, with a matching outward facet beside every defender. */
 export function arenaVariant(vertices: readonly Vec2[], count: number, shape: ArenaShape): Vec2[] {

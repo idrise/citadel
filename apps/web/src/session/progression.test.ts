@@ -48,7 +48,7 @@ it("advances on every win, accelerates consistent wins, reaches the ceiling quic
   expect(progress.level).toBe(86);
 });
 
-it("ignores time away entirely, while preserving arena-size adjustment and result-order weighting", () => {
+it("ignores time away and historical roster changes while preserving result-order weighting", () => {
   const progress = {
     ...freshProgress(),
     level: 80,
@@ -60,8 +60,8 @@ it("ignores time away entirely, while preserving arena-size adjustment and resul
   expect(levelFor(progress, 4)).toBe(80);
   expect(levelFor(recent, 4)).toBe(80);
   expect(estimateSkill(progress.recent)).toEqual(estimateSkill(recent.recent));
-  expect(levelFor(progress, 6)).toBeLessThan(80);
-  expect(levelFor(progress, 2)).toBeGreaterThan(80);
+  expect(levelFor(progress, 6)).toBe(80);
+  expect(levelFor(progress, 2)).toBe(80);
 });
 
 it("uses finishing position and arena size as evidence rather than treating all losses alike", () => {
