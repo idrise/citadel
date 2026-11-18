@@ -87,7 +87,7 @@ it("adds reflected demotion lettering and leaves the world bright with no foregr
   expect(
     overlay.update({ mode: "level", level: 7, count: 4, elapsed: 0, reduced: true }, 0, 390, 844),
   ).toEqual([]);
-  expect(overlay.visible).toBe(false);
+  expect(overlay.visible).toBe(true); // The release version remains visible.
   expect(overlay.backgroundGain).toBe(1);
   overlay.dispose();
   disposeScene(root);

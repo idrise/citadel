@@ -1,3 +1,4 @@
+import { BUILD_INFO } from "./build-info";
 import { containersProtected } from "../simulation/protection";
 import { levelHighlights, lossMessage } from "../session/level-briefing";
 import { clampPaddleAngle, fortress } from "../simulation/arena";
@@ -18,6 +19,7 @@ export function AccessibleStatus({
   const home = fortress(humanSeat, state.arena);
   return (
     <div className="sr-only" aria-live="off">
+      <output aria-label="Release version">V{BUILD_INFO.version}</output>
       <p id="game-controls">
         Relative mouse steers. Click or Space serves. A/D or arrows also steer. Escape releases the
         mouse and pauses. On touch screens, drag left or right to steer and tap to serve.

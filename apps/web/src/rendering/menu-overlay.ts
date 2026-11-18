@@ -1,3 +1,5 @@
+import { BUILD_INFO } from "../app/build-info";
+import { createReleaseVersion } from "./release-version";
 import { createSceneSettings, type SettingsTarget } from "./scene-settings";
 import { createDebugLabel } from "./debug-label";
 import { createLevelStatus } from "./level-status";
@@ -30,6 +32,7 @@ export function createMenuOverlay() {
   const menu = createSceneMenu(camera);
   const debug = createDebugLabel(camera);
   const level = createLevelStatus(camera);
+  const version = createReleaseVersion(camera, BUILD_INFO.version);
   const settings = createSceneSettings(camera);
   let settingsTargets: SettingsTarget[] = [];
   const spectator = createSpectatorMenu(camera);
@@ -88,7 +91,7 @@ export function createMenuOverlay() {
           : gain + (target - gain) * (1 - Math.exp(-Math.max(0, dt) * 8));
       if (Math.abs(gain - target) < 0.0005) gain = target;
       initial = false;
-      visible = state.mode !== "hidden" && state.mode !== "level";
+      visible = true; // The release label is present on every screen.
       dimmer.uniforms.gain!.value = gain;
       dimmer.enabled = gain !== 1;
       veil.opacity = 1 - gain;
@@ -97,8 +100,7 @@ export function createMenuOverlay() {
       settingsTargets = settings.update(state.settings, width, height);
       debug.update(state.debug ?? false, width, height);
       level.update(state, width, height);
-      visible ||= state.bestLevel !== undefined;
-      visible ||= liveControls.length > 0 || Boolean(state.debug) || settingsTargets.length > 0;
+      version.update(width, height);
       return [...controls, ...liveControls];
     },
     renderDirect(renderer: WebGLRenderer) {

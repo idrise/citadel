@@ -860,6 +860,20 @@ root/Pages builds and nine native browser checks at each path pass; the existing
 bundle-size advisory remains. Thirty-six timing/render samples have zero page
 errors/collision caps. M09 awaits review; no push or deployment is authorised.
 
+18 November release-version amendment: package metadata now identifies V1.0.0.
+A small muted procedural label stays 18 CSS pixels inside the bottom-right safe-area
+viewport on title, play, pause and result screens, at every graphics quality.
+It reuses the foreground scene and keeps its text size on resize; screen readers
+receive the same release version. Unit coverage checks placement, size and geometry
+reuse at desktop, phone and short landscape sizes. Browser review evidence is in
+`docs/reviews/m09/release-version/`. Validation: 695 unit tests with four workers,
+format/lint/types, root production build and two native Chromium browser checks
+pass. The unrestricted-worker run timed out in two simulation stress tests;
+the owner has requested a follow-up on the CI timeout. The existing bundle-size
+advisory remains, and phone evidence uses emulation. Local demo: http://127.0.0.1:5181/.
+M09 still awaits owner review; no push or
+deployment is authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,

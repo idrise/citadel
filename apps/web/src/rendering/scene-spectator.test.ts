@@ -34,7 +34,7 @@ it("renders early Back/Retry as neon scene geometry and keeps the live board bri
   expect(back.getObjectByName("neon-text:BACK")).toBeDefined();
   expect(back.visible).toBe(true);
   overlay.update({ mode: "hidden", count: 6, elapsed: 0, reduced: false }, 0, 1280, 900);
-  expect(overlay.visible).toBe(false);
+  expect(overlay.visible).toBe(true); // The release version remains visible.
   overlay.dispose();
 });
 it("keeps all scene hit targets finger-sized and inside narrow, rotated and desktop viewports", () => {

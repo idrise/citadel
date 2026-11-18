@@ -112,7 +112,7 @@ it.each(["title", "victory", "defeat"] as const)(
     overlay.update({ ...state, mode: "hidden" }, 2, 1280, 900);
     expect(overlay.backgroundGain).toBe(1);
     expect(overlay.dimmer.enabled).toBe(false);
-    expect(overlay.visible).toBe(false);
+    expect(overlay.visible).toBe(true); // The release version remains visible.
     overlay.update(state, 0.5, 1280, 900);
     expect(overlay.backgroundGain).toBeLessThanOrEqual(mode === "title" ? 1 : 0.2);
     overlay.update({ ...state, reduced: true }, 0, 1280, 900);
