@@ -55,3 +55,14 @@ launch guide confusing; prefer their later feedback over retaining that forecast
 - [x] **Adapt resolution gradually toward 60fps.** Use sustained frame/GPU pressure, warm-up and hysteresis; reduce scale by at most 2.5% per step, recover more slowly, and ignore isolated long stalls. Keep the CSS canvas, controls and simulation fixed; retain quality caps and a bounded minimum scale. Local high-resolution captures exercise actual buffer changes without layout movement.
 
 Windows stutter investigation limit: four local 30s native Chromium captures, a GC/long-task trace and a high-resolution adaptation run are recorded in the review. They do not reproduce David's Windows machine or unknown tab workloads. Retesting there and on physical iPad/iPhone remains open; local diagnostics now capture the evidence needed.
+
+## Playtest feedback — 18 November 2026, 11:49–11:58
+
+David Brown's feedback from the previous night's play. Pending manual review;
+these are proposals and investigations, not approved gameplay changes.
+
+- [ ] **Check spin direction.** David suspects the spin goes the wrong way: with the bat moving right at impact, he expects anticlockwise ball spin and a curve to the left, based on ping pong. Verify the current behaviour and sign conventions before deciding whether to change it.
+- [ ] **Show replay tokens at the top left.** Review a visible token count as a way to add psychological pressure during play.
+- [ ] **Review the proposed replay-token rules.** Start with three tokens; lose one on a failed level; losing with no tokens left causes demotion. Restore one or two tokens on demotion and give three back on a level win. Decide the demotion refill and whether winning adds three tokens or resets the balance to three, including any cap.
+- [ ] **Consider brief invulnerability after losing a post.** David experienced rapid successive losses that took him from “hero to zero” in about a second. Review whether a very short protection window would make damage feel less random, or whether that pressure should remain part of the game.
+- [ ] **Investigate ball-on-ball collisions and their performance cost.** David sometimes took a double hit from balls overlapping one another. Assess whether collisions would address this and measure their impact under high ball counts, including phone and tablet workloads, before deciding whether to add them.
