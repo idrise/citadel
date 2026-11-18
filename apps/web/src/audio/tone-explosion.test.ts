@@ -2,6 +2,7 @@ import { expect, it, vi } from "vite-plus/test";
 const state = vi.hoisted(() => ({
   nodes: [] as {
     kind: string;
+    options: { volume?: number };
     triggerAttackRelease: ReturnType<typeof vi.fn>;
     dispose: ReturnType<typeof vi.fn>;
   }[],
@@ -10,7 +11,10 @@ vi.mock("tone", () => {
   class Node {
     triggerAttackRelease = vi.fn();
     dispose = vi.fn();
-    constructor(readonly kind: string) {
+    constructor(
+      readonly kind: string,
+      readonly options: { volume?: number } = {},
+    ) {
       state.nodes.push(this);
     }
     connect() {
@@ -24,13 +28,13 @@ vi.mock("tone", () => {
       }
     },
     NoiseSynth: class extends Node {
-      constructor() {
-        super("noise");
+      constructor(options: { volume?: number }) {
+        super("noise", options);
       }
     },
     MembraneSynth: class extends Node {
-      constructor() {
-        super("boom");
+      constructor(options: { volume?: number }) {
+        super("boom", options);
       }
     },
   };
@@ -43,6 +47,9 @@ it("synthesizes a bass/noise impact, coalesces simultaneous deaths and releases 
   explosion.play(1.01, 0.8);
   const boom = state.nodes.find((n) => n.kind === "boom")!,
     noise = state.nodes.find((n) => n.kind === "noise")!;
+  // The bus adds 5dB; preserve the explosion's existing peak budget.
+  expect(boom.options.volume! + 5).toBeLessThanOrEqual(-3);
+  expect(noise.options.volume! + 5).toBeLessThanOrEqual(-8);
   expect(boom.triggerAttackRelease).toHaveBeenCalledTimes(1);
   expect(noise.triggerAttackRelease).toHaveBeenCalledTimes(1);
   explosion.play(2, 0.85, true);

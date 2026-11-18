@@ -15,6 +15,7 @@ const state = vi.hoisted(() => {
         setTargetAtTime: ReturnType<typeof vi.fn>;
       };
       dispose: ReturnType<typeof vi.fn>;
+      connect: ReturnType<typeof vi.fn>;
     }[],
     melodic: { ...bank(), duck: vi.fn() },
     drums: bank(),
@@ -31,9 +32,7 @@ vi.mock("tone", () => {
     constructor(readonly kind: string) {
       state.nodes.push(this);
     }
-    connect() {
-      return this;
-    }
+    connect = vi.fn((_destination: unknown) => this);
   }
   return {
     Gain: class extends Node {
@@ -109,7 +108,7 @@ it("preserves kick ducking and score breath/open while mix controls and teardown
   ]);
   instruments.setMix(0.3, 0.8, 5);
   expect(gains[0]!.gain.setTargetAtTime).toHaveBeenCalledWith(0.3, 5, 0.015);
-  expect(gains[1]!.gain.setTargetAtTime).toHaveBeenCalledWith(0.8, 5, 0.015);
+  expect(gains[1]!.gain.setTargetAtTime).toHaveBeenCalledWith(0.8 * 10 ** (5 / 20), 5, 0.015);
   instruments.dispose();
   for (const bank of [
     state.melodic,
@@ -121,4 +120,39 @@ it("preserves kick ducking and score breath/open while mix controls and teardown
   ])
     expect(bank.dispose).toHaveBeenCalledOnce();
   for (const node of state.nodes) expect(node.dispose).toHaveBeenCalledOnce();
+});
+
+it("keeps score and effects compression independent so music cannot suppress live effects", () => {
+  const output = {} as never;
+  const instruments = createInstruments({} as never, output);
+  const [compressor, effectsCompressor] = state.nodes.filter((node) => node.kind === "compressor");
+  const [score, effects, arranged] = state.nodes.filter((node) => node.kind === "gain");
+  expect(compressor!.connect).toHaveBeenCalledExactlyOnceWith(output);
+  expect(score!.connect).toHaveBeenCalledExactlyOnceWith(compressor);
+  expect(effects!.connect).toHaveBeenCalledExactlyOnceWith(effectsCompressor);
+  expect(effectsCompressor!.connect).toHaveBeenCalledExactlyOnceWith(output);
+  expect(arranged!.connect).toHaveBeenCalledExactlyOnceWith(score);
+  instruments.dispose();
+});
+
+it("retains true mute and independent slider changes with the effects gain boost", () => {
+  const instruments = createInstruments({} as never, {} as never);
+  const [music, effects] = state.nodes.filter((node) => node.kind === "gain");
+  for (const [musicVolume, effectsVolume] of [
+    [0.2, 1],
+    [1, 0],
+    [0, 0.5],
+    [0, 0],
+  ]) {
+    instruments.setMix(musicVolume!, effectsVolume!, 3);
+    expect(music!.gain.setTargetAtTime).toHaveBeenLastCalledWith(musicVolume, 3, 0.015);
+    expect(effects!.gain.setTargetAtTime).toHaveBeenLastCalledWith(
+      effectsVolume! * 10 ** (5 / 20),
+      3,
+      0.015,
+    );
+    for (const node of [music!, effects!])
+      expect(node.gain.cancelScheduledValues).toHaveBeenLastCalledWith(3);
+  }
+  instruments.dispose();
 });

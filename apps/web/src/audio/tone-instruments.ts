@@ -7,7 +7,10 @@ import { createFeedback } from "./tone-feedback";
 import { createDrums } from "./tone-drums";
 import { createImpactFeedback } from "./tone-impacts";
 
-/** Separate live and arranged buses: a build's breath never makes a player hit unresponsive. */
+// Effects need room above the score even when their slider is already at maximum.
+const EFFECTS_GAIN = 10 ** (5 / 20);
+
+/** Independent dynamics keep the score from suppressing live gameplay feedback. */
 export function createInstruments(context: Tone.BaseContext, output: Tone.InputNode) {
   const compressor = new Tone.Compressor({
     context,
@@ -16,8 +19,15 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
     attack: 0.008,
     release: 0.12,
   }).connect(output);
+  const effectsCompressor = new Tone.Compressor({
+    context,
+    threshold: -10,
+    ratio: 4,
+    attack: 0.001,
+    release: 0.08,
+  }).connect(output);
   const scoreLevel = new Tone.Gain({ context, gain: 1 }).connect(compressor);
-  const effectsLevel = new Tone.Gain({ context, gain: 1 }).connect(compressor);
+  const effectsLevel = new Tone.Gain({ context, gain: EFFECTS_GAIN }).connect(effectsCompressor);
   const arranged = new Tone.Gain({ context, gain: 1 }).connect(scoreLevel);
   const swish = createPaddleSwish(context, effectsLevel);
   const melodic = createMelodic(context, arranged);
@@ -30,7 +40,7 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
     setMix(music: number, effects: number, time: number) {
       for (const [bus, value] of [
         [scoreLevel, music],
-        [effectsLevel, effects],
+        [effectsLevel, effects * EFFECTS_GAIN],
       ] as const) {
         bus.gain.cancelScheduledValues(time);
         bus.gain.setTargetAtTime(value, time, 0.015);
@@ -74,6 +84,7 @@ export function createInstruments(context: Tone.BaseContext, output: Tone.InputN
       scoreLevel.dispose();
       effectsLevel.dispose();
       compressor.dispose();
+      effectsCompressor.dispose();
     },
   };
 }

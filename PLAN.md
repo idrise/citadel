@@ -789,6 +789,21 @@ root/Pages builds pass; the existing chunk-size advisory remains. Nine rendered
 Settings scenarios and ten offline music auditions report no page errors.
 This extends M09 review; it does not approve M09, begin M10 or authorise publishing.
 
+18 November effects-volume amendment (owner feedback): SFX were still too quiet
+with the effects slider at maximum and music lowered. The effects bus now gets
++5dB (about 1.78x amplitude) and independent compression, while music retains its
+existing gain/compressor. Elimination sources are trimmed by the same 5dB so the
+already strong explosion keeps its level. Actual 20%-music/100%-SFX auditions
+measure about 5dB stronger wall, bat, serve, damage and pickup cues with unchanged
+music-only RMS. Muting remains silent; the captured sixteen-impact burst with
+both sliders at maximum stays below the checked peak bound. One native compressor
+is added; scheduling, contexts and voice counts are unchanged. See
+`docs/EFFECTS_BALANCE_REVIEW.md` for before/after audio, checks and limits.
+Validation: 669 unit tests, lint/types/format, root build and five native
+production-browser music/Settings checks pass; the existing chunk-size advisory
+remains. Fifteen before/after cases measure levels, mute and unclipped captured
+peaks. M09 awaits review; no publishing or later milestone is authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,
@@ -1671,4 +1686,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
