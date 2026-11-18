@@ -813,6 +813,23 @@ build and diff checks pass; the existing chunk-size advisory remains. Audio and
 measurements are linked from `docs/EFFECTS_BALANCE_REVIEW.md`. The owner's roster
 edit remains separate. M09 awaits review; no publishing is authorised.
 
+18 November graphics-quality amendment (owner requested): Settings now exposes
+persisted Low/Medium/High graphics steps. Low disables bloom, planar captures and
+metallic environment reflections, caps pixel ratio at one and removes trails and
+sparks; Medium adds bloom with smaller budgets; High restores full available
+effects under existing mobile and accessibility limits. The extra slider fits by
+reducing row spacing from 76px to 52px while retaining the header space and 24px
+bottom inset. Native ranges and cached scene labels stay aligned. Quality changes
+reuse the canvas and preserve simulation, progress, sound and input settings.
+Matched six-seat static captures reduce desktop draw calls 633→179→165 and
+emulated phone/tablet 345→179→165 (High→Medium→Low). These counts do not establish
+an FPS gain on affected hardware. `docs/GRAPHICS_QUALITY_REVIEW.md` records rendered
+2/4/6-seat comparisons, compact menus, checks and remaining limits. Checkpoint:
+`78c16e6`. Validation: 675 unit tests, format/lint/types, root/Pages builds, ten
+root and nine Pages-path native browser checks pass; the existing chunk-size
+advisory remains. M09 and the
+performance/device gates remain open; no push or deployment is authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,
@@ -1695,4 +1712,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/GRAPHICS_QUALITY_REVIEW.md`, `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

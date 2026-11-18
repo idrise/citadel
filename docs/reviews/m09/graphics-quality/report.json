@@ -1,0 +1,492 @@
+{
+  "kind": "Matched static boards at DPR 2; mobile is emulation on the host GPU",
+  "samples": [
+    {
+      "name": "desktop",
+      "touch": false,
+      "quality": "low",
+      "count": 2,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": false,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 1280,
+        "height": 900
+      },
+      "calls": 77
+    },
+    {
+      "name": "desktop",
+      "touch": false,
+      "quality": "medium",
+      "count": 2,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1.5
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 1920,
+        "height": 1350
+      },
+      "calls": 91
+    },
+    {
+      "name": "desktop",
+      "touch": false,
+      "quality": "high",
+      "count": 2,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": true,
+        "environment": true,
+        "pixelRatio": 2
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 2560,
+        "height": 1800
+      },
+      "calls": 224
+    },
+    {
+      "name": "desktop",
+      "touch": false,
+      "quality": "low",
+      "count": 4,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": false,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 1280,
+        "height": 900
+      },
+      "calls": 113
+    },
+    {
+      "name": "desktop",
+      "touch": false,
+      "quality": "medium",
+      "count": 4,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1.5
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 1920,
+        "height": 1350
+      },
+      "calls": 127
+    },
+    {
+      "name": "desktop",
+      "touch": false,
+      "quality": "high",
+      "count": 4,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": true,
+        "environment": true,
+        "pixelRatio": 2
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 2560,
+        "height": 1800
+      },
+      "calls": 461
+    },
+    {
+      "name": "desktop",
+      "touch": false,
+      "quality": "low",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": false,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 1280,
+        "height": 900
+      },
+      "calls": 165
+    },
+    {
+      "name": "desktop",
+      "touch": false,
+      "quality": "medium",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1.5
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 1920,
+        "height": 1350
+      },
+      "calls": 179
+    },
+    {
+      "name": "desktop",
+      "touch": false,
+      "quality": "high",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": true,
+        "environment": true,
+        "pixelRatio": 2
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 2560,
+        "height": 1800
+      },
+      "calls": 633
+    },
+    {
+      "name": "phone",
+      "touch": true,
+      "quality": "low",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": false,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 390,
+        "height": 844
+      },
+      "calls": 165
+    },
+    {
+      "name": "phone",
+      "touch": true,
+      "quality": "medium",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 390,
+        "height": 844
+      },
+      "calls": 179
+    },
+    {
+      "name": "phone",
+      "touch": true,
+      "quality": "high",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": true,
+        "environment": true,
+        "pixelRatio": 1.5
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 585,
+        "height": 1266
+      },
+      "calls": 345
+    },
+    {
+      "name": "tablet",
+      "touch": true,
+      "quality": "low",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": false,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 768,
+        "height": 1024
+      },
+      "calls": 165
+    },
+    {
+      "name": "tablet",
+      "touch": true,
+      "quality": "medium",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 768,
+        "height": 1024
+      },
+      "calls": 179
+    },
+    {
+      "name": "tablet",
+      "touch": true,
+      "quality": "high",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": true,
+        "environment": true,
+        "pixelRatio": 1.5
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 1152,
+        "height": 1536
+      },
+      "calls": 345
+    },
+    {
+      "name": "landscape",
+      "touch": true,
+      "quality": "low",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": false,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 568,
+        "height": 320
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 568,
+        "height": 320
+      },
+      "calls": 165
+    },
+    {
+      "name": "landscape",
+      "touch": true,
+      "quality": "medium",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": false,
+        "environment": false,
+        "pixelRatio": 1
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 568,
+        "height": 320
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 568,
+        "height": 320
+      },
+      "calls": 179
+    },
+    {
+      "name": "landscape",
+      "touch": true,
+      "quality": "high",
+      "count": 6,
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+      "vendor": "Google Inc. (Apple)",
+      "shadows": false,
+      "effects": {
+        "bloom": true,
+        "reflections": true,
+        "environment": true,
+        "pixelRatio": 1.5
+      },
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "maxTextureSize": 16384,
+      "viewport": {
+        "width": 568,
+        "height": 320
+      },
+      "devicePixelRatio": 2,
+      "drawingBuffer": {
+        "width": 852,
+        "height": 480
+      },
+      "calls": 345
+    }
+  ],
+  "errors": []
+}
