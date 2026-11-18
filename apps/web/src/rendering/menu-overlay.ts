@@ -79,11 +79,7 @@ export function createMenuOverlay() {
         state.elapsed < VICTORY_HOLD_SECONDS;
       const target = state.settings?.open
         ? MENU_BACKGROUND_GAIN
-        : state.mode === "hidden" ||
-            state.mode === "level" ||
-            state.mode === "title" ||
-            celebrating ||
-            (state.mode === "defeat" && state.demotion)
+        : state.mode === "hidden" || state.mode === "level" || state.mode === "title" || celebrating
           ? 1
           : MENU_BACKGROUND_GAIN;
       gain =

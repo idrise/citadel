@@ -77,27 +77,28 @@ for (const touch of [false, true])
       page,
     }, info) => {
       test.setTimeout(120000);
-      await page.addInitScript(() => {
+      const level = touch ? 2 : 21;
+      await page.addInitScript((level) => {
         if (!localStorage.getItem("citadel.progress.v1"))
           localStorage.setItem(
             "citadel.progress.v1",
             JSON.stringify({
               version: 5,
-              level: 2,
+              level,
               count: 2,
               replayTokens: 0,
               best: 1,
               demotion: null,
               rounds: 3,
-              recent: [0, 1, 2].map((at) => ({ level: 2, count: 2, place: 2, at })),
+              recent: [0, 1, 2].map((at) => ({ level, count: 2, place: 2, at })),
             }),
           );
-      });
+      }, level);
       await page.clock.install();
       await page.goto("./?seed=1");
       await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1000));
-      await choosePlayers(page, 2);
-      await selectFortress(page, 1);
+      await choosePlayers(page, touch ? 2 : 6);
+      await selectFortress(page, touch ? 1 : 5);
       await configureGame(page, { music: false, effectsVolume: 0, reducedEffects: false });
       if (touch) await page.getByRole("button", { name: "Start", exact: true }).tap();
       else await play(page);
@@ -110,22 +111,33 @@ for (const touch of [false, true])
         });
       else await page.keyboard.down("KeyD");
       for (let seconds = 0; seconds < 120; seconds++) {
-        if ((await page.getByLabel("Round phase", { exact: true }).textContent()) === "finished")
+        if (
+          (await page.getByLabel("Progress update", { exact: true }).textContent())?.includes(
+            "Demoted",
+          )
+        )
           break;
         await page.clock.runFor(1000);
       }
       if (!touch) await page.keyboard.up("KeyD");
       await expect(page.getByLabel("Progress update", { exact: true })).toContainText(
-        "Demoted to level 1",
+        `Demoted to level ${level - 1}`,
       );
       await expect(page.getByLabel("Replay tokens", { exact: true })).toHaveText("3");
+      if (!touch) {
+        await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
+        await page.clock.runFor(250);
+        await page.screenshot({ path: info.outputPath("demoted-early.png") });
+      }
       await page.clock.runFor(2000);
       await page.screenshot({ path: info.outputPath("demoted-result.png") });
-      await page.getByRole("button", { name: "Retry", exact: true }).click();
-      await expect(page.getByLabel("Round level", { exact: true })).toHaveText("1");
+      await page
+        .getByRole("button", { name: new RegExp(`^Retry(?: level ${level - 1})?$`), exact: true })
+        .click();
+      await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(level - 1));
       await expect(page.getByLabel("Replay tokens", { exact: true })).toHaveText("3");
       await page.reload();
-      await expect(page.getByLabel("Round level", { exact: true })).toHaveText("1");
+      await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(level - 1));
       await expect(page.getByLabel("Replay tokens", { exact: true })).toHaveText("3");
     });
   });

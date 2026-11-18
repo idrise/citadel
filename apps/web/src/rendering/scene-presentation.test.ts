@@ -169,24 +169,58 @@ it("offers the appropriate direct continuation after a brief result beat", () =>
   disposeScene(camera);
 });
 
-it("keeps a demotion's reflected world sign bright and avoids covering it with ROUND OVER", () => {
+it("replaces ROUND OVER with DEMOTED in the same foreground result heading", () => {
   const overlay = createMenuOverlay();
-  overlay.update(
-    {
-      mode: "defeat",
-      level: 2,
-      count: 4,
-      elapsed: 5,
-      reduced: true,
-      demotion: { from: 2, to: 1, count: 4 },
-    },
-    0,
-    390,
-    844,
-  );
+  for (const [width, height] of [
+    [1280, 900],
+    [390, 844],
+    [844, 390],
+  ])
+    for (const reduced of [false, true]) {
+      const state = { mode: "defeat" as const, level: 2, count: 6, elapsed: 5, reduced };
+      const normalControls = overlay.update(state, 0, width!, height!);
+      const normal = overlay.scene.getObjectByName("neon-text:ROUND OVER")!;
+      const demoted = overlay.scene.getObjectByName("neon-text:DEMOTED")!;
+      expect(normal.visible).toBe(true);
+      expect(demoted.visible).toBe(false);
+      const controls = overlay.update(
+        { ...state, demotion: { from: 2, to: 1, count: 6 } },
+        0,
+        width!,
+        height!,
+      );
+      expect(controls).toEqual(normalControls);
+      expect(overlay.backgroundGain).toBe(MENU_BACKGROUND_GAIN);
+      expect(normal.visible).toBe(false);
+      expect(demoted.visible).toBe(true);
+      expect(demoted.parent).toBe(normal.parent);
+      expect(demoted.position).toEqual(normal.position);
+      expect(overlay.scene.getObjectByName("neon-text:DEMOTED TO LEVEL 01")!.visible).toBe(true);
+    }
+  overlay.dispose();
+});
+
+it("shows the demotion heading immediately while bots finish and retains only early Back/Retry controls", () => {
+  const overlay = createMenuOverlay();
+  const state = {
+    mode: "hidden" as const,
+    count: 6,
+    elapsed: 0,
+    reduced: false,
+    demotion: { from: 3, to: 2, count: 6 as const },
+    spectator: { level: 2, demotion: { from: 3, to: 2, count: 6 as const } },
+  };
+  const controls = overlay.update(state, 0, 390, 844);
+  expect(controls.map((c) => c.action)).toEqual(["back", "retry"]);
   expect(overlay.backgroundGain).toBe(1);
-  expect(overlay.scene.getObjectByName("neon-text:ROUND OVER")!.visible).toBe(false);
-  expect(overlay.scene.getObjectByName("neon-text:DEMOTED TO LEVEL 01")).toBeDefined();
+  const heading = overlay.scene.getObjectByName("neon-text:DEMOTED")!;
+  expect(heading.visible).toBe(true);
+  expect(heading.parent!.parent!.visible).toBe(true);
+  overlay.update({ ...state, mode: "defeat", elapsed: 5 }, 0, 390, 844);
+  expect(heading.visible).toBe(true);
+  overlay.update({ mode: "defeat", count: 6, elapsed: 5, reduced: false }, 0, 390, 844);
+  expect(heading.visible).toBe(false);
+  expect(overlay.scene.getObjectByName("neon-text:ROUND OVER")!.visible).toBe(true);
   overlay.dispose();
 });
 

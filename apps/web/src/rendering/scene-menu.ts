@@ -56,8 +56,10 @@ export function createSceneMenu(camera: PerspectiveCamera) {
   heading.add(victory);
   const defeat = createNeonLettering("ROUND OVER", 1.3, 0xa9c9ff);
   heading.add(defeat);
+  const demoted = createNeonLettering("DEMOTED", 1.3, 0xffab83);
+  heading.add(demoted);
   const textWidths = new Map(
-    [title, victory, defeat].map((text) => [
+    [title, victory, defeat, demoted].map((text) => [
       text,
       new Box3().setFromObject(text).getSize(new Vector3()).x,
     ]),
@@ -114,17 +116,23 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       hover = action;
     },
     update(state: SceneMenuState, width: number, height: number): SceneControl[] {
-      group.visible = state.mode !== "hidden" && state.mode !== "level";
+      const earlyDemotion = state.mode === "hidden" && Boolean(state.spectator?.demotion);
+      group.visible = earlyDemotion || (state.mode !== "hidden" && state.mode !== "level");
       if (!group.visible) return [];
       camera.aspect = width / Math.max(height, 1);
       camera.updateProjectionMatrix();
       const depth = 18,
         halfHeight = Math.tan((camera.fov * Math.PI) / 360) * depth;
       const result = state.mode !== "title",
-        reveal = state.reduced ? 1 : Math.max(0, Math.min(1, (state.elapsed - 0.15) / 0.6));
+        reveal =
+          state.reduced || earlyDemotion
+            ? 1
+            : Math.max(0, Math.min(1, (state.elapsed - 0.15) / 0.6));
       title.visible = false;
       victory.visible = state.mode === "victory" && reveal > 0;
       defeat.visible = state.mode === "defeat" && !state.demotion && reveal > 0;
+      demoted.visible =
+        ((state.mode === "defeat" && Boolean(state.demotion)) || earlyDemotion) && reveal > 0;
       heading.scale.setScalar(result ? 0.85 + 0.15 * reveal : 1);
       heading.position.set(0, result ? (1 - reveal) * -0.4 : 0, 0);
       const changedLevel = state.demotion;
@@ -143,7 +151,7 @@ export function createSceneMenu(camera: PerspectiveCamera) {
         group.add(demotionText);
         demotionKey = nextDemotionKey;
       }
-      demotionText.visible = result && Boolean(changedLevel) && reveal > 0;
+      demotionText.visible = state.mode === "defeat" && Boolean(changedLevel) && reveal > 0;
       demotionText.position.set(0, -1.9, 0);
       demotionText.scale.setScalar(1);
       const available = state.elapsed >= RESULT_ACTION_SECONDS;
@@ -161,9 +169,11 @@ export function createSceneMenu(camera: PerspectiveCamera) {
             button.text = text;
           }
         }
-        button.item.visible = result
-          ? (button.action === "rematch" || button.action === "options") && available
-          : button.action !== "rematch";
+        button.item.visible = earlyDemotion
+          ? false
+          : result
+            ? (button.action === "rematch" || button.action === "options") && available
+            : button.action !== "rematch";
         if (button.action === "options") button.item.position.y = result ? -4.5 : -5.1;
         button.material.emissiveIntensity =
           hover === button.action && !button.disabled ? 0.6 : 0.12;
@@ -185,7 +195,7 @@ export function createSceneMenu(camera: PerspectiveCamera) {
       group.scale.setScalar((2 * halfHeight) / height);
       heading.position.set(layout.title.x, height / 2 - layout.title.y, 0);
       heading.scale.setScalar(1);
-      for (const text of [title, victory, defeat])
+      for (const text of [title, victory, defeat, demoted])
         text.scale.setScalar(layout.title.width / textWidths.get(text)!);
       for (const button of controls) {
         const placement = layout.controls[button.action];

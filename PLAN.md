@@ -741,8 +741,10 @@ cover desktop, phone, short landscape and a 320px square. The live demo remains
 M09 still awaits owner review; no push or deployment is authorised.
 
 18 November TODO follow-up (owner requested all remaining items): added persistent
-three-token replay balances, a quiet scene count at top left, and large reflected
-DEMOTED lettering on actual demotions. Three failures spend the tokens; a further
+three-token replay balances, a quiet scene count at top left, and a prominent
+DEMOTED result heading on actual demotions. The owner's follow-up requests the
+existing ROUND OVER heading style; this foreground lettering cannot be hidden
+by arena geometry, including while surviving bots finish. Three failures spend the tokens; a further
 failure at zero demotes one level and refills to three. Wins refill to three.
 Version-five saves migrate older loss counters without dropping levels, best wins
 or history. Tokens follow the player across roster changes; debug attempts and

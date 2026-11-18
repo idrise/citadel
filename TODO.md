@@ -64,6 +64,6 @@ request on 18 November. Ready for local review; see
 
 - [x] **Spin direction.** David suspects the spin goes the wrong way: with the bat moving right at impact, he expects anticlockwise ball spin and a curve to the left, based on ping pong. If the assumption is correct then reverse the curvature.
 - [x] **Show replay tokens at the top left.** Review a visible token count as a way to add psychological pressure during play.
-- [x] When the player loses and is demoted make that really clear with text saying demoted displayed like in the title text.
+- [x] Clearly announce demotion with **DEMOTED** using the existing **ROUND OVER** result heading, updated following review.
 - [x] **Replay-token rules.** Start with three tokens; lose one on a failed level; losing with no tokens left causes demotion. Restore to three tokens on demotion and restore to three on a level win.
 - [x] Add ball to ball collisions and transfer spin onto the destination ball.

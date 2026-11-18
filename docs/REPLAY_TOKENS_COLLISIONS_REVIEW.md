@@ -11,10 +11,11 @@ zero demotes one level and restores three tokens. Every win resets to three;
 level 1 refills after an exhausted failure without dropping below the floor.
 Settings restart, abandoned rounds and debug navigation spend nothing.
 
-On a demotion, large peach **DEMOTED** world lettering rises with the same
-geometry, reflections and screen anchor as the title. It sits above the star's
-side walls so the complete word stays visible. The result and next introduction
-identify the new level, and Retry starts that level immediately.
+On a demotion, **DEMOTED** replaces **ROUND OVER** in the existing foreground
+result heading, as requested in the owner's follow-up. It uses the same layout
+and neon lettering, so arena walls and morphs cannot cover it. It also appears
+immediately while surviving bots continue, retaining Back/Retry. The result and
+next introduction identify the new level, and Retry starts that level immediately.
 
 A rightward mouse/keyboard/touch brush now imparts anticlockwise spin as seen
 from the defender and bends the inward flight left. The previous sign did the
@@ -57,6 +58,9 @@ actual descending roster boundary rather than hard-coding levels 3/4.
 - The final 37 native Chromium browser scenarios pass across progression,
   reset, token rendering, desktop/touch curve input, level rosters, reading
   windows and captured debug navigation.
+- Following the heading amendment, both updated demotion browser flows pass:
+  a real six-seat early defeat on desktop and a completed two-seat phone defeat.
+  The refreshed images show the foreground heading over the live board and star.
 - Simulation coverage includes swept crossings, near misses/tangencies, exact
   overlaps, separating overlaps, dense launch queues, momentum/energy during
   impulses, spin transfer, per-tick paced speeds, ownership, ignored ready
@@ -76,6 +80,7 @@ Rendered examples: [desktop demotion](reviews/m09/replay-tokens-collisions/deskt
 [phone demotion](reviews/m09/replay-tokens-collisions/phone-demoted.png),
 [desktop six-seat zero balance](reviews/m09/replay-tokens-collisions/desktop-6-tokens-0.png),
 [phone six-seat zero balance](reviews/m09/replay-tokens-collisions/phone-6-tokens-0.png),
+[early desktop demotion](reviews/m09/replay-tokens-collisions/desktop-demoted-early.png),
 and [rotated phone](reviews/m09/replay-tokens-collisions/phone-landscape-zero.png).
 The folder also includes 2/4-seat views and a muted
 [natural six-seat level-100 gameplay capture](reviews/m09/replay-tokens-collisions/gameplay.webm).
@@ -96,6 +101,9 @@ Run CPU-heavy unit and browser suites separately. A concurrent run exceeded
 existing timeouts; the isolated staged snapshot passes all 660 tests without
 changing timeout limits. The first browser run passed 36/37; its hard-coded roster
 assumption was corrected and all 37 passed on rerun.
+The first six-seat follow-up capture used level 2 and did not lose within its
+120-second simulated window. The revised fixture uses a real level-21 loss;
+health, results and collision outcomes are never forced.
 
 ## Measured cost and limits
 
@@ -131,6 +139,8 @@ evidence in [the evidence folder](reviews/m09/replay-tokens-collisions/).
 The reports retain their actual served bundle identities; the before source is
 the exported token checkpoint `3758ce9`, and the after source is the physics
 checkpoint plus the raised demotion sign.
+These performance captures predate the foreground-heading amendment; its
+simulation code is identical.
 
 Physical Windows Chrome and iPad/iPhone Safari validation remain open. The build
 retains its existing large-chunk advisory. No push, remote workflow or deployment
