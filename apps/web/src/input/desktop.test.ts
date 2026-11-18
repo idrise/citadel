@@ -86,7 +86,7 @@ it.each([-1, 1])(
     }
     expect(state.events.find((event) => event.type === "paddle")?.seat).toBe(0);
     expect(state.players[0]!.angle).toBeCloseTo(base, 10);
-    expect(Math.sign(state.balls[0]!.spin ?? 0)).toBe(side);
+    expect(Math.sign(state.balls[0]!.spin ?? 0)).toBe(-side);
     expect(Math.abs(state.balls[0]!.spin ?? 0)).toBeGreaterThan(0.6);
     input.controls.dispose();
   },

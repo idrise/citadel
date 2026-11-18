@@ -75,6 +75,7 @@ export interface GameEvent {
     | "launch"
     | "paddle"
     | "wall"
+    | "ball"
     | "damage"
     | "elimination"
     | "victory"
@@ -84,6 +85,7 @@ export interface GameEvent {
   seat: number;
   piece: number | null;
   ballId?: number;
+  otherBallId?: number;
   /** Optional read-only observer credit; never determines damage or revenge serves. */
   attackerSeat?: number | null;
   radius?: number;

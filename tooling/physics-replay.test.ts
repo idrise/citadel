@@ -10,11 +10,15 @@ it.each(PHYSICS_CASES)(
     for (const fps of [60, 144])
       expect(replayPhysics(name, fps).traceDigest).toBe(baseline.traceDigest);
     expect(baseline.state.stats.collisionCaps).toBe(0);
+    if (name.startsWith("ball-") || name === "wall-ball")
+      expect(baseline.events.some((e) => e.type === "ball" && e.otherBallId !== undefined)).toBe(
+        true,
+      );
     if (name.startsWith("swipe") || name === "grazing-120") {
       const first = baseline.events[0]!;
       expect([first.type, first.seat, first.tick]).toEqual(["paddle", 0, 1]);
       if (name.startsWith("swipe"))
-        expect(Math.sign(first.impact!.spin)).toBe(name === "swipe-positive" ? 1 : -1);
+        expect(Math.sign(first.impact!.spin)).toBe(name === "swipe-positive" ? -1 : 1);
     }
     for (const ball of baseline.state.balls)
       if (ball.phase === "active") {
@@ -38,9 +42,12 @@ it.each(PHYSICS_CASES)(
   },
 );
 
-it("matches the spin-bounce golden impact logs and state trace digests", () => {
+it("matches the reversed-swipe and ball-contact golden impact logs and state trace digests", () => {
   const golden = JSON.parse(
-    readFileSync(new URL("../docs/reviews/m09/spin-bounce/replays.json", import.meta.url), "utf8"),
+    readFileSync(
+      new URL("../docs/reviews/m09/replay-tokens-collisions/replays.json", import.meta.url),
+      "utf8",
+    ),
   ) as { cases: { name: (typeof PHYSICS_CASES)[number]; traceDigest: string }[] };
   for (const fixture of golden.cases)
     expect(replayPhysics(fixture.name).traceDigest).toBe(fixture.traceDigest);

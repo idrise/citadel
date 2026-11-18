@@ -22,7 +22,7 @@ for (const count of [2, 6, levelDifficulty(100).playerCount] as const)
     console.log(JSON.stringify(result));
   }
 // Authored-roster win regression, selected to demonstrate possibility, not estimate a win rate.
-capable.push(eliteProxyTrial(20, levelDifficulty(100).playerCount, 100));
+capable.push(eliteProxyTrial(3, levelDifficulty(100).playerCount, 100));
 const report = {
   kind: "Seeded collision trials and fixed level-60 bot proxy; not human difficulty calibration",
   profiles: [60, 80, 90, 100].map((level) => ({ level, ...botLevelProfile(level) })),

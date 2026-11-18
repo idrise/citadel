@@ -19,13 +19,13 @@ it("adds signed remembered swipe spin to serves while preserving straight statio
         ball.position = railPosition(seat, player.angle, ARENA.railRadius + 0.4, state.arena);
         player.swipe = { velocity: side * ARENA.paddleSpeed, remaining: side === 0 ? 0 : 0.1 };
         launchBall(state, ball, DEFAULT_OPTIONS);
-        expect(ball.spin).toBe(side * MAX_SWIPE_CURVE);
+        expect(ball.spin).toBe(side === 0 ? 0 : -side * MAX_SWIPE_CURVE);
         expect(length(ball.velocity)).toBeCloseTo(24, 10);
         expect(ball.striker).toBe(seat);
       }
   expect(serveCurve({ velocity: ARENA.paddleSpeed, remaining: 0 })).toBe(0);
   expect(serveCurve({ velocity: ARENA.paddleSpeed, remaining: 0.05 })).toBeCloseTo(
-    MAX_SWIPE_CURVE * Math.SQRT1_2,
+    -MAX_SWIPE_CURVE * Math.SQRT1_2,
   );
 });
 it.each([-1, 1])(
@@ -46,7 +46,7 @@ it.each([-1, 1])(
       { ...DEFAULT_OPTIONS, humanSeat: 0 },
     );
     expect(next.events.some((event) => event.type === "launch")).toBe(true);
-    expect(Math.sign(next.balls[0]!.spin!)).toBe(side);
+    expect(Math.sign(next.balls[0]!.spin!)).toBe(-side);
     expect(state.balls[0]!.phase).toBe("ready");
     expect(next.balls[0]!.phase).toBe("active");
   },

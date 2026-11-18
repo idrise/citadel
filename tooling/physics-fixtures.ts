@@ -14,6 +14,9 @@ export const PHYSICS_CASES = [
   "health-gap",
   "empty-sector",
   "eight-curves",
+  "ball-swept",
+  "ball-chain",
+  "wall-ball",
 ] as const;
 export type PhysicsCase = (typeof PHYSICS_CASES)[number];
 export function physicsFixture(name: PhysicsCase) {
@@ -23,7 +26,28 @@ export function physicsFixture(name: PhysicsCase) {
   const ball = state.balls[0]!;
   ball.phase = "active";
   ball.spin = 0;
-  if (name === "corner-240" || name === "eight-curves") {
+  if (name === "ball-swept" || name === "ball-chain" || name === "wall-ball") {
+    state.players.forEach((p) => p.health.fill(false));
+    const positions =
+      name === "ball-chain" ? [-0.7, 0, 0.7] : name === "wall-ball" ? [8.76, 8.21] : [-1, 1];
+    state.balls = positions.map((x, id) => ({
+      ...ball,
+      id,
+      position: { x, y: 0 },
+      velocity: {
+        x:
+          name === "wall-ball"
+            ? 24
+            : name === "ball-chain"
+              ? [59.5, 0, -59.5][id]!
+              : id
+                ? -240
+                : 240,
+        y: 0,
+      },
+      spin: name === "ball-swept" && id === 0 ? -1.4 : 0,
+    }));
+  } else if (name === "corner-240" || name === "eight-curves") {
     // Isolated geometry fixtures: remove defending bodies to exercise repeated wall rebounds.
     state.players.forEach((player) => player.health.fill(false));
     if (name === "corner-240") {

@@ -13,7 +13,23 @@ import {
 import { createMatch, stepMatch } from "./match";
 import { predictReturn } from "./return-preview";
 import { DEFAULT_OPTIONS, IDLE_INTENT } from "./types";
-import { angleDifference, angleOf, length, scale, unit } from "./vector";
+import { angleDifference, angleOf, dot, length, scale, unit } from "./vector";
+
+it("a rightward bat brush bends an inward flight left from every supported defender's view", () => {
+  for (const count of [2, 3, 4, 5, 6, 12, 16] as const) {
+    const state = createMatch(7, count);
+    for (const player of state.players) {
+      const direction = fortress(player.id, state.arena).direction;
+      const forward = unit(direction),
+        right = unit(direction + Math.PI / 2);
+      const spin = swipeCurve(ARENA.paddleSpeed, scale(forward, -24), forward);
+      const curved = curveFlight(scale(forward, 24), spin, 0.25);
+      expect(spin).toBeLessThan(0);
+      expect(dot(curved.velocity, right)).toBeLessThan(-5);
+      expect(length(curved.velocity)).toBeCloseTo(24, 10);
+    }
+  }
+});
 
 it("preserves a straight zero-spin flight exactly and bounds curve without adding speed", () => {
   const velocity = { x: 24, y: 0 };
@@ -30,7 +46,7 @@ it("preserves a straight zero-spin flight exactly and bounds curve without addin
   expect(angleOf(current)).toBeLessThanOrEqual(MAX_SWIPE_CURVE / CURVE_DECAY);
   expect(spin).toBeLessThan(0.001);
   expect(swipeCurve(0, { x: -24, y: 0 }, { x: 1, y: 0 })).toBe(0);
-  expect(swipeCurve(100, { x: -24, y: 0 }, { x: 1, y: 0 })).toBe(MAX_SWIPE_CURVE);
+  expect(swipeCurve(100, { x: -24, y: 0 }, { x: 1, y: 0 })).toBe(-MAX_SWIPE_CURVE);
 });
 
 it("makes an ordinary swipe visibly bend the path while preserving ball speed", () => {
@@ -43,8 +59,8 @@ it("makes an ordinary swipe visibly bend the path while preserving ball speed", 
     spin = next.spin;
     lateral += velocity.y * FIXED_DT;
   }
-  expect(lateral).toBeGreaterThan(2.8);
-  expect(angleOf(velocity)).toBeGreaterThan(0.3);
+  expect(lateral).toBeLessThan(-2.8);
+  expect(angleOf(velocity)).toBeLessThan(-0.3);
   expect(length(velocity)).toBeCloseTo(24, 10);
 });
 
@@ -80,7 +96,7 @@ it.each([-1, 1])(
       state = stepMatch(state, IDLE_INTENT);
     expect(state.events.find((e) => e.type === "paddle")?.seat).toBe(0);
     expect(state.players[0]!.angle).toBe(heldAngle);
-    expect(Math.sign(state.balls[0]!.spin ?? 0)).toBe(side);
+    expect(Math.sign(state.balls[0]!.spin ?? 0)).toBe(-side);
     expect(Math.abs(state.balls[0]!.spin ?? 0)).toBeGreaterThan(0.6);
   },
 );
@@ -103,7 +119,7 @@ it.each([-1, 1])("imparts a small signed curve for a moving paddle on side %s", 
   advanceBall(state, state.balls[0]!, before, FIXED_DT, DEFAULT_OPTIONS, pieces);
   const ball = state.balls[0]!;
   expect(state.events[0]!.type).toBe("paddle");
-  expect(Math.sign(ball.spin ?? 0)).toBe(side);
+  expect(Math.sign(ball.spin ?? 0)).toBe(-side);
   expect(Math.abs(ball.spin ?? 0)).toBeLessThanOrEqual(MAX_SWIPE_CURVE);
   expect(length(ball.velocity)).toBeCloseTo(24);
   expect(state.events[0]!.impact!.spin).toBe(ball.spin);

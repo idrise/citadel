@@ -14,7 +14,7 @@ import {
 } from "./arena";
 import { beginArenaMorph, stepArenaMorph } from "./arena-morph";
 import { createPieceBodies, stepHealth } from "./health";
-import { advanceBall } from "./ball";
+import { advanceBalls } from "./balls";
 import { botLevelProfile } from "./bot-level";
 import { botIntent } from "./bots";
 import { sample } from "./random";
@@ -182,10 +182,13 @@ export function stepMatch(
   } else state.elapsed += dt;
   stepSupplies(state, dt);
   const served = new Set<number>();
+  const activeBalls = state.balls.filter((ball) => ball.phase === "active");
+  const activeIds = new Set(activeBalls.map((ball) => ball.id));
+  advanceBalls(state, activeBalls, previousAngles, dt, options, previousPieces);
   const waitingPositions: Vec2[] = [];
   for (const ball of state.balls) {
     if (state.phase === "finished") break;
-    if (ball.phase === "ready") {
+    if (ball.phase === "ready" && !activeIds.has(ball.id)) {
       const queueIndex = state.balls.filter(
         (queued) => queued.phase === "ready" && queued.seat === ball.seat && queued.id < ball.id,
       ).length;
@@ -208,7 +211,7 @@ export function stepMatch(
         served.add(ball.seat);
         launchBall(state, ball, options);
       }
-    } else advanceBall(state, ball, previousAngles, dt, options, previousPieces);
+    }
   }
   if (state.phase === "playing") {
     const desired = Math.min(

@@ -16,6 +16,16 @@ const event = (id: number, type: GameEvent["type"] = "paddle", seat = 0): GameEv
   position: { x: 0, y: 0 },
 });
 
+it("plays a neutral ricochet for ball contacts without awarding a player hit or phrase", () => {
+  const director = createMusicDirector(0, 2026);
+  const contact = { ...event(0, "ball", -1), ballId: 0, otherBallId: 1 };
+  const before = structuredClone(contact);
+  expect(director.observe(frame, [contact])).toMatchObject([{ voice: "ricochet" }]);
+  expect(director.snapshot()).toMatchObject({ streak: 0, notes: 0 });
+  expect(director.observe(frame, [contact])).toEqual([]);
+  expect(contact).toEqual(before);
+});
+
 it("keeps wall knocks and both human and rival paddle hits audible on distinct cue voices", () => {
   const director = createMusicDirector(0, 2026);
   const cues = director.observe(frame, [event(0, "wall"), event(1), event(2, "paddle", 1)]);

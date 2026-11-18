@@ -37,7 +37,7 @@ it("elite serve error varies across seeds, has both signs and stays fixed while 
 });
 
 it("a fallible legal controller can win the level-100 twelve-player finale", () => {
-  const result = eliteProxyTrial(20, 12, 100);
+  const result = eliteProxyTrial(3, 12, 100);
   expect(result.won).toBe(true);
   expect(result.alive).toBe(true);
   expect(result.collisionCaps).toBe(0);

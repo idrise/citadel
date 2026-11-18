@@ -46,11 +46,16 @@ export function curveFlight(velocity: Vec2, spin: number | undefined, dt: number
   };
 }
 
-/** A deliberate brush is readable even below maximum bat speed; held bats retain the established aim. */
+/** Positive bat-angle motion is screen-right from its fortress. Negative flight rotation
+ * bends an inward return to that defender's left, matching an anticlockwise brush.
+ * A deliberate brush is readable below maximum speed; held bats retain their aim. */
 export function swipeCurve(angularVelocity: number, incoming: Vec2, normal: Vec2): number {
   const approach = clamp(-dot(normalise(incoming), normal), 0, 1);
   const swipe = clamp(angularVelocity / ARENA.paddleSpeed, -1, 1);
-  return Math.sign(swipe) * Math.sqrt(Math.abs(swipe)) * MAX_SWIPE_CURVE * (0.45 + 0.55 * approach);
+  if (swipe === 0) return 0;
+  return (
+    -Math.sign(swipe) * Math.sqrt(Math.abs(swipe)) * MAX_SWIPE_CURVE * (0.45 + 0.55 * approach)
+  );
 }
 
 /** A little tangential grip converts visible spin into a signed rebound angle.

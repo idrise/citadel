@@ -18,7 +18,7 @@ export function emit(
   position: Vec2,
   seat: number,
   piece: number | null = null,
-  details: Pick<GameEvent, "ballId" | "radius" | "returnTo" | "impact"> = {},
+  details: Pick<GameEvent, "ballId" | "otherBallId" | "radius" | "returnTo" | "impact"> = {},
 ): GameEvent {
   const event: GameEvent = {
     id: state.nextEventId++,

@@ -26,7 +26,7 @@ for (const side of [-1, 1])
     await page.clock.runFor(80);
     await expect(page.getByLabel("Ball 0 phase", { exact: true })).toHaveText("active");
     const spin = Number(await page.getByLabel("Ball 0 spin", { exact: true }).textContent());
-    expect(Math.sign(spin)).toBe(side);
+    expect(Math.sign(spin)).toBe(-side);
     expect(Math.abs(spin)).toBeGreaterThan(0.5);
   });
 test("a mouse flick and click impart curve through the captured-input adapter", async ({
@@ -46,9 +46,9 @@ test("a mouse flick and click impart curve through the captured-input adapter", 
   });
   await page.clock.runFor(100);
   await expect(page.getByLabel("Ball 0 phase", { exact: true })).toHaveText("active");
-  expect(
-    Number(await page.getByLabel("Ball 0 spin", { exact: true }).textContent()),
-  ).toBeGreaterThan(0.5);
+  expect(Number(await page.getByLabel("Ball 0 spin", { exact: true }).textContent())).toBeLessThan(
+    -0.5,
+  );
 });
 test.describe("touch serving curve", () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
@@ -76,6 +76,6 @@ test.describe("touch serving curve", () => {
     await expect(page.getByLabel("Ball 0 phase", { exact: true })).toHaveText("active");
     expect(
       Number(await page.getByLabel("Ball 0 spin", { exact: true }).textContent()),
-    ).toBeGreaterThan(0.5);
+    ).toBeLessThan(-0.5);
   });
 });

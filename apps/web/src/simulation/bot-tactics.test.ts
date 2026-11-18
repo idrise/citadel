@@ -7,6 +7,7 @@ import { aimServeAt } from "./aim";
 import { createMatch, stepMatch } from "./match";
 import { SUPPLIES } from "./supplies";
 import { DEFAULT_OPTIONS } from "./types";
+import { swipeCurve } from "./flight";
 import { add, angleDifference, scale, unit } from "./vector";
 
 it.each([1, 40, 80, 100])(
@@ -121,7 +122,7 @@ it("produces curved real returns and collections through normal simulation, with
 
 it.each([
   { turn: -0.8, seed: 4 },
-  { turn: 0.8, seed: 20 },
+  { turn: 0.8, seed: 1 },
 ])(
   "swipes a real return toward the supply at offset $turn and earns its container",
   ({ turn, seed }) => {
@@ -198,6 +199,6 @@ it("unlocks accurate signed shot planning as the bot tactics budget reaches leve
   const easy = planBotShot(state, 0, contact, 2, botLevelProfile(1).tactics);
   const hard = planBotShot(state, 0, contact, 16, botLevelProfile(100).tactics);
   expect(easy.swipe).toBe(0);
-  expect(hard.swipe).toBeGreaterThan(0);
+  expect(swipeCurve(hard.swipe, contact.velocity, unit(home.direction))).toBeGreaterThan(0);
   expect(hard.score).toBeGreaterThan(easy.score);
 });

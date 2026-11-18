@@ -91,7 +91,7 @@ it("two same-tick balls cannot destroy the same isolated piece twice or substitu
     ...state.balls[0]!,
     id,
     phase: "active",
-    position: { x: -0.6, y: 0 },
+    position: { x: -0.6 - id * 0.4, y: 0 },
     velocity: { x: 120, y: 0 },
     spin: 0,
   }));

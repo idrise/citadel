@@ -7,6 +7,7 @@ it("sustains sixteen balls through multiple fixture resets, with identical seede
   for (let i = 0; i < 3600; i++) {
     first.step();
     second.step();
+    expect(first.state.stats.collisionCaps).toBe(0);
     if (first.state.balls.length !== 16) throw new Error(`Lost fixture balls at ${i}`);
   }
   expect(first.state).toEqual(second.state);
@@ -15,6 +16,17 @@ it("sustains sixteen balls through multiple fixture resets, with identical seede
   expect(first.state.arena.variant).toBe("rounded");
   expect(first.state.players.every(alive)).toBe(true);
 });
+it.each([2, 6] as const)(
+  "separates dense sixteen-ball launch queues in %i seats without collision caps",
+  (seats) => {
+    const fixture = createScenario({ seats, shape: "classic", workload: "sixteen" });
+    for (let tick = 0; tick < 480; tick++) {
+      fixture.step();
+      expect(fixture.state.stats.collisionCaps).toBe(0);
+      expect(fixture.state.balls).toHaveLength(16);
+    }
+  },
+);
 it.each([2, 3, 4, 6] as const)(
   "runs %i-seat fixtures without changing the requested roster",
   (seats) => {

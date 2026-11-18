@@ -299,6 +299,6 @@ describe("timed multi-ball pressure", () => {
     }
     expect(state).toEqual(replay);
     expect(state.stats.collisionCaps).toBe(0);
-    expect(state.stats.damage).toBeGreaterThan(10);
+    expect(state.stats.damage).toBeGreaterThanOrEqual(ARENA.startingPieces * 3);
   });
 });
