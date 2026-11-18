@@ -6,9 +6,10 @@ export function createDrums(
   output: Tone.InputNode,
   liveOutput: Tone.InputNode,
 ) {
+  // Bring the rhythmic pulse forward; retain quieter hats and crash headroom.
   const kick = new Tone.MembraneSynth({
     context,
-    volume: -10,
+    volume: -7,
     pitchDecay: 0.045,
     octaves: 4.5,
     envelope: { attack: 0.001, decay: 0.25, sustain: 0, release: 0.08 },
@@ -16,12 +17,12 @@ export function createDrums(
   const high = new Tone.Filter({ context, type: "highpass", frequency: 6500 }).connect(output);
   const hat = new Tone.NoiseSynth({
     context,
-    volume: -21,
+    volume: -17,
     envelope: { attack: 0.001, decay: 0.028, sustain: 0, release: 0.012 },
   }).connect(high);
   const openHat = new Tone.NoiseSynth({
     context,
-    volume: -23,
+    volume: -19,
     envelope: { attack: 0.002, decay: 0.13, sustain: 0, release: 0.04 },
   }).connect(high);
   const clapFilter = new Tone.Filter({
@@ -32,7 +33,7 @@ export function createDrums(
   }).connect(output);
   const clap = new Tone.NoiseSynth({
     context,
-    volume: -14,
+    volume: -11,
     envelope: { attack: 0.002, decay: 0.11, sustain: 0, release: 0.04 },
   }).connect(clapFilter);
   const snareFilter = new Tone.Filter({ context, type: "highpass", frequency: 1300 }).connect(
@@ -40,12 +41,12 @@ export function createDrums(
   );
   const snare = new Tone.NoiseSynth({
     context,
-    volume: -18,
+    volume: -13,
     envelope: { attack: 0.001, decay: 0.075, sustain: 0, release: 0.025 },
   }).connect(snareFilter);
   const snareBody = new Tone.Synth({
     context,
-    volume: -22,
+    volume: -18,
     oscillator: { type: "triangle" },
     envelope: { attack: 0.001, decay: 0.06, sustain: 0, release: 0.02 },
   }).connect(output);
@@ -54,7 +55,7 @@ export function createDrums(
   );
   const crash = new Tone.NoiseSynth({
     context,
-    volume: -19,
+    volume: -17,
     envelope: { attack: 0.003, decay: 1.1, sustain: 0, release: 0.2 },
   }).connect(crashFilter);
   const damage = new Tone.PolySynth({

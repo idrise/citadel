@@ -21,7 +21,7 @@ export function createMelodic(context: Tone.BaseContext, output: Tone.InputNode)
     voice: Tone.Synth,
     maxPolyphony: 6,
     options: {
-      volume: -4,
+      volume: -7,
       oscillator: { type: "fatsawtooth", count: 2, spread: 11 },
       envelope: { attack: 0.004, decay: 0.18, sustain: 0.04, release: 0.12 },
     },
@@ -68,7 +68,7 @@ export function createMelodic(context: Tone.BaseContext, output: Tone.InputNode)
   const arpPan = new Tone.Panner({ context, pan: 0.18 }).connect(delay);
   const arp = new Tone.FMSynth({
     context,
-    volume: -15,
+    volume: -16,
     harmonicity: 2,
     modulationIndex: 1.4,
     envelope: { attack: 0.003, decay: 0.08, sustain: 0, release: 0.08 },
