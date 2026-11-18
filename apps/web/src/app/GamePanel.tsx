@@ -78,7 +78,6 @@ export function GamePanel({
     level,
     bestLevel,
     replayTokens,
-    serveGuide: settings.serveGuide,
     lossLevel,
     introDuration: 1.5,
     previousLevel,

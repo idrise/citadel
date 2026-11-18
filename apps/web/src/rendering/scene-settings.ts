@@ -18,7 +18,6 @@ export type SettingsAction =
   | "restart"
   | "resetProgress"
   | "sound"
-  | "guide"
   | "report"
   | "benchmark";
 export interface SceneSettingsState {
@@ -30,7 +29,6 @@ export interface SceneSettingsState {
   effectsVolume: number;
   musicVolume: number;
   mouseSensitivity: number;
-  serveGuide?: boolean;
   level?: number;
   bestLevel?: number;
 }
@@ -68,11 +66,10 @@ const rows = [
 /** Shared pixel bounds keep the panel, rendered controls and accessible targets aligned. */
 function settingsPanelLayout(state: SceneSettingsState, width: number, height: number) {
   const count = state.touch ? 2 : 3,
-    columns = height < 420 ? (width >= 500 ? count : 2) : 1,
-    rowCount = Math.ceil(count / columns),
+    columns = height < 420 ? count : 1,
     w = Math.min(height < 420 ? 620 : 430, width - 24),
-    h = Math.min(count * 76 + (state.serveGuide === undefined ? 188 : 212), height - 24),
-    rowTop = state.serveGuide === undefined ? 65 : height < 420 ? 80 : 88;
+    h = Math.min(count * 76 + 228, height - 24),
+    rowTop = 100;
   return {
     count,
     columns,
@@ -82,7 +79,7 @@ function settingsPanelLayout(state: SceneSettingsState, width: number, height: n
     top: (height - h) / 2,
     rowTop,
     rowWidth: (w - 48 - (columns - 1) * 20) / columns,
-    gap: Math.min(76, (h - 120 - 8 - 44 - rowTop) / Math.max(1, rowCount - 1)),
+    gap: 76,
   };
 }
 export function settingsTargets(
@@ -123,19 +120,6 @@ export function settingsTargets(
     height,
   );
   return [
-    ...(state.serveGuide === undefined
-      ? []
-      : [
-          {
-            key: "guide" as const,
-            label: `Ball guide: ${state.serveGuide ? "Serve direction only" : "Off"}`,
-            left: left + w / 2 + 6,
-            top: top + 16,
-            width: w / 2 - 30,
-            height: 44,
-            value: state.serveGuide ? 1 : 0,
-          },
-        ]),
     ...rows.slice(0, count).map((row, i) => ({
       key: row.key,
       label: row.label,
@@ -159,7 +143,8 @@ export function settingsTargets(
     ...(
       ["resetProgress", ...(state.diagnostics ? (["report", "benchmark"] as const) : [])] as const
     ).map((key, i) => {
-      const unit = (w - 48 - 16) / 4;
+      const columnWidth = (w - 60) / 2,
+        diagnosticWidth = (columnWidth - 8) / 2;
       return {
         key,
         label:
@@ -168,9 +153,9 @@ export function settingsTargets(
             : key === "report"
               ? "Save performance report"
               : "Run performance test",
-        left: left + 24 + (i === 0 ? 0 : (i + 1) * unit + i * 8),
+        left: left + 24 + (i === 0 ? 0 : columnWidth + 12 + (i - 1) * (diagnosticWidth + 8)),
         top: top + h - 120,
-        width: state.diagnostics ? (i === 0 ? 2 * unit : unit) : w - 48,
+        width: state.diagnostics ? (i === 0 ? columnWidth : diagnosticWidth) : w - 48,
         height: 44,
       };
     }),
@@ -205,7 +190,6 @@ export function createSceneSettings(camera: PerspectiveCamera) {
   const buttons = (
     [
       ["pause", "PAUSE"],
-      ["guide", "GUIDE OFF"],
       ["resume", "RESUME"],
       ["restart", "RESTART"],
       ["resetProgress", "RESET"],
@@ -215,15 +199,13 @@ export function createSceneSettings(camera: PerspectiveCamera) {
     ] as const
   ).map(([key, text]) => {
     const body = box(`settings:${key}`),
-      label = createNeonLettering(
-        text,
-        key === "guide" || key === "report" || key === "benchmark" ? 13 : 16,
-      );
+      label = createNeonLettering(text, key === "report" || key === "benchmark" ? 13 : 16);
     if (key === "resetProgress") {
       const detail = createNeonLettering("PROGRESS", 13);
       detail.position.y = -18;
       label.add(detail);
     }
+    label.name = `settings-label:${key}`;
     root.add(label);
     return {
       key,
@@ -246,7 +228,15 @@ export function createSceneSettings(camera: PerspectiveCamera) {
     group.add(fill);
     const thumb = new Mesh(new BoxGeometry(9, 19, 0.2), fill.material);
     group.add(thumb);
-    return { ...row, group, text, track, fill, thumb };
+    return {
+      ...row,
+      group,
+      text,
+      track,
+      fill,
+      thumb,
+      textWidth: new Box3().setFromObject(text).getSize(new Vector3()).x,
+    };
   });
   for (const label of [
     title,
@@ -313,29 +303,13 @@ export function createSceneSettings(camera: PerspectiveCamera) {
         const { w, h } = settingsPanelLayout(state, width, height);
         panel.scale.set(w, h, 1);
         panel.position.z = -2;
-        title.position.set(state.serveGuide === undefined ? 0 : -w / 4 + 10, h / 2 - 34, 1);
-        title.scale.setScalar(state.serveGuide === undefined ? 1 : 0.8);
-        progress.position.set(-w / 4 + 10, h / 2 - 28, 1);
+        title.position.set(0, h / 2 - 34, 1);
+        progress.position.set(0, h / 2 - 28, 1);
       }
       for (const button of buttons) {
         const target = targets.find((t) => t.key === button.key);
         button.body.visible = button.label.visible = Boolean(target);
         if (!target) continue;
-        if (button.key === "guide" && button.label.userData.enabled !== Boolean(state.serveGuide)) {
-          root.remove(button.label);
-          disposeScene(button.label);
-          button.label = createNeonLettering(state.serveGuide ? "GUIDE ON" : "GUIDE OFF", 13);
-          button.label.traverse((node) => {
-            if (
-              node instanceof Mesh &&
-              node.material instanceof ShaderMaterial &&
-              node.material.name === "NeonFeatureEdges"
-            )
-              node.material.uniforms.strokeWidth!.value = 0.85;
-          });
-          button.label.userData.enabled = Boolean(state.serveGuide);
-          root.add(button.label);
-        }
         const p = centre(target.left, target.top, target.width, target.height);
         button.label.scale.setScalar(Math.min(1, (target.width - 16) / button.textWidth));
         button.body.scale.set(target.width, target.height, 1);
@@ -349,8 +323,8 @@ export function createSceneSettings(camera: PerspectiveCamera) {
         const p = centre(target.left, target.top, target.width, target.height),
           t = Math.max(0, Math.min(1, (target.value! - row.min) / (row.max - row.min)));
         row.group.position.set(p.x, p.y, 1);
-        row.text.position.set(0, height < 420 ? 24 : 32, 0);
-        row.text.scale.setScalar(height < 420 && width < 500 ? 0.7 : height < 420 ? 0.85 : 1);
+        row.text.position.set(0, 32, 0);
+        row.text.scale.setScalar(Math.min(1, target.width / row.textWidth));
         row.track.scale.x = target.width;
         row.fill.scale.x = Math.max(0.001, target.width * t);
         row.fill.position.x = -(target.width * (1 - t)) / 2;

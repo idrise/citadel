@@ -76,7 +76,6 @@ for (const touch of [false, true])
         musicVolume: 0.23,
         effectsVolume: 0.41,
         mouseSensitivity: 1.4,
-        serveGuide: true,
       });
       if (touch) await page.getByRole("button", { name: "Start", exact: true }).tap();
       else await play(page);

@@ -20,7 +20,7 @@ it("compares all four aid modes without changing control or pacing choices", () 
     expect(next.reducedEffects).toBe(true);
   }
   expect(settings.preview).toBe(false);
-  expect(settings.serveGuide).toBe(false);
+  expect(settings).not.toHaveProperty("serveGuide");
 });
 
 it("keeps informational preview and mouse sensitivity outside authoritative simulation options", () => {

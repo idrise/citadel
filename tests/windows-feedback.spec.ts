@@ -1,24 +1,19 @@
 import { expect, test } from "./fixtures";
 import { openGame, openSettings, play, finishIntroduction, pause, saveLevel } from "./helpers";
-test("guide defaults off, persists an explicit serve-only choice and desktop Pause stays hidden", async ({
-  page,
-}, info) => {
+test("retired guide choices are ignored and desktop Pause stays hidden", async ({ page }, info) => {
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      "citadel.solo.v1",
+      JSON.stringify({ version: 1, count: 4, humanSeat: 0, settings: { serveGuide: true } }),
+    ),
+  );
   await openGame(page, false);
   await openSettings(page);
-  await expect(page.getByRole("button", { name: "Ball guide: Off", exact: true })).toHaveAttribute(
-    "aria-pressed",
-    "false",
-  );
-  await page.getByRole("button", { name: "Ball guide: Off", exact: true }).click();
-  await expect(
-    page.getByRole("button", { name: "Ball guide: Serve direction only", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await page.screenshot({ path: info.outputPath("desktop-settings-guide.png") });
+  await expect(page.getByRole("button", { name: /Ball guide/ })).toHaveCount(0);
+  await page.screenshot({ path: info.outputPath("desktop-settings.png") });
   await page.reload();
   await openSettings(page);
-  await expect(
-    page.getByRole("button", { name: "Ball guide: Serve direction only", exact: true }),
-  ).toBeVisible();
+  await expect(page.getByRole("button", { name: /Ball guide/ })).toHaveCount(0);
   await play(page);
   await finishIntroduction(page);
   await expect(page.getByRole("button", { name: "Pause", exact: true })).toBeHidden();
@@ -45,7 +40,7 @@ test("current/best status migrates older progress and debug navigation cannot ra
 });
 test.describe("touch playtest status", () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
-  test("labels Pause and retains guide/status layout through rotation", async ({ page }, info) => {
+  test("labels Pause and retains settings layout through rotation", async ({ page }, info) => {
     await openGame(page, false);
     await page.getByRole("button", { name: "Start", exact: true }).tap();
     await finishIntroduction(page);
@@ -59,8 +54,8 @@ test.describe("touch playtest status", () => {
     ]) {
       await page.setViewportSize(size);
       await page.clock.runFor(200);
-      const guide = page.getByRole("button", { name: "Ball guide: Off", exact: true }),
-        box = (await guide.boundingBox())!;
+      await expect(page.getByRole("button", { name: /Ball guide/ })).toHaveCount(0);
+      const box = (await page.getByLabel("Sound effects volume", { exact: true }).boundingBox())!;
       expect(box.height).toBeGreaterThanOrEqual(44);
       expect(box.y).toBeGreaterThanOrEqual(0);
       expect(box.y + box.height).toBeLessThan(size.height);

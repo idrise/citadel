@@ -1,4 +1,4 @@
-import { PerspectiveCamera, Vector3 } from "three";
+import { Box3, PerspectiveCamera, Vector3 } from "three";
 import { expect, it } from "vite-plus/test";
 import { createSceneSettings, settingsTargets, type SceneSettingsState } from "./scene-settings";
 const state: SceneSettingsState = {
@@ -153,46 +153,51 @@ it("leaves comfortable space below both rendered buttons without crowding slider
   menu.dispose();
 });
 
-it("offers a labelled touch-only Pause and keeps the guide toggle clear of the sliders and footer", () => {
-  for (const touch of [false, true]) {
-    const live = { ...state, open: false, touch, showPause: true };
-    expect(settingsTargets(live, 390, 844).some((t) => t.key === "pause")).toBe(touch);
-    for (const height of [320, 390, 844]) {
-      const targets = settingsTargets({ ...state, touch, serveGuide: false }, 390, height),
-        guide = targets.find((t) => t.key === "guide")!,
-        resume = targets.find((t) => t.key === "resume")!,
-        sliders = targets.filter((t) => t.min !== undefined);
-      expect(guide.height).toBeGreaterThanOrEqual(44);
-      expect(guide.label).toBe("Ball guide: Off");
-      for (const slider of sliders) {
-        expect(slider.top).toBeGreaterThanOrEqual(guide.top + guide.height);
-        expect(resume.top - slider.top - slider.height).toBeGreaterThanOrEqual(8);
+it("centres the header, spaces slider labels below it and aligns both button labels", () => {
+  for (const [width, height] of [
+    [320, 320],
+    [568, 320],
+    [844, 390],
+    [390, 844],
+    [1280, 900],
+  ] as const)
+    for (const touch of [false, true]) {
+      const camera = new PerspectiveCamera(44, width / height, 0.1, 200),
+        view = createSceneSettings(camera),
+        settings = { ...state, touch, level: 7, bestLevel: 12 };
+      const targets = view.update(settings, width, height);
+      camera.updateMatrixWorld(true);
+      expect(targets.some((t) => String(t.key) === "guide")).toBe(false);
+      const progress = camera.getObjectByName("settings-level-status")!;
+      expect(progress.position.x).toBe(0);
+      const headerBottom = new Box3().setFromObject(progress).min.clone().project(camera);
+      const labelTop = new Box3()
+        .setFromObject(camera.getObjectByName("neon-text:SOUND EFFECTS")!)
+        .max.clone()
+        .project(camera);
+      expect(((headerBottom.y - labelTop.y) * height) / 2).toBeGreaterThanOrEqual(24);
+      for (const key of ["resume", "restart"] as const) {
+        const label = camera.getObjectByName(`settings-label:${key}`)!,
+          target = targets.find((t) => t.key === key)!,
+          centre = new Box3().setFromObject(label).getCenter(new Vector3()).project(camera);
+        expect(((centre.x + 1) * width) / 2).toBeCloseTo(target.left + target.width / 2, 0);
+        expect(((1 - centre.y) * height) / 2).toBeCloseTo(target.top + target.height / 2, 0);
       }
+      const first = progress.getObjectByName("neon-text:LEVEL 07");
+      view.update({ ...settings, musicVolume: 0.2 }, width, height);
+      expect(camera.getObjectByName("neon-text:LEVEL 07")).toBe(first);
+      view.update(state, width, height);
+      expect(camera.getObjectByName("neon-text:SETTINGS")!.position.x).toBe(0);
     }
-  }
 });
 
-it("puts current and best levels inside the short-screen Settings header and reuses them when sliders change", () => {
-  const camera = new PerspectiveCamera(44, 568 / 320, 0.1, 200),
-    view = createSceneSettings(camera),
-    settings = { ...state, touch: true, serveGuide: false, level: 7, bestLevel: 12 };
-  view.update(settings, 568, 320);
-  camera.updateMatrixWorld(true);
-  const progress = camera.getObjectByName("settings-level-status")!,
-    first = progress.getObjectByName("neon-text:LEVEL 07")!,
-    best = progress.getObjectByName("neon-text:BEST 12")!;
-  expect(progress.visible).toBe(true);
-  const guide = settingsTargets(settings, 568, 320).find((t) => t.key === "guide")!;
-  for (const line of [first, best]) {
-    const projected = line.getWorldPosition(new Vector3()).project(camera),
-      x = ((projected.x + 1) * 568) / 2,
-      y = ((1 - projected.y) * 320) / 2;
-    expect(x).toBeLessThan(guide.left);
-    expect(y).toBeGreaterThan(12);
-    expect(y).toBeLessThan(guide.top + guide.height);
-  }
-  view.update({ ...settings, musicVolume: 0.2 }, 568, 320);
-  expect(camera.getObjectByName("settings-level-status")).toBe(progress);
+it("offers a labelled touch-only Pause", () => {
+  for (const touch of [false, true])
+    expect(
+      settingsTargets({ ...state, open: false, touch, showPause: true }, 390, 844).some(
+        (t) => t.key === "pause",
+      ),
+    ).toBe(touch);
 });
 
 it("keeps report and diagnostic-test actions finger-sized without overlapping the pause controls", () => {
@@ -203,15 +208,21 @@ it("keeps report and diagnostic-test actions finger-sized without overlapping th
     [1280, 900],
   ] as const)
     for (const touch of [true, false]) {
-      const targets = settingsTargets(
-        { ...state, touch, serveGuide: false, diagnostics: true },
-        width,
-        height,
-      );
+      const targets = settingsTargets({ ...state, touch, diagnostics: true }, width, height);
       const footer = targets.filter((t) =>
         ["resume", "restart", "report", "benchmark"].includes(t.key),
       );
       expect(footer).toHaveLength(4);
+      const resume = targets.find((t) => t.key === "resume")!,
+        restart = targets.find((t) => t.key === "restart")!,
+        reset = targets.find((t) => t.key === "resetProgress")!,
+        report = targets.find((t) => t.key === "report")!,
+        benchmark = targets.find((t) => t.key === "benchmark")!;
+      expect(reset.left).toBe(resume.left);
+      expect(reset.width).toBe(resume.width);
+      expect(report.left).toBe(restart.left);
+      expect(benchmark.left + benchmark.width).toBeCloseTo(restart.left + restart.width, 8);
+
       for (let i = 0; i < footer.length; i++) {
         const target = footer[i]!;
         expect(target.width).toBeGreaterThanOrEqual(44);
@@ -238,11 +249,7 @@ it("keeps Reset progress reachable and separate from every slider and action on 
     [1280, 900],
   ])
     for (const touch of [false, true]) {
-      const targets = settingsTargets(
-        { ...state, touch, serveGuide: false, diagnostics: true },
-        width!,
-        height!,
-      );
+      const targets = settingsTargets({ ...state, touch, diagnostics: true }, width!, height!);
       const reset = targets.find((t) => t.key === "resetProgress")!;
       expect(reset.label).toBe("Reset progress");
       expect(reset.width).toBeGreaterThanOrEqual(44);

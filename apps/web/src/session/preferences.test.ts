@@ -97,13 +97,11 @@ it("migrates old preferences to an independent effects bus, clamps it and retain
   expect(prefs.settings.effectsVolume).toBe(1);
   expect(prefs.settings.musicVolume).toBe(0);
 });
-it("leaves old trajectory preferences off until the player explicitly enables the new serve marker", () => {
-  for (const preview of [false, true]) {
-    const saved = { version: 1, count: 6, humanSeat: 0, settings: { preview } };
-    expect(parsePreferences(JSON.stringify(saved)).settings.serveGuide).toBe(false);
-    expect(
-      parsePreferences(JSON.stringify({ ...saved, settings: { preview, serveGuide: true } }))
-        .settings.serveGuide,
-    ).toBe(true);
+it("discards retired guide choices without losing volumes or sensitivity", () => {
+  for (const serveGuide of [false, true]) {
+    const saved = { version: 1, settings: { serveGuide, musicVolume: 0.3, mouseSensitivity: 1.4 } };
+    const settings = parsePreferences(JSON.stringify(saved)).settings;
+    expect(settings).not.toHaveProperty("serveGuide");
+    expect(settings).toMatchObject({ musicVolume: 0.3, mouseSensitivity: 1.4 });
   }
 });

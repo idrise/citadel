@@ -39,7 +39,6 @@ export interface SessionSnapshot {
   level: number;
   bestLevel: number;
   replayTokens: number;
-  serveGuide: boolean;
   lossLevel: number;
   introDuration: number;
   previousLevel: number | undefined;
@@ -170,12 +169,6 @@ export function createSession(
             "_blank",
             "noopener,noreferrer",
           );
-        } else if (action === "guide") {
-          settings = { ...settings, serveGuide: !settings.serveGuide };
-          mark("settings", JSON.stringify(settings));
-          onSettings(settings);
-          present([], 0);
-          report();
         } else music.unlock();
       },
       change(key, value) {
@@ -224,7 +217,6 @@ export function createSession(
       level,
       bestLevel,
       replayTokens,
-      serveGuide: settings.serveGuide,
       lossLevel,
       previousLevel,
       introDuration,
@@ -448,7 +440,6 @@ export function createSession(
           effectsVolume: settings.effectsVolume,
           musicVolume: settings.music ? settings.musicVolume : 0,
           mouseSensitivity: settings.mouseSensitivity,
-          serveGuide: settings.serveGuide,
           level,
           bestLevel,
         },
@@ -475,7 +466,7 @@ export function createSession(
         reduced: settings.reducedEffects,
       },
       quality: settings.effectsQuality,
-      preview: settings.serveGuide,
+      preview: false,
       slowdown: settings.slowdown,
       reducedEffects: settings.reducedEffects,
       musicPulse: settings.musicLights ? musicVisuals.pulse : 0,

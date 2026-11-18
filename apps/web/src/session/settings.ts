@@ -4,7 +4,6 @@ import { DEFAULT_OPTIONS, type MatchOptions } from "../simulation/types";
 export interface GameSettings {
   effectsQuality: "low" | "medium" | "high";
   preview: boolean;
-  serveGuide: boolean;
   slowdown: boolean;
   reducedEffects: boolean;
   mouseSensitivity: number;
@@ -34,7 +33,6 @@ export function createSettings(reducedEffects = false): GameSettings {
   return {
     effectsQuality: "high",
     preview: false,
-    serveGuide: false,
     slowdown: false,
     reducedEffects,
     mouseSensitivity: 1,
