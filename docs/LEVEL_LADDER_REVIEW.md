@@ -1,5 +1,27 @@
 # Three-loss ladder, bot difficulty and reflected level signs — M09
 
+## 18 November update: sequential wins
+
+Every win now unlocks exactly the next level: 1 → 2, 2 → 3, and so on.
+Level 100 stays at 100. Winning streaks and prior finishing positions no longer
+skip levels. This supersedes the accelerated-promotion rules recorded below.
+Existing saved levels, completed personal bests and history are retained; no save
+migration or progress reset is required. Replay-token loss/demotion rules remain
+as described in `REPLAY_TOKENS_COLLISIONS_REVIEW.md`.
+
+Validation: the regression first reproduced level 70 jumping to 75 after a streak.
+All 695 unit tests and format/lint/types now pass. Coverage includes every level,
+all 2–16 seat counts, wins/losses, token balances, save round-trips and the level-100
+ceiling. Eight production Chromium checks pass, including real 1 → 2 and 2 → 3 wins,
+Next Level, reload persistence, ordinary retries and token-exhaustion demotion.
+The root production build passes with the existing bundle-size advisory.
+
+Rendered evidence: [level 2 victory](reviews/m09/sequential-progression/level-2-win.png)
+and [level 3 introduction](reviews/m09/sequential-progression/level-3-start.png).
+Try winning consecutive levels at http://127.0.0.1:5181/; each Next Level should
+increase the displayed level by exactly one. Browser evidence is desktop Chromium;
+physical mobile checks and remote CI remain unverified. REVIEW REQUIRED — M09.
+
 The bot curve is now combined with level-driven ball count/speed, pickup budgets
 and physical bat width. See [the combined difficulty review](DIFFICULTY_CURVE_REVIEW.md).
 

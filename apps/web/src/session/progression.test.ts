@@ -2,7 +2,6 @@ import { expect, it } from "vite-plus/test";
 import { createMatch } from "../simulation/match";
 import {
   createProgressRecorder,
-  estimateSkill,
   freshProgress,
   levelFor,
   levelAfterLoss,
@@ -10,29 +9,28 @@ import {
   MAX_REPLAY_TOKENS,
   parseProgress,
   PROGRESS_KEY,
-  rankProbability,
   recordResult,
   RESULT_WINDOW,
   saveProgress,
 } from "./progression";
 
-it("records only actual wins, including skipped promotions and a win at the ceiling", () => {
+it("records only actual wins, across restored challenges and a win at the ceiling", () => {
   expect(freshProgress().best).toBe(0);
   let progress = recordResult(freshProgress(), { level: 1, count: 6, place: 6, at: 0 });
   expect(progress.best).toBe(0);
   progress = recordResult(progress, { level: 1, count: 6, place: 1, at: 1 });
   expect(progress).toMatchObject({ level: 2, best: 1 });
   progress = recordResult(progress, { level: 5, count: 6, place: 1, at: 2 });
-  expect(progress.level).toBeGreaterThanOrEqual(6);
+  expect(progress.level).toBe(6);
   const strong = {
     ...freshProgress(),
     level: 70,
     rounds: 2,
     recent: [0, 1].map((at) => ({ level: 70, count: 6 as const, place: 1, at })),
   };
-  const skipped = recordResult(strong, { level: 70, count: 6, place: 1, at: 2 });
-  expect(skipped.level).toBeGreaterThan(71);
-  expect(skipped.best).toBe(70);
+  const won = recordResult(strong, { level: 70, count: 6, place: 1, at: 2 });
+  expect(won.level).toBe(71);
+  expect(won.best).toBe(70);
   expect(progress.best).toBe(5);
   const unlocked = progress.level;
   for (let at = 3; at <= 6; at++)
@@ -81,14 +79,18 @@ it("retains won peaks after their history rolls off and saves tokens as version 
   expect(parseProgress(raw)).toEqual(progress);
 });
 
-it("advances on every win, accelerates consistent wins, reaches the ceiling quickly and demotes once per four failed attempts", () => {
+it("visits every level in order through a long win streak and demotes once per four failed attempts", () => {
   let progress = freshProgress();
   expect(levelFor(progress, 6)).toBe(1);
   progress = recordResult(progress, { level: 1, count: 4, place: 1, at: 0 });
   expect(progress.level).toBe(2);
-  for (let i = 0; i < 21; i++)
-    progress = recordResult(progress, { level: progress.level, count: 4, place: 1, at: i + 1 });
-  expect(progress.level).toBe(100);
+  for (let from = 2; from <= 100; from++) {
+    progress = recordResult(progress, { level: from, count: 4, place: 1, at: from });
+    expect(progress.level).toBe(Math.min(100, from + 1));
+    expect(progress.best).toBe(from);
+    progress = parseProgress(JSON.stringify({ version: 5, ...progress }));
+    expect(progress.level).toBe(Math.min(100, from + 1));
+  }
   for (let i = 0; i < 16; i++)
     progress = recordResult(progress, { level: progress.level, count: 4, place: 4, at: i + 20 });
   expect(progress.level).toBe(96);
@@ -99,7 +101,7 @@ it("advances on every win, accelerates consistent wins, reaches the ceiling quic
   expect(progress.level).toBe(86);
 });
 
-it("ignores time away and historical roster changes while preserving result-order weighting", () => {
+it("ignores time away and historical roster changes while preserving saved history", () => {
   const progress = {
     ...freshProgress(),
     level: 80,
@@ -110,27 +112,22 @@ it("ignores time away and historical roster changes while preserving result-orde
   const recent = { ...progress, recent: [{ ...progress.recent[0]!, at: Date.now() }] };
   expect(levelFor(progress, 4)).toBe(80);
   expect(levelFor(recent, 4)).toBe(80);
-  expect(estimateSkill(progress.recent)).toEqual(estimateSkill(recent.recent));
   expect(levelFor(progress, 6)).toBe(80);
   expect(levelFor(progress, 2)).toBe(80);
 });
 
-it("uses finishing position and arena size as evidence rather than treating all losses alike", () => {
+it("retains the actual finishing position and roster in history while losses retry the same level", () => {
   const previous = { ...freshProgress(), level: 70 };
-  const second = recordResult(previous, { level: 70, count: 6, place: 2, at: 0 });
-  const last = recordResult(previous, { level: 70, count: 6, place: 6, at: 0 });
-  expect(second.level).toBe(70);
-  expect(last.level).toBe(70);
-  expect(estimateSkill(second.recent).posterior).not.toEqual(estimateSkill(last.recent).posterior);
-  for (const skill of [-30, 50, 160])
-    for (const count of [2, 4, 6]) {
-      let sum = 0;
-      for (let place = 1; place <= count; place++) sum += rankProbability(skill, 50, count, place);
-      expect(sum).toBeCloseTo(1, 10);
+  for (const count of [2, 6, 16] as const)
+    for (let place = 2; place <= count; place++) {
+      const result = { level: 70, count, place, at: 0 };
+      const next = recordResult(previous, result);
+      expect(next.level).toBe(70);
+      expect(next.recent.at(-1)).toEqual(result);
     }
 });
 
-it("uses losses to temper future upward calibration without demoting a retry", () => {
+it("advances exactly one level after either a win streak or losses", () => {
   const history = (place: number) => ({
     ...freshProgress(),
     level: 70,
@@ -139,7 +136,7 @@ it("uses losses to temper future upward calibration without demoting a retry", (
   });
   const win = { level: 70, count: 4 as const, place: 1, at: 3 };
   expect(recordResult(history(4), win).level).toBe(71);
-  expect(recordResult(history(1), win).level).toBeGreaterThan(71);
+  expect(recordResult(history(1), win).level).toBe(71);
 });
 
 it("retries the actual played level for every losing place and roster, including adjusted attempts", () => {
@@ -220,18 +217,37 @@ it("saves a known personal loss immediately while remaining bots continue, witho
   expect(recorder(state, 300)).toBeNull();
 });
 
-it("always advances a win, even after losses or at a roster-adjusted level, and caps at 100", () => {
-  for (const level of [1, 25, 70, 99, 100]) {
-    const previous = {
-      ...freshProgress(),
-      level,
-      rounds: 1,
-      recent: [{ level, count: 4 as const, place: 4, at: 0 }],
-    };
-    expect(recordResult(previous, { level, count: 4, place: 1, at: 1 }).level).toBe(
-      Math.min(100, level + 1),
-    );
-  }
+it("wins unlock only the next played level across every level, roster, history and token balance", () => {
+  for (let level = 1; level <= 100; level++)
+    for (const count of [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] as const)
+      for (const replayTokens of [0, 1, 2, 3]) {
+        const previous = {
+          ...freshProgress(),
+          level: 100, // The played level is authoritative, even after switching challenges.
+          best: 90,
+          replayTokens,
+          rounds: RESULT_WINDOW,
+          recent: Array.from({ length: RESULT_WINDOW }, (_, at) => ({
+            level,
+            count: 6 as const,
+            place: replayTokens === 0 ? 6 : 1,
+            at,
+          })),
+        };
+        const saved = structuredClone(previous);
+        const result = { level, count, place: 1, at: RESULT_WINDOW };
+        const next = recordResult(previous, result);
+        expect(next).toMatchObject({
+          level: Math.min(100, level + 1),
+          best: Math.max(90, level),
+          count,
+          replayTokens: MAX_REPLAY_TOKENS,
+          demotion: null,
+          rounds: RESULT_WINDOW + 1,
+        });
+        expect(next.recent).toEqual([...previous.recent.slice(1), result]);
+        expect(previous).toEqual(saved);
+      }
 });
 
 it("winning level one always leads to two, including progress saved by an older build", () => {
@@ -364,19 +380,22 @@ it("restores three tokens after a recorded win even if an older save has stale l
     }
 });
 
-it.each([25, 60, 100])("finds a synthetic threshold of %i without large overshoots", (capacity) => {
-  let progress = freshProgress();
-  for (let round = 0; round < 30; round++) {
-    const from = progress.level;
-    progress = recordResult(progress, {
-      level: from,
-      count: 4,
-      place: from <= capacity ? 1 : 4,
-      at: round,
-    });
-    expect(progress.level - from).toBeLessThanOrEqual(5);
-    expect(from - progress.level).toBeLessThanOrEqual(1);
-  }
-  expect(progress.level).toBeGreaterThanOrEqual(capacity);
-  expect(progress.level).toBeLessThanOrEqual(Math.min(100, capacity + 1));
-});
+it.each([25, 60, 100])(
+  "reaches a synthetic threshold of %i by playing every intervening level",
+  (capacity) => {
+    let progress = freshProgress();
+    for (let round = 0; round < capacity + 16; round++) {
+      const from = progress.level;
+      progress = recordResult(progress, {
+        level: from,
+        count: 4,
+        place: from <= capacity ? 1 : 4,
+        at: round,
+      });
+      expect(progress.level - from).toBeLessThanOrEqual(1);
+      expect(from - progress.level).toBeLessThanOrEqual(1);
+    }
+    expect(progress.level).toBeGreaterThanOrEqual(capacity);
+    expect(progress.level).toBeLessThanOrEqual(Math.min(100, capacity + 1));
+  },
+);

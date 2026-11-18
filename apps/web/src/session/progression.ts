@@ -7,8 +7,6 @@ import { clamp } from "../simulation/vector";
 export const PROGRESS_KEY = "citadel.progress.v1";
 export const RESULT_WINDOW = 16;
 export const MAX_REPLAY_TOKENS = 3;
-const SKILL_SCALE = 8;
-const TARGET_WIN_RATE = 0.6;
 export interface LevelResult {
   level: number;
   count: PlayerCount;
@@ -39,43 +37,6 @@ export const freshProgress = (): PlayerProgress => ({
   recent: [],
 });
 
-/** Symmetric-rival ranking likelihood: second of six carries more evidence than last.
- * This is an explicit calibration model, not a claim of measured human win rates. */
-export function rankProbability(skill: number, level: number, count: number, place: number) {
-  const strength = Math.exp((skill - level) / SKILL_SCALE);
-  let probability = 1;
-  for (let placed = 0; placed < place - 1; placed++)
-    probability *= (count - 1 - placed) / (strength + count - 1 - placed);
-  return (probability * strength) / (strength + count - place);
-}
-
-/** Recent attempts matter; time away never changes the judgment. */
-export function estimateSkill(recent: readonly LevelResult[]) {
-  const scores = Array.from({ length: 191 }, (_, i) => {
-    const skill = i - 30;
-    const log = recent.reduce((sum, result, index) => {
-      const weight = Math.pow(0.96, recent.length - 1 - index);
-      return (
-        sum +
-        weight *
-          Math.log(
-            Math.max(1e-15, rankProbability(skill, result.level, result.count, result.place)),
-          )
-      );
-    }, 0);
-    return { skill, log };
-  });
-  const peak = Math.max(...scores.map((s) => s.log));
-  const weights = scores.map((s) => Math.exp(s.log - peak));
-  const total = weights.reduce((a, b) => a + b, 0);
-  const posterior = scores.map((s, i) => ({ skill: s.skill, weight: weights[i]! / total }));
-  const mean = posterior.reduce((sum, s) => sum + s.skill * s.weight, 0);
-  const deviation = Math.sqrt(
-    posterior.reduce((sum, s) => sum + (s.skill - mean) ** 2 * s.weight, 0),
-  );
-  return { posterior, deviation };
-}
-
 /** A level now owns its roster; historical counts must never shift the saved level. */
 export function levelFor(progress: PlayerProgress, _count?: PlayerCount) {
   return progress.level;
@@ -90,31 +51,13 @@ export function levelAfterLoss(progress: PlayerProgress, count: PlayerCount) {
 export function recordResult(progress: PlayerProgress, result: LevelResult): PlayerProgress {
   if (!validResult(result)) throw new Error("Invalid progression result");
   const recent = [...progress.recent, { ...result }].slice(-RESULT_WINDOW);
-  const { posterior, deviation } = estimateSkill(recent);
-  let desired = 1;
-  for (let level = 1; level <= 100; level++) {
-    const win = posterior.reduce(
-      (sum, s) => sum + s.weight * rankProbability(s.skill, level, result.count, 1),
-      0,
-    );
-    if (win >= TARGET_WIN_RATE) desired = level;
-  }
-  // Keep the established conservative upward calibration.
-  const step = clamp(Math.round(deviation * 0.75), 2, 5);
-  const consistent = recent.slice(-3).filter((r) => r.place === 1).length >= 2;
   const exhausted = result.place !== 1 && progress.replayTokens === 0;
   const demotion: Demotion | null =
     exhausted && result.level > 1
       ? { from: result.level, to: result.level - 1, count: result.count }
       : null;
-  const level =
-    result.place === 1
-      ? result.level === 1
-        ? 2
-        : consistent
-          ? clamp(desired, result.level + 1, result.level + step)
-          : result.level + 1
-      : (demotion?.to ?? result.level);
+  // A completed level unlocks its immediate successor, regardless of win history.
+  const level = result.place === 1 ? result.level + 1 : (demotion?.to ?? result.level);
   return {
     level: clamp(level, 1, 100),
     // The floor also starts a fresh cycle after an exhausted attempt.

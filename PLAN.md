@@ -889,6 +889,20 @@ CI-path build pass. The production version label also passes desktop and phone
 browser checks at root and Pages paths. Existing chunk-size advice remains;
 remote Linux CI rerun is pending. M09 awaits review; no push/deployment authorised.
 
+18 November sequential-win amendment (owner request): every won level now advances
+to its immediate successor, capped at 100. This supersedes the earlier accelerated
+promotion and Bayesian calibration rules. Removed the unused skill-estimation
+machinery. Existing saves retain their current challenge, best completed level,
+history and tokens; loss/demotion and debug navigation rules remain intact.
+The regression reproduced 70 → 75 under the old streak rule; it now requires 71.
+Unit coverage checks all 100 levels, all 2–16 rosters, histories, token balances,
+long win streaks and reloads. All 695 unit tests, format/lint/types, the root build
+and eight production Chromium progression checks pass, including real 1 → 2 and
+restored-streak 2 → 3 wins and their Next Level/reload paths. Evidence and local-demo
+instructions are in `docs/LEVEL_LADDER_REVIEW.md`. The existing bundle-size advisory
+remains; remote CI/physical-device checks are not claimed. M09 awaits owner review;
+no push or deployment is authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,

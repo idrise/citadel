@@ -41,51 +41,86 @@ test("introduces the level before play, pauses the introduction and never rates 
   expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).rounds, key)).toBe(0);
 });
 
-test("a first win advances 1 to 2 and one click starts the next round without recreating the canvas", async ({
-  page,
-}, testInfo) => {
-  test.setTimeout(90000);
-  await openGame(page);
-  await choosePlayers(page, 2);
-  await openSettings(page);
-  await configureGame(page, { music: false, effectsVolume: 0 });
-  await play(page);
-  for (
-    let time = 0;
-    time < 120 &&
-    (await page.getByLabel("Round phase", { exact: true }).textContent()) !== "finished";
-    time++
-  )
-    await page.clock.runFor(1000);
-  await expect(page.getByLabel("Round winner", { exact: true })).toHaveText("You win");
-  const progress = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
-  expect(progress.rounds).toBe(1);
-  expect(progress.level).toBe(2);
-  expect(progress.replayTokens).toBe(3);
-  expect(progress.demotion).toBeNull();
-  await expect(page.getByLabel("Round level", { exact: true })).toHaveText("1");
-  await expect(page.getByLabel("Round ball speed", { exact: true })).toHaveText("14.00");
-  await page.clock.runFor(6000);
-  expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).rounds, key)).toBe(1);
-  await page.screenshot({ path: testInfo.outputPath("level-1-win.png") });
-  await page.locator("canvas").evaluate((canvas) => canvas.setAttribute("data-continued", "same"));
-  await page.getByRole("button", { name: "Next level", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Start", exact: true })).toBeHidden();
-  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("countdown");
-  await expect(page.getByLabel("Level introduction", { exact: true })).toHaveText("Level 2");
-  await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
-    "LOSS RETRIES LEVEL 02",
-  );
-  await expect(page.getByLabel("Round ball speed", { exact: true })).toHaveText("14.20");
-  await expect(page.locator("canvas")).toHaveAttribute("data-continued", "same");
-  await page.screenshot({ path: testInfo.outputPath("level-2-start.png") });
-  await expect.poll(() => page.evaluate(() => Boolean(document.pointerLockElement))).toBe(true);
-  await finishIntroduction(page);
-  await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
-  await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(progress.level));
-  await page.reload();
-  await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(progress.level));
-});
+for (const from of [1, 2])
+  test(`a win at level ${from} advances exactly one level, including a restored winning streak`, async ({
+    page,
+  }, testInfo) => {
+    test.setTimeout(90000);
+    if (from > 1)
+      await page.addInitScript(
+        ({ key, from }) => {
+          if (!localStorage.getItem(key))
+            localStorage.setItem(
+              key,
+              JSON.stringify({
+                version: 5,
+                level: from,
+                count: 2,
+                best: from - 1,
+                rounds: 2,
+                replayTokens: 3,
+                demotion: null,
+                recent: [0, 1].map((at) => ({ level: from - 1, count: 2, place: 1, at })),
+              }),
+            );
+        },
+        { key, from },
+      );
+    await openGame(page);
+    await choosePlayers(page, 2);
+    await openSettings(page);
+    await configureGame(page, { music: false, effectsVolume: 0 });
+    await play(page);
+    for (
+      let time = 0;
+      time < 120 &&
+      (await page.getByLabel("Round phase", { exact: true }).textContent()) !== "finished";
+      time++
+    )
+      await page.clock.runFor(1000);
+    await expect(page.getByLabel("Round winner", { exact: true })).toHaveText("You win");
+    const progress = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
+    expect(progress.rounds).toBe(from === 1 ? 1 : 3);
+    expect(progress.level).toBe(from + 1);
+    expect(progress.replayTokens).toBe(3);
+    expect(progress.demotion).toBeNull();
+    await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(from));
+    await expect(page.getByLabel("Round ball speed", { exact: true })).toHaveText(
+      (14 + ((from - 1) * 20) / 99).toFixed(2),
+    );
+    await page.clock.runFor(6000);
+    expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).rounds, key)).toBe(
+      progress.rounds,
+    );
+    await page.screenshot({ path: testInfo.outputPath(`level-${from}-win.png`) });
+    await page
+      .locator("canvas")
+      .evaluate((canvas) => canvas.setAttribute("data-continued", "same"));
+    await page.getByRole("button", { name: "Next level", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Start", exact: true })).toBeHidden();
+    await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("countdown");
+    await expect(page.getByLabel("Level introduction", { exact: true })).toHaveText(
+      `Level ${from + 1}`,
+    );
+    await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
+      `LOSS RETRIES LEVEL ${String(from + 1).padStart(2, "0")}`,
+    );
+    await expect(page.getByLabel("Round ball speed", { exact: true })).toHaveText(
+      (14 + (from * 20) / 99).toFixed(2),
+    );
+    await expect(page.locator("canvas")).toHaveAttribute("data-continued", "same");
+    await page.screenshot({ path: testInfo.outputPath(`level-${from + 1}-start.png`) });
+    await expect.poll(() => page.evaluate(() => Boolean(document.pointerLockElement))).toBe(true);
+    await finishIntroduction(page);
+    await expect(page.getByLabel("Round phase", { exact: true })).toHaveText("playing");
+    await expect(page.getByLabel("Round level", { exact: true })).toHaveText(
+      String(progress.level),
+    );
+    await page.reload();
+    await expect(page.getByLabel("Round level", { exact: true })).toHaveText(
+      String(progress.level),
+    );
+  });
 
 test("a restored win discards a stale counter and requires four new played losses before demotion", async ({
   page,
