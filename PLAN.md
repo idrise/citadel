@@ -874,6 +874,21 @@ advisory remains, and phone evidence uses emulation. Local demo: http://127.0.0.
 M09 still awaits owner review; no push or
 deployment is authorised.
 
+18 November CI stress-timeout follow-up (owner-reported eight-ball test timeout):
+Reproduced the default five-second timeout locally under full-suite contention;
+the sixteen-ball/reset stress test also timed out in that run. Both deterministic
+stress tests now have a scoped 30-second allowance. The eight-ball test calculates
+arena planes once per tick and aggregates minimum clearance and the first invalid
+serve recipient across every ball/tick, removing repeated passing matcher overhead.
+The same seed, two full replays and 45-second simulation ceiling remain; damage,
+collision-cap and replay assertions remain, with an explicit eight-ball peak check.
+No simulation, balance, global timeout, retries or worker policy changes were made.
+Validation: all 26 focused tests pass; all 695 tests/121 files pass in three
+consecutive default-worker runs (7.21s, 8.28s, 7.80s). Format/lint/types and the
+CI-path build pass. The production version label also passes desktop and phone
+browser checks at root and Pages paths. Existing chunk-size advice remains;
+remote Linux CI rerun is pending. M09 awaits review; no push/deployment authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,

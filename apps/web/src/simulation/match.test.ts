@@ -276,29 +276,46 @@ describe("timed multi-ball pressure", () => {
     expect(next.balls[1]!.phase).toBe("active");
     expect(next).toEqual(stepMatch(state));
   });
-  it("supports eight fast balls with slowdown while preserving bounds, recipients and replay", () => {
-    let state = createMatch(15);
-    const options = {
-      ...DEFAULT_OPTIONS,
-      humanSeat: -1,
-      ballInterval: 1,
-      maxBalls: 8,
-      slowdown: true,
-    };
-    let replay = createMatch(15);
-    for (let tick = 0; tick < 120 * 45 && state.phase !== "finished"; tick++) {
-      state = stepMatch(state, IDLE_INTENT, options);
-      replay = stepMatch(replay, IDLE_INTENT, options);
-      for (const ball of state.balls) {
-        for (const { start, normal } of polygonEdges(state.arena.vertices))
-          expect(
-            dot({ x: ball.position.x - start.x, y: ball.position.y - start.y }, normal),
-          ).toBeGreaterThanOrEqual(ARENA.ballRadius - 1e-6);
-        if (ball.phase === "ready") expect(alive(state.players[ball.seat]!)).toBe(true);
+  // This is a deterministic stress run, not a five-second performance budget.
+  it(
+    "supports eight fast balls with slowdown while preserving bounds, recipients and replay",
+    { timeout: 30_000 },
+    () => {
+      let state = createMatch(15);
+      const options = {
+        ...DEFAULT_OPTIONS,
+        humanSeat: -1,
+        ballInterval: 1,
+        maxBalls: 8,
+        slowdown: true,
+      };
+      let replay = createMatch(15);
+      let minimumClearance = Infinity,
+        peakBalls = 0;
+      let invalidRecipient: { tick: number; ball: number; seat: number } | null = null;
+      for (let tick = 0; tick < 120 * 45 && state.phase !== "finished"; tick++) {
+        state = stepMatch(state, IDLE_INTENT, options);
+        replay = stepMatch(replay, IDLE_INTENT, options);
+        // Geometry may change after elimination; calculate its planes once per tick.
+        const edges = polygonEdges(state.arena.vertices);
+        peakBalls = Math.max(peakBalls, state.balls.length);
+        for (const ball of state.balls) {
+          for (const { start, normal } of edges)
+            minimumClearance = Math.min(
+              minimumClearance,
+              dot({ x: ball.position.x - start.x, y: ball.position.y - start.y }, normal),
+            );
+          if (ball.phase === "ready" && !alive(state.players[ball.seat]!) && !invalidRecipient)
+            invalidRecipient = { tick, ball: ball.id, seat: ball.seat };
+        }
       }
-    }
-    expect(state).toEqual(replay);
-    expect(state.stats.collisionCaps).toBe(0);
-    expect(state.stats.damage).toBeGreaterThanOrEqual(ARENA.startingPieces * 3);
-  });
+      // Aggregate every tick, so a transient violation cannot be hidden by recovery.
+      expect(minimumClearance).toBeGreaterThanOrEqual(ARENA.ballRadius - 1e-6);
+      expect(invalidRecipient).toBeNull();
+      expect(peakBalls).toBe(8);
+      expect(state).toEqual(replay);
+      expect(state.stats.collisionCaps).toBe(0);
+      expect(state.stats.damage).toBeGreaterThanOrEqual(ARENA.startingPieces * 3);
+    },
+  );
 });

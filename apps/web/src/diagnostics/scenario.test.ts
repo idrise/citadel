@@ -1,21 +1,26 @@
 import { expect, it } from "vite-plus/test";
 import { createScenario } from "./scenario";
 import { alive } from "../simulation/types";
-it("sustains sixteen balls through multiple fixture resets, with identical seeded ticks", () => {
-  const first = createScenario({ seats: 3, shape: "rounded", workload: "sixteen" });
-  const second = createScenario({ seats: 3, shape: "rounded", workload: "sixteen" });
-  for (let i = 0; i < 3600; i++) {
-    first.step();
-    second.step();
-    expect(first.state.stats.collisionCaps).toBe(0);
-    if (first.state.balls.length !== 16) throw new Error(`Lost fixture balls at ${i}`);
-  }
-  expect(first.state).toEqual(second.state);
-  expect(first.simulatedSeconds()).toBe(30);
-  expect(first.cycles).toBe(2);
-  expect(first.state.arena.variant).toBe("rounded");
-  expect(first.state.players.every(alive)).toBe(true);
-});
+// The full 30 simulated seconds are a correctness check, not a wall-clock benchmark.
+it(
+  "sustains sixteen balls through multiple fixture resets, with identical seeded ticks",
+  { timeout: 30_000 },
+  () => {
+    const first = createScenario({ seats: 3, shape: "rounded", workload: "sixteen" });
+    const second = createScenario({ seats: 3, shape: "rounded", workload: "sixteen" });
+    for (let i = 0; i < 3600; i++) {
+      first.step();
+      second.step();
+      expect(first.state.stats.collisionCaps).toBe(0);
+      if (first.state.balls.length !== 16) throw new Error(`Lost fixture balls at ${i}`);
+    }
+    expect(first.state).toEqual(second.state);
+    expect(first.simulatedSeconds()).toBe(30);
+    expect(first.cycles).toBe(2);
+    expect(first.state.arena.variant).toBe("rounded");
+    expect(first.state.players.every(alive)).toBe(true);
+  },
+);
 it.each([2, 6] as const)(
   "separates dense sixteen-ball launch queues in %i seats without collision caps",
   (seats) => {
