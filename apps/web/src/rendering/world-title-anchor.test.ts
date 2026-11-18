@@ -95,8 +95,9 @@ it("anchors DEMOTED using the same reflected, rising title geometry across roste
         width! / height!,
       );
       sign.update("DEMOTED", 1, arena, 0, true, null, 1, width! < height! ? -0.95 : 0);
+      sign.root.position.y += 3;
       const id = sign.root.children[0]!.uuid;
-      place(camera, width!, height!, sign.raisedY);
+      place(camera, width!, height!, sign.raisedY + 3);
       const projected = sign.root.getWorldPosition(new Vector3()).project(camera);
       expect(projected.x).toBeCloseTo(0, 8);
       expect(((1 - projected.y) * height!) / 2).toBeCloseTo(
@@ -104,7 +105,7 @@ it("anchors DEMOTED using the same reflected, rising title geometry across roste
         7,
       );
       expect(sign.root.getObjectByName("neon-text:DEMOTED")).toBeDefined();
-      expect(new Box3().setFromObject(sign.root).min.y).toBeGreaterThan(0.01);
+      expect(new Box3().setFromObject(sign.root).min.y).toBeGreaterThan(2.22);
       sign.update("DEMOTED", 1, arena, 0, true, null, 1, width! < height! ? -0.95 : 0);
       expect(sign.root.children[0]!.uuid).toBe(id);
     }

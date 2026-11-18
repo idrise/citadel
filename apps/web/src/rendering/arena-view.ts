@@ -73,7 +73,8 @@ export function createArenaView(
   const titleSign = createLevelIntro(stage.root);
   const placeTitle = createWorldTitleAnchor(titleSign.root);
   titleSign.root.name = "citadel-title";
-  let titleRise = 0;
+  let titleRise = 0,
+    titleLift = 0;
   const reflection = createArenaReflections(humanSeat, initial, mobile);
   stage.root.add(...reflection.meshes);
   const balls = createBallView(stage.root);
@@ -92,7 +93,7 @@ export function createArenaView(
   return {
     root: stage.root,
     placeTitle(camera: PerspectiveCamera, width: number, height: number) {
-      placeTitle(camera, width, height, titleSign.raisedY);
+      placeTitle(camera, width, height, titleSign.raisedY + titleLift);
     },
     dispose: () => reflection.dispose(),
     captureTransition(frame: TitleFrame): TitleFrame {
@@ -217,6 +218,9 @@ export function createArenaView(
         titleRise,
         options.titleTilt ?? (options.portrait ? -0.95 : 0),
       );
+      // The result star's side walls can occlude floor-height title lettering.
+      titleLift = demoted ? 3 * titleRise : 0;
+      titleSign.root.position.y += titleLift;
       intro.update(
         options.menu?.mode === "level" ? (options.menu.level ?? 1) : null,
         state.countdown,

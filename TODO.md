@@ -58,11 +58,12 @@ Windows stutter investigation limit: four local 30s native Chromium captures, a 
 
 ## Playtest feedback — 18 November 2026, 11:49–11:58
 
-David Brown's feedback from the previous night's play. Pending manual review;
-these are proposals and investigations, not approved gameplay changes.
+David Brown's feedback from the previous night's play, implemented at the owner's
+request on 18 November. Ready for local review; see
+[replay tokens, spin and collisions](docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md).
 
-- [ ] **Check spin direction.** David suspects the spin goes the wrong way: with the bat moving right at impact, he expects anticlockwise ball spin and a curve to the left, based on ping pong. Verify the current behaviour and sign conventions before deciding whether to change it.
-- [ ] **Show replay tokens at the top left.** Review a visible token count as a way to add psychological pressure during play.
-- [ ] **Review the proposed replay-token rules.** Start with three tokens; lose one on a failed level; losing with no tokens left causes demotion. Restore one or two tokens on demotion and give three back on a level win. Decide the demotion refill and whether winning adds three tokens or resets the balance to three, including any cap.
-- [ ] **Consider brief invulnerability after losing a post.** David experienced rapid successive losses that took him from “hero to zero” in about a second. Review whether a very short protection window would make damage feel less random, or whether that pressure should remain part of the game.
-- [ ] **Investigate ball-on-ball collisions and their performance cost.** David sometimes took a double hit from balls overlapping one another. Assess whether collisions would address this and measure their impact under high ball counts, including phone and tablet workloads, before deciding whether to add them.
+- [x] **Spin direction.** David suspects the spin goes the wrong way: with the bat moving right at impact, he expects anticlockwise ball spin and a curve to the left, based on ping pong. If the assumption is correct then reverse the curvature.
+- [x] **Show replay tokens at the top left.** Review a visible token count as a way to add psychological pressure during play.
+- [x] When the player loses and is demoted make that really clear with text saying demoted displayed like in the title text.
+- [x] **Replay-token rules.** Start with three tokens; lose one on a failed level; losing with no tokens left causes demotion. Restore to three tokens on demotion and restore to three on a level win.
+- [x] Add ball to ball collisions and transfer spin onto the destination ball.

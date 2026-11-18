@@ -1,3 +1,4 @@
+import { levelDifficulty } from "../apps/web/src/simulation/difficulty";
 import { expect, test } from "./fixtures";
 import { openGame, choosePlayers, finishIntroduction } from "./helpers";
 const progressKey = "citadel.progress.v1";
@@ -90,39 +91,48 @@ test("rapid debug steps retain capture and never open Settings when recapture wo
 test("debug steps stay captured when the next roster clamps the human fortress", async ({
   page,
 }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem(
-      "citadel.progress.v1",
-      JSON.stringify({
-        version: 4,
-        level: 3,
-        best: 2,
-        count: 6,
-        rounds: 1,
-        losses: 0,
-        demotion: null,
-        recent: [{ level: 2, count: 6, place: 1, at: 0 }],
-      }),
-    );
-    localStorage.setItem(
-      "citadel.solo.v1",
-      JSON.stringify({ version: 1, count: 6, humanSeat: 5, settings: {} }),
-    );
-  });
+  const level = Array.from({ length: 98 }, (_, i) => i + 2).find(
+    (level) => levelDifficulty(level).playerCount > levelDifficulty(level + 1).playerCount,
+  )!;
+  const count = levelDifficulty(level).playerCount;
+  await page.addInitScript(
+    ({ level, count }) => {
+      localStorage.setItem(
+        "citadel.progress.v1",
+        JSON.stringify({
+          version: 4,
+          level,
+          best: level - 1,
+          count,
+          rounds: 1,
+          losses: 0,
+          demotion: null,
+          recent: [{ level: level - 1, count, place: 1, at: 0 }],
+        }),
+      );
+      localStorage.setItem(
+        "citadel.solo.v1",
+        JSON.stringify({ version: 1, count, humanSeat: count - 1, settings: {} }),
+      );
+    },
+    { level, count },
+  );
   await page.clock.install();
   await page.goto("./?seed=2026");
   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1000));
   await page.getByRole("button", { name: "Start", exact: true }).click();
   const saved = await page.evaluate(() => localStorage.getItem("citadel.progress.v1"));
   await page.keyboard.press("+");
-  await expect(page.getByLabel("Round level", { exact: true })).toHaveText("4");
-  await expect(page.getByLabel("Player count", { exact: true })).toHaveText("2");
+  await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(level + 1));
+  await expect(page.getByLabel("Player count", { exact: true })).toHaveText(
+    String(levelDifficulty(level + 1).playerCount),
+  );
   await expect(page.getByRole("button", { name: "Resume", exact: true })).toBeHidden();
   expect(await page.evaluate(() => document.pointerLockElement?.tagName)).toBe("CANVAS");
   await page.evaluate(() => window.__citadelTestInput.move(8, 0));
   await page.clock.runFor(100);
   await page.keyboard.press("-");
-  await expect(page.getByLabel("Round level", { exact: true })).toHaveText("3");
+  await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(level));
   await expect(page.getByRole("button", { name: "Resume", exact: true })).toBeHidden();
   expect(await page.evaluate(() => localStorage.getItem("citadel.progress.v1"))).toBe(saved);
 });

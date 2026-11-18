@@ -1,0 +1,718 @@
+{
+  "seed": 2026,
+  "supplySeed": 2026,
+  "level": 100,
+  "seats": 6,
+  "activeWallSeconds": 16,
+  "audio": "muted for visual capture",
+  "errors": [],
+  "diagnostics": {
+    "kind": "Local rolling frame diagnostics; nothing uploaded",
+    "totalFrames": 1271,
+    "totalSpikes": 3,
+    "longestMs": 199.976,
+    "windowFrames": 1271,
+    "intervalMs": {
+      "samples": 981,
+      "median": 16.69999999999891,
+      "p95": 16.700000000000728,
+      "p99": 16.80000000000109,
+      "max": 16.80000000000291
+    },
+    "simulationMs": {
+      "samples": 981,
+      "median": 0.20000004768371582,
+      "p95": 1.0999999046325684,
+      "p99": 1.7999999523162842,
+      "max": 3.5999999046325684
+    },
+    "audioMs": {
+      "samples": 981,
+      "median": 0,
+      "p95": 0.09999990463256836,
+      "p99": 0.10000014305114746,
+      "max": 1.9000000953674316
+    },
+    "renderCpuMs": {
+      "samples": 981,
+      "median": 5.599999904632568,
+      "p95": 8.099999904632568,
+      "p99": 8.799999952316284,
+      "max": 22.600000143051147
+    },
+    "gpuMs": {
+      "samples": 33,
+      "median": 9.975708,
+      "p95": 13.944666,
+      "p99": 14.599458,
+      "max": 15.443875
+    },
+    "summary": {
+      "frames": 981,
+      "capturedMs": 16349.3,
+      "metrics": {
+        "intervalMs": {
+          "samples": 981,
+          "median": 16.69999999999891,
+          "p95": 16.700000000000728,
+          "p99": 16.80000000000109,
+          "max": 16.80000000000291
+        },
+        "simulationMs": {
+          "samples": 981,
+          "median": 0.20000004768371582,
+          "p95": 1.0999999046325684,
+          "p99": 1.7999999523162842,
+          "max": 3.5999999046325684
+        },
+        "audioMs": {
+          "samples": 981,
+          "median": 0,
+          "p95": 0.09999990463256836,
+          "p99": 0.10000014305114746,
+          "max": 1.9000000953674316
+        },
+        "renderCpuMs": {
+          "samples": 981,
+          "median": 5.599999904632568,
+          "p95": 8.099999904632568,
+          "p99": 8.799999952316284,
+          "max": 22.600000143051147
+        },
+        "frameCpuMs": {
+          "samples": 981,
+          "median": 6,
+          "p95": 8.899999856948853,
+          "p99": 10.200000047683716,
+          "max": 23.09999990463257
+        },
+        "gpuMs": {
+          "samples": 33,
+          "median": 9.975708,
+          "p95": 13.944666,
+          "p99": 14.599458,
+          "max": 15.443875
+        }
+      },
+      "stalls": {
+        "50": {
+          "frames": 0,
+          "totalMs": 0
+        },
+        "100": {
+          "frames": 0,
+          "totalMs": 0
+        },
+        "250": {
+          "frames": 0,
+          "totalMs": 0
+        },
+        "33.4": {
+          "frames": 0,
+          "totalMs": 0
+        }
+      }
+    },
+    "phases": {
+      "title": {
+        "frames": 9,
+        "capturedMs": 349.976,
+        "metrics": {
+          "intervalMs": {
+            "samples": 9,
+            "median": 16.69999999999999,
+            "p95": 33.40000000000009,
+            "p99": 33.40000000000009,
+            "max": 199.976
+          },
+          "simulationMs": {
+            "samples": 9,
+            "median": 0,
+            "p95": 0,
+            "p99": 0,
+            "max": 0
+          },
+          "audioMs": {
+            "samples": 9,
+            "median": 0,
+            "p95": 0,
+            "p99": 0,
+            "max": 0.09999990463256836
+          },
+          "renderCpuMs": {
+            "samples": 9,
+            "median": 9.599999904632568,
+            "p95": 10.900000095367432,
+            "p99": 10.900000095367432,
+            "max": 14.200000047683716
+          },
+          "frameCpuMs": {
+            "samples": 9,
+            "median": 9.599999904632568,
+            "p95": 11.399999856948853,
+            "p99": 11.399999856948853,
+            "max": 14.200000047683716
+          },
+          "gpuMs": {
+            "samples": 0,
+            "median": null,
+            "p95": null,
+            "p99": null,
+            "max": null
+          }
+        },
+        "stalls": {
+          "50": {
+            "frames": 1,
+            "totalMs": 199.976
+          },
+          "100": {
+            "frames": 1,
+            "totalMs": 199.976
+          },
+          "250": {
+            "frames": 0,
+            "totalMs": 0
+          },
+          "33.4": {
+            "frames": 2,
+            "totalMs": 233.3760000000001
+          }
+        }
+      },
+      "countdown": {
+        "frames": 281,
+        "capturedMs": 4766.5,
+        "metrics": {
+          "intervalMs": {
+            "samples": 281,
+            "median": 16.699999999999818,
+            "p95": 16.700000000000728,
+            "p99": 33.299999999999955,
+            "max": 49.89999999999998
+          },
+          "simulationMs": {
+            "samples": 281,
+            "median": 0.10000014305114746,
+            "p95": 0.20000004768371582,
+            "p99": 0.3000001907348633,
+            "max": 2.299999952316284
+          },
+          "audioMs": {
+            "samples": 281,
+            "median": 0,
+            "p95": 0.09999990463256836,
+            "p99": 0.10000014305114746,
+            "max": 0.10000014305114746
+          },
+          "renderCpuMs": {
+            "samples": 281,
+            "median": 4.799999952316284,
+            "p95": 17.59999990463257,
+            "p99": 21.59999990463257,
+            "max": 22.799999952316284
+          },
+          "frameCpuMs": {
+            "samples": 281,
+            "median": 4.900000095367432,
+            "p95": 17.799999952316284,
+            "p99": 21.799999952316284,
+            "max": 23
+          },
+          "gpuMs": {
+            "samples": 9,
+            "median": 11.162,
+            "p95": 20.682291,
+            "p99": 20.682291,
+            "max": 28.648458
+          }
+        },
+        "stalls": {
+          "50": {
+            "frames": 0,
+            "totalMs": 0
+          },
+          "100": {
+            "frames": 0,
+            "totalMs": 0
+          },
+          "250": {
+            "frames": 0,
+            "totalMs": 0
+          },
+          "33.4": {
+            "frames": 1,
+            "totalMs": 49.89999999999998
+          }
+        }
+      },
+      "playing": {
+        "frames": 605,
+        "capturedMs": 10082.8,
+        "metrics": {
+          "intervalMs": {
+            "samples": 605,
+            "median": 16.69999999999891,
+            "p95": 16.799999999999272,
+            "p99": 16.80000000000109,
+            "max": 16.80000000000109
+          },
+          "simulationMs": {
+            "samples": 605,
+            "median": 0.20000004768371582,
+            "p95": 0.3000001907348633,
+            "p99": 1.4000000953674316,
+            "max": 3.5999999046325684
+          },
+          "audioMs": {
+            "samples": 605,
+            "median": 0,
+            "p95": 0.09999990463256836,
+            "p99": 0.10000014305114746,
+            "max": 1.9000000953674316
+          },
+          "renderCpuMs": {
+            "samples": 605,
+            "median": 5.200000047683716,
+            "p95": 6.700000047683716,
+            "p99": 7.299999952316284,
+            "max": 22.600000143051147
+          },
+          "frameCpuMs": {
+            "samples": 605,
+            "median": 5.5,
+            "p95": 7,
+            "p99": 8,
+            "max": 23.09999990463257
+          },
+          "gpuMs": {
+            "samples": 21,
+            "median": 9.445874,
+            "p95": 14.599458,
+            "p99": 14.599458,
+            "max": 15.443875
+          }
+        },
+        "stalls": {
+          "50": {
+            "frames": 0,
+            "totalMs": 0
+          },
+          "100": {
+            "frames": 0,
+            "totalMs": 0
+          },
+          "250": {
+            "frames": 0,
+            "totalMs": 0
+          },
+          "33.4": {
+            "frames": 0,
+            "totalMs": 0
+          }
+        }
+      },
+      "morph": {
+        "frames": 376,
+        "capturedMs": 6266.5,
+        "metrics": {
+          "intervalMs": {
+            "samples": 376,
+            "median": 16.700000000000728,
+            "p95": 16.700000000000728,
+            "p99": 16.799999999999272,
+            "max": 16.80000000000291
+          },
+          "simulationMs": {
+            "samples": 376,
+            "median": 0.5999999046325684,
+            "p95": 1.5,
+            "p99": 2.0999999046325684,
+            "max": 2.799999952316284
+          },
+          "audioMs": {
+            "samples": 376,
+            "median": 0,
+            "p95": 0.09999990463256836,
+            "p99": 0.10000014305114746,
+            "max": 0.19999980926513672
+          },
+          "renderCpuMs": {
+            "samples": 376,
+            "median": 6.700000047683716,
+            "p95": 8.299999952316284,
+            "p99": 8.899999856948853,
+            "max": 11.599999904632568
+          },
+          "frameCpuMs": {
+            "samples": 376,
+            "median": 7.5,
+            "p95": 9.100000143051147,
+            "p99": 10.200000047683716,
+            "max": 11.899999856948853
+          },
+          "gpuMs": {
+            "samples": 13,
+            "median": 10.869666,
+            "p95": 13.316291,
+            "p99": 13.316291,
+            "max": 13.497541
+          }
+        },
+        "stalls": {
+          "50": {
+            "frames": 0,
+            "totalMs": 0
+          },
+          "100": {
+            "frames": 0,
+            "totalMs": 0
+          },
+          "250": {
+            "frames": 0,
+            "totalMs": 0
+          },
+          "33.4": {
+            "frames": 0,
+            "totalMs": 0
+          }
+        }
+      }
+    },
+    "totalMarkers": 42,
+    "markers": [
+      {
+        "atMs": 478.2999999523163,
+        "type": "settings",
+        "detail": "{\"effectsQuality\":\"high\",\"preview\":false,\"serveGuide\":false,\"slowdown\":false,\"reducedEffects\":false,\"mouseSensitivity\":1,\"serveTimeout\":1.8,\"music\":true,\"musicVolume\":0.45,\"effectsVolume\":0.75,\"musicLights\":true}"
+      },
+      {
+        "atMs": 501.5,
+        "type": "phase",
+        "detail": "title"
+      },
+      {
+        "atMs": 559.5999999046326,
+        "type": "reset"
+      },
+      {
+        "atMs": 579.7000000476837,
+        "type": "settings",
+        "detail": "{\"effectsQuality\":\"high\",\"preview\":false,\"serveGuide\":false,\"slowdown\":false,\"reducedEffects\":false,\"mouseSensitivity\":1,\"serveTimeout\":1.8,\"music\":false,\"musicVolume\":0.45,\"effectsVolume\":0,\"musicLights\":true}"
+      },
+      {
+        "atMs": 600.8999998569489,
+        "type": "phase",
+        "detail": "title"
+      },
+      {
+        "atMs": 615.0999999046326,
+        "type": "settings",
+        "detail": "{\"effectsQuality\":\"high\",\"preview\":false,\"serveGuide\":false,\"slowdown\":false,\"reducedEffects\":false,\"mouseSensitivity\":1,\"serveTimeout\":1.8,\"music\":false,\"musicVolume\":0.45,\"effectsVolume\":0,\"musicLights\":true}"
+      },
+      {
+        "atMs": 675.3999998569489,
+        "type": "start"
+      },
+      {
+        "atMs": 675.7999999523163,
+        "type": "resume"
+      },
+      {
+        "atMs": 733.7000000476837,
+        "type": "phase",
+        "detail": "countdown"
+      },
+      {
+        "atMs": 5465.200000047684,
+        "type": "phase",
+        "detail": "playing"
+      },
+      {
+        "atMs": 7449.200000047684,
+        "tick": 811,
+        "type": "arrival",
+        "detail": "5"
+      },
+      {
+        "atMs": 8458.399999856949,
+        "tick": 930,
+        "type": "damage",
+        "detail": "3"
+      },
+      {
+        "atMs": 8564.799999952316,
+        "tick": 945,
+        "type": "damage",
+        "detail": "4"
+      },
+      {
+        "atMs": 9448.799999952316,
+        "tick": 1050,
+        "type": "supply",
+        "detail": "-1"
+      },
+      {
+        "atMs": 9448.799999952316,
+        "tick": 1051,
+        "type": "arrival",
+        "detail": "0"
+      },
+      {
+        "atMs": 10944.200000047684,
+        "tick": 1228,
+        "type": "collection",
+        "detail": "4"
+      },
+      {
+        "atMs": 11450,
+        "tick": 1290,
+        "type": "arrival",
+        "detail": "5"
+      },
+      {
+        "atMs": 12464.399999856949,
+        "tick": 1412,
+        "type": "damage",
+        "detail": "0"
+      },
+      {
+        "atMs": 12564.700000047684,
+        "tick": 1425,
+        "type": "damage",
+        "detail": "1"
+      },
+      {
+        "atMs": 12664.899999856949,
+        "tick": 1436,
+        "type": "damage",
+        "detail": "5"
+      },
+      {
+        "atMs": 13448.599999904633,
+        "tick": 1530,
+        "type": "arrival",
+        "detail": "3"
+      },
+      {
+        "atMs": 14247.599999904633,
+        "tick": 1627,
+        "type": "damage",
+        "detail": "4"
+      },
+      {
+        "atMs": 14681.099999904633,
+        "tick": 1678,
+        "type": "damage",
+        "detail": "0"
+      },
+      {
+        "atMs": 15448.700000047684,
+        "tick": 1770,
+        "type": "arrival",
+        "detail": "1"
+      },
+      {
+        "atMs": 15519.5,
+        "tick": 1779,
+        "type": "damage",
+        "detail": "0"
+      },
+      {
+        "atMs": 15519.5,
+        "tick": 1779,
+        "type": "elimination",
+        "detail": "0"
+      },
+      {
+        "atMs": 15540.399999856949,
+        "type": "phase",
+        "detail": "morph"
+      },
+      {
+        "atMs": 16051.099999904633,
+        "tick": 1843,
+        "type": "damage",
+        "detail": "3"
+      },
+      {
+        "atMs": 17451.200000047684,
+        "tick": 2010,
+        "type": "supply",
+        "detail": "-1"
+      },
+      {
+        "atMs": 17451.200000047684,
+        "tick": 2011,
+        "type": "arrival",
+        "detail": "5"
+      },
+      {
+        "atMs": 17552.799999952316,
+        "tick": 2023,
+        "type": "damage",
+        "detail": "4"
+      },
+      {
+        "atMs": 17568.299999952316,
+        "tick": 2025,
+        "type": "damage",
+        "detail": "1"
+      },
+      {
+        "atMs": 18265.299999952316,
+        "tick": 2109,
+        "type": "damage",
+        "detail": "4"
+      },
+      {
+        "atMs": 18265.299999952316,
+        "tick": 2109,
+        "type": "elimination",
+        "detail": "4"
+      },
+      {
+        "atMs": 18950.799999952316,
+        "tick": 2191,
+        "type": "collection",
+        "detail": "1"
+      },
+      {
+        "atMs": 19449.39999985695,
+        "tick": 2251,
+        "type": "arrival",
+        "detail": "3"
+      },
+      {
+        "atMs": 20317.89999985695,
+        "tick": 2355,
+        "type": "damage",
+        "detail": "3"
+      },
+      {
+        "atMs": 20317.89999985695,
+        "tick": 2355,
+        "type": "elimination",
+        "detail": "3"
+      },
+      {
+        "atMs": 20530.89999985695,
+        "tick": 2380,
+        "type": "damage",
+        "detail": "1"
+      },
+      {
+        "atMs": 20746.599999904633,
+        "tick": 2407,
+        "type": "damage",
+        "detail": "2"
+      },
+      {
+        "atMs": 21348.599999904633,
+        "tick": 2478,
+        "type": "damage",
+        "detail": "5"
+      },
+      {
+        "atMs": 21450.599999904633,
+        "tick": 2491,
+        "type": "arrival",
+        "detail": "1"
+      }
+    ],
+    "spikes": [
+      {
+        "simulationMs": 0,
+        "audioMs": 0.09999990463256836,
+        "renderCpuMs": 10.900000095367432,
+        "gpuMs": null,
+        "gpuSampleId": 0,
+        "gpuAgeMs": null,
+        "geometries": 220,
+        "textures": 22,
+        "triangles": 329908,
+        "drawingWidth": 1280,
+        "drawingHeight": 900,
+        "resolutionScale": 1,
+        "calls": 1679,
+        "level": 100,
+        "balls": 1,
+        "atMs": 292.124,
+        "phase": "title",
+        "tick": 0,
+        "simulationSeconds": 0,
+        "seats": 12,
+        "frameCpuMs": 11.399999856948853,
+        "intervalMs": 199.976
+      },
+      {
+        "simulationMs": 0,
+        "audioMs": 0,
+        "renderCpuMs": 10.900000095367432,
+        "gpuMs": null,
+        "gpuSampleId": 0,
+        "gpuAgeMs": null,
+        "geometries": 222,
+        "textures": 22,
+        "triangles": 338620,
+        "drawingWidth": 1280,
+        "drawingHeight": 900,
+        "resolutionScale": 1,
+        "calls": 1691,
+        "level": 100,
+        "balls": 1,
+        "atMs": 558.8,
+        "phase": "title",
+        "tick": 0,
+        "simulationSeconds": 0,
+        "seats": 6,
+        "frameCpuMs": 11,
+        "intervalMs": 33.40000000000009
+      },
+      {
+        "simulationMs": 0.09999990463256836,
+        "audioMs": 0,
+        "renderCpuMs": 10.700000047683716,
+        "gpuMs": null,
+        "gpuSampleId": 0,
+        "gpuAgeMs": null,
+        "geometries": 230,
+        "textures": 22,
+        "triangles": 420676,
+        "drawingWidth": 1280,
+        "drawingHeight": 900,
+        "resolutionScale": 1,
+        "calls": 1761,
+        "level": 100,
+        "balls": 1,
+        "atMs": 675.5,
+        "phase": "countdown",
+        "tick": 0,
+        "simulationSeconds": 0,
+        "seats": 6,
+        "frameCpuMs": 11,
+        "intervalMs": 49.89999999999998
+      }
+    ],
+    "audio": {
+      "kind": "Audio scheduling and context state; optional native playback statistics reported separately",
+      "playback": null,
+      "contextChanges": [],
+      "contextState": "unavailable",
+      "sampleRate": null,
+      "baseLatency": null,
+      "outputLatency": null,
+      "clockTime": null,
+      "musicEnabled": false,
+      "effectsEnabled": false,
+      "schedule": null
+    },
+    "build": {
+      "version": "0.1.0",
+      "revision": "3758ce91961af9dc03dec36f5468b08d4d6ea936",
+      "buildId": "866adf8f6e3d3eb0",
+      "dirty": true
+    }
+  },
+  "rawFrames": "gameplay-raw.json.gz"
+}

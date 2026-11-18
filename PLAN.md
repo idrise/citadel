@@ -1,7 +1,7 @@
 # CITADEL — PLAN.md
 
 **Status:** Shared design in progress; confirmed rules and provisional prototype experiments distinguished below.  
-**Updated:** 17 November 2026\
+**Updated:** 18 November 2026\
 **Genre:** Fast, competitive, polygon-arena paddle/ball survival  
 **Target:** Understandable, tense matches that usually resolve in approximately **two minutes**. Difficulty is ramped as the game goes on.
 **Players:** 2–16 seats as an experimental local test ceiling, initially **one human and the remaining seats filled by bots**\
@@ -116,6 +116,7 @@ The previously discussed sketch is a **layout reference**, not a requirement to 
 
 - Pure TypeScript, fixed timestep; prefer a **120 Hz physics step as a starting experiment**, and measure it. `nextState = step(state, inputs, dt)` contains gameplay decisions; rendering and sound consume events/state but do not determine collisions.
 - 2D ball movement, swept/continuous collision detection against polygon walls, moving curved paddles and the actual remaining health-piece collision shapes. The defence rail is not a damage trigger. Fast balls must not tunnel. Define deterministic ordering for multiple impacts in one step and cap collision iterations to prevent loops.
+- Active balls use relative swept circle collisions on a shared tick clock with world contacts. Equal-mass normal impulses exchange signed spin, retaining last-striker credit. Restore each ball's paced speed at the tick boundary; ready balls never collide. Stable IDs break exact ties, with bounded collision and overlap-recovery work.
 - Paddles move along a bounded arc with limited angular speed and optional tunable acceleration; start with responsive tracking as described above. The requested bat angle is a **target**, not an instantaneous teleport. An off-centre contact can aim a shot even when the paddle is stationary.
 - Paddle movement can impart **spin/curvature** based on tangential paddle velocity, contact offset and incoming direction. Curvature has bounded magnitude and decay; zero-spin must behave predictably. Make dangerous trajectories legible; show shot attribution only if it adds useful information without clutter.
 - Damage requires a swept collision with an intact health piece at its current simulated position and radius; sweep relative to piece movement, not just its end position. Destroy exactly that piece, emit its destruction effect, consume the active ball and put it into a short attached/ready-to-serve state at the damaged defender if they survive. Crossing the defence arc or a missing piece causes no damage. Resolve simultaneous piece contacts deterministically; one ball can destroy at most one piece before returning. If the defender is eliminated, apply the explicitly labelled prototype serve fallback above; never attach a ball to an eliminated seat or serve after match end.
@@ -144,7 +145,7 @@ Bots arrive **before** advanced polish and before mobile/networking:
 
 - One human can fill any seat in a 2–6 player local game; all other seats are bots.
 - Bots use the **same public game state and intent interface as a human**, with no wallhack/future-state privilege beyond a limited, explicit prediction horizon.
-- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. The owner now requests **100 adaptive levels**, replacing configurable Beginner/Standard/Expert choices. Start at level 1 and persist progress locally. Wins advance at least one level, with calibrated streak jumps capped at five; three consecutive losses at a challenge demote one level and reset the streak. Wins reset losses; level 1 is the floor and 100 the ceiling. Time away never changes the level or skill weighting. Announce demotions on results and at the next introduction. Level 100 uses the strongest legal visible-state controller with no deliberate error; earlier levels use slower, less accurate prediction, serve aim and shot/curve planning. Show LEVEL 01 as reflected world geometry rising from and sinking into the floor during the existing opening countdown. Each attempt also freezes the level-driven ball cap (1–16), arrival interval (12–2 s), ball speed (14–34), pickup budget (0 until level 5, rising to 7) and physical bat width (135% down to 70% of standard). Extra balls unlock at 8/15/21/28/34/41/48/54/61/67/74/81/87/94/100; pickups unlock at 5/20/35/50/65/80/95. All players share the width, and player settings cannot override this progression.
+- Include a basic intercept/deflect controller in M01 so the interaction can be played immediately; refine it in later milestones. Give bots reaction delay, imperfect estimates, bounded paddle speed and sensible serve timing. The owner now requests **100 adaptive levels**, replacing configurable Beginner/Standard/Expert choices. Start at level 1 and persist progress locally. Wins advance at least one level, with calibrated streak jumps capped at five; three replay tokens are available initially. Each failure spends one; a failure at zero tokens demotes one level and restores three. Wins reset the balance to three. Level 1 is the floor (an exhausted failure refills without demotion) and 100 the ceiling. Time away never changes the level or skill weighting. Announce demotions on results and at the next introduction. Level 100 uses the strongest legal visible-state controller with no deliberate error; earlier levels use slower, less accurate prediction, serve aim and shot/curve planning. Show LEVEL 01 as reflected world geometry rising from and sinking into the floor during the existing opening countdown. Each attempt also freezes the level-driven ball cap (1–16), arrival interval (12–2 s), ball speed (14–34), pickup budget (0 until level 5, rising to 7) and physical bat width (135% down to 70% of standard). Extra balls unlock at 8/15/21/28/34/41/48/54/61/67/74/81/87/94/100; pickups unlock at 5/20/35/50/65/80/95. All players share the width, and player settings cannot override this progression.
 - Bot randomness is seeded for repeatable test runs. Instrument who takes damage, causes deflections, survives and wins, plus mean/median duration. Bots must not all make exactly the same decisions.
 - Use separate match test seeds, not hand-scripted victories. One human vs five bots must be playable locally with **no network or account**.
 - The same bots can later fill unoccupied multiplayer seats, take over a disconnect or support practice. Their behaviour belongs in the pure simulation module (`apps/web/src/simulation` initially; extract `packages/simulation` when useful), not networking/UI.
@@ -738,6 +739,34 @@ root browser scenarios and five Pages checks pass. Reviewed Settings/reset frame
 cover desktop, phone, short landscape and a 320px square. The live demo remains
 `http://127.0.0.1:5179/`. Existing chunk-size advice and physical-device limits remain.
 M09 still awaits owner review; no push or deployment is authorised.
+
+18 November TODO follow-up (owner requested all remaining items): added persistent
+three-token replay balances, a quiet scene count at top left, and large reflected
+DEMOTED lettering on actual demotions. Three failures spend the tokens; a further
+failure at zero demotes one level and refills to three. Wins refill to three.
+Version-five saves migrate older loss counters without dropping levels, best wins
+or history. Tokens follow the player across roster changes; debug attempts and
+abandoned rounds never spend them.
+
+A screen-right brush previously produced a rightward curve. Swipe-to-spin is now
+reversed for both launches and returns, with every-seat direction tests. Active
+balls collide through relative swept circles on a shared tick clock with walls,
+moving bats, pieces and pickups. Signed spin exchanges, ownership stays with the
+last bat, and paced speeds are restored at tick boundaries. Overlap repair is
+bounded and separate from real impacts; held balls remain excluded. No protection
+window was added: that proposal was removed from the owner's TODO list.
+
+Review, reproducible checks, rendered desktop/phone 2/4/6-seat evidence and measured
+collision costs are in docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md. The owner's early
+level roster overrides remain local; only their duplicate level-3 key was removed
+to permit validation. Local checkpoints: 3758ce9 (tokens/demotion), 5c2bbf3 (spin/collisions),
+with rendered evidence in the linked review. Checks: all 660 unit
+tests, formatting/lint/types, 37 native browser scenarios, root/Pages builds and
+the software-WebGL Pages viewport/refresh smoke pass. Short matched sixteen-ball
+measurements show simulation p95 0.3 to 0.4 ms per frame across desktop and
+emulated phone/tablet, with display pacing near 60 Hz on this Mac. This extends M09 review work;
+M09/M10 physical-device gates, M06 and M08 public verification stay open. No push,
+deployment or remote workflow was performed. **REVIEW REQUIRED — M09.**
 
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
@@ -1621,4 +1650,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
