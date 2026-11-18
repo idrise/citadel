@@ -161,7 +161,12 @@ export const LEVEL_FORMULAS: LevelFormulas = {
 /** Omitted keys use their formula. Bot overrides merge one field at a time too.
  * Example: 12: { playerCount: 6, ballSpeed: 18, bots: { reaction: 0.4 } } */
 export const LEVEL_OVERRIDES: Readonly<Partial<Record<number, LevelOverride>>> = {
-  1: { playerCount: 6 },
+  1: { playerCount: 2 },
+  2: { playerCount: 2 },
+
+  3: { playerCount: 4 },
+  4: { playerCount: 4 },
+  5: { playerCount: 4 },
 };
 
 /** Exported resolver also supports isolated tuning previews/tests without mutating live rules. */
