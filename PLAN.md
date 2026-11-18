@@ -804,6 +804,15 @@ production-browser music/Settings checks pass; the existing chunk-size advisory
 remains. Fifteen before/after cases measure levels, mute and unclipped captured
 peaks. M09 awaits review; no publishing or later milestone is authorised.
 
+18 November bat-movement sound amendment (owner feedback): swish source gain is
+now four times its previous value (+12dB), preserving its velocity curve,
+silence at rest, stereo movement and existing effects routing. Five matched
+before/after auditions check 1, 3.2 and 16rad/s movement, music and mute; maximum
+isolated peak is 0.426 and mute stays silent. `vp check`, 671 unit tests, root
+build and diff checks pass; the existing chunk-size advisory remains. Audio and
+measurements are linked from `docs/EFFECTS_BALANCE_REVIEW.md`. The owner's roster
+edit remains separate. M09 awaits review; no publishing is authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,

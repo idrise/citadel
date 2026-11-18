@@ -1,0 +1,55 @@
+{
+  "samples": [
+    {
+      "kind": "swishSlow",
+      "duration": 2,
+      "music": 0.2,
+      "effects": 1,
+      "peak": 0.0064248680137097836,
+      "rms": 0.0011181062894292158,
+      "peakWindowRms": 0.0025706617911262337,
+      "channels": 2
+    },
+    {
+      "kind": "swish",
+      "duration": 2,
+      "music": 0.2,
+      "effects": 1,
+      "peak": 0.04639676213264465,
+      "rms": 0.007605147001837335,
+      "peakWindowRms": 0.017744626836669865,
+      "channels": 2
+    },
+    {
+      "kind": "swishFast",
+      "duration": 2,
+      "music": 0.2,
+      "effects": 1,
+      "peak": 0.42631709575653076,
+      "rms": 0.07938592134791157,
+      "peakWindowRms": 0.18293147546548838,
+      "channels": 2
+    },
+    {
+      "kind": "swishMusic",
+      "duration": 2,
+      "music": 0.2,
+      "effects": 1,
+      "peak": 0.14610248804092407,
+      "rms": 0.017925208617991146,
+      "peakWindowRms": 0.034544925663509224,
+      "channels": 2
+    },
+    {
+      "kind": "swishMuted",
+      "duration": 2,
+      "music": 0.2,
+      "effects": 0,
+      "peak": 0,
+      "rms": 0,
+      "peakWindowRms": 0,
+      "channels": 2
+    }
+  ],
+  "errors": []
+}

@@ -58,4 +58,28 @@ lowered, then try busy multiball play. Physical-device listening and the reporte
 Windows output issue remain unverified. The owner's roster tuning is preserved
 outside this change; no push, deployment or milestone advancement is authorised.
 
+18 November bat-movement follow-up: the owner found the swish too quiet after the
+bus correction. Its speed-driven source gain now ranges up to 0.3 instead of
+0.075: +12.04dB (four times amplitude), with the same speed curve, timbre, stereo
+position, smoothing and silence threshold. Other cues and bus settings retain
+their previous tuning. Ordinary 3.2rad/s movement now measures 0.0177 peak-window
+RMS instead of 0.00444; maximum 16rad/s movement measures 0.1829 instead of 0.0458.
+Maximum isolated peak is 0.426, the normal-speed music mix peaks at 0.146, and SFX
+mute is exact silence. Five matched before/after cases cover slow, ordinary and
+maximum speed, music and mute. These measured fixtures stay unclipped; physical
+speaker/headphone listening remains for owner review.
+
+Compare the movement with music [before](reviews/m09/bat-swish/before.wav) and
+[after](reviews/m09/bat-swish/after.wav), with raw
+[before](reviews/m09/bat-swish/before.json)/[after](reviews/m09/bat-swish/after.json)
+measurements. Reproduce using `node tooling/review-effects-balance.mjs --swish --before`
+then `node tooling/review-effects-balance.mjs --swish` with the same root dev server.
+The swish baseline restores only `paddle-swish.ts` from local revision `42aa1c3`.
+`vp check`, all 671 unit tests, the root production build and `git diff --check`
+pass; the existing chunk-size advisory remains. New regressions cover normal-speed
+audibility, silence/dead-zone/invalid input, signed-speed symmetry, monotonic gain
+and maximum-speed bounds. No new browser gameplay run was needed for this single
+synth parameter change; the five browser passes above belong to the preceding
+bus amendment. No push or deployment was performed.
+
 **REVIEW REQUIRED — M09**

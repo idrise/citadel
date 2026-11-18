@@ -15,6 +15,10 @@ export const EFFECTS_REVIEW_CASES = [
   "supply",
   "victory",
   "swish",
+  "swishSlow",
+  "swishFast",
+  "swishMusic",
+  "swishMuted",
   "music",
   "mixed",
   "stress",
@@ -31,7 +35,11 @@ export async function renderEffectsBalance(kind: EffectsReviewCase) {
     (context) => {
       limiter = new Tone.Limiter({ context, threshold: -3 }).toDestination();
       instruments = createInstruments(context, limiter);
-      instruments.setMix(kind === "stressMusic" ? 1 : 0.2, kind === "muted" ? 0 : 1, 0);
+      instruments.setMix(
+        kind === "stressMusic" ? 1 : 0.2,
+        kind === "muted" || kind === "swishMuted" ? 0 : 1,
+        0,
+      );
       const director = createMusicDirector(0, 2026);
       const frame = { elapsed: 70, balls: 4, alive: [true, true, true, true] };
       director.observe(frame, []);
@@ -48,7 +56,7 @@ export async function renderEffectsBalance(kind: EffectsReviewCase) {
         };
         instruments!.play(director.observe(frame, [event]), time, "effects");
       };
-      if (kind === "music" || kind === "mixed" || kind === "stressMusic")
+      if (kind === "music" || kind === "mixed" || kind === "stressMusic" || kind === "swishMusic")
         for (let step = 0; 0.1 + step * SIXTEENTH < duration - 0.5; step++)
           instruments!.play(director.step(256 + step), 0.1 + step * SIXTEENTH, "music");
       if (kind === "mixed") {
@@ -68,8 +76,14 @@ export async function renderEffectsBalance(kind: EffectsReviewCase) {
         play("damage", 0.3);
         play("damage", 0.35, 1);
         play("elimination", 0.4, 1);
-      } else if (kind === "swish") {
-        instruments.steer(3.2, 0.2, 0.25);
+      } else if (
+        kind === "swish" ||
+        kind === "swishSlow" ||
+        kind === "swishFast" ||
+        kind === "swishMusic" ||
+        kind === "swishMuted"
+      ) {
+        instruments.steer(kind === "swishFast" ? 16 : kind === "swishSlow" ? 1 : 3.2, 0.2, 0.25);
         instruments.steer(0, 0, 0.65);
       } else if (kind !== "music") {
         play(
@@ -91,7 +105,7 @@ export async function renderEffectsBalance(kind: EffectsReviewCase) {
     kind,
     duration,
     music: kind === "stressMusic" ? 1 : 0.2,
-    effects: kind === "muted" ? 0 : 1,
+    effects: kind === "muted" || kind === "swishMuted" ? 0 : 1,
     ...result,
   };
 }

@@ -5,7 +5,7 @@ export function swishParameters(velocity: number, position: number) {
   return {
     frequency: 110 + speed * 540,
     modulation: 0.5 + speed * 8,
-    gain: speed < 0.015 ? 0 : speed * 0.075,
+    gain: speed < 0.015 ? 0 : speed * 0.3,
     pan: clamp(Number.isFinite(position) ? position : 0, -1, 1) * 0.65,
   };
 }

@@ -12,3 +12,20 @@ it("is silent at rest, grows brighter with real speed, and follows the bat acros
   expect(swishParameters(Infinity, NaN).gain).toBe(0);
   expect(swishParameters(100, 10)).toEqual(fast);
 });
+
+it("gives ordinary bat movement an audible level while bounding the fastest swish", () => {
+  expect(swishParameters(3.2, 0).gain).toBeGreaterThanOrEqual(0.05);
+  expect(swishParameters(16, 0).gain).toBeLessThanOrEqual(0.3);
+  for (const velocity of [0, 0.01, 0.1, 0.239, NaN, Infinity, -Infinity])
+    expect(swishParameters(velocity, 0).gain).toBe(0);
+});
+it("increases volume smoothly with speed in both directions and caps out-of-range input", () => {
+  let last = 0;
+  for (const velocity of [0.25, 1, 3.2, 8, 16]) {
+    const gain = swishParameters(velocity, 0).gain;
+    expect(gain).toBeGreaterThan(last);
+    expect(swishParameters(-velocity, 0).gain).toBe(gain);
+    last = gain;
+  }
+  expect(swishParameters(1000, 0).gain).toBe(last);
+});
