@@ -11,7 +11,12 @@ import { createDebugLevels, debugLevelStep } from "./debug-levels";
 import { levelBriefingTiming } from "./briefing-timing";
 import { levelDifficulty } from "../simulation/difficulty";
 import { roundSeed } from "./round-seed";
-import { createProgressRecorder, type Demotion, type LevelResult } from "./progression";
+import {
+  createProgressRecorder,
+  MAX_REPLAY_TOKENS,
+  type Demotion,
+  type LevelResult,
+} from "./progression";
 import { createRoundObserver, type RoundTotals } from "./round-observer";
 import { createDesktopInput } from "../input/desktop";
 import { createTouchInput } from "../input/touch";
@@ -33,6 +38,7 @@ export interface SessionSnapshot {
   humanSeat: number;
   level: number;
   bestLevel: number;
+  replayTokens: number;
   serveGuide: boolean;
   lossLevel: number;
   introDuration: number;
@@ -116,6 +122,7 @@ export function createSession(
   let rosterOverride: PlayerCount | null = null;
   let savedLevel = level;
   let bestLevel = 0;
+  let replayTokens = MAX_REPLAY_TOKENS;
   let supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
   let state = createMatch(seed, count, ARENA.startingPieces, supplySeed, levelDifficulty(level));
   let demotion: Demotion | null = null;
@@ -148,6 +155,7 @@ export function createSession(
           pendingLossLevel = 1;
           pendingPreviousLevel = undefined;
           bestLevel = 0;
+          replayTokens = MAX_REPLAY_TOKENS;
           demotion = null;
           resetRound(levelDifficulty(1).playerCount, humanSeat, 1, true);
           onResetProgress();
@@ -215,6 +223,7 @@ export function createSession(
       humanSeat,
       level,
       bestLevel,
+      replayTokens,
       serveGuide: settings.serveGuide,
       lossLevel,
       previousLevel,
@@ -456,6 +465,7 @@ export function createSession(
                 : "hidden",
         level,
         bestLevel,
+        replayTokens: debug.active ? undefined : replayTokens,
         lossLevel,
         previousLevel,
         introDuration,
@@ -610,8 +620,10 @@ export function createSession(
       nextLossLevel = level,
       nextPreviousLevel?: number,
       nextBest = bestLevel,
+      nextReplayTokens = replayTokens,
     ) {
       bestLevel = nextBest;
+      replayTokens = nextReplayTokens;
       demotion = next;
       pendingLossLevel = nextLossLevel;
       pendingPreviousLevel = nextPreviousLevel;

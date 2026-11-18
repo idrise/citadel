@@ -199,13 +199,16 @@ export function createArenaView(
       const profile = effectsProfile(options.quality, options.reducedEffects, 1, 4, mobile);
       reflection.setReduced(!profile.reflections);
       reflection.meshes[0]!.visible &&= options.floorReflection ?? true;
-      const titleMode = options.menu?.mode === "title";
+      const demoted =
+        Boolean(options.menu?.demotion) &&
+        (options.menu?.mode === "defeat" || Boolean(options.menu?.spectator));
+      const titleMode = options.menu?.mode === "title" || demoted;
       titleRise = titleMode
         ? Math.min(1, titleRise + Math.max(0, dt) / 0.55)
         : Math.max(0, titleRise - Math.max(0, dt) / 0.22);
       if (options.reducedEffects) titleRise = titleMode ? 1 : 0;
       titleSign.update(
-        "CITADEL",
+        demoted ? "DEMOTED" : "CITADEL",
         1,
         state.arena,
         options.humanSeat,

@@ -61,7 +61,7 @@ test("a first win advances 1 to 2 and one click starts the next round without re
   const progress = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
   expect(progress.rounds).toBe(1);
   expect(progress.level).toBe(2);
-  expect(progress.losses).toBe(0);
+  expect(progress.replayTokens).toBe(3);
   expect(progress.demotion).toBeNull();
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText("1");
   await expect(page.getByLabel("Round ball speed", { exact: true })).toHaveText("14.00");
@@ -87,7 +87,7 @@ test("a first win advances 1 to 2 and one click starts the next round without re
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText(String(progress.level));
 });
 
-test("a restored win discards a stale counter and requires three new played losses before demotion", async ({
+test("a restored win discards a stale counter and requires four new played losses before demotion", async ({
   page,
 }) => {
   test.setTimeout(120000);
@@ -114,14 +114,16 @@ test("a restored win discards a stale counter and requires three new played loss
   await choosePlayers(page, 2);
   await selectFortress(page, 1);
   await configureGame(page, { music: false, effectsVolume: 0 });
-  expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).losses, key)).toBe(0);
-  for (let loss = 1; loss <= 3; loss++) {
+  expect(
+    await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).replayTokens, key),
+  ).toBe(3);
+  for (let loss = 1; loss <= 4; loss++) {
     // Geometry fixtures are explicit after reload; real saved levels now own their roster.
     await choosePlayers(page, 2);
     await selectFortress(page, 1);
     await play(page);
     await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(
-      loss === 3 ? "LOSS DROPS TO LEVEL 01" : "LOSS RETRIES LEVEL 02",
+      loss === 4 ? "LOSS DROPS TO LEVEL 01" : "LOSS RETRIES LEVEL 02",
     );
     await page.keyboard.down("KeyD");
     for (
@@ -135,17 +137,17 @@ test("a restored win discards a stale counter and requires three new played loss
     await expect(page.getByLabel("Round winner", { exact: true })).toHaveText("Coral wins");
     expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key)).toMatchObject(
       {
-        level: loss === 3 ? 1 : 2,
-        losses: loss % 3,
+        level: loss === 4 ? 1 : 2,
+        replayTokens: 3 - (loss % 4),
         rounds: 1 + loss,
-        demotion: loss === 3 ? { from: 2, to: 1, count: 2 } : null,
+        demotion: loss === 4 ? { from: 2, to: 1, count: 2 } : null,
       },
     );
     await page.clock.runFor(1600);
     // Reload the same ordinary opening; the saved streak must survive between attempts.
     await page.reload();
     await expect(page.getByLabel("Round level", { exact: true })).toHaveText(
-      loss === 3 ? "1" : "2",
+      loss === 4 ? "1" : "2",
     );
   }
 });
@@ -228,7 +230,7 @@ test("a loss retries the played level directly and preserves it after reload", a
   await page.clock.runFor(1000);
   const progress = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
   expect(progress.level).toBe(2);
-  expect(progress.losses).toBe(1);
+  expect(progress.replayTokens).toBe(2);
   expect(progress.rounds).toBe(2);
   await page.getByRole("button", { name: "Retry", exact: true }).click();
   await expect(page.getByLabel("Level introduction", { exact: true })).toHaveText("Level 2");
@@ -264,7 +266,7 @@ test("an older loss-demoted save restores the level that was played", async ({ p
   expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).level, key)).toBe(2);
 });
 
-test("the third consecutive loss demotes one level, announces it and persists the new challenge", async ({
+test("a loss with no replay tokens demotes one level, announces it and persists the new challenge", async ({
   page,
 }, testInfo) => {
   await page.addInitScript(
@@ -273,12 +275,12 @@ test("the third consecutive loss demotes one level, announces it and persists th
         localStorage.setItem(
           key,
           JSON.stringify({
-            version: 2,
+            version: 5,
             level: 2,
             count: 2,
             best: 1,
             rounds: 3,
-            losses: 2,
+            replayTokens: 0,
             demotion: null,
             recent: [
               { level: 1, count: 2, place: 1, at: now - 3000 },
@@ -313,14 +315,14 @@ test("the third consecutive loss demotes one level, announces it and persists th
   await expect(page.getByLabel("Round winner", { exact: true })).toHaveText("Coral wins");
   await page.clock.runFor(4600);
   await expect(page.getByLabel("Progress update", { exact: true })).toHaveText(
-    "Demoted to level 1 after three consecutive losses.",
+    "Demoted to level 1 after losing with no replay tokens. Three replay tokens restored.",
   );
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText("2");
   const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
   expect(saved).toMatchObject({
-    version: 4,
+    version: 5,
     level: 1,
-    losses: 0,
+    replayTokens: 3,
     rounds: 4,
     demotion: { from: 2, to: 1, count: 2 },
   });

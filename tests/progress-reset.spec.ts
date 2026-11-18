@@ -32,7 +32,7 @@ test("Best stays zero when starting a level, then records the level actually won
   await expect(page.getByLabel("Highest won level", { exact: true })).toHaveText("1");
   await expect
     .poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("citadel.progress.v1")!)))
-    .toMatchObject({ version: 4, level: 2, best: 1 });
+    .toMatchObject({ version: 5, level: 2, best: 1 });
   await page.clock.runFor(1200);
   await page.getByRole("button", { name: "Next level", exact: true }).click();
   await expect(page.getByLabel("Round level", { exact: true })).toHaveText("2");
@@ -105,12 +105,12 @@ for (const touch of [false, true])
       await expect
         .poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("citadel.progress.v1")!)))
         .toMatchObject({
-          version: 4,
+          version: 5,
           level: 1,
           best: 0,
           rounds: 0,
           recent: [],
-          losses: 0,
+          replayTokens: 3,
           demotion: null,
         });
       await page.clock.runFor(1500);

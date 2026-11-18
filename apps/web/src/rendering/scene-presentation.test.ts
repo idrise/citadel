@@ -169,6 +169,27 @@ it("offers the appropriate direct continuation after a brief result beat", () =>
   disposeScene(camera);
 });
 
+it("keeps a demotion's reflected world sign bright and avoids covering it with ROUND OVER", () => {
+  const overlay = createMenuOverlay();
+  overlay.update(
+    {
+      mode: "defeat",
+      level: 2,
+      count: 4,
+      elapsed: 5,
+      reduced: true,
+      demotion: { from: 2, to: 1, count: 4 },
+    },
+    0,
+    390,
+    844,
+  );
+  expect(overlay.backgroundGain).toBe(1);
+  expect(overlay.scene.getObjectByName("neon-text:ROUND OVER")!.visible).toBe(false);
+  expect(overlay.scene.getObjectByName("neon-text:DEMOTED TO LEVEL 01")).toBeDefined();
+  overlay.dispose();
+});
+
 it("keeps title controls centred across tablet ratios and the compact-width boundary", () => {
   const camera = new PerspectiveCamera(44, 1, 0.1, 200),
     menu = createSceneMenu(camera);

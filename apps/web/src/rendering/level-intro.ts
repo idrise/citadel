@@ -64,7 +64,7 @@ export function createLevelIntro(parent: Object3D) {
         const text = createNeonLettering(
           typeof value === "string" ? value : `LEVEL ${String(value).padStart(2, "0")}`,
           1.4,
-          typeof value === "string" ? 0x9ceaff : 0xffcf79,
+          value === "DEMOTED" ? 0xffab83 : typeof value === "string" ? 0x9ceaff : 0xffcf79,
         );
         body.add(text);
         textWidth = new Box3().setFromObject(text).getSize(new Vector3()).x;

@@ -24,6 +24,7 @@ export function GamePanel({
   onSettings,
   level,
   bestLevel,
+  replayTokens,
   onResetProgress,
   lossLevel,
   previousLevel,
@@ -32,6 +33,7 @@ export function GamePanel({
 }: {
   level: number;
   bestLevel: number;
+  replayTokens: number;
   onResetProgress: () => void;
   lossLevel: number;
   previousLevel: number | undefined;
@@ -75,6 +77,7 @@ export function GamePanel({
     humanSeat,
     level,
     bestLevel,
+    replayTokens,
     serveGuide: settings.serveGuide,
     lossLevel,
     introDuration: 1.5,
@@ -178,8 +181,8 @@ export function GamePanel({
     session.current?.configureRoster(count, humanSeat, level);
   }, [count, humanSeat, level]);
   useEffect(() => {
-    session.current?.configureProgress(demotion, lossLevel, previousLevel, bestLevel);
-  }, [demotion, lossLevel, previousLevel, bestLevel]);
+    session.current?.configureProgress(demotion, lossLevel, previousLevel, bestLevel, replayTokens);
+  }, [demotion, lossLevel, previousLevel, bestLevel, replayTokens]);
   useEffect(() => {
     session.current?.configure(settings);
   }, [settings]);

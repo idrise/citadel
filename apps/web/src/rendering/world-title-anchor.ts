@@ -19,7 +19,7 @@ export function createWorldTitleAnchor(root: Object3D) {
     corner = new Vector3();
   return (camera: PerspectiveCamera, width: number, height: number, raisedY: number) => {
     if (!root.visible || width <= 0 || height <= 0) return;
-    const face = root.getObjectByName("neon-text:CITADEL")?.children[0];
+    const face = root.children[0]?.children[0]?.children[0];
     if (!(face instanceof Mesh) || !face.geometry.boundingBox) return;
     const layout = mobileMenuLayout(width, height, false).title;
     ndc.set(0, 1 - (2 * layout.y) / height);

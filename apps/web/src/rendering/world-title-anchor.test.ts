@@ -76,3 +76,38 @@ it("preserves rising/sinking below the floor and ignores a hidden title", () => 
   expect(intro.root.position).toEqual(before);
   disposeScene(scene);
 });
+
+it("anchors DEMOTED using the same reflected, rising title geometry across rosters and phone rotation", () => {
+  for (const count of [2, 4, 6] as const) {
+    const root = new Group(),
+      arena = createArena(count),
+      camera = createArenaCamera(0, arena),
+      sign = createLevelIntro(root),
+      place = createWorldTitleAnchor(sign.root);
+    for (const [width, height] of [
+      [1280, 900],
+      [390, 844],
+      [844, 390],
+    ]) {
+      fitArenaCamera(
+        camera,
+        new Box3(new Vector3(-20, 0, -20), new Vector3(20, 2.34, 20)),
+        width! / height!,
+      );
+      sign.update("DEMOTED", 1, arena, 0, true, null, 1, width! < height! ? -0.95 : 0);
+      const id = sign.root.children[0]!.uuid;
+      place(camera, width!, height!, sign.raisedY);
+      const projected = sign.root.getWorldPosition(new Vector3()).project(camera);
+      expect(projected.x).toBeCloseTo(0, 8);
+      expect(((1 - projected.y) * height!) / 2).toBeCloseTo(
+        mobileMenuLayout(width!, height!, false).title.y,
+        7,
+      );
+      expect(sign.root.getObjectByName("neon-text:DEMOTED")).toBeDefined();
+      expect(new Box3().setFromObject(sign.root).min.y).toBeGreaterThan(0.01);
+      sign.update("DEMOTED", 1, arena, 0, true, null, 1, width! < height! ? -0.95 : 0);
+      expect(sign.root.children[0]!.uuid).toBe(id);
+    }
+    disposeScene(root);
+  }
+});

@@ -30,8 +30,11 @@ export function AccessibleStatus({
         )}
       <output aria-label="Progress update" aria-live="polite">
         {snapshot.demotion
-          ? `Demoted to level ${snapshot.demotion.to} after three consecutive losses.`
+          ? `Demoted to level ${snapshot.demotion.to} after losing with no replay tokens. Three replay tokens restored.`
           : ""}
+      </output>
+      <output aria-label="Replay tokens" aria-live="polite">
+        {snapshot.debug ? "Debug - progress not saved" : snapshot.replayTokens}
       </output>
       <output aria-label="Round ball limit">{state.difficulty?.maxBalls ?? 4}</output>
       <output aria-label="Round ball speed">

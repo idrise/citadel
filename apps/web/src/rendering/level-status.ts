@@ -16,7 +16,9 @@ export function createLevelStatus(camera: PerspectiveCamera) {
       if (!root.visible) return;
       const text = `${state.debug ? "DEBUG " : ""}LEVEL ${String(state.level ?? 1).padStart(2, "0")} - ${state.count} PLAYERS`,
         best = `BEST ${String(state.bestLevel).padStart(2, "0")}`,
-        next = `${text}|${best}`;
+        tokens =
+          state.debug || state.replayTokens === undefined ? "" : `REPLAYS ${state.replayTokens}`,
+        next = `${text}|${best}|${tokens}`;
       if (next !== key) {
         for (const child of root.children.slice()) {
           root.remove(child);
@@ -26,6 +28,15 @@ export function createLevelStatus(camera: PerspectiveCamera) {
           peak = createNeonLettering(best, 12, 0xffcf79);
         peak.position.y = -20;
         root.add(current, peak);
+        if (tokens) {
+          const replays = createNeonLettering(
+            tokens,
+            14,
+            state.replayTokens === 0 ? 0xff8d71 : 0xffcf79,
+          );
+          replays.position.y = -42;
+          root.add(replays);
+        }
         root.traverse((node) => {
           if (
             node instanceof Mesh &&

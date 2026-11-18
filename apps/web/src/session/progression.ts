@@ -6,6 +6,7 @@ import { clamp } from "../simulation/vector";
 
 export const PROGRESS_KEY = "citadel.progress.v1";
 export const RESULT_WINDOW = 16;
+export const MAX_REPLAY_TOKENS = 3;
 const SKILL_SCALE = 8;
 const TARGET_WIN_RATE = 0.6;
 export interface LevelResult {
@@ -20,7 +21,7 @@ export interface Demotion {
   count: PlayerCount;
 }
 export interface PlayerProgress {
-  losses: number;
+  replayTokens: number;
   demotion: Demotion | null;
   level: number;
   count: PlayerCount;
@@ -30,7 +31,7 @@ export interface PlayerProgress {
 }
 export const freshProgress = (): PlayerProgress => ({
   level: 1,
-  losses: 0,
+  replayTokens: MAX_REPLAY_TOKENS,
   demotion: null,
   count: 4,
   best: 0,
@@ -80,11 +81,10 @@ export function levelFor(progress: PlayerProgress, _count?: PlayerCount) {
   return progress.level;
 }
 
-/** The same challenge test used by recordResult; a new level starts a fresh loss streak. */
+/** Tokens belong to the player, including when a level's roster changes. */
 export function levelAfterLoss(progress: PlayerProgress, count: PlayerCount) {
   const level = levelFor(progress, count);
-  const sameChallenge = progress.level === level && progress.count === count;
-  return level > 1 && sameChallenge && progress.losses >= 2 ? level - 1 : level;
+  return level > 1 && progress.replayTokens === 0 ? level - 1 : level;
 }
 
 export function recordResult(progress: PlayerProgress, result: LevelResult): PlayerProgress {
@@ -99,13 +99,12 @@ export function recordResult(progress: PlayerProgress, result: LevelResult): Pla
     );
     if (win >= TARGET_WIN_RATE) desired = level;
   }
-  // Keep climbs conservative now that each downward step takes three defeats.
+  // Keep the established conservative upward calibration.
   const step = clamp(Math.round(deviation * 0.75), 2, 5);
   const consistent = recent.slice(-3).filter((r) => r.place === 1).length >= 2;
-  const sameChallenge = progress.level === result.level && progress.count === result.count;
-  const losses = result.place === 1 ? 0 : (sameChallenge ? progress.losses : 0) + 1;
+  const exhausted = result.place !== 1 && progress.replayTokens === 0;
   const demotion: Demotion | null =
-    losses >= 3 && result.level > 1
+    exhausted && result.level > 1
       ? { from: result.level, to: result.level - 1, count: result.count }
       : null;
   const level =
@@ -118,7 +117,8 @@ export function recordResult(progress: PlayerProgress, result: LevelResult): Pla
       : (demotion?.to ?? result.level);
   return {
     level: clamp(level, 1, 100),
-    losses: losses % 3,
+    // The floor also starts a fresh cycle after an exhausted attempt.
+    replayTokens: result.place === 1 || exhausted ? MAX_REPLAY_TOKENS : progress.replayTokens - 1,
     demotion,
     count: result.count,
     best: result.place === 1 ? Math.max(progress.best, result.level) : progress.best,
@@ -163,7 +163,7 @@ export function parseProgress(raw: string | null): PlayerProgress {
     const value: unknown = JSON.parse(raw);
     if (
       !record(value) ||
-      (value.version !== 1 && value.version !== 2 && value.version !== 3 && value.version !== 4) ||
+      !integer(value.version, 1, 5) ||
       !integer(value.level, 1, 100) ||
       !integer(value.count, 2, MAX_PLAYERS) ||
       !integer(value.best, 0, 100) ||
@@ -178,7 +178,9 @@ export function parseProgress(raw: string | null): PlayerProgress {
     const legacy = value.version === 1;
     if (
       !legacy &&
-      (!integer(value.losses, 0, 2) ||
+      (!(value.version === 5
+        ? integer(value.replayTokens, 0, MAX_REPLAY_TOKENS)
+        : integer(value.losses, 0, 2)) ||
         (value.demotion !== null &&
           (!record(value.demotion) ||
             !integer(value.demotion.from, 2, 100) ||
@@ -202,7 +204,12 @@ export function parseProgress(raw: string | null): PlayerProgress {
       }
     return {
       level: retryLevel,
-      losses: last?.place === 1 ? 0 : legacy ? Math.min(2, legacyLosses) : (value.losses as number),
+      replayTokens:
+        last?.place === 1 || (!legacy && value.demotion !== null)
+          ? MAX_REPLAY_TOKENS
+          : value.version === 5
+            ? (value.replayTokens as number)
+            : MAX_REPLAY_TOKENS - (legacy ? Math.min(2, legacyLosses) : (value.losses as number)),
       demotion: legacy || last?.place === 1 ? null : (value.demotion as Demotion | null),
       count: value.count as PlayerCount,
       // V3 stored reached/unlocked levels. Only its retained wins prove a completed level.
@@ -230,7 +237,7 @@ export function saveProgress(
   storage: () => Pick<Storage, "setItem"> = () => window.localStorage,
 ) {
   try {
-    storage().setItem(PROGRESS_KEY, JSON.stringify({ version: 4, ...progress }));
+    storage().setItem(PROGRESS_KEY, JSON.stringify({ version: 5, ...progress }));
     return true;
   } catch {
     return false;

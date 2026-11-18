@@ -89,7 +89,7 @@ it("preserves the actual saved level when a win or demotion changes the next ros
   progress = recordResult(progress, { level: 20, count: 6, place: 1, at: 1 });
   expect(progress.level).toBe(21);
   expect(levelFor(progress, levelFeatures(21).playerCount)).toBe(21);
-  for (let at = 2; at <= 4; at++)
+  for (let at = 2; at <= 5; at++)
     progress = recordResult(progress, {
       level: 21,
       count: levelFeatures(21).playerCount,

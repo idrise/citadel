@@ -23,12 +23,12 @@ for (const touch of [false, true]) {
           localStorage.setItem(
             "citadel.progress.v1",
             JSON.stringify({
-              version: 2,
+              version: 5,
               level: 8,
               count: 6,
               best: 7,
               rounds: touch ? 2 : 1,
-              losses: touch ? 2 : 0,
+              replayTokens: touch ? 0 : 3,
               demotion: null,
               recent: Array.from({ length: touch ? 2 : 1 }, () => ({
                 level: touch ? 8 : 7,

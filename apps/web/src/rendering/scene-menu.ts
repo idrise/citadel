@@ -24,6 +24,7 @@ export interface SceneMenuState {
   mode: "title" | "victory" | "defeat" | "hidden" | "level";
   level?: number;
   bestLevel?: number;
+  replayTokens?: number | undefined;
   lossLevel?: number;
   introDuration?: number;
   previousLevel?: number | undefined;
@@ -123,7 +124,7 @@ export function createSceneMenu(camera: PerspectiveCamera) {
         reveal = state.reduced ? 1 : Math.max(0, Math.min(1, (state.elapsed - 0.15) / 0.6));
       title.visible = false;
       victory.visible = state.mode === "victory" && reveal > 0;
-      defeat.visible = state.mode === "defeat" && reveal > 0;
+      defeat.visible = state.mode === "defeat" && !state.demotion && reveal > 0;
       heading.scale.setScalar(result ? 0.85 + 0.15 * reveal : 1);
       heading.position.set(0, result ? (1 - reveal) * -0.4 : 0, 0);
       const changedLevel = state.demotion;

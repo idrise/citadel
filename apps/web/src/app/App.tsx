@@ -37,6 +37,7 @@ export function App() {
       <GamePanel
         level={levelFor(progress)}
         bestLevel={progress.best}
+        replayTokens={progress.replayTokens}
         onResetProgress={() => {
           setCount(null);
           setProgress(freshProgress());

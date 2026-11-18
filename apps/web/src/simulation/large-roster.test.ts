@@ -32,7 +32,7 @@ it("supports exactly 2–16 distinct coloured seats and round-trips extended pre
     settings: { musicVolume: 0.2, effectsVolume: 0.8 },
   });
   const progress = recordResult(freshProgress(), { level: 1, count: 16, place: 1, at: 100 });
-  expect(parseProgress(JSON.stringify({ version: 2, ...progress }))).toEqual(progress);
+  expect(parseProgress(JSON.stringify({ version: 5, ...progress }))).toEqual(progress);
 });
 it("keeps all five symmetric convex families, containers and the full bat surfaces legal through every supported roster", () => {
   for (const count of PLAYER_COUNTS)

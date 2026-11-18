@@ -112,12 +112,12 @@ test("a demotion keeps the live roster intact until Retry applies the next level
     localStorage.setItem(
       "citadel.progress.v1",
       JSON.stringify({
-        version: 3,
+        version: 5,
         level: 21,
         count,
         best: 21,
         rounds: 1,
-        losses: 2,
+        replayTokens: 0,
         demotion: null,
         recent: [{ level: 21, count, place: count, at: 0 }],
       }),

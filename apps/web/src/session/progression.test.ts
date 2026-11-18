@@ -7,6 +7,7 @@ import {
   levelFor,
   levelAfterLoss,
   loadProgress,
+  MAX_REPLAY_TOKENS,
   parseProgress,
   PROGRESS_KEY,
   rankProbability,
@@ -34,11 +35,11 @@ it("records only actual wins, including skipped promotions and a win at the ceil
   expect(skipped.best).toBe(70);
   expect(progress.best).toBe(5);
   const unlocked = progress.level;
-  for (let at = 3; at <= 5; at++)
+  for (let at = 3; at <= 6; at++)
     progress = recordResult(progress, { level: unlocked, count: 6, place: 6, at });
   expect(progress.level).toBe(unlocked - 1);
   expect(progress.best).toBe(5);
-  progress = recordResult(progress, { level: 100, count: 6, place: 1, at: 6 });
+  progress = recordResult(progress, { level: 100, count: 6, place: 1, at: 7 });
   expect(progress).toMatchObject({ level: 100, best: 100 });
 });
 
@@ -53,18 +54,18 @@ it("migrates reached-level records from retained wins without inventing victorie
       { level: 25, count: 4, place: 4, at: 1 },
     ],
   };
-  const migrated = parseProgress(JSON.stringify({ version: 3, ...old }));
+  const migrated = parseProgress(JSON.stringify({ version: 3, losses: 0, ...old }));
   expect(migrated).toMatchObject({ level: 25, best: 20, rounds: 2, recent: old.recent });
   const lossOnly = { ...old, recent: old.recent.map((r) => ({ ...r, place: 4 })) };
-  expect(parseProgress(JSON.stringify({ version: 3, ...lossOnly })).best).toBe(0);
+  expect(parseProgress(JSON.stringify({ version: 3, losses: 0, ...lossOnly })).best).toBe(0);
   for (const version of [1, 2, 4])
-    expect(parseProgress(JSON.stringify({ version, ...old })).best).toBe(40);
-  expect(parseProgress(JSON.stringify({ version: 4, ...freshProgress() }))).toEqual(
+    expect(parseProgress(JSON.stringify({ version, losses: 0, ...old })).best).toBe(40);
+  expect(parseProgress(JSON.stringify({ version: 4, losses: 0, ...freshProgress() }))).toEqual(
     freshProgress(),
   );
 });
 
-it("retains won peaks after their history rolls off and saves the new semantics as version four", () => {
+it("retains won peaks after their history rolls off and saves tokens as version five", () => {
   let progress = recordResult(freshProgress(), { level: 30, count: 4, place: 1, at: 0 });
   for (let at = 1; at <= RESULT_WINDOW + 3; at++)
     progress = recordResult(progress, { level: progress.level, count: 4, place: 4, at });
@@ -76,11 +77,11 @@ it("retains won peaks after their history rolls off and saves the new semantics 
       raw = value;
     },
   }));
-  expect(JSON.parse(raw).version).toBe(4);
+  expect(JSON.parse(raw).version).toBe(5);
   expect(parseProgress(raw)).toEqual(progress);
 });
 
-it("advances on every win, accelerates consistent wins, reaches the ceiling quickly and demotes once per three losses", () => {
+it("advances on every win, accelerates consistent wins, reaches the ceiling quickly and demotes once per four failed attempts", () => {
   let progress = freshProgress();
   expect(levelFor(progress, 6)).toBe(1);
   progress = recordResult(progress, { level: 1, count: 4, place: 1, at: 0 });
@@ -88,12 +89,12 @@ it("advances on every win, accelerates consistent wins, reaches the ceiling quic
   for (let i = 0; i < 21; i++)
     progress = recordResult(progress, { level: progress.level, count: 4, place: 1, at: i + 1 });
   expect(progress.level).toBe(100);
-  for (let i = 0; i < 12; i++)
+  for (let i = 0; i < 16; i++)
     progress = recordResult(progress, { level: progress.level, count: 4, place: 4, at: i + 20 });
   expect(progress.level).toBe(96);
   expect(progress.best).toBe(100);
   expect(progress.recent).toHaveLength(RESULT_WINDOW);
-  for (let i = 0; i < 30; i++)
+  for (let i = 0; i < 40; i++)
     progress = recordResult(progress, { level: progress.level, count: 4, place: 4, at: i + 100 });
   expect(progress.level).toBe(86);
 });
@@ -152,7 +153,7 @@ it("retries the actual played level for every losing place and roster, including
         );
         expect(progress.level).toBe(level);
         expect(levelFor(progress, count)).toBe(level);
-        expect(parseProgress(JSON.stringify({ version: 2, ...progress }))).toEqual(progress);
+        expect(parseProgress(JSON.stringify({ version: 5, ...progress }))).toEqual(progress);
         expect(progress.recent.at(-1)).toEqual({ level, count, place, at: 1000 });
       }
 });
@@ -252,73 +253,113 @@ it("repairs an older loss-demoted save without restoring intentional version-two
   expect(levelFor(repaired, 4)).toBe(80);
   expect(repaired.recent).toEqual(old.recent);
   const won = recordResult(freshProgress(), { level: 1, count: 4, place: 1, at: 1000 });
-  expect(parseProgress(JSON.stringify({ version: 2, ...won })).level).toBe(2);
+  expect(parseProgress(JSON.stringify({ version: 5, ...won })).level).toBe(2);
 });
 
 it.each([1, 2, 35, 100])(
-  "demotes level %i exactly once per three consecutive losses and persists it",
+  "spends all three tokens before demoting level %i on a further failure, across reloads",
   (initial) => {
     let progress = { ...freshProgress(), level: initial };
-    for (let round = 1; round <= 6; round++) {
+    for (let round = 1; round <= 8; round++) {
       const from = progress.level;
+      expect(levelAfterLoss(progress, 4)).toBe(round % 4 === 0 ? Math.max(1, from - 1) : from);
+      const before = structuredClone(progress);
       progress = recordResult(progress, { level: from, count: 4, place: 4, at: round });
-      expect(progress.level).toBe(Math.max(1, initial - Math.floor(round / 3)));
-      expect(progress.losses).toBe(round % 3);
+      expect(progress.level).toBe(Math.max(1, initial - Math.floor(round / 4)));
+      expect(progress.replayTokens).toBe(3 - (round % 4));
       expect(progress.demotion).toEqual(
-        round % 3 === 0 && from > 1 ? { from, to: from - 1, count: 4 } : null,
+        round % 4 === 0 && from > 1 ? { from, to: from - 1, count: 4 } : null,
       );
-      expect(parseProgress(JSON.stringify({ version: 2, ...progress }))).toEqual(progress);
+      expect(before.replayTokens).toBe(3 - ((round - 1) % 4));
+      expect(parseProgress(JSON.stringify({ version: 5, ...progress }))).toEqual(progress);
     }
   },
 );
-it("a win or different challenge clears the pending loss streak; legacy losses migrate once", () => {
-  let progress = recordResult(freshProgress(), { level: 35, count: 4, place: 4, at: 0 });
-  progress = recordResult(progress, { level: 35, count: 4, place: 4, at: 1 });
-  expect(progress.losses).toBe(2);
-  const won = recordResult(progress, { level: 35, count: 4, place: 1, at: 2 });
-  expect(won.losses).toBe(0);
-  expect(won.demotion).toBeNull();
-  expect(recordResult(progress, { level: 35, count: 6, place: 6, at: 2 }).losses).toBe(1);
-  expect(recordResult(progress, { level: 20, count: 4, place: 4, at: 2 }).losses).toBe(1);
-  const legacy = parseProgress(JSON.stringify({ version: 1, ...progress }));
-  expect(legacy.losses).toBe(2);
-  const demoted = recordResult(legacy, { level: 35, count: 4, place: 4, at: 2 });
-  expect(demoted.level).toBe(34);
-  expect(parseProgress(JSON.stringify({ version: 2, ...demoted })).level).toBe(34);
-});
-it("rejects malformed version-two counters and demotions", () => {
-  for (const extra of [
-    { losses: 3 },
-    { losses: -1 },
-    { demotion: { from: 10, to: 8, count: 4 } },
-    { demotion: { from: 2, to: 1, count: 6 } },
-  ])
-    expect(parseProgress(JSON.stringify({ version: 2, ...freshProgress(), ...extra }))).toEqual(
-      freshProgress(),
-    );
+
+it("refills on every win, including zero tokens and level 100, and carries tokens across rosters", () => {
+  for (const level of [1, 35, 100])
+    for (const replayTokens of [0, 1, 2, 3]) {
+      const previous = { ...freshProgress(), level, replayTokens };
+      const won = recordResult(previous, { level, count: 6, place: 1, at: 0 });
+      expect(won.replayTokens).toBe(MAX_REPLAY_TOKENS);
+      expect(won.demotion).toBeNull();
+      expect(levelAfterLoss(previous, 16)).toBe(
+        replayTokens === 0 ? Math.max(1, level - 1) : level,
+      );
+      const lost = recordResult(previous, { level, count: 16, place: 16, at: 1 });
+      expect(lost.replayTokens).toBe(replayTokens === 0 ? 3 : replayTokens - 1);
+      expect(lost.level).toBe(replayTokens === 0 ? Math.max(1, level - 1) : level);
+    }
 });
 
-it("requires three new losses after a win even after reloading with a stale saved counter", () => {
+it("migrates all older counters to remaining tokens once, retaining levels, history and intentional demotions", () => {
+  for (const version of [1, 2, 3, 4])
+    for (const losses of [0, 1, 2]) {
+      const recent = Array.from({ length: losses }, (_, at) => ({
+        level: 35,
+        count: 6,
+        place: 6,
+        at,
+      }));
+      const old = {
+        version,
+        ...freshProgress(),
+        level: 35,
+        count: 6,
+        losses,
+        rounds: losses,
+        recent,
+      };
+      const migrated = parseProgress(JSON.stringify(old));
+      expect(migrated).toMatchObject({ level: 35, replayTokens: 3 - losses, recent });
+      expect(parseProgress(JSON.stringify({ version: 5, ...migrated }))).toEqual(migrated);
+      const demoted = parseProgress(
+        JSON.stringify({
+          ...old,
+          level: 34,
+          demotion: { from: 35, to: 34, count: 6 },
+        }),
+      );
+      if (version > 1) expect(demoted).toMatchObject({ level: 34, replayTokens: 3 });
+    }
+});
+
+it("rejects malformed token balances and demotions without accepting fractional, unbounded or missing data", () => {
+  const base = {
+    version: 5,
+    ...freshProgress(),
+    level: 2,
+    rounds: 1,
+    recent: [{ level: 2, count: 4, place: 4, at: 0 }],
+  };
+  for (const replayTokens of [-1, 4, 1.5, null, "3", undefined])
+    expect(parseProgress(JSON.stringify({ ...base, replayTokens }))).toEqual(freshProgress());
+  for (const demotion of [
+    { from: 10, to: 8, count: 4 },
+    { from: 3, to: 2, count: 6 },
+  ])
+    expect(parseProgress(JSON.stringify({ ...base, demotion }))).toEqual(freshProgress());
+  for (const losses of [-1, 3, null])
+    expect(parseProgress(JSON.stringify({ ...base, version: 4, losses }))).toEqual(freshProgress());
+});
+
+it("restores three tokens after a recorded win even if an older save has stale losses", () => {
   for (const count of [2, 6, 16] as const)
     for (const level of [1, 35, 99, 100]) {
       let progress: ReturnType<typeof freshProgress> = { ...freshProgress(), count, level };
-      for (let at = 0; at < 2; at++)
+      for (let at = 0; at < 3; at++)
         progress = recordResult(progress, { count, level, place: count, at });
-      progress = recordResult(progress, { count, level, place: 1, at: 2 });
-      expect(progress.losses).toBe(0);
-      // Older/stale counters must not survive a recorded win on load.
-      progress = parseProgress(JSON.stringify({ version: 2, ...progress, losses: 2 }));
-      expect(progress.losses).toBe(0);
+      progress = recordResult(progress, { count, level, place: 1, at: 3 });
+      expect(progress.replayTokens).toBe(3);
+      progress = parseProgress(JSON.stringify({ version: 4, ...progress, losses: 2 }));
+      expect(progress.replayTokens).toBe(3);
       const nextLevel = progress.level;
-      for (let loss = 1; loss <= 3; loss++) {
-        expect(levelAfterLoss(progress, count)).toBe(loss === 3 ? nextLevel - 1 : nextLevel);
-        progress = recordResult(progress, { count, level: nextLevel, place: count, at: 2 + loss });
-        expect(progress.level).toBe(loss === 3 ? nextLevel - 1 : nextLevel);
-        expect(progress.losses).toBe(loss % 3);
-        expect(progress.demotion).toEqual(
-          loss === 3 ? { from: nextLevel, to: nextLevel - 1, count } : null,
-        );
-        progress = parseProgress(JSON.stringify({ version: 2, ...progress }));
+      for (let loss = 1; loss <= 4; loss++) {
+        expect(levelAfterLoss(progress, count)).toBe(loss === 4 ? nextLevel - 1 : nextLevel);
+        progress = recordResult(progress, { count, level: nextLevel, place: count, at: 3 + loss });
+        expect(progress.level).toBe(loss === 4 ? nextLevel - 1 : nextLevel);
+        expect(progress.replayTokens).toBe(3 - (loss % 4));
+        progress = parseProgress(JSON.stringify({ version: 5, ...progress }));
       }
     }
 });
