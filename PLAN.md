@@ -830,6 +830,19 @@ root and nine Pages-path native browser checks pass; the existing chunk-size
 advisory remains. M09 and the
 performance/device gates remain open; no push or deployment is authorised.
 
+18 November elite-proxy CI correction (owner reported a brittle selected-seed
+win assertion): the original test still passes on the available Mac; the CI
+Linux result is not reproduced. Full-match proxy wins and losses remain in the
+balance-report tool but are no longer fixed CI outcomes. Short replay tests now
+check the shared proxy controller's speed cap, both steering signs, no overshoot,
+finite inputs, repeatability and zero collision caps. Existing elite save/miss
+and serve-error coverage is retained. Only tooling/tests/docs change; no gameplay,
+bot tuning, seed substitution, retry, skip or timeout adjustment is made. See
+`docs/ELITE_BOTS_REVIEW.md` for the updated test boundary and reproduction limit.
+Validation: all nine focused tests, 677 total unit tests, format/lint/types, the
+CI-path production build and diff checks pass locally; the existing bundle-size
+advisory remains. Remote CI rerun remains pending; M09 awaits review and no push is authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,

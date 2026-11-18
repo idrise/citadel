@@ -2,9 +2,12 @@ import { expect, it } from "vite-plus/test";
 import { botLevelProfile } from "../apps/web/src/simulation/bot-level";
 import { aimServeAt } from "../apps/web/src/simulation/aim";
 import { botIntent } from "../apps/web/src/simulation/bots";
-import { createMatch } from "../apps/web/src/simulation/match";
+import { FIXED_DT } from "../apps/web/src/simulation/arena";
+import { levelDifficulty } from "../apps/web/src/simulation/difficulty";
+import { DEFAULT_OPTIONS } from "../apps/web/src/simulation/types";
+import { createMatch, stepMatch } from "../apps/web/src/simulation/match";
 import { angleDifference } from "../apps/web/src/simulation/vector";
-import { eliteCatchTrial, eliteProxyTrial } from "./elite-bot-review";
+import { eliteCatchTrial, eliteProxyIntent } from "./elite-bot-review";
 
 it.each([2, 4, 6, 12] as const)(
   "elite defenders both save and concede real shots in a %i-player arena",
@@ -36,15 +39,58 @@ it("elite serve error varies across seeds, has both signs and stays fixed while 
   expect(Math.max(...errors)).toBeGreaterThan(0.01);
 });
 
-it("a fallible legal controller can win the level-100 twelve-player finale", () => {
-  const result = eliteProxyTrial(3, 12, 100);
-  expect(result.won).toBe(true);
-  expect(result.alive).toBe(true);
-  expect(result.collisionCaps).toBe(0);
-  // This bot proxy is a possibility regression, not a human difficulty calibration.
-  expect(result.seconds).toBeGreaterThan(10);
-}, 15000);
+it.each([60, 100])(
+  "the level-%i proxy caps both steering directions without overshooting a nearby target",
+  (proxyLevel) => {
+    const maxTurn = botLevelProfile(proxyLevel).speed * FIXED_DT;
+    for (const turn of [-1, 1, -maxTurn / 2, maxTurn / 2, 0]) {
+      const state = createMatch(3, 12, 3, 3, levelDifficulty(100));
+      state.phase = "playing";
+      state.balls = [];
+      const current = state.players[0]!.angle;
+      state.bots[0]!.targetAngle = current + turn;
+      state.bots[0]!.idleAt = Infinity;
+      const intent = eliteProxyIntent(state, proxyLevel);
+      expect(intent.targetAngle).toBeCloseTo(
+        current + Math.max(-maxTurn, Math.min(maxTurn, turn)),
+        12,
+      );
+      expect(intent.launch).toBe(false);
+    }
+  },
+);
 
-it("the level-60 proxy still loses a seeded duel against the elite bots", () => {
-  expect(eliteProxyTrial(7, 2).won).toBe(false);
-});
+// Winners of long, chaotic matches belong in the balance report. CI checks the
+// controller contract over a short replay, independently of the resulting winner.
+it.each([
+  { seed: 3, count: 12 as const, proxyLevel: 100 },
+  { seed: 7, count: 2 as const, proxyLevel: 60 },
+])(
+  "proxy level $proxyLevel produces bounded, repeatable inputs for $count seats",
+  ({ seed, count, proxyLevel }) => {
+    let state = createMatch(seed, count, 3, seed, levelDifficulty(100)),
+      replay = structuredClone(state);
+    const maxTurn = botLevelProfile(proxyLevel).speed * FIXED_DT;
+    for (
+      let tick = 0;
+      tick < 360 && state.phase !== "finished" && state.players[0]!.health.some(Boolean);
+      tick++
+    ) {
+      const current = state.players[0]!.angle,
+        intent = eliteProxyIntent(state, proxyLevel),
+        replayIntent = eliteProxyIntent(replay, proxyLevel);
+      expect(replayIntent).toEqual(intent);
+      expect(intent.version).toBe(1);
+      if (intent.targetAngle !== null) {
+        expect(Number.isFinite(intent.targetAngle)).toBe(true);
+        expect(Math.abs(angleDifference(intent.targetAngle, current))).toBeLessThanOrEqual(
+          maxTurn + 1e-8,
+        );
+      }
+      state = stepMatch(state, intent, { ...DEFAULT_OPTIONS, humanSeat: 0 });
+      replay = stepMatch(replay, replayIntent, { ...DEFAULT_OPTIONS, humanSeat: 0 });
+      expect(state.stats.collisionCaps).toBe(0);
+    }
+    expect(state).toEqual(replay);
+  },
+);

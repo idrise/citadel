@@ -3,7 +3,7 @@ import { botLevelProfile } from "../apps/web/src/simulation/bot-level";
 import { botIntent } from "../apps/web/src/simulation/bots";
 import { levelDifficulty } from "../apps/web/src/simulation/difficulty";
 import { createMatch, stepMatch } from "../apps/web/src/simulation/match";
-import { DEFAULT_OPTIONS } from "../apps/web/src/simulation/types";
+import { DEFAULT_OPTIONS, type MatchState } from "../apps/web/src/simulation/types";
 import { add, angleDifference, clamp, scale, unit } from "../apps/web/src/simulation/vector";
 
 /** A real shot at an intact container: a save or a scored hit must use normal collision rules. */
@@ -41,21 +41,22 @@ export function eliteCatchTrial(seed: number, count: PlayerCount = 4) {
   };
 }
 
-/** Fixed level-60 policy in seat zero; its motor is capped too. This is not a human playtest. */
+/** Apply the proxy's own motor limit before passing its target to the human input adapter. */
+export function eliteProxyIntent(state: MatchState, proxyLevel = 60) {
+  const intent = botIntent(state, 0, proxyLevel),
+    current = state.players[0]!.angle,
+    maxTurn = botLevelProfile(proxyLevel).speed * FIXED_DT;
+  if (intent.targetAngle !== null)
+    intent.targetAngle =
+      current + clamp(angleDifference(intent.targetAngle, current), -maxTurn, maxTurn);
+  return intent;
+}
+
+/** A bounded balance audition, not a CI contract about which seat must win. */
 export function eliteProxyTrial(seed: number, count: PlayerCount, proxyLevel = 60) {
   let state = createMatch(seed, count, 3, seed, levelDifficulty(100));
-  const proxy = botLevelProfile(proxyLevel);
   for (let tick = 0; tick < 120 * 90 && state.phase !== "finished"; tick++) {
-    const intent = botIntent(state, 0, proxyLevel),
-      current = state.players[0]!.angle;
-    if (intent.targetAngle !== null)
-      intent.targetAngle =
-        current +
-        clamp(
-          angleDifference(intent.targetAngle, current),
-          -proxy.speed * FIXED_DT,
-          proxy.speed * FIXED_DT,
-        );
+    const intent = eliteProxyIntent(state, proxyLevel);
     state = stepMatch(state, intent, { ...DEFAULT_OPTIONS, humanSeat: 0 });
     if (!state.players[0]!.health.some(Boolean)) break;
   }
