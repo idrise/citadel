@@ -5,10 +5,11 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 const origin = process.argv.find((arg) => arg.startsWith("http")) ?? "http://127.0.0.1:5181";
-const swishReview = process.argv.includes("--swish");
-const directory = `docs/reviews/m09/${swishReview ? "bat-swish" : "effects-balance"}`;
+const airSwish = process.argv.includes("--air-swish");
+const swishReview = airSwish || process.argv.includes("--swish");
+const directory = `docs/reviews/m09/${airSwish ? "bat-air" : swishReview ? "bat-swish" : "effects-balance"}`;
 const before = process.argv.includes("--before");
-const revision = swishReview ? "42aa1c3" : "5ffd980";
+const revision = airSwish ? "98d5735" : swishReview ? "42aa1c3" : "5ffd980";
 await mkdir(directory, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" });
 const samples = [],
@@ -17,13 +18,15 @@ try {
   const page = await browser.newPage();
   page.on("pageerror", (e) => errors.push(e.message));
   if (before)
-    for (const module of swishReview
-      ? ["paddle-swish"]
-      : ["tone-instruments", "tone-explosion", "paddle-swish"]) {
+    for (const module of airSwish
+      ? ["paddle-swish", "tone-swish"]
+      : swishReview
+        ? ["paddle-swish"]
+        : ["tone-instruments", "tone-explosion", "paddle-swish"]) {
       const body = execFileSync("git", ["show", `${revision}:apps/web/src/audio/${module}.ts`], {
         encoding: "utf8",
       });
-      await page.route(`**/${module}.ts*`, async (route) => {
+      await page.route(`**/${module}*`, async (route) => {
         const response = await route.fetch();
         const compiled = await response.text();
         const tonePath = compiled.match(/import \* as Tone from "([^"]+)"/)?.[1];
@@ -39,25 +42,27 @@ try {
     r.fulfill({ contentType: "text/html", body: "<title>Citadel music mix</title>" }),
   );
   await page.goto(`${origin}/__mix-review`);
-  for (const kind of swishReview
-    ? ["swishSlow", "swish", "swishFast", "swishMusic", "swishMuted"]
-    : [
-        "wall",
-        "paddle",
-        "launch",
-        "damage",
-        "breach",
-        "elimination",
-        "collection",
-        "supply",
-        "victory",
-        "swish",
-        "music",
-        "mixed",
-        "stress",
-        "stressMusic",
-        "muted",
-      ]) {
+  for (const kind of airSwish
+    ? ["swishRest", "swishSlow", "swish", "swishFast", "swishGesture", "swishMusic", "swishMuted"]
+    : swishReview
+      ? ["swishSlow", "swish", "swishFast", "swishMusic", "swishMuted"]
+      : [
+          "wall",
+          "paddle",
+          "launch",
+          "damage",
+          "breach",
+          "elimination",
+          "collection",
+          "supply",
+          "victory",
+          "swish",
+          "music",
+          "mixed",
+          "stress",
+          "stressMusic",
+          "muted",
+        ]) {
     const { wav, ...stats } = await page.evaluate(
       async ({ path, kind }) => {
         const { renderEffectsBalance } = await import(`/@fs${path}`);
@@ -67,11 +72,17 @@ try {
     );
     console.log({ kind, peak: stats.peak, peakWindowRms: stats.peakWindowRms });
     assert(stats.peak < 0.99, `${kind}: output peak ${stats.peak} must not clip`);
-    if (kind === "muted" || kind === "swishMuted") assert(stats.peak < 0.000001);
+    if (kind === "muted" || kind === "swishMuted" || kind === "swishRest")
+      assert(stats.peak < 0.000001);
     else assert(stats.peakWindowRms > 0.00001, `${kind}: cue must be audible`);
     if (kind === "mixed" || kind === "swishMusic")
       await writeFile(
         `${directory}/${before ? "before" : "after"}.wav`,
+        Buffer.from(wav, "base64"),
+      );
+    if (airSwish && kind === "swishGesture")
+      await writeFile(
+        `${directory}/${before ? "before" : "after"}-${kind}.wav`,
         Buffer.from(wav, "base64"),
       );
     samples.push(stats);
@@ -80,6 +91,18 @@ try {
     const baseline = JSON.parse(await readFile(`${directory}/before.json`, "utf8"));
     for (const sample of samples) {
       const previous = baseline.samples.find((row) => row.kind === sample.kind);
+      if (airSwish) {
+        if (["swish", "swishFast"].includes(sample.kind))
+          assert(sample.peakWindowRms >= 0.008, `${sample.kind}: movement must remain audible`);
+        if (sample.kind === "swish") {
+          const ratio = sample.peakWindowRms / previous.peakWindowRms;
+          assert(
+            ratio >= 0.6 && ratio <= 1.6,
+            "ordinary steering retains a comparable audible level",
+          );
+        }
+        continue;
+      }
       if (swishReview) {
         if (["swishSlow", "swish", "swishFast"].includes(sample.kind)) {
           const change = 20 * Math.log10(sample.peakWindowRms / previous.peakWindowRms);

@@ -1,5 +1,10 @@
 # Gameplay effects volume — 18 November
 
+18 November listening revision: the bat's pitched swish has been replaced by an
+unpitched air texture. See [the current bat-sound review](BAT_AIR_REVIEW.md) for
+before/after audio and the current `--air-swish` reproduction commands. The earlier
+movement-gain measurements and `--swish` comparison below record the previous timbre.
+
 Effects now get +5dB of bus gain (about 1.78× amplitude) and their own compressor,
 so the score cannot compress gameplay cues. The existing music gain and score
 compression are retained. Both buses still feed the existing final limiter.

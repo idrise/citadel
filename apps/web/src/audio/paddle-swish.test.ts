@@ -6,7 +6,8 @@ it("is silent at rest, grows brighter with real speed, and follows the bat acros
     fast = swishParameters(16, 1);
   expect(fast.gain).toBeGreaterThan(slow.gain);
   expect(fast.frequency).toBeGreaterThan(slow.frequency);
-  expect(fast.modulation).toBeGreaterThan(slow.modulation);
+  expect(slow.frequency).toBeGreaterThanOrEqual(1200);
+  expect(fast.frequency).toBeLessThanOrEqual(3800);
   expect(slow.pan).toBe(-fast.pan);
   expect(swishParameters(-16, 1)).toEqual(fast);
   expect(swishParameters(Infinity, NaN).gain).toBe(0);
@@ -15,7 +16,7 @@ it("is silent at rest, grows brighter with real speed, and follows the bat acros
 
 it("gives ordinary bat movement an audible level while bounding the fastest swish", () => {
   expect(swishParameters(3.2, 0).gain).toBeGreaterThanOrEqual(0.05);
-  expect(swishParameters(16, 0).gain).toBeLessThanOrEqual(0.3);
+  expect(swishParameters(16, 0).gain).toBeLessThanOrEqual(0.6);
   for (const velocity of [0, 0.01, 0.1, 0.239, NaN, Infinity, -Infinity])
     expect(swishParameters(velocity, 0).gain).toBe(0);
 });

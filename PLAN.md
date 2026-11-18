@@ -913,6 +913,20 @@ victory-control timing. Existing bundle-size advice remains. Evidence and limits
 are in `docs/PROGRESS_RESET_REVIEW.md`; the local demo is http://127.0.0.1:5181/.
 M09 awaits owner review; no push or deployment is authorised.
 
+18 November bat-air sound amendment (owner listening feedback): replaced the
+robotic pitched FM swish with a broad filtered pink-noise air texture. Actual bat
+speed still controls its loudness/brightness and position controls pan; rest,
+pause and effects mute stay silent. The revised curve keeps ordinary steering
+within about 1dB of its previous measured RMS while softening maximum-speed
+movement by about 11.6dB. One owned noise chain replaces the FM voice; there are
+no per-movement allocations or new contexts/timers. Seven matched native offline
+fixtures cover rest, slow/normal/fast movement, alternating strokes, music and mute;
+all remain unclipped and rest/mute are exact silence. See `docs/BAT_AIR_REVIEW.md`
+for playable before/after clips, raw measurements and listening limits. All 699
+unit tests, format/lint/types, the root build and five production audio/Settings
+browser checks pass. Existing bundle-size advice remains. Local listening demo:
+http://127.0.0.1:5181/. M09 awaits owner review; no push/deployment authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,
@@ -1795,4 +1809,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/CONTAINER_PROTECTION_REVIEW.md`, `docs/GRAPHICS_QUALITY_REVIEW.md`, `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/BAT_AIR_REVIEW.md`, `docs/CONTAINER_PROTECTION_REVIEW.md`, `docs/GRAPHICS_QUALITY_REVIEW.md`, `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

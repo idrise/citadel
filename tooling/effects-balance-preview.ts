@@ -16,6 +16,8 @@ export const EFFECTS_REVIEW_CASES = [
   "victory",
   "swish",
   "swishSlow",
+  "swishGesture",
+  "swishRest",
   "swishFast",
   "swishMusic",
   "swishMuted",
@@ -28,7 +30,7 @@ export const EFFECTS_REVIEW_CASES = [
 export type EffectsReviewCase = (typeof EFFECTS_REVIEW_CASES)[number];
 /** Real score and event cues, with the user's quiet-music/max-effects balance. */
 export async function renderEffectsBalance(kind: EffectsReviewCase) {
-  const duration = kind === "mixed" ? 8 : 2;
+  const duration = kind === "mixed" ? 8 : kind === "swishGesture" ? 5 : 2;
   let instruments: ReturnType<typeof createInstruments> | undefined;
   let limiter: Tone.Limiter | undefined;
   const buffer = await Tone.Offline(
@@ -76,14 +78,39 @@ export async function renderEffectsBalance(kind: EffectsReviewCase) {
         play("damage", 0.3);
         play("damage", 0.35, 1);
         play("elimination", 0.4, 1);
+      } else if (kind === "swishGesture") {
+        // Slow brush, fast reverse flick, then several alternating strokes and a full stop.
+        let position = 0;
+        for (let frame = 0; frame < duration * 60; frame++) {
+          const time = frame / 60;
+          const velocity =
+            time < 0.5 || time >= 4.2
+              ? 0
+              : time < 1.5
+                ? 3.2 * Math.sin((time - 0.5) * Math.PI)
+                : time < 2
+                  ? 0
+                  : time < 2.5
+                    ? -16 * Math.sin((time - 2) * Math.PI * 2)
+                    : time < 3
+                      ? 0
+                      : 10 * Math.sin((time - 3) * Math.PI * 4);
+          position = Math.max(-1, Math.min(1, position + velocity / 60));
+          instruments.steer(velocity, position, time);
+        }
       } else if (
         kind === "swish" ||
         kind === "swishSlow" ||
         kind === "swishFast" ||
         kind === "swishMusic" ||
-        kind === "swishMuted"
+        kind === "swishMuted" ||
+        kind === "swishRest"
       ) {
-        instruments.steer(kind === "swishFast" ? 16 : kind === "swishSlow" ? 1 : 3.2, 0.2, 0.25);
+        instruments.steer(
+          kind === "swishRest" ? 0 : kind === "swishFast" ? 16 : kind === "swishSlow" ? 1 : 3.2,
+          0.2,
+          0.25,
+        );
         instruments.steer(0, 0, 0.65);
       } else if (kind !== "music") {
         play(
