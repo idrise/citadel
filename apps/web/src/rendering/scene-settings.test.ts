@@ -21,10 +21,18 @@ it("contains only requested controls with reachable targets on portrait, landsca
       const controls = settingsTargets({ ...state, touch }, width!, height!);
       expect(controls.map((t) => t.key)).toEqual(
         touch
-          ? ["effectsVolume", "musicVolume", "resume", "restart", "resetProgress"]
+          ? [
+              "effectsVolume",
+              "musicVolume",
+              "graphicsQuality",
+              "resume",
+              "restart",
+              "resetProgress",
+            ]
           : [
               "effectsVolume",
               "musicVolume",
+              "graphicsQuality",
               "mouseSensitivity",
               "resume",
               "restart",
@@ -267,4 +275,23 @@ it("keeps Reset progress reachable and separate from every slider and action on 
         ),
       ).toBe(false);
     }
+});
+
+it("fits four compressed desktop rows while retaining header space, footer padding and discrete graphics labels", () => {
+  const camera = new PerspectiveCamera(44, 1280 / 900, 0.1, 200),
+    view = createSceneSettings(camera);
+  for (const graphicsQuality of [0, 1, 2]) {
+    const targets = view.update({ ...state, graphicsQuality }, 1280, 900),
+      sliders = targets.filter((t) => t.min !== undefined),
+      graphics = sliders.find((t) => t.key === "graphicsQuality")!,
+      reset = targets.find((t) => t.key === "resetProgress")!;
+    expect(sliders).toHaveLength(4);
+    expect(graphics).toMatchObject({ min: 0, max: 2, step: 1, value: graphicsQuality });
+    expect(sliders[1]!.top - sliders[0]!.top).toBe(52);
+    expect(reset.top - sliders.at(-1)!.top - 44).toBeGreaterThanOrEqual(12);
+    for (const [index, label] of ["LOW", "MEDIUM", "HIGH"].entries())
+      expect(camera.getObjectByName(`neon-text:GRAPHICS ${label}`)!.visible).toBe(
+        index === graphicsQuality,
+      );
+  }
 });

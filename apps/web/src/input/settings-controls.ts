@@ -1,3 +1,4 @@
+import { qualityLabel } from "../rendering/quality";
 import type { SettingKey, SettingsAction, SettingsTarget } from "../rendering/scene-settings";
 /** Accessible native ranges are invisible hit surfaces over the rendered tracks. */
 export function createSettingsControls(
@@ -17,6 +18,7 @@ export function createSettingsControls(
   for (const [key, label] of [
     ["effectsVolume", "Sound effects volume"],
     ["musicVolume", "Music volume"],
+    ["graphicsQuality", "Graphics quality"],
     ["mouseSensitivity", "Mouse sensitivity"],
   ] as const) {
     const input = document.createElement("input");
@@ -58,9 +60,11 @@ export function createSettingsControls(
           element.value = String(target.value);
           element.setAttribute(
             "aria-valuetext",
-            key === "mouseSensitivity"
-              ? `${target.value!.toFixed(2)} times`
-              : `${Math.round(target.value! * 100)} percent`,
+            key === "graphicsQuality"
+              ? qualityLabel(target.value!)
+              : key === "mouseSensitivity"
+                ? `${target.value!.toFixed(2)} times`
+                : `${Math.round(target.value! * 100)} percent`,
           );
         }
         Object.assign(element.style, {

@@ -1,4 +1,15 @@
-export type EffectsQuality = "low" | "medium" | "high";
+export const QUALITY_LEVELS = ["low", "medium", "high"] as const;
+export type EffectsQuality = (typeof QUALITY_LEVELS)[number];
+export function qualityStep(quality: EffectsQuality) {
+  return QUALITY_LEVELS.indexOf(quality);
+}
+export function qualityForStep(step: number): EffectsQuality {
+  return QUALITY_LEVELS[Number.isFinite(step) ? Math.max(0, Math.min(2, Math.round(step))) : 2]!;
+}
+export function qualityLabel(step: number) {
+  const quality = qualityForStep(step);
+  return quality[0]!.toUpperCase() + quality.slice(1);
+}
 /** Presentation budgets only. Reduced effects overrides every quality setting. */
 export function effectsProfile(
   quality: EffectsQuality = "high",
@@ -10,7 +21,7 @@ export function effectsProfile(
   const low = reduced || quality === "low";
   return {
     bloom: !low,
-    reflections: !low,
+    reflections: !low && quality === "high",
     pixelRatio: Math.min(
       Math.max(deviceRatio, 1),
       low ? 1 : mobile ? (quality === "medium" ? 1 : 1.5) : quality === "medium" ? 1.5 : 2,

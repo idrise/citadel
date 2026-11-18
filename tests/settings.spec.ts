@@ -1,6 +1,6 @@
 import { expect, test } from "./fixtures";
 import { openGame, openSettings, play, finishIntroduction, pause } from "./helpers";
-test("settings render Resume, Restart and the three desktop sliders, persisting real changes", async ({
+test("settings render Resume, Restart and the four desktop sliders, persisting real changes", async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 1280, height: 900 });
@@ -10,10 +10,15 @@ test("settings render Resume, Restart and the three desktop sliders, persisting 
   await expect(page.locator(".menu-panel,.touch-hint,.title-display,.enable-sound")).toHaveCount(0);
   const panel = page.getByRole("navigation", { name: "Game settings", exact: true });
   await expect(panel.getByRole("button")).toHaveCount(5);
-  await expect(panel.getByRole("slider")).toHaveCount(3);
+  await expect(panel.getByRole("slider")).toHaveCount(4);
   await page.getByLabel("Sound effects volume", { exact: true }).fill("0.8");
   await page.getByLabel("Music volume", { exact: true }).fill("0");
   await page.getByLabel("Mouse sensitivity", { exact: true }).fill("1.4");
+  await page.getByLabel("Graphics quality", { exact: true }).fill("1");
+  await expect(page.getByLabel("Graphics quality", { exact: true })).toHaveAttribute(
+    "aria-valuetext",
+    "Medium",
+  );
   await page.screenshot({ path: testInfo.outputPath("desktop-settings.png") });
   await page.getByRole("button", { name: "Resume", exact: true }).click();
   await play(page);
@@ -28,6 +33,7 @@ test("settings render Resume, Restart and the three desktop sliders, persisting 
   await expect(page.getByLabel("Sound effects volume", { exact: true })).toHaveValue("0.8");
   await expect(page.getByLabel("Music volume", { exact: true })).toHaveValue("0");
   await expect(page.getByLabel("Mouse sensitivity", { exact: true })).toHaveValue("1.4");
+  await expect(page.getByLabel("Graphics quality", { exact: true })).toHaveValue("1");
 });
 test.describe("touch scene settings", () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
@@ -39,7 +45,7 @@ test.describe("touch scene settings", () => {
     await expect(page.getByLabel("Mouse sensitivity", { exact: true })).toBeHidden();
     await expect(
       page.getByRole("navigation", { name: "Game settings", exact: true }).getByRole("slider"),
-    ).toHaveCount(2);
+    ).toHaveCount(3);
     await page.getByLabel("Music volume", { exact: true }).focus();
     await page.keyboard.press("ArrowLeft");
     await expect(page.getByLabel("Music volume", { exact: true })).toHaveValue("0.44");
@@ -49,7 +55,13 @@ test.describe("touch scene settings", () => {
     ]) {
       await page.setViewportSize(size);
       await page.clock.runFor(50);
-      for (const name of ["Sound effects volume", "Music volume", "Resume", "Restart"]) {
+      for (const name of [
+        "Sound effects volume",
+        "Music volume",
+        "Graphics quality",
+        "Resume",
+        "Restart",
+      ]) {
         const control =
           name === "Resume" || name === "Restart"
             ? page.getByRole("button", { name, exact: true })

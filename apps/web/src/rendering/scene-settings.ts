@@ -8,10 +8,11 @@ import {
   ShaderMaterial,
   type PerspectiveCamera,
 } from "three";
+import { qualityLabel } from "./quality";
 import { createNeonLettering } from "./neon-lettering";
 import { disposeScene } from "./dispose-scene";
 import { createFeatureEdges } from "./feature-edges";
-export type SettingKey = "effectsVolume" | "musicVolume" | "mouseSensitivity";
+export type SettingKey = "effectsVolume" | "musicVolume" | "graphicsQuality" | "mouseSensitivity";
 export type SettingsAction =
   | "pause"
   | "resume"
@@ -29,6 +30,7 @@ export interface SceneSettingsState {
   effectsVolume: number;
   musicVolume: number;
   mouseSensitivity: number;
+  graphicsQuality?: number;
   level?: number;
   bestLevel?: number;
 }
@@ -54,6 +56,7 @@ const rows = [
     step: 0.01,
   },
   { key: "musicVolume", label: "Music volume", text: "MUSIC", min: 0, max: 1, step: 0.01 },
+  { key: "graphicsQuality", label: "Graphics quality", text: "GRAPHICS", min: 0, max: 2, step: 1 },
   {
     key: "mouseSensitivity",
     label: "Mouse sensitivity",
@@ -65,10 +68,10 @@ const rows = [
 ] as const;
 /** Shared pixel bounds keep the panel, rendered controls and accessible targets aligned. */
 function settingsPanelLayout(state: SceneSettingsState, width: number, height: number) {
-  const count = state.touch ? 2 : 3,
+  const count = state.touch ? 3 : 4,
     columns = height < 420 ? count : 1,
     w = Math.min(height < 420 ? 620 : 430, width - 24),
-    h = Math.min(count * 76 + 228, height - 24),
+    h = Math.min(state.touch ? 380 : 456, height - 24),
     rowTop = 100;
   return {
     count,
@@ -79,7 +82,7 @@ function settingsPanelLayout(state: SceneSettingsState, width: number, height: n
     top: (height - h) / 2,
     rowTop,
     rowWidth: (w - 48 - (columns - 1) * 20) / columns,
-    gap: 76,
+    gap: 52,
   };
 }
 export function settingsTargets(
@@ -127,7 +130,7 @@ export function settingsTargets(
       top: top + rowTop + Math.floor(i / columns) * gap,
       width: rowWidth,
       height: 44,
-      value: state[row.key],
+      value: state[row.key] ?? 2,
       min: row.min,
       max: row.max,
       step: row.step,
@@ -217,8 +220,15 @@ export function createSceneSettings(camera: PerspectiveCamera) {
   const sliders = rows.map((row) => {
     const group = new Group();
     root.add(group);
-    const text = createNeonLettering(row.text, 15, 0x9ceaff);
-    group.add(text);
+    const labels = (
+      row.key === "graphicsQuality"
+        ? [0, 1, 2].map((step) => `GRAPHICS ${qualityLabel(step).toUpperCase()}`)
+        : [row.text]
+    ).map((value) => {
+      const text = createNeonLettering(value, 15, 0x9ceaff);
+      group.add(text);
+      return { text, width: new Box3().setFromObject(text).getSize(new Vector3()).x };
+    });
     const track = new Mesh(new BoxGeometry(1, 4, 0.1), material);
     group.add(track);
     const fill = new Mesh(
@@ -231,17 +241,16 @@ export function createSceneSettings(camera: PerspectiveCamera) {
     return {
       ...row,
       group,
-      text,
+      labels,
       track,
       fill,
       thumb,
-      textWidth: new Box3().setFromObject(text).getSize(new Vector3()).x,
     };
   });
   for (const label of [
     title,
     ...buttons.map((button) => button.label),
-    ...sliders.map((row) => row.text),
+    ...sliders.flatMap((row) => row.labels.map((label) => label.text)),
   ])
     label.traverse((node) => {
       if (
@@ -323,8 +332,11 @@ export function createSceneSettings(camera: PerspectiveCamera) {
         const p = centre(target.left, target.top, target.width, target.height),
           t = Math.max(0, Math.min(1, (target.value! - row.min) / (row.max - row.min)));
         row.group.position.set(p.x, p.y, 1);
-        row.text.position.set(0, 32, 0);
-        row.text.scale.setScalar(Math.min(1, target.width / row.textWidth));
+        row.labels.forEach((label, index) => {
+          label.text.visible = row.labels.length === 1 || index === Math.round(target.value!);
+          label.text.position.set(0, 26, 0);
+          label.text.scale.setScalar(Math.min(1, target.width / label.width));
+        });
         row.track.scale.x = target.width;
         row.fill.scale.x = Math.max(0.001, target.width * t);
         row.fill.position.x = -(target.width * (1 - t)) / 2;

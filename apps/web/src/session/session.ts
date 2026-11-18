@@ -1,3 +1,5 @@
+import { qualityStep } from "../rendering/quality";
+import { changeSetting } from "./settings-change";
 import { BUILD_INFO } from "../app/build-info";
 import { createPerformanceReport, browserEnvironment } from "./performance-report";
 import { downloadJSON } from "./download-json";
@@ -173,13 +175,7 @@ export function createSession(
       },
       change(key, value) {
         if (!Number.isFinite(value)) return;
-        const low = key === "mouseSensitivity" ? 0.5 : 0,
-          high = key === "mouseSensitivity" ? 2 : 1;
-        settings = {
-          ...settings,
-          [key]: Math.max(low, Math.min(high, value)),
-          ...(key === "musicVolume" ? { music: value > 0 } : {}),
-        };
+        settings = changeSetting(settings, key, value);
         music.configure(settings);
         mark("settings", JSON.stringify(settings));
         onSettings(settings);
@@ -440,6 +436,7 @@ export function createSession(
           effectsVolume: settings.effectsVolume,
           musicVolume: settings.music ? settings.musicVolume : 0,
           mouseSensitivity: settings.mouseSensitivity,
+          graphicsQuality: qualityStep(settings.effectsQuality),
           level,
           bestLevel,
         },

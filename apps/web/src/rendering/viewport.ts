@@ -85,6 +85,8 @@ export function createViewport(
   );
   const disposeLighting = lightArena(scene, createArena(MAX_PLAYERS));
   const disposeEnvironment = createNeonEnvironment(renderer, scene, initial);
+  const environmentTexture = scene.environment;
+  let profile = effectsProfile();
   const camera = createArenaCamera(humanSeat, initial);
   const motion = createCameraMotion(camera);
   const title = createTitleTransition();
@@ -124,6 +126,12 @@ export function createViewport(
         renderer: debug ? String(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL)) : null,
         vendor: debug ? String(gl.getParameter(debug.UNMASKED_VENDOR_WEBGL)) : null,
         shadows: renderer.shadowMap.enabled,
+        effects: {
+          bloom: profile.bloom,
+          reflections: profile.reflections,
+          environment: scene.environment !== null,
+          pixelRatio: renderer.getPixelRatio(),
+        },
         webglVersion: String(gl.getParameter(gl.VERSION)),
         maxTextureSize: Number(gl.getParameter(gl.MAX_TEXTURE_SIZE)),
         viewport: { width: container.clientWidth, height: container.clientHeight },
@@ -170,14 +178,15 @@ export function createViewport(
     render(state: MatchState, dt: number, options: ViewOptions) {
       const renderBegin = performance.now();
       renderer.info.reset();
-      const pixelRatio =
-        effectsProfile(
-          options.quality,
-          options.reducedEffects,
-          window.devicePixelRatio,
-          renderer.capabilities.maxSamples,
-          mobile,
-        ).pixelRatio * (diagnostic?.fixedScale ?? resolution.scale);
+      profile = effectsProfile(
+        options.quality,
+        options.reducedEffects,
+        window.devicePixelRatio,
+        renderer.capabilities.maxSamples,
+        mobile,
+      );
+      scene.environment = profile.reflections ? environmentTexture : null;
+      const pixelRatio = profile.pixelRatio * (diagnostic?.fixedScale ?? resolution.scale);
       if (renderer.getPixelRatio() !== pixelRatio) {
         renderer.setPixelRatio(pixelRatio);
         bloom.resize(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1));
