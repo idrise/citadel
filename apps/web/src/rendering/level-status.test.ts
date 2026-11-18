@@ -84,21 +84,28 @@ it("keeps status readable and stable across level updates, resize and debug with
   expect(root.visible).toBe(false);
 });
 
-it("shows zero before any wins and the literal highest win at level 100", () => {
+it("omits Best before the first win and after reset, retaining the level and compact replay row", () => {
   const camera = new PerspectiveCamera(44, 1, 0.1, 200),
     status = createLevelStatus(camera);
-  for (const [level, bestLevel] of [
-    [1, 0],
-    [10, 5],
-    [100, 100],
-  ] as const) {
+  for (const bestLevel of [0, 1, 5, 100, 0]) {
     status.update(
-      { mode: "title", count: 6, level, bestLevel, elapsed: 0, reduced: false },
+      { mode: "title", count: 6, level: 1, bestLevel, replayTokens: 3, elapsed: 0, reduced: false },
       390,
       844,
     );
-    expect(camera.getObjectByName("level-status")!.userData.text).toContain(
-      `BEST ${String(bestLevel).padStart(2, "0")}`,
-    );
+    const root = camera.getObjectByName("level-status")!;
+    expect(root.visible).toBe(true);
+    expect(root.getObjectByName("neon-text:LEVEL 01 - 6 PLAYERS")).toBeDefined();
+    expect(root.getObjectByName("neon-text:BEST 00")).toBeUndefined();
+    if (bestLevel > 0)
+      expect(
+        root.getObjectByName(`neon-text:BEST ${String(bestLevel).padStart(2, "0")}`),
+      ).toBeDefined();
+    else {
+      expect(root.userData.text).not.toContain("BEST");
+      expect(root.children).toHaveLength(2);
+    }
+    expect(root.getObjectByName("neon-text:REPLAYS 3")!.position.y).toBe(bestLevel > 0 ? -42 : -20);
   }
+  disposeScene(camera);
 });

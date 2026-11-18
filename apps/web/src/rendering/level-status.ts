@@ -15,7 +15,7 @@ export function createLevelStatus(camera: PerspectiveCamera) {
       root.visible = state.bestLevel !== undefined && !state.settings?.open;
       if (!root.visible) return;
       const text = `${state.debug ? "DEBUG " : ""}LEVEL ${String(state.level ?? 1).padStart(2, "0")} - ${state.count} PLAYERS`,
-        best = `BEST ${String(state.bestLevel).padStart(2, "0")}`,
+        best = (state.bestLevel ?? 0) > 0 ? `BEST ${String(state.bestLevel).padStart(2, "0")}` : "",
         tokens =
           state.debug || state.replayTokens === undefined ? "" : `REPLAYS ${state.replayTokens}`,
         next = `${text}|${best}|${tokens}`;
@@ -24,17 +24,19 @@ export function createLevelStatus(camera: PerspectiveCamera) {
           root.remove(child);
           disposeScene(child);
         }
-        const current = createNeonLettering(text, 13, 0x9ceaff),
-          peak = createNeonLettering(best, 12, 0xffcf79);
-        peak.position.y = -20;
-        root.add(current, peak);
+        root.add(createNeonLettering(text, 13, 0x9ceaff));
+        if (best) {
+          const peak = createNeonLettering(best, 12, 0xffcf79);
+          peak.position.y = -20;
+          root.add(peak);
+        }
         if (tokens) {
           const replays = createNeonLettering(
             tokens,
             14,
             state.replayTokens === 0 ? 0xff8d71 : 0xffcf79,
           );
-          replays.position.y = -42;
+          replays.position.y = best ? -42 : -20;
           root.add(replays);
         }
         root.traverse((node) => {

@@ -12,10 +12,13 @@ import { levelDifficulty } from "../apps/web/src/simulation/difficulty";
 
 test("Best stays zero when starting a level, then records the level actually won", async ({
   page,
-}) => {
+}, info) => {
   test.setTimeout(90000);
   await openGame(page);
   await choosePlayers(page, 2);
+  await page.screenshot({ path: info.outputPath("fresh-main-no-best.png") });
+  await openSettings(page);
+  await page.screenshot({ path: info.outputPath("fresh-settings-no-best.png") });
   await configureGame(page, { music: false, effectsVolume: 0 });
   await expect(page.getByLabel("Highest won level", { exact: true })).toHaveText("0");
   await play(page);
@@ -30,6 +33,11 @@ test("Best stays zero when starting a level, then records the level actually won
     await page.clock.runFor(1000);
   await expect(page.getByLabel("Round winner", { exact: true })).toHaveText("You win");
   await expect(page.getByLabel("Highest won level", { exact: true })).toHaveText("1");
+  await page.clock.runFor(1200); // Let the normal victory controls become available.
+  await page.screenshot({ path: info.outputPath("won-main-best-01.png") });
+  await openSettings(page);
+  await page.screenshot({ path: info.outputPath("won-settings-best-01.png") });
+  await page.getByRole("button", { name: "Resume", exact: true }).click();
   await expect
     .poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("citadel.progress.v1")!)))
     .toMatchObject({ version: 5, level: 2, best: 1 });
@@ -131,6 +139,7 @@ for (const touch of [false, true])
         await page.evaluate(() => JSON.parse(localStorage.getItem("citadel.solo.v1")!).settings),
       ).toEqual(settings);
       await openSettings(page);
+      await page.screenshot({ path: info.outputPath("after-reset-settings-no-best.png") });
       const sizes = touch
         ? [
             [844, 390],

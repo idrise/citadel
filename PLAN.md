@@ -903,6 +903,16 @@ instructions are in `docs/LEVEL_LADDER_REVIEW.md`. The existing bundle-size advi
 remains; remote CI/physical-device checks are not claimed. M09 awaits owner review;
 no push or deployment is authorised.
 
+18 November empty-Best presentation amendment (owner request): main-screen and
+Settings Best lettering is omitted until a level has actually been won. The replay
+row moves up when Best is absent. Wins show the completed peak; Reset progress
+removes it again without hiding the level. Saved progress and nonvisual numeric
+status remain intact. All 696 unit tests, format/lint/types, the root build and four
+production Chromium reset/win checks pass after correcting the screenshot fixture's
+victory-control timing. Existing bundle-size advice remains. Evidence and limits
+are in `docs/PROGRESS_RESET_REVIEW.md`; the local demo is http://127.0.0.1:5181/.
+M09 awaits owner review; no push or deployment is authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,

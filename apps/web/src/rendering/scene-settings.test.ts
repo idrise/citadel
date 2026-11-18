@@ -1,5 +1,6 @@
 import { Box3, PerspectiveCamera, Vector3 } from "three";
 import { expect, it } from "vite-plus/test";
+import { disposeScene } from "./dispose-scene";
 import { createSceneSettings, settingsTargets, type SceneSettingsState } from "./scene-settings";
 const state: SceneSettingsState = {
   open: true,
@@ -294,4 +295,27 @@ it("fits four compressed desktop rows while retaining header space, footer paddi
         index === graphicsQuality,
       );
   }
+});
+
+it("omits an unwon Best in Settings, shows a completed best, and removes it again after reset", () => {
+  const camera = new PerspectiveCamera(44, 1, 0.1, 200),
+    view = createSceneSettings(camera);
+  for (const bestLevel of [0, 1, 100, 0]) {
+    view.update({ ...state, level: 1, bestLevel }, 390, 844);
+    const progress = camera.getObjectByName("settings-level-status")!;
+    expect(progress.visible).toBe(true);
+    expect(progress.getObjectByName("neon-text:LEVEL 01")).toBeDefined();
+    expect(progress.getObjectByName("neon-text:BEST 00")).toBeUndefined();
+    if (bestLevel > 0)
+      expect(
+        progress.getObjectByName(`neon-text:BEST ${String(bestLevel).padStart(2, "0")}`),
+      ).toBeDefined();
+    else expect(progress.children).toHaveLength(1);
+    const ids = progress.children.map((child) => child.uuid);
+    view.update({ ...state, level: 1, bestLevel }, 390, 844);
+    expect(
+      camera.getObjectByName("settings-level-status")!.children.map((child) => child.uuid),
+    ).toEqual(ids);
+  }
+  disposeScene(camera);
 });

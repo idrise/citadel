@@ -284,18 +284,18 @@ export function createSceneSettings(camera: PerspectiveCamera) {
           disposeScene(progress);
           progress = new Group();
           progress.name = "settings-level-status";
-          const level = createNeonLettering(
-              `LEVEL ${String(state.level).padStart(2, "0")}`,
-              16,
-              0x9ceaff,
-            ),
-            best = createNeonLettering(
+          progress.add(
+            createNeonLettering(`LEVEL ${String(state.level).padStart(2, "0")}`, 16, 0x9ceaff),
+          );
+          if ((state.bestLevel ?? 0) > 0) {
+            const best = createNeonLettering(
               `BEST ${String(state.bestLevel).padStart(2, "0")}`,
               13,
               0xffcf79,
             );
-          best.position.y = -21;
-          progress.add(level, best);
+            best.position.y = -21;
+            progress.add(best);
+          }
           progress.traverse((node) => {
             if (
               node instanceof Mesh &&

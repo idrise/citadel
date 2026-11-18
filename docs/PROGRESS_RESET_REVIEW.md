@@ -1,6 +1,7 @@
 # Won-level Best and progress reset
 
-Best now means the highest real level won. It starts at zero; entering a level,
+Best now means the highest real level won. It starts at zero in saved progress and is
+omitted from the main screen and Settings until the first win. Entering a level,
 unlocking a higher challenge, losses and debug navigation never raise it. Winning
 level 100 records 100. Every view uses the saved number directly: the initial
 one-level display subtraction would have been wrong after skipped promotions or
@@ -19,7 +20,26 @@ and graphics preferences remain intact. Restart remains a separate action which
 preserves progress. The short-screen panel places sliders in columns and uses two
 button rows; accessible targets and rendered controls use the same bounds.
 
-## Checks and evidence
+## 18 November empty-Best presentation
+
+Neither scene creates Best lettering while the saved best is zero. Replay tokens
+move into the free status row. A completed Best appears after a win and disappears
+again after Reset progress; the level and settings controls stay visible.
+Unit coverage includes zero → positive → zero transitions, the level-100 peak,
+geometry reuse and the replay row position. All 696 unit tests, format/lint/types
+and the root production build pass; the existing large-chunk advisory remains.
+Four production Chromium checks cover real win/save/reload, desktop/touch resets
+and debug reset. The initial screenshot flow was corrected to wait for the normal
+victory controls before opening Settings; the corrected run passes.
+
+Rendered evidence: [fresh main screen](reviews/m09/empty-best/fresh-main.png),
+[fresh Settings](reviews/m09/empty-best/fresh-settings.png),
+[Best after a win](reviews/m09/empty-best/won-settings.png), and
+[phone Settings after reset](reviews/m09/empty-best/phone-reset-settings.png).
+Local demo: http://127.0.0.1:5181/. Touch screenshots use browser emulation;
+physical-device checks and remote CI are not claimed. REVIEW REQUIRED — M09.
+
+## Earlier checks and evidence
 
 - `vp check --fix`: formatting, lint and TypeScript pass.
 - `vp test run`: 627 unit tests in 114 files pass. Coverage includes only-win updates,
