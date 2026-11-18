@@ -2,7 +2,7 @@ TODO implementations are ready for local review; Windows and physical-mobile val
 [the feedback review](docs/MOBILE_FEEDBACK_REVIEW.md) and
 [the triangle/rally review](docs/TRIANGLE_RALLY_REVIEW.md), and
 [the scene Retry and wall-gap correction](docs/SCENE_RETRY_GAP_REVIEW.md) for checks, screenshots,
-audio, measurements and physical-device limits. See also [the pre-signoff tweaks](docs/PRESIGNOFF_TWEAKS_REVIEW.md), [roster/layout variety](docs/ROSTER_VARIETY_REVIEW.md), and [curved serves and bot tactics](docs/SERVING_TACTICS_REVIEW.md). Awaiting M09 review.
+audio, measurements and physical-device limits. The [18 November follow-up](docs/TODO_FOLLOWUP_REVIEW.md) covers Settings alignment, bat pass-through regressions, percussion and guide removal. See also [the pre-signoff tweaks](docs/PRESIGNOFF_TWEAKS_REVIEW.md), [roster/layout variety](docs/ROSTER_VARIETY_REVIEW.md), and [curved serves and bot tactics](docs/SERVING_TACTICS_REVIEW.md). Awaiting M09 review.
 
 - [x] Use **Citadel** consistently in the page title, manifest, accessible UI, package and documentation.
 - [x] Enlarge the mobile portrait arena while retaining every opponent and container; use a steeper camera and tighter safe framing.
@@ -67,3 +67,7 @@ request on 18 November. Ready for local review; see
 - [x] Clearly announce demotion with **DEMOTED** using the existing **ROUND OVER** result heading, updated following review.
 - [x] **Replay-token rules.** Start with three tokens; lose one on a failed level; losing with no tokens left causes demotion. Restore to three tokens on demotion and restore to three on a level win.
 - [x] Add ball to ball collisions and transfer spin onto the destination ball.
+- [x] The settings panel the gap between sound effects and the top elements is too small, get the layout consistent. Restart and Resume buttons don't line up correctly.
+- [x] Had the ball go through the bat a couple of times. Assume that's down to the occasional dropped frame.
+- [x] Increase the volume of the percussion in the music. Look at the volumes and get a great balance.
+- [x] Remove guide on and guide off in the settings as they don't seem to make any difference to the game. Center the title text now the button is gone.
