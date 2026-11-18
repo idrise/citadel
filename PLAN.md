@@ -120,6 +120,7 @@ The previously discussed sketch is a **layout reference**, not a requirement to 
 - Paddles move along a bounded arc with limited angular speed and optional tunable acceleration; start with responsive tracking as described above. The requested bat angle is a **target**, not an instantaneous teleport. An off-centre contact can aim a shot even when the paddle is stationary.
 - Paddle movement can impart **spin/curvature** based on tangential paddle velocity, contact offset and incoming direction. Curvature has bounded magnitude and decay; zero-spin must behave predictably. Make dangerous trajectories legible; show shot attribution only if it adds useful information without clutter.
 - Damage requires a swept collision with an intact health piece at its current simulated position and radius; sweep relative to piece movement, not just its end position. Destroy exactly that piece, emit its destruction effect, consume the active ball and put it into a short attached/ready-to-serve state at the damaged defender if they survive. Crossing the defence arc or a missing piece causes no damage. Resolve simultaneous piece contacts deterministically; one ball can destroy at most one piece before returning. If the defender is eliminated, apply the explicitly labelled prototype serve fallback above; never attach a ball to an eliminated seat or serve after match end.
+- After losing a container, a surviving human or bot's entire remaining bank is invulnerable for two playing seconds, starting at the swept hit's sub-tick time. Protected containers rebound balls without taking damage or consuming the ball; they preserve its rally clock and striker credit. Rebounds and pickups do not extend the deadline. A soft owner-coloured pulse identifies the bank; reduced effects uses a steady tint. Pause freezes both the timer and cue. A final-container loss still eliminates normally.
 - Elimination at zero health; removed players can spectate. Edge cases include last piece lost simultaneously, serve recipient eliminated while another ball is active/returning, balls trapped near geometry and no survivors.
 - No random competitive power-ups in the default rule set; randomness (including bots/serves if needed) uses a seed and can be replayed.
 - Start each round with **one ball**, then add one every **15 playing seconds** to a provisional default cap of **four**, as requested during M01 hands-on feedback. Ball radius is **0.187** and speed **24 units/s**, respectively 10% larger and twice the initial prototype values. Expose arrival interval (5–30s) and cap (1–8) in the experiment panel. Pausing/countdown never advance arrivals. Balls do not collide with each other in this prototype. One click launches at most one queued ball, while each ball still has an automatic deadline; eliminating a defender reassigns their pending serves. Keep zero-spin behaviour and all ball IDs deterministic.
@@ -842,6 +843,22 @@ bot tuning, seed substitution, retry, skip or timeout adjustment is made. See
 Validation: all nine focused tests, 677 total unit tests, format/lint/types, the
 CI-path production build and diff checks pass locally; the existing bundle-size
 advisory remains. Remote CI rerun remains pending; M09 awaits review and no push is authorised.
+
+18 November container-protection amendment (owner explicitly renewed this request):
+Every surviving seat now gets two seconds of bank invulnerability after a scored
+container loss. The deadline starts at the actual swept impact; protected contacts
+rebound and cannot chain-score within the tick. Protected bounces and collected
+containers preserve the current deadline, striker and rally clock. Revenge serves
+and final-piece elimination remain. A three-cycle owner-coloured pulse uses the
+playing clock and shared bank materials, freezing on pause; reduced effects uses
+a steady tint and Low graphics retains it without bloom. No meshes or render
+passes are added. This supersedes the earlier removed-TODO proposal record.
+See `docs/CONTAINER_PROTECTION_REVIEW.md` for 2/4/6 desktop/phone renders, a pulse
+clip, edge-case tests and limits. Implementation checkpoint: `2bcf36e`.
+Validation: 694 unit tests, format/lint/types,
+root/Pages builds and nine native browser checks at each path pass; the existing
+bundle-size advisory remains. Thirty-six timing/render samples have zero page
+errors/collision caps. M09 awaits review; no push or deployment is authorised.
 
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
@@ -1725,4 +1742,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/GRAPHICS_QUALITY_REVIEW.md`, `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/CONTAINER_PROTECTION_REVIEW.md`, `docs/GRAPHICS_QUALITY_REVIEW.md`, `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
