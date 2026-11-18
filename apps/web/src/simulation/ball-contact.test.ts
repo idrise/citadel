@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { ARENA, FIXED_DT } from "./arena";
+import { ARENA, FIXED_DT, fortress, railPosition } from "./arena";
 import { sweepBalls, resolveBallContact } from "./ball-contact";
 import { curveFlight, MAX_SWIPE_CURVE } from "./flight";
 import { createMatch, stepMatch } from "./match";
@@ -239,4 +239,24 @@ it("resolves destination damage before a later pair and never hits a consumed re
   expect(state.balls[0]!.phase).toBe("ready");
   expect(state.balls[0]!.seat).toBe(0);
   expect(state.stats.collisionCaps).toBe(0);
+});
+
+it("defends again when a pair collision returns a ball to the same bat within one tick", () => {
+  for (const count of [2, 4, 6] as const) {
+    const state = createMatch(7, count);
+    state.phase = "playing";
+    const angle = fortress(0, state.arena).direction,
+      normal = unit(angle),
+      surface = ARENA.railRadius + ARENA.paddleThickness / 2 + ARENA.ballRadius;
+    state.balls = [0.01, 0.5].map((distance, id) => ({
+      ...ball(id, 0, 0, 0, 0),
+      position: railPosition(0, angle, surface + distance, state.arena),
+      velocity: scale(normal, -24),
+    }));
+    advance(state);
+    expect(state.events.map((e) => e.type)).toEqual(["paddle", "ball", "paddle"]);
+    expect(dot(state.balls[0]!.velocity, normal)).toBeGreaterThan(0);
+    expect(state.stats.damage).toBe(0);
+    expect(state.stats.collisionCaps).toBe(0);
+  }
 });

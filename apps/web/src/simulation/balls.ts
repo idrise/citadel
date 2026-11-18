@@ -109,6 +109,10 @@ export function advanceBalls(
           velocities.get(other)!.factor,
         )
       ) {
+        // A new impulse can send either ball straight back to a bat it hit
+        // earlier in this tick. Only suppress consecutive contacts with that bat.
+        flight.struckPaddles.clear();
+        other.struckPaddles.clear();
         flight.departure = hit.normal;
         other.departure = scale(hit.normal, -1);
         paired.add(flight);

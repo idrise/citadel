@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { ARENA, batCentre, fortress, railPosition } from "./arena";
+import { ARENA, batCentre, batRadius, createArena, fortress, railPosition } from "./arena";
 import { paddleReturn, sweepCircle, sweepPaddle, sweepWalls } from "./collision";
 import { add, dot, length, scale, unit } from "./vector";
 
@@ -73,4 +73,22 @@ describe("swept collisions", () => {
     expect(dot(edge, unit(angle))).toBeLessThan(12);
     expect(dot(edge, unit(angle))).toBeGreaterThan(0);
   });
+});
+
+it("recovers an entering overlap on either curved face without rebouncing departures", () => {
+  for (const profile of ["shallow", "standard", "deep"] as const)
+    for (const side of [-1, 1]) {
+      const arena = createArena(6, undefined, 0, 1, "classic", profile),
+        angle = fortress(0, arena).direction,
+        normal = scale(unit(angle), side),
+        inflation = ARENA.ballRadius + ARENA.paddleThickness / 2,
+        point = add(
+          batCentre(0, angle, arena),
+          scale(unit(angle), batRadius(arena) + side * (inflation - 0.01)),
+        ),
+        hit = sweepPaddle(point, scale(normal, -59.5), 0, angle, 0, 1 / 120, arena);
+      expect(hit?.time).toBe(0);
+      expect(hit?.separation).toBeCloseTo(0.01, 10);
+      expect(sweepPaddle(point, scale(normal, 59.5), 0, angle, 0, 1 / 120, arena)).toBeNull();
+    }
 });

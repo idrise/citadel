@@ -92,6 +92,17 @@ export function sweepPaddle(
   const relativeVelocity = sub(velocity, centreVelocity);
   const inflation = ARENA.ballRadius + ARENA.paddleThickness / 2;
   const candidates: PaddleContact[] = [];
+  // Pair separation and arena morphs can leave a ball just inside a face.
+  // Circle roots only find future boundary crossings, so recover an entering
+  // overlap now; a departing ball must continue without a second rebound.
+  const radial = length(relative),
+    radialOffset = radial - bow,
+    offset = angleDifference(angleOf(relative), angle) / halfAngle;
+  if (Math.abs(radialOffset) < inflation && Math.abs(offset) <= 1) {
+    const normal = scale(normalise(relative), radialOffset >= 0 ? 1 : -1);
+    if (dot(relativeVelocity, normal) < -EPS)
+      candidates.push({ time: 0, normal, offset, separation: inflation - Math.abs(radialOffset) });
+  }
   const a = dot(relativeVelocity, relativeVelocity);
   const b = dot(relative, relativeVelocity);
   if (a > EPS) {
