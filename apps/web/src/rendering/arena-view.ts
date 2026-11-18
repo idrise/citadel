@@ -1,3 +1,4 @@
+import { protectionPulse } from "./health-protection";
 import { MAX_PLAYERS } from "../simulation/player-count";
 import type { TitleFrame } from "./title-transition";
 import { morphPosts, type PostReveal } from "../simulation/arena-transition";
@@ -292,6 +293,11 @@ export function createArenaView(
           paddle.position.set(ending.paddle.position.x, 0.95, ending.paddle.position.y);
           paddle.rotation.y = -ending.paddle.angle;
         }
+        stage.healthProtection[player.id]!(
+          state.phase === "playing"
+            ? protectionPulse(player, state.elapsed, options.reducedEffects)
+            : 0,
+        );
         stage.health[player.id]!.forEach((piece, index) => {
           piece.visible = Boolean(player.health[index]);
           const body = player.pieces[index];

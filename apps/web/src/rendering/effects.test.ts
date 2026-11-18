@@ -18,22 +18,25 @@ const hit: GameEvent = {
   radius: 0.32,
   returnTo: { x: 1, y: 1 },
 };
-it("uses the existing bounded spark pool for ball contacts and suppresses it with reduced effects", () => {
-  const root = new Group(),
-    effects = createEffects(root),
-    state = createMatch();
-  const saved = structuredClone(state);
-  const event = { ...hit, type: "ball" as const, seat: -1, piece: null, otherBallId: 1 };
-  effects.emit(event, false);
-  effects.update(0.05, false, state);
-  expect(root.children.filter((c) => c.name === "impact-feedback" && c.visible)).toHaveLength(1);
-  effects.reset();
-  effects.emit(event, true);
-  effects.update(0.05, true, state);
-  expect(root.children.filter((c) => c.name === "impact-feedback" && c.visible)).toHaveLength(0);
-  expect(state).toEqual(saved);
-  disposeScene(root);
-});
+it.each(["ball", "shield"] as const)(
+  "uses the bounded spark pool for %s contacts and suppresses it with reduced effects",
+  (type) => {
+    const root = new Group(),
+      effects = createEffects(root),
+      state = createMatch();
+    const saved = structuredClone(state);
+    const event = { ...hit, type, seat: type === "shield" ? 0 : -1, piece: null, otherBallId: 1 };
+    effects.emit(event, false);
+    effects.update(0.05, false, state);
+    expect(root.children.filter((c) => c.name === "impact-feedback" && c.visible)).toHaveLength(1);
+    effects.reset();
+    effects.emit(event, true);
+    effects.update(0.05, true, state);
+    expect(root.children.filter((c) => c.name === "impact-feedback" && c.visible)).toHaveLength(0);
+    expect(state).toEqual(saved);
+    disposeScene(root);
+  },
+);
 it("tints each active ball and trail with its last striker, while ready balls use the revenge recipient", () => {
   const root = new Group(),
     balls = createBallView(root),

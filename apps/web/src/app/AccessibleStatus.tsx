@@ -1,3 +1,4 @@
+import { containersProtected } from "../simulation/protection";
 import { levelHighlights, lossMessage } from "../session/level-briefing";
 import { clampPaddleAngle, fortress } from "../simulation/arena";
 import { SUPPLIES } from "../simulation/supplies";
@@ -149,6 +150,13 @@ export function AccessibleStatus({
         Seed {state.rng} · {state.elapsed.toFixed(1)}s · {state.stats.paddleHits} returns ·{" "}
         {state.stats.damage} pieces lost · {state.stats.collisionCaps} collision caps
       </p>
+      {state.players.map((player) => (
+        <output key={`protection-${player.id}`} aria-label={`${SEATS[player.id]!.name} protection`}>
+          {state.phase === "playing" && containersProtected(player, state.elapsed)
+            ? "Protected"
+            : "Vulnerable"}
+        </output>
+      ))}
       {state.players.map((player) => (
         <output key={player.id} aria-label={`${SEATS[player.id]!.name} health`}>
           {player.health.filter(Boolean).length}

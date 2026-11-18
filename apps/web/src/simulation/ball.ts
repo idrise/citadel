@@ -1,3 +1,4 @@
+import { containersProtected } from "./protection";
 import { advanceRally } from "./rally";
 import { collectSupply, SUPPLIES } from "./supplies";
 import { ARENA } from "./arena";
@@ -158,13 +159,40 @@ export function resolveBallImpact(
   }
   if (hit.type === "piece") {
     if (stopAtFirstImpact) return;
-    damagePiece(state, ball, hit.seat, hit.piece, {
-      time: elapsed,
-      normal: { ...hit.normal },
-      incoming,
-      outgoing: { x: 0, y: 0 },
-      spin: ball.spin ?? 0,
-    });
+    const at = state.elapsed - dt + elapsed;
+    if (containersProtected(state.players[hit.seat]!, at)) {
+      const rebound = spinBounce(ball.velocity, hit.normal, ball.spin);
+      ball.velocity = rebound.velocity;
+      ball.spin = rebound.spin;
+      struckPaddles.clear();
+      ball.position = add(ball.position, scale(hit.normal, (hit.separation ?? 0) + 0.0001));
+      emit(state, "shield", ball.position, hit.seat, hit.piece, {
+        ballId: ball.id,
+        impact: {
+          time: elapsed,
+          normal: { ...hit.normal },
+          incoming,
+          outgoing: { ...ball.velocity },
+          spin: ball.spin ?? 0,
+        },
+      });
+      return;
+    }
+
+    damagePiece(
+      state,
+      ball,
+      hit.seat,
+      hit.piece,
+      {
+        time: elapsed,
+        normal: { ...hit.normal },
+        incoming,
+        outgoing: { x: 0, y: 0 },
+        spin: ball.spin ?? 0,
+      },
+      at,
+    );
     return;
   }
   if (hit.type === "paddle") {

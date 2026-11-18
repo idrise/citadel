@@ -1,3 +1,4 @@
+import { CONTAINER_PROTECTION_SECONDS, containersProtected } from "./protection";
 import { serveCurve } from "./flight";
 import { serveDirection } from "./aim";
 import { ARENA, fortress, railPosition } from "./arena";
@@ -64,10 +65,13 @@ export function damagePiece(
   seat: number,
   piece: number,
   impact?: ImpactDetails,
+  at = state.elapsed,
 ): void {
   const player = state.players[seat];
-  if (!player?.health[piece]) return;
+  if (!player?.health[piece] || containersProtected(player, at)) return;
   player.health[piece] = false;
+  if (alive(player)) player.protectedUntil = at + CONTAINER_PROTECTION_SECONDS;
+  else delete player.protectedUntil;
   state.stats.damage++;
   const damage = emit(state, "damage", player.pieces[piece]!.position, seat, piece, {
     ballId: ball.id,

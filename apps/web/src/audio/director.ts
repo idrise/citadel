@@ -43,7 +43,7 @@ export function createMusicDirector(humanSeat: number, seed: number) {
       for (const event of events) {
         if (event.id <= lastEvent) continue;
         lastEvent = event.id;
-        if (event.type === "wall" || event.type === "ball") {
+        if (event.type === "wall" || event.type === "ball" || event.type === "shield") {
           cues.push(cue("ricochet", 74, 0.65, 0.045));
           continue;
         }

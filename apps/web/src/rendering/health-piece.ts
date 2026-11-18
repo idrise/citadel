@@ -1,4 +1,4 @@
-import { CylinderGeometry, Group, Mesh } from "three";
+import { Color, CylinderGeometry, Group, Mesh, type ShaderMaterial } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { createFeatureEdgeFactory } from "./feature-edges";
 import { frostedMaterial } from "./frosted-material";
@@ -31,7 +31,9 @@ export function createHealthFactory(colour: number) {
   const outlines = [bodyGeometry, trimGeometry].map((geometry) =>
     createFeatureEdgeFactory(geometry, colour, { width: 3, power: 1.8 }),
   );
-  return () => {
+  const edgeMaterials: ShaderMaterial[] = [];
+  const protectionColour = new Color(colour).lerp(new Color(0xe8f5ff), 0.25);
+  function make() {
     const root = new Group();
     let index = 0;
     for (const [geometry, material, height] of [
@@ -40,9 +42,21 @@ export function createHealthFactory(colour: number) {
     ] as const) {
       const part = new Mesh(geometry, material);
       part.position.y = height;
-      part.add(outlines[index++]!());
+      const outline = outlines[index]!();
+      edgeMaterials[index] ??= outline.material;
+      index++;
+      part.add(outline);
       root.add(part);
     }
     return root;
+  }
+  make.setProtection = (amount: number) => {
+    bodyMaterial.emissive.copy(protectionColour);
+    capMaterial.emissive.copy(protectionColour);
+    bodyMaterial.emissiveIntensity = amount * 0.85;
+    capMaterial.emissiveIntensity = amount * 0.35;
+    for (const material of edgeMaterials)
+      (material.uniforms.neonColour!.value as Color).setHex(colour).multiplyScalar(1.8 + amount);
   };
+  return make;
 }

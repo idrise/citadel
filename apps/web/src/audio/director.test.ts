@@ -170,3 +170,9 @@ it.each([0, 1, 2, 3, 4, 5])("routes real piece damage correctly for human fortre
   expect(lost[0]!.velocity).toBeGreaterThanOrEqual(0.9);
   expect(observer.snapshot().players[human]).toMatchObject({ scored: 1, lost: 1 });
 });
+
+it("plays a shield rebound as a neutral contact without damage or success cues", () => {
+  const director = createMusicDirector(0, 2026);
+  expect(director.observe(frame, [event(0, "shield", 0)])).toMatchObject([{ voice: "ricochet" }]);
+  expect(director.snapshot()).toMatchObject({ streak: 0, notes: 0 });
+});

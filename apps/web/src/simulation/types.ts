@@ -24,6 +24,8 @@ export interface PlayerState {
   pieces: PieceBody[];
   swipe?: BatSwipe;
   collectedFormation?: boolean;
+  /** Playing-time deadline after losing a container; absent until the first loss. */
+  protectedUntil?: number;
 }
 export interface BotState {
   targetAngle: number;
@@ -76,6 +78,7 @@ export interface GameEvent {
     | "paddle"
     | "wall"
     | "ball"
+    | "shield"
     | "damage"
     | "elimination"
     | "victory"

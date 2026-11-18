@@ -21,6 +21,7 @@ export function createStage(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA
     marks: Mesh[] = [];
   const paddles: Mesh[] = [];
   const health: Group[][] = [];
+  const healthProtection: ((amount: number) => void)[] = [];
   for (const seat of initial.fortresses) {
     const { colour, sides } = SEATS[seat.id]!;
     const rail = arcMesh(
@@ -65,6 +66,7 @@ export function createStage(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA
       roughness: 0.4,
     });
     const healthPiece = createHealthFactory(colour);
+    healthProtection[seat.id] = healthPiece.setProtection;
     health.push(
       Array.from({ length: SUPPLIES.maxPieces }, (_, index) => {
         const position = seat.pieces[index] ?? seat.anchor;
@@ -85,5 +87,5 @@ export function createStage(humanSeat = 0, initial: ArenaGeometry = SQUARE_ARENA
     marks.push(mark);
     root.add(mark);
   }
-  return { root, paddles, health, rails, marks, base };
+  return { root, paddles, health, healthProtection, rails, marks, base };
 }
