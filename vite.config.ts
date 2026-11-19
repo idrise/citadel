@@ -1,14 +1,25 @@
 import { fileURLToPath } from "node:url";
 import { buildIdentity } from "./tooling/build-identity";
+import { localDiagnosticsEnabled } from "./tooling/build-profile";
 import packageInfo from "./package.json";
 import { defineConfig } from "vite-plus";
 import react from "@vitejs/plugin-react";
 import { pagesBase } from "./tooling/pages-base.ts";
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ command, mode, isPreview }) => ({
   root: "apps/web",
   define: {
-    __CITADEL_BUILD__: JSON.stringify(buildIdentity(packageInfo.version, process.cwd(), mode)),
+    __CITADEL_LOCAL_DIAGNOSTICS__: JSON.stringify(
+      localDiagnosticsEnabled(command, mode, isPreview),
+    ),
+    __CITADEL_BUILD__: JSON.stringify(
+      buildIdentity(
+        packageInfo.version,
+        process.cwd(),
+        mode,
+        localDiagnosticsEnabled(command, mode, isPreview),
+      ),
+    ),
   },
   base: pagesBase(process.env.PAGES_BASE_PATH),
   plugins: [react()],

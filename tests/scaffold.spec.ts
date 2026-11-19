@@ -1,6 +1,29 @@
 import { expect, test } from "./fixtures";
 import { openGame, play, pause } from "./helpers";
 
+for (const touch of [false, true])
+  test.describe(touch ? "touch release gate" : "desktop release gate", () => {
+    test.use({
+      hasTouch: touch,
+      isMobile: touch,
+      viewport: touch ? { width: 390, height: 844 } : { width: 1280, height: 900 },
+    });
+    test("Settings diagnostic actions match the build profile", async ({ page }, info) => {
+      test.setTimeout(120000); // Software WebGL startup can be slow on shared CI workers.
+      const local = process.env.CITADEL_BUILD_MODE === "local-debug";
+      await page.goto("./");
+      await page.getByRole("button", { name: "Settings", exact: true }).click();
+      const panel = page.getByRole("navigation", { name: "Game settings", exact: true });
+      await expect(panel).toBeVisible();
+      for (const name of ["Save performance report", "Run performance test"])
+        await expect(panel.getByRole("button", { name, exact: true })).toHaveCount(local ? 1 : 0);
+      for (const name of ["Reset progress", "Resume", "Restart"])
+        await expect(panel.getByRole("button", { name, exact: true })).toBeInViewport();
+      await expect(panel.getByRole("button")).toHaveCount(local ? 5 : 3);
+      await page.screenshot({ path: info.outputPath("build-settings.png") });
+    });
+  });
+
 test("production game fills the viewport and refreshes under the Pages path", async ({
   page,
 }, testInfo) => {

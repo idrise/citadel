@@ -14,11 +14,14 @@ export function buildIdentity(
   version: string,
   root = process.cwd(),
   mode = "production",
+  localDiagnostics = false,
 ): BuildIdentity {
   const hash = createHash("sha256")
     .update(version)
     .update("\0")
     .update(mode)
+    .update("\0")
+    .update(localDiagnostics ? "local-diagnostics" : "release-settings")
     .update("\0")
     .update(process.env.PAGES_BASE_PATH ?? "/")
     .update("\0");
@@ -42,6 +45,7 @@ export function buildIdentity(
     "pnpm-lock.yaml",
     "vite.config.ts",
     "tooling/build-identity.ts",
+    "tooling/build-profile.ts",
     "tooling/pages-base.ts",
   ]) {
     try {

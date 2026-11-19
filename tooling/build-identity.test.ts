@@ -19,6 +19,7 @@ it("identifies dirty source content independently of checkout revision and works
   expect(buildIdentity("2", root).buildId).not.toBe(original.buildId);
   expect(buildIdentity("1", root, "local-debug").buildId).not.toBe(original.buildId);
   expect(buildIdentity("1", root, "production").buildId).toBe(original.buildId);
+  expect(buildIdentity("1", root, "production", true).buildId).not.toBe(original.buildId);
   writeFileSync(file, "export const a=2;");
   expect(buildIdentity("1", root).buildId).not.toBe(original.buildId);
   expect(original.revision).toBe(process.env.GITHUB_SHA ?? "unknown");

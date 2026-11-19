@@ -984,6 +984,21 @@ All 708 unit tests, including ten swish tests, and format/lint/types pass. No au
 capture or build was rerun for these test-alignment follow-ups; existing listening
 clips retain the preceding 0.5 multiplier. M09 still awaits owner review.
 
+19 November deployed diagnostic-button correction: the owner reported Test still
+visible after an Actions deployment. Reproduced both buttons leaking locally by
+building production mode with NODE_ENV=development; the old DEV-based gate produced
+five desktop buttons instead of three. Vite now defines an explicit diagnostic
+flag from build/serve command, explicit mode and preview state, independent of
+NODE_ENV. Root/Pages release builds hide the actions; local-debug retains them.
+Build fingerprints include the resolved profile/helper. Both Actions workflows
+now force production mode/NODE_ENV and run short startup plus desktop/touch Settings
+checks before uploading, without simulating a match. All 712 unit tests, nine
+focused tests, format/lint/types, root/local/Pages builds and nine browser checks
+pass across adversarial release, local and exact software-WebGL CI-gate cases.
+See the correction record and renders in `docs/LOCAL_BUILD_REVIEW.md`. Existing
+bundle advice remains. The actual remote run environment/public-site update is
+unverified; no push, workflow trigger or deployment is authorised. M09 awaits review.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,

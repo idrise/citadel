@@ -31,7 +31,14 @@ jobs:
       - run: vp install --frozen-lockfile
       - run: vp check
       - run: vp test run
-      - run: vp build
+      - run: vp build --mode production
+        env:
+          NODE_ENV: production
       - run: vp exec playwright install --with-deps chromium
-      - name: Browser smoke test
-        run: vp exec playwright test tests/scaffold.spec.ts --grep "production game fills the viewport" --workers=1
+      - name: Browser smoke and release Settings
+        run: >-
+          vp exec playwright test tests/scaffold.spec.ts
+          --grep "production game fills the viewport|Settings diagnostic actions match the build profile"
+          --workers=1
+        env:
+          CITADEL_BUILD_MODE: production

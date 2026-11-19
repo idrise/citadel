@@ -6,16 +6,17 @@ afterEach(() => {
 });
 
 it.each([
-  { dev: true, mode: "development", expected: true },
-  { dev: false, mode: "local-debug", expected: true },
-  { dev: false, mode: "production", expected: false },
-  { dev: false, mode: "staging", expected: false },
+  { dev: true, mode: "development" },
+  { dev: true, mode: "production" },
+  { dev: false, mode: "local-debug" },
+  { dev: false, mode: "production" },
+  { dev: false, mode: "staging" },
 ])(
-  "enables local diagnostic actions only for development or explicit local builds ($mode)",
-  async ({ dev, mode, expected }) => {
+  "uses the compiled diagnostic flag regardless of Vite's runtime environment ($dev, $mode)",
+  async ({ dev, mode }) => {
     vi.stubEnv("DEV", dev);
     vi.stubEnv("MODE", mode);
     const { LOCAL_DIAGNOSTICS } = await import("./build-info");
-    expect(LOCAL_DIAGNOSTICS).toBe(expected);
+    expect(LOCAL_DIAGNOSTICS).toBe(__CITADEL_LOCAL_DIAGNOSTICS__);
   },
 );

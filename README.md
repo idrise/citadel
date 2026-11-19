@@ -190,8 +190,8 @@ pnpm preview:local --host 127.0.0.1 --port 5182
 
 This explicitly selects Vite mode `local-debug` and writes `dist-local/`, separate
 from the deployment's `dist/`. The standard build and Pages workflow stay in
-production mode and publish `dist/`. Visibility is fixed at build time, independent
-of hostname, URL parameters or saved settings. Local and release build identities
+production mode and publish `dist/`. Visibility uses an explicit build-command flag, independent
+of `NODE_ENV`, Vite's `DEV` flag, hostname, URL parameters or saved settings. Local and release build identities
 are distinct in performance reports.
 
 To exercise the GitHub Pages project path locally:
@@ -217,7 +217,9 @@ variable. To run the same browser checks against the local diagnostic build, use
 assert Report/Test are absent; local mode also checks their report download and
 performance-test link. For a local host-GPU run, use
 `PLAYWRIGHT_RENDERER=hardware pnpm test:browser --workers=1`; CI defaults to
-software WebGL and runs the production startup and refresh smoke test only. No history router is installed; later room links must remain static-host compatible.
+software WebGL and checks production startup/refresh plus desktop/touch Settings.
+Both Actions workflows explicitly build in production mode with `NODE_ENV=production`;
+the Pages upload follows the checks that Report/Test are absent. No history router is installed; later room links must remain static-host compatible.
 
 ## Module ownership
 
