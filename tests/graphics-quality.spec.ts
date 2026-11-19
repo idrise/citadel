@@ -9,7 +9,7 @@ for (const touch of [false, true])
       isMobile: touch,
       viewport: touch ? { width: 390, height: 844 } : { width: 1280, height: 900 },
     });
-    test("saves each quality level and changes the real rendering passes while paused", async ({
+    test("saves each quality level and reports real rendering passes in local builds", async ({
       page,
     }, info) => {
       const errors: string[] = [];
@@ -30,18 +30,24 @@ for (const touch of [false, true])
           () => JSON.parse(localStorage.getItem("citadel.solo.v1")!).settings,
         );
         expect(saved.effectsQuality).toBe(name.toLowerCase());
-        const downloadPromise = page.waitForEvent("download");
-        const report = page.getByRole("button", { name: "Save performance report", exact: true });
-        if (touch) await report.tap();
-        else await report.click();
-        const download = await downloadPromise;
-        const data = JSON.parse(await readFile((await download.path())!, "utf8"));
-        expect(data.graphics.effects).toMatchObject({
-          bloom: step > 0,
-          reflections: step === 2,
-          environment: step === 2,
-        });
-        expect(data.graphics.shadows).toBe(false);
+        if (process.env.CITADEL_BUILD_MODE === "local-debug") {
+          const downloadPromise = page.waitForEvent("download");
+          const report = page.getByRole("button", { name: "Save performance report", exact: true });
+          if (touch) await report.tap();
+          else await report.click();
+          const download = await downloadPromise;
+          const data = JSON.parse(await readFile((await download.path())!, "utf8"));
+          expect(data.graphics.effects).toMatchObject({
+            bloom: step > 0,
+            reflections: step === 2,
+            environment: step === 2,
+          });
+          expect(data.graphics.shadows).toBe(false);
+        } else {
+          await expect(
+            page.getByRole("button", { name: "Save performance report", exact: true }),
+          ).toHaveCount(0);
+        }
         await page.screenshot({ path: info.outputPath(`${name.toLowerCase()}-settings.png`) });
       }
       await quality.focus();

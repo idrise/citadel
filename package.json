@@ -9,7 +9,9 @@
     "test": "vp test run",
     "test:browser": "playwright test",
     "build": "vp build",
+    "build:local": "vp build --mode local-debug",
     "preview": "vp preview",
+    "preview:local": "vp preview --mode local-debug",
     "format": "vp fmt"
   },
   "dependencies": {

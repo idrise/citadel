@@ -10,9 +10,15 @@ export interface BuildIdentity {
   dirty: boolean | null;
 }
 /** Fingerprint build inputs, including local uncommitted source; never infer the served revision at capture time. */
-export function buildIdentity(version: string, root = process.cwd()): BuildIdentity {
+export function buildIdentity(
+  version: string,
+  root = process.cwd(),
+  mode = "production",
+): BuildIdentity {
   const hash = createHash("sha256")
     .update(version)
+    .update("\0")
+    .update(mode)
     .update("\0")
     .update(process.env.PAGES_BASE_PATH ?? "/")
     .update("\0");

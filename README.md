@@ -177,7 +177,22 @@ pnpm build
 
 `pnpm check` runs formatting, lint and TypeScript checks through Vite+.
 `pnpm build` compiles the web app to static HTML, CSS and JavaScript in `dist/`.
-No application server is needed in production.
+No application server is needed in production. Its Settings panel omits the local
+**Report** and **Test** actions; Reset progress fills that row.
+
+`pnpm dev` includes those diagnostic actions. For a built local version with the
+same optimisations as the release build, use:
+
+```sh
+pnpm build:local
+pnpm preview:local --host 127.0.0.1 --port 5182
+```
+
+This explicitly selects Vite mode `local-debug` and writes `dist-local/`, separate
+from the deployment's `dist/`. The standard build and Pages workflow stay in
+production mode and publish `dist/`. Visibility is fixed at build time, independent
+of hostname, URL parameters or saved settings. Local and release build identities
+are distinct in performance reports.
 
 To exercise the GitHub Pages project path locally:
 
@@ -196,7 +211,11 @@ PAGES_BASE_PATH=/citadel/ pnpm preview --host 127.0.0.1
 
 Open the displayed server URL at `/citadel/`. For a custom domain or user site,
 use `PAGES_BASE_PATH=/` when building and previewing. Browser tests accept the same
-variable. For a local host-GPU run, use
+variable. To run the same browser checks against the local diagnostic build, use
+`CITADEL_BUILD_MODE=local-debug pnpm test:browser` after `pnpm build:local`, matching
+`PAGES_BASE_PATH` for build and tests. The default checks use the release build and
+assert Report/Test are absent; local mode also checks their report download and
+performance-test link. For a local host-GPU run, use
 `PLAYWRIGHT_RENDERER=hardware pnpm test:browser --workers=1`; CI defaults to
 software WebGL and runs the production startup and refresh smoke test only. No history router is installed; later room links must remain static-host compatible.
 

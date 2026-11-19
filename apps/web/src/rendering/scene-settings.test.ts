@@ -319,3 +319,23 @@ it("omits an unwon Best in Settings, shows a completed best, and removes it agai
   }
   disposeScene(camera);
 });
+
+it("removes both diagnostic actions and fills their row with Reset progress when diagnostics are disabled", () => {
+  const camera = new PerspectiveCamera(44, 1, 0.1, 200),
+    view = createSceneSettings(camera);
+  for (const diagnostics of [true, false, true, false]) {
+    const targets = view.update({ ...state, diagnostics }, 390, 844);
+    expect(camera.getObjectByName("settings-label:report")!.visible).toBe(diagnostics);
+    expect(camera.getObjectByName("settings-label:benchmark")!.visible).toBe(diagnostics);
+    expect(targets.some((t) => t.key === "report")).toBe(diagnostics);
+    expect(targets.some((t) => t.key === "benchmark")).toBe(diagnostics);
+    const reset = targets.find((t) => t.key === "resetProgress")!,
+      resume = targets.find((t) => t.key === "resume")!,
+      restart = targets.find((t) => t.key === "restart")!;
+    expect(reset.width).toBeCloseTo(
+      diagnostics ? resume.width : restart.left + restart.width - resume.left,
+      5,
+    );
+  }
+  disposeScene(camera);
+});

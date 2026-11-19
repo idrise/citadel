@@ -4,6 +4,7 @@ import { pagesBase } from "./tooling/pages-base.ts";
 const basePath = pagesBase(process.env.PAGES_BASE_PATH ?? "/citadel/");
 // Native rendering is optional for local GPU checks; CI stays on portable software WebGL.
 const hardware = process.env.PLAYWRIGHT_RENDERER === "hardware";
+const buildMode = process.env.CITADEL_BUILD_MODE === "local-debug" ? "local-debug" : "production";
 const previewUrl = `http://127.0.0.1:4173${basePath}`;
 
 export default defineConfig({
@@ -29,7 +30,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "pnpm exec vp preview --host 127.0.0.1 --port 4173 --strictPort",
+    command: `pnpm exec vp preview --mode ${buildMode} --host 127.0.0.1 --port 4173 --strictPort`,
     url: previewUrl,
     reuseExistingServer: false,
     env: { PAGES_BASE_PATH: basePath },

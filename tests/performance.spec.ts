@@ -61,7 +61,7 @@ async function audioClosed(page: Page) {
     )
     .toBe(true);
 }
-test("Pause exports served build and preserves active evidence while the menu keeps rendering", async ({
+test("Pause keeps diagnostic actions local and preserves active evidence while the menu keeps rendering", async ({
   page,
 }, testInfo) => {
   await openGame(page);
@@ -69,6 +69,17 @@ test("Pause exports served build and preserves active evidence while the menu ke
   await finishIntroduction(page);
   await page.clock.runFor(1500);
   await pause(page);
+  if (process.env.CITADEL_BUILD_MODE !== "local-debug") {
+    await expect(
+      page.getByRole("button", { name: "Save performance report", exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("button", { name: "Run performance test", exact: true }),
+    ).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Reset progress", exact: true })).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath("release-settings.png") });
+    return;
+  }
   const first = await downloadReport<ReturnType<typeof createPerformanceReport>>(
     page,
     "Save performance report",

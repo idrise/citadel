@@ -1,4 +1,21 @@
-import { expect, test } from "./fixtures";
+import { expect, test, type Page } from "./fixtures";
+const localBuild = process.env.CITADEL_BUILD_MODE === "local-debug";
+
+async function expectDiagnosticActions(page: Page) {
+  for (const name of ["Save performance report", "Run performance test"])
+    await expect(page.getByRole("button", { name, exact: true })).toHaveCount(localBuild ? 1 : 0);
+  const reset = (await page
+    .getByRole("button", { name: "Reset progress", exact: true })
+    .boundingBox())!;
+  const resume = (await page.getByRole("button", { name: "Resume", exact: true }).boundingBox())!;
+  const restart = (await page.getByRole("button", { name: "Restart", exact: true }).boundingBox())!;
+  expect(reset.x).toBeCloseTo(resume.x, 4);
+  expect(reset.width).toBeCloseTo(
+    localBuild ? resume.width : restart.x + restart.width - resume.x,
+    4,
+  );
+}
+
 import { openGame, openSettings, play, finishIntroduction, pause } from "./helpers";
 test("settings render Resume, Restart and the four desktop sliders, persisting real changes", async ({
   page,
@@ -9,7 +26,8 @@ test("settings render Resume, Restart and the four desktop sliders, persisting r
   await openSettings(page);
   await expect(page.locator(".menu-panel,.touch-hint,.title-display,.enable-sound")).toHaveCount(0);
   const panel = page.getByRole("navigation", { name: "Game settings", exact: true });
-  await expect(panel.getByRole("button")).toHaveCount(5);
+  await expect(panel.getByRole("button")).toHaveCount(localBuild ? 5 : 3);
+  await expectDiagnosticActions(page);
   await expect(panel.getByRole("slider")).toHaveCount(4);
   await page.getByLabel("Sound effects volume", { exact: true }).fill("0.8");
   await page.getByLabel("Music volume", { exact: true }).fill("0");
@@ -30,6 +48,7 @@ test("settings render Resume, Restart and the four desktop sliders, persisting r
   expect(await canvas!.evaluate((node) => node.isConnected)).toBe(true);
   await page.reload();
   await openSettings(page);
+  await expectDiagnosticActions(page);
   await expect(page.getByLabel("Sound effects volume", { exact: true })).toHaveValue("0.8");
   await expect(page.getByLabel("Music volume", { exact: true })).toHaveValue("0");
   await expect(page.getByLabel("Mouse sensitivity", { exact: true })).toHaveValue("1.4");
@@ -55,6 +74,7 @@ test.describe("touch scene settings", () => {
     ]) {
       await page.setViewportSize(size);
       await page.clock.runFor(50);
+      await expectDiagnosticActions(page);
       for (const name of [
         "Sound effects volume",
         "Music volume",

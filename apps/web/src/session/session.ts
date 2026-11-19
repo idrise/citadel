@@ -1,6 +1,6 @@
 import { qualityStep } from "../rendering/quality";
 import { changeSetting } from "./settings-change";
-import { BUILD_INFO } from "../app/build-info";
+import { BUILD_INFO, LOCAL_DIAGNOSTICS } from "../app/build-info";
 import { createPerformanceReport, browserEnvironment } from "./performance-report";
 import { downloadJSON } from "./download-json";
 import {
@@ -160,12 +160,12 @@ export function createSession(
           demotion = null;
           resetRound(levelDifficulty(1).playerCount, humanSeat, 1, true);
           onResetProgress();
-        } else if (action === "report") {
+        } else if (action === "report" && LOCAL_DIAGNOSTICS) {
           downloadJSON(
             performanceReport(),
             `citadel-performance-${BUILD_INFO.buildId}-${state.tick}.json`,
           );
-        } else if (action === "benchmark") {
+        } else if (action === "benchmark" && LOCAL_DIAGNOSTICS) {
           window.open(
             new URL(`${import.meta.env.BASE_URL}diagnostics.html`, window.location.href),
             "_blank",
@@ -429,7 +429,7 @@ export function createSession(
         debug: debug.active,
         settings: {
           open: settingsOpen,
-          diagnostics: true,
+          diagnostics: LOCAL_DIAGNOSTICS,
           touch: touchMode,
           showPause: started && !paused && state.phase !== "finished",
           needsSound: started && !paused && music.snapshot().needsGesture,
