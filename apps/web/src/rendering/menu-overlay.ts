@@ -7,6 +7,7 @@ import { createSpectatorMenu } from "./scene-spectator";
 import { VICTORY_HOLD_SECONDS } from "./victory-morph";
 import {
   AmbientLight,
+  Color,
   DirectionalLight,
   Mesh,
   MeshBasicMaterial,
@@ -45,6 +46,7 @@ export function createMenuOverlay() {
   });
   const dimScene = new Scene(),
     dimCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 2);
+  const displayGain = new Color();
   const veil = new MeshBasicMaterial({
     color: 0,
     transparent: true,
@@ -94,7 +96,8 @@ export function createMenuOverlay() {
       visible = true; // The release label is present on every screen.
       dimmer.uniforms.gain!.value = gain;
       dimmer.enabled = gain !== 1;
-      veil.opacity = 1 - gain;
+      // Direct rendering blends over display-encoded pixels; the composer dims linear colour.
+      veil.opacity = 1 - displayGain.setScalar(gain).convertLinearToSRGB().r;
       const controls = menu.update(state, width, height);
       const liveControls = spectator.update(state.spectator, width, height);
       settingsTargets = settings.update(state.settings, width, height);

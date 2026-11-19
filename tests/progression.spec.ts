@@ -330,7 +330,7 @@ test("a loss with no replay tokens demotes one level, announces it and persists 
   await openGame(page, true, 1);
   await choosePlayers(page, 2);
   await openSettings(page);
-  await configureGame(page, { music: false, effectsVolume: 0 });
+  await configureGame(page, { music: false, effectsVolume: 0, effectsQuality: "low" });
   await selectFortress(page, Number("1"));
   await play(page);
   await expect(page.getByLabel("Loss consequence", { exact: true })).toHaveText(

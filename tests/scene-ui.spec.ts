@@ -93,7 +93,7 @@ test("a real human win keeps the arena alive for neon fireworks and scene rematc
   await page.screenshot({ path: testInfo.outputPath("victory-star-hold.png") });
   await expect(rematch).toBeVisible();
   expect(await page.locator(".diagnostics").textContent()).toBe(stats);
-  await page.clock.runFor(1400);
+  await page.clock.runFor(2100); // Include the settled result dimming after the victory hold.
   await expect(rematch).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("victory-readable-low.png") });
   await openSettings(page);

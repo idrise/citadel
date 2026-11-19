@@ -1014,6 +1014,19 @@ and Windows/physical-device limits remain; this is not an FPS improvement claim.
 The public deployment predates this hardening. No push/deployment authorised;
 M09 still awaits owner review.
 
+19 November Low-graphics dimming correction (owner report): the direct-rendered
+black veil used a linear brightness multiplier as display-space alpha, making the
+arena nearly black beneath Settings or settled results. The veil now converts the
+same gain to display space before blending, retaining about 0.41 display gain for
+the intended 0.14 linear value. The existing veil and one reused Color handle this;
+no passes/targets/effects are added, and composer/foreground brightness remain.
+All 718 unit tests, format/lint/types, root/local builds and four native production
+browser checks pass across desktop/touch Settings, real Low win and reduced-effects
+Low loss/demotion. The win fixture now waits for settled result dimming. Comparison
+renders and limits are in `docs/GRAPHICS_QUALITY_REVIEW.md`; local demo 5182 is
+rebuilt. Existing chunk-size advice remains; physical-device evidence is not
+claimed. M09 awaits owner review; no push or deployment authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,

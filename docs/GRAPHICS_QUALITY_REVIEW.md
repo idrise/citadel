@@ -1,5 +1,37 @@
 # Graphics quality slider — 18 November
 
+## 19 November: Low dimming correction
+
+Low's existing black veil blended over display-encoded pixels using a linear gain.
+The intended 0.14 linear gain became 0.14 display gain, leaving a white reference
+at only about 0.017 linear brightness. The direct path now converts that scalar to
+display space before calculating the veil opacity (about 0.41 retained display
+gain). This keeps the arena visible beneath Settings and settled result controls.
+The linear composer gain, foreground brightness and Medium/High paths retain
+their existing behavior. This is an output-space correction, not identical HDR/bloom
+output across quality levels.
+
+The correction reuses one Color and the existing veil; no render targets, textures,
+bloom/reflection work or draw calls are added. The same direct path covers reduced
+effects. Unit regressions check inverse colour conversion for Settings, win and
+loss, both reduced-effects modes, normal-play veil omission and renderer-state
+restoration after errors. All 718 unit tests, format/lint/types and root/local
+builds pass, with the existing large-chunk advisory. Four production Chromium
+checks pass: desktop/touch quality Settings, a real Low win after result dimming
+settles, and a Low loss/demotion using reduced effects. Screens were reviewed;
+physical-device results are not claimed.
+
+Compare [old desktop](reviews/m09/low-dimming/before-desktop.png) /
+[corrected desktop](reviews/m09/low-dimming/after-desktop.png) and
+[old phone](reviews/m09/low-dimming/before-phone.png) /
+[corrected phone](reviews/m09/low-dimming/after-phone.png).
+Settled results: [win](reviews/m09/low-dimming/low-victory.png) /
+[loss](reviews/m09/low-dimming/low-defeat.png).
+
+Local demo: http://127.0.0.1:5182/. Reload, select Low, then open Settings or finish
+an attempt. The dimmed arena should remain visible. No push/deployment occurred.
+REVIEW REQUIRED — M09.
+
 Settings now has a persisted three-step Graphics quality slider on desktop and
 touch. The scene label shows Graphics Low/Medium/High; the accessible range has
 named values and native keyboard controls. Existing saved `effectsQuality`
