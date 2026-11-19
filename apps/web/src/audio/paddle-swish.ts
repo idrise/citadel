@@ -11,7 +11,7 @@ export function swishParameters(velocity: number, position: number) {
   const speed = clamp(Number.isFinite(velocity) ? Math.abs(velocity) / 16 : 0, 0, 1);
   return {
     frequency: 1000 + speed * 800,
-    gain: speed < 0.1 ? 0 : 0.14 + Math.sqrt(speed) * 0.26,
+    gain: speed < 0.1 ? 0 : (0.14 + Math.sqrt(speed) * 0.26) * 0.5,
     pan: clamp(Number.isFinite(position) ? position : 0, -1, 1) * 0.35,
   };
 }

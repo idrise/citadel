@@ -966,6 +966,16 @@ corrections and mute are silent. See `docs/BAT_WHOOSH_REVIEW.md` for before/afte
 and in-game listening evidence. Existing bundle advice and device limits remain;
 owner listening approval is pending. No push/deployment is authorised.
 
+19 November quieter-swish amendment (owner request): halved only the swish source
+amplitude (-6.02dB), retaining its sound character, envelope, triggers and pan.
+Other effects, music and saved volume controls retain their levels. Normal/fast
+native captures measure about -6.1/-6.2dB; seven offline fixtures pass with rest,
+tiny corrections and mute still silent. All 708 unit tests, format/lint/types and
+release/local builds pass. The real-game clip and `docs/BAT_WHOOSH_REVIEW.md` are
+refreshed; no further broad browser suite was needed for a source-gain trim.
+The local demo remains http://127.0.0.1:5182/. M09 awaits owner review; no push or
+deployment is authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,

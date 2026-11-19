@@ -19,10 +19,19 @@ with three containers; no page errors occur. Compare isolated strokes
 [before](reviews/m09/bat-whoosh/before.wav) /
 [after](reviews/m09/bat-whoosh/after.wav).
 
+19 November volume follow-up: the owner requested a quieter swish. Its source
+amplitude is now halved (-6.02dB), with the timbre, envelope, stroke grouping,
+stereo, other effects and saved volume settings retained. Ordinary and fast
+captures measure approximately -6.1/-6.2dB against the preceding unpitched version;
+noise varies slightly between renders. The audio files and real-game clip below
+have been refreshed. All 708 unit tests, format/lint/types, release/local builds
+and seven offline audio fixtures pass. No additional broad browser suite was
+needed for this source-gain-only change.
+
 The actual graph was rendered at rest, with tiny corrections, ordinary and fast
 strokes, repeated strokes, a complete game mix and SFX mute. Rest, tiny corrections
-and mute are silent. Ordinary movement measures about 0.024 peak-window RMS and
-fast movement about 0.038; the mixed fixture peaks at 0.615, below the 0.99 check.
+and mute are silent. Ordinary movement measures about 0.012 peak-window RMS and
+fast movement about 0.019; the mixed fixture peaks at 0.566, below the 0.99 check.
 Raw results: [before](reviews/m09/bat-whoosh/before.json) /
 [after](reviews/m09/bat-whoosh/after.json). The baseline is local revision `b00feae`.
 Noise measurements vary slightly between renders; these checks do not prove taste.
