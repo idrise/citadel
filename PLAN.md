@@ -976,6 +976,14 @@ refreshed; no further broad browser suite was needed for a source-gain trim.
 The local demo remains http://127.0.0.1:5182/. M09 awaits owner review; no push or
 deployment is authorised.
 
+19 November owner-tuned quarter-scale swish: retained the owner's 0.25 source
+multiplier and updated unit expectations for slow, ordinary (0.06407) and maximum
+(0.1) gain. The offline whoosh review's minimum RMS floor is scaled down to match
+this quieter intentional tuning; historical glide thresholds stay intact. All ten
+focused swish tests, all 708 unit tests and format/lint/types pass. No audio/media
+capture or build was rerun for this test-alignment follow-up; existing listening
+clips retain the preceding 0.5 multiplier. M09 still awaits owner review.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,

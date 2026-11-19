@@ -112,7 +112,10 @@ try {
       const previous = baseline.samples.find((row) => row.kind === sample.kind);
       if (strokeReview) {
         if (["swish", "swishFast"].includes(sample.kind))
-          assert(sample.peakWindowRms >= 0.008, `${sample.kind}: the stroke remains audible`);
+          assert(
+            sample.peakWindowRms >= (whoosh ? 0.004 : 0.008),
+            `${sample.kind}: the stroke remains audible`,
+          );
         continue;
       }
       if (airSwish) {
