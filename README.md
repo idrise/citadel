@@ -192,7 +192,10 @@ This explicitly selects Vite mode `local-debug` and writes `dist-local/`, separa
 from the deployment's `dist/`. The standard build and Pages workflow stay in
 production mode and publish `dist/`. Visibility uses an explicit build-command flag, independent
 of `NODE_ENV`, Vite's `DEV` flag, hostname, URL parameters or saved settings. Local and release build identities
-are distinct in performance reports.
+are distinct in performance reports. The release also omits rolling debug frame
+capture and its console hook; lightweight adaptive-resolution timing stays active.
+Minification, CSS splitting and tree shaking are explicitly enabled, with source
+maps disabled. The CI startup check rejects development React/HMR in built assets.
 
 To exercise the GitHub Pages project path locally:
 

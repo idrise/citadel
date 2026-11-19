@@ -162,3 +162,8 @@ export function createFrameDiagnostics(capacity = 1800) {
   };
 }
 export type FrameDiagnostics = ReturnType<ReturnType<typeof createFrameDiagnostics>["snapshot"]>;
+
+/** Release sessions allocate no rolling frame, marker or spike storage. */
+export function createFrameCapture(enabled: boolean, capacity = 1800) {
+  return enabled ? createFrameDiagnostics(capacity) : null;
+}

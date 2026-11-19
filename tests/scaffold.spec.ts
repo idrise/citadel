@@ -20,6 +20,12 @@ for (const touch of [false, true])
       for (const name of ["Reset progress", "Resume", "Restart"])
         await expect(panel.getByRole("button", { name, exact: true })).toBeInViewport();
       await expect(panel.getByRole("button")).toHaveCount(local ? 5 : 3);
+      expect(
+        await page.evaluate(
+          () =>
+            typeof (window as unknown as { __citadelPerformance?: unknown }).__citadelPerformance,
+        ),
+      ).toBe(local ? "function" : "undefined");
       await page.screenshot({ path: info.outputPath("build-settings.png") });
     });
   });
@@ -46,6 +52,23 @@ test("production game fills the viewport and refreshes under the Pages path", as
   await expect(page.getByRole("button", { name: "Start", exact: true })).toBeVisible();
   await expect(page.locator("canvas")).toHaveCount(1);
   expect(errors).toEqual([]);
+  // Inspect the real entry/preloaded chunks, not just the requested Vite mode.
+  const sources = await page
+    .locator("script[src],link[rel=modulepreload]")
+    .evaluateAll((nodes) =>
+      nodes.map((node) =>
+        node instanceof HTMLScriptElement ? node.src : (node as HTMLLinkElement).href,
+      ),
+    );
+  expect(sources.length).toBeGreaterThan(0);
+  for (const source of sources) {
+    expect(source).not.toContain("/@vite/client");
+    const response = await page.request.get(source);
+    expect(response.ok()).toBe(true);
+    const javascript = await response.text();
+    expect(javascript).not.toContain("Download the React DevTools");
+    expect(javascript).not.toContain("react_stack_bottom_frame");
+  }
   await page.screenshot({ path: testInfo.outputPath("fullscreen-start.png") });
 });
 

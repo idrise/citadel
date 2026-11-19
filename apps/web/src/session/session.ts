@@ -4,7 +4,7 @@ import { BUILD_INFO, LOCAL_DIAGNOSTICS } from "../app/build-info";
 import { createPerformanceReport, browserEnvironment } from "./performance-report";
 import { downloadJSON } from "./download-json";
 import {
-  createFrameDiagnostics,
+  createFrameCapture,
   type FrameSample,
   type FrameDiagnostics,
   type FramePhase,
@@ -70,17 +70,19 @@ export function createSession(
   onSettings: (settings: GameSettings) => void = () => {},
   onResetProgress: () => void = () => {},
 ) {
-  const diagnostics = createFrameDiagnostics();
+  const diagnostics = createFrameCapture(LOCAL_DIAGNOSTICS);
   const host = window as Window & {
-    __citadelPerformance?: () => ReturnType<typeof diagnostics.snapshot>;
+    __citadelPerformance?: () => FrameDiagnostics;
   };
   const previousDiagnostics = host.__citadelPerformance;
-  const readDiagnostics = () => ({
-    ...diagnostics.snapshot(),
-    audio: music.diagnostics(),
-    build: BUILD_INFO,
-  });
-  host.__citadelPerformance = readDiagnostics;
+  const readDiagnostics = diagnostics
+    ? () => ({
+        ...diagnostics.snapshot(),
+        audio: music.diagnostics(),
+        build: BUILD_INFO,
+      })
+    : undefined;
+  if (readDiagnostics) host.__citadelPerformance = readDiagnostics;
   let pausedEvidence: {
     frames: FrameDiagnostics;
     audio: ReturnType<ReturnType<typeof createGameMusic>["diagnostics"]>;
@@ -88,12 +90,13 @@ export function createSession(
     context: ReturnType<typeof reportContext>;
   } | null = null;
   const mark = (type: string, detail?: string) =>
-    diagnostics.mark({
+    diagnostics?.mark({
       atMs: performance.now(),
       type,
       ...(detail === undefined ? {} : { detail }),
     });
   function performanceReport() {
+    if (!diagnostics) throw new Error("Performance capture is available only in local builds");
     return createPerformanceReport({
       build: BUILD_INFO,
       frames: pausedEvidence?.frames ?? diagnostics.snapshot(),
@@ -229,7 +232,7 @@ export function createSession(
       music: music.snapshot(),
     });
   const setPaused = (value: boolean) => {
-    if (value && !paused)
+    if (diagnostics && value && !paused)
       pausedEvidence = {
         frames: diagnostics.snapshot(),
         audio: music.diagnostics(),
@@ -322,9 +325,9 @@ export function createSession(
     { signal: abort.signal },
   );
   const animate = (timestamp: number) => {
-    const frameBegin = performance.now();
+    const frameBegin = diagnostics ? performance.now() : 0;
     const intervalMs = lastTimestamp ? timestamp - lastTimestamp : 0;
-    if (previousFrame) {
+    if (diagnostics && previousFrame) {
       diagnostics.record({ ...previousFrame, intervalMs });
       if (
         previousFrame.drawingWidth !== viewport.canvas.width ||
@@ -373,39 +376,43 @@ export function createSession(
       lastReport = timestamp;
       report();
     }
-    const phase: FramePhase = document.hidden
-      ? "hidden"
-      : !started
-        ? "title"
-        : paused
-          ? "paused"
-          : state.phase === "playing" && state.morph
-            ? "morph"
-            : state.phase;
-    if (previousFrame?.phase !== phase) mark("phase", phase);
-    for (const event of events)
-      if (
-        ["damage", "elimination", "victory", "arrival", "supply", "collection"].includes(event.type)
-      )
-        diagnostics.mark({
-          atMs: performance.now(),
-          tick: event.tick,
-          type: event.type,
-          detail: String(event.seat),
-        });
-    previousFrame = {
-      simulationMs,
-      audioMs,
-      ...viewport.performance,
-      level,
-      balls: state.balls.length,
-      atMs: timestamp,
-      phase,
-      tick: state.tick,
-      simulationSeconds: state.elapsed,
-      seats: state.players.filter(alive).length,
-      frameCpuMs: performance.now() - frameBegin,
-    };
+    if (diagnostics) {
+      const phase: FramePhase = document.hidden
+        ? "hidden"
+        : !started
+          ? "title"
+          : paused
+            ? "paused"
+            : state.phase === "playing" && state.morph
+              ? "morph"
+              : state.phase;
+      if (previousFrame?.phase !== phase) mark("phase", phase);
+      for (const event of events)
+        if (
+          ["damage", "elimination", "victory", "arrival", "supply", "collection"].includes(
+            event.type,
+          )
+        )
+          diagnostics.mark({
+            atMs: performance.now(),
+            tick: event.tick,
+            type: event.type,
+            detail: String(event.seat),
+          });
+      previousFrame = {
+        simulationMs,
+        audioMs,
+        ...viewport.performance,
+        level,
+        balls: state.balls.length,
+        atMs: timestamp,
+        phase,
+        tick: state.tick,
+        simulationSeconds: state.elapsed,
+        seats: state.players.filter(alive).length,
+        frameCpuMs: performance.now() - frameBegin,
+      };
+    }
     frame = requestAnimationFrame(animate);
   };
   function present(events: GameEvent[], dt: number) {
@@ -629,7 +636,7 @@ export function createSession(
       present([], 0);
     },
     dispose() {
-      if (host.__citadelPerformance === readDiagnostics) {
+      if (readDiagnostics && host.__citadelPerformance === readDiagnostics) {
         if (previousDiagnostics) host.__citadelPerformance = previousDiagnostics;
         else delete host.__citadelPerformance;
       }

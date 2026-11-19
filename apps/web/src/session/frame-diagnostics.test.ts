@@ -1,5 +1,5 @@
 import { expect, it } from "vite-plus/test";
-import { createFrameDiagnostics } from "./frame-diagnostics";
+import { createFrameCapture, createFrameDiagnostics } from "./frame-diagnostics";
 it("bounds evidence, retains stall counts and returns independent local snapshots", () => {
   const diagnostics = createFrameDiagnostics(120);
   for (let i = 0; i < 200; i++)
@@ -96,4 +96,16 @@ it("counts only unique fresh GPU samples and never treats unsupported timers as 
 it("rejects invalid recorder capacity rather than silently losing evidence", () => {
   for (const capacity of [0, -1, 1.5, NaN, Infinity])
     expect(() => createFrameDiagnostics(capacity)).toThrow();
+});
+
+it("does not create a recorder or validate storage capacity when capture is disabled", () => {
+  expect(createFrameCapture(false, 0)).toBeNull();
+  expect(() => createFrameCapture(true, 0)).toThrow("Diagnostic capacity");
+});
+it("keeps local capture bounded and independently owned", () => {
+  const first = createFrameCapture(true, 2)!,
+    second = createFrameCapture(true, 2)!;
+  first.mark({ atMs: 1, type: "pause" });
+  expect(first.snapshot().markers).toHaveLength(1);
+  expect(second.snapshot().markers).toHaveLength(0);
 });

@@ -87,6 +87,10 @@ try {
   await page.goto(`${origin}?seed=${seed}`);
   await page.getByRole("button", { name: "Start", exact: true }).waitFor();
   const menuMs = Date.now() - before;
+  if (!(await page.evaluate(() => typeof window.__citadelPerformance === "function")))
+    throw new Error(
+      "Frame capture is disabled in release builds. Use pnpm build:local and pnpm preview:local for this measurement.",
+    );
   const metadata = await page.evaluate(() => ({
     userAgent: navigator.userAgent,
     dpr: devicePixelRatio,

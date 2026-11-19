@@ -24,9 +24,14 @@ export default defineConfig(({ command, mode, isPreview }) => ({
   base: pagesBase(process.env.PAGES_BASE_PATH),
   plugins: [react()],
   build: {
+    minify: "oxc",
+    cssMinify: true,
+    cssCodeSplit: true,
+    sourcemap: false,
     outDir: mode === "local-debug" ? "../../dist-local" : "../../dist",
     emptyOutDir: true,
     rolldownOptions: {
+      treeshake: true,
       input: {
         game: fileURLToPath(new URL("./apps/web/index.html", import.meta.url)),
         diagnostics: fileURLToPath(new URL("./apps/web/diagnostics.html", import.meta.url)),

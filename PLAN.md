@@ -999,6 +999,21 @@ See the correction record and renders in `docs/LOCAL_BUILD_REVIEW.md`. Existing
 bundle advice remains. The actual remote run environment/public-site update is
 unverified; no push, workflow trigger or deployment is authorised. M09 awaits review.
 
+19 November production-optimisation audit (owner request): inspected actual live
+assets at citadel.davidjelliott.com, serving 9b9366b/build 3f8796979c3490e1. The entry
+uses production React/minification without HMR/source maps, but rolling debug frame
+capture remained. Release now allocates no recorder, retains no frame/marker/spike
+buffers, omits diagnostic pause snapshots and exposes no capture hook. Local-debug
+retains the reporting facility; adaptive-resolution timing and quality budgets
+remain. Compiler minification/CSS splitting/tree shaking/no-source-map choices are
+explicit; the CI startup gate checks served entry/preload chunks for development
+React/HMR. All 714 unit tests, format/lint/types, release/local builds and eight
+native browser checks pass (five release, three local). See
+`docs/PRODUCTION_BUILD_REVIEW.md` and its raw audit. Existing large-chunk advice
+and Windows/physical-device limits remain; this is not an FPS improvement claim.
+The public deployment predates this hardening. No push/deployment authorised;
+M09 still awaits owner review.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,
@@ -1881,4 +1896,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/BAT_WHOOSH_REVIEW.md`, `docs/BAT_GLIDE_REVIEW.md`, `docs/LOCAL_BUILD_REVIEW.md`, `docs/BAT_AIR_REVIEW.md`, `docs/CONTAINER_PROTECTION_REVIEW.md`, `docs/GRAPHICS_QUALITY_REVIEW.md`, `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/PRODUCTION_BUILD_REVIEW.md`, `docs/BAT_WHOOSH_REVIEW.md`, `docs/BAT_GLIDE_REVIEW.md`, `docs/LOCAL_BUILD_REVIEW.md`, `docs/BAT_AIR_REVIEW.md`, `docs/CONTAINER_PROTECTION_REVIEW.md`, `docs/GRAPHICS_QUALITY_REVIEW.md`, `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

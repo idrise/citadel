@@ -1,0 +1,26 @@
+{
+  "checkedDate": "2026-11-19",
+  "live": {
+    "url": "https://citadel.davidjelliott.com/",
+    "revision": "9b9366bc7b84276138f3252a30bc4c6c73c49120",
+    "buildId": "3f8796979c3490e1",
+    "gameAsset": "https://citadel.davidjelliott.com/assets/game-DHeE_w-P.js",
+    "gameAssetBytes": 246484,
+    "productionReactMarkers": true,
+    "reactDevelopmentMarkers": false,
+    "hmr": false,
+    "sourceMaps": false,
+    "rollingCaptureHookPresent": true
+  },
+  "resolvedLocalReleaseConfig": {
+    "mode": "production",
+    "isProduction": true,
+    "minify": "oxc",
+    "cssMinify": true,
+    "cssCodeSplit": true,
+    "sourcemap": false,
+    "treeshake": true,
+    "localDiagnostics": "false"
+  },
+  "limits": "Static live-asset inspection and local build/runtime verification; no all-device FPS guarantee and no deployment performed."
+}

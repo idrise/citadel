@@ -7,11 +7,13 @@ phone and tablet viewports do not emulate a mobile GPU, browser, battery or heat
 
 ## Reproduce the local automated capture
 
-Build and serve the production game (the server must remain running):
+Build and serve the production-optimised local diagnostic version (the server must
+remain running). Release builds omit rolling frame capture and its console hook;
+the explicit local mode keeps that capture available for measurement:
 
 ```sh
-PAGES_BASE_PATH=/ pnpm exec vp build
-PAGES_BASE_PATH=/ pnpm exec vp preview --host 127.0.0.1 --port 4173 --strictPort
+PAGES_BASE_PATH=/ pnpm build:local
+PAGES_BASE_PATH=/ pnpm preview:local --host 127.0.0.1 --port 4173 --strictPort
 ```
 
 In another terminal, run one scenario at a time, without other heavy work:
@@ -28,7 +30,7 @@ or another unsigned seed, and
 same conditions. Save the JSON outside the repository if it includes machine
 information; inspect it before sharing. It contains local raw frame samples,
 summary percentiles, renderer/browser/viewport details, phase counts, errors,
-startup timing and the tested source revision. The script uses the production
+startup timing and the tested source revision. The script uses the optimised local diagnostic
 bundle, seed 51 by default and the existing document-local virtual controls. It restarts
 finished matches with the same seed and level, and attempts to collect 60 seconds
 of playing frames, with a bounded timeout. Check `activeMs`, `restarts`, `phases`,
@@ -57,7 +59,9 @@ In Chrome settings, note whether graphics acceleration is enabled; Chrome's
 Do not change settings before recording the original state. Compare High and Low
 in the same match conditions, then return to the original setting.
 
-While the game is playing, open DevTools Console and run:
+In an explicit diagnostic build, while the game is playing, open DevTools Console
+and run the following. The public release has no `__citadelPerformance` hook;
+use Chrome's Performance recording there, or reproduce in the optimised local build:
 
 ```js
 copy(JSON.stringify(window.__citadelPerformance(), null, 2));
