@@ -28,8 +28,8 @@ have been refreshed. All 708 unit tests, format/lint/types, release/local builds
 and seven offline audio fixtures pass. No additional broad browser suite was
 needed for this source-gain-only change.
 
-The owner subsequently selected a 0.25 source multiplier. Unit gain expectations
-and the offline review floor now match that quieter tuning; all 708 unit tests and
+The owner subsequently selected 0.25 and then 0.125 source multipliers. Unit gain
+expectations and the offline review floor now match 0.125; all 708 unit tests and
 format/lint/types pass. The recordings and measurements below retain the preceding
 0.5 multiplier and were not regenerated for this test-only follow-up.
 

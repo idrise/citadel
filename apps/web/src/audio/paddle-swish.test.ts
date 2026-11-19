@@ -6,9 +6,9 @@ it("keeps tiny corrections silent and bounds deliberate strokes in either direct
     expect(swishParameters(velocity, NaN).gain).toBe(0);
   const slow = swishParameters(2, -1),
     fast = swishParameters(16, 1);
-  expect(slow.gain).toBeGreaterThan(0.05);
-  expect(fast.gain).toBe(0.1);
-  expect(swishParameters(3.2, 0).gain).toBeCloseTo(0.06407, 5);
+  expect(slow.gain).toBeGreaterThan(0.025);
+  expect(fast.gain).toBe(0.05);
+  expect(swishParameters(3.2, 0).gain).toBeCloseTo(0.03203, 5);
   expect(fast.frequency).toBeGreaterThan(slow.frequency);
   expect(fast.frequency).toBeLessThanOrEqual(1800);
   expect(slow.pan).toBe(-fast.pan);

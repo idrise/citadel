@@ -976,12 +976,12 @@ refreshed; no further broad browser suite was needed for a source-gain trim.
 The local demo remains http://127.0.0.1:5182/. M09 awaits owner review; no push or
 deployment is authorised.
 
-19 November owner-tuned quarter-scale swish: retained the owner's 0.25 source
-multiplier and updated unit expectations for slow, ordinary (0.06407) and maximum
-(0.1) gain. The offline whoosh review's minimum RMS floor is scaled down to match
-this quieter intentional tuning; historical glide thresholds stay intact. All ten
-focused swish tests, all 708 unit tests and format/lint/types pass. No audio/media
-capture or build was rerun for this test-alignment follow-up; existing listening
+19 November owner-tuned swish tests: retained the owner's multiplier changes
+(0.25, then 0.125) and updated unit expectations for slow, ordinary (0.03203) and
+maximum (0.05) gain. The offline whoosh review's minimum RMS floor is now 0.002 to
+match this quieter intentional tuning; historical glide thresholds stay intact.
+All 708 unit tests, including ten swish tests, and format/lint/types pass. No audio
+capture or build was rerun for these test-alignment follow-ups; existing listening
 clips retain the preceding 0.5 multiplier. M09 still awaits owner review.
 
 17 November level-owned roster amendment: the owner requested removal of player-count

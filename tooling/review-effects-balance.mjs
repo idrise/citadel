@@ -113,7 +113,7 @@ try {
       if (strokeReview) {
         if (["swish", "swishFast"].includes(sample.kind))
           assert(
-            sample.peakWindowRms >= (whoosh ? 0.004 : 0.008),
+            sample.peakWindowRms >= (whoosh ? 0.002 : 0.008),
             `${sample.kind}: the stroke remains audible`,
           );
         continue;
