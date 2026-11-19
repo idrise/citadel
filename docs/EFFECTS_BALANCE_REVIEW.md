@@ -1,10 +1,9 @@
 # Gameplay effects volume — 18 November
 
-19 November listening revision: the movement sound is now a brief electronic glide
-on deliberate strokes. See [the current bat-sound review](BAT_GLIDE_REVIEW.md) for
-actual gameplay audio and the current `--glide-swish` reproduction command. The
-earlier movement-gain measurements and `--swish` comparison below record a previous
-timbre.
+19 November listening revision: bat movement now uses a smooth unpitched air pass.
+See [the current bat-sound review](BAT_WHOOSH_REVIEW.md) for actual gameplay audio
+and the current `--whoosh` reproduction command. The earlier movement-gain
+measurements and `--swish` comparison below record a previous timbre.
 
 Effects now get +5dB of bus gain (about 1.78× amplitude) and their own compressor,
 so the score cannot compress gameplay cues. The existing music gain and score

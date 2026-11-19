@@ -4,7 +4,7 @@ import { chromium } from "@playwright/test";
 import { installVirtualBrowserControls } from "../tests/virtual-input.ts";
 
 const origin = process.argv[2] ?? "http://127.0.0.1:5182";
-const directory = "docs/reviews/m09/bat-glide";
+const directory = process.argv[3] ?? "docs/reviews/m09/bat-glide";
 await mkdir(directory, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" });
 try {

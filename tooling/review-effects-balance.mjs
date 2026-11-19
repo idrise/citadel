@@ -5,19 +5,23 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 const origin = process.argv.find((arg) => arg.startsWith("http")) ?? "http://127.0.0.1:5181";
+const whoosh = process.argv.includes("--whoosh");
 const glideSwish = process.argv.includes("--glide-swish");
 const airSwish = process.argv.includes("--air-swish");
-const textureReview = glideSwish || airSwish;
+const strokeReview = whoosh || glideSwish;
+const textureReview = strokeReview || airSwish;
 const swishReview = textureReview || process.argv.includes("--swish");
-const directory = `docs/reviews/m09/${glideSwish ? "bat-glide" : airSwish ? "bat-air" : swishReview ? "bat-swish" : "effects-balance"}`;
+const directory = `docs/reviews/m09/${whoosh ? "bat-whoosh" : glideSwish ? "bat-glide" : airSwish ? "bat-air" : swishReview ? "bat-swish" : "effects-balance"}`;
 const before = process.argv.includes("--before");
-const revision = glideSwish
-  ? "57974aa"
-  : airSwish
-    ? "98d5735"
-    : swishReview
-      ? "42aa1c3"
-      : "5ffd980";
+const revision = whoosh
+  ? "b00feae"
+  : glideSwish
+    ? "57974aa"
+    : airSwish
+      ? "98d5735"
+      : swishReview
+        ? "42aa1c3"
+        : "5ffd980";
 await mkdir(directory, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" });
 const samples = [],
@@ -50,7 +54,7 @@ try {
     r.fulfill({ contentType: "text/html", body: "<title>Citadel music mix</title>" }),
   );
   await page.goto(`${origin}/__mix-review`);
-  for (const kind of glideSwish
+  for (const kind of strokeReview
     ? ["swishRest", "swishSlow", "swish", "swishFast", "swishGesture", "swishGameMix", "swishMuted"]
     : airSwish
       ? ["swishRest", "swishSlow", "swish", "swishFast", "swishGesture", "swishMusic", "swishMuted"]
@@ -86,7 +90,7 @@ try {
       kind === "muted" ||
       kind === "swishMuted" ||
       kind === "swishRest" ||
-      (glideSwish && !before && kind === "swishSlow")
+      ((whoosh || (strokeReview && !before)) && kind === "swishSlow")
     )
       assert(stats.peak < 0.000001);
     else assert(stats.peakWindowRms > 0.00001, `${kind}: cue must be audible`);
@@ -106,9 +110,9 @@ try {
     const baseline = JSON.parse(await readFile(`${directory}/before.json`, "utf8"));
     for (const sample of samples) {
       const previous = baseline.samples.find((row) => row.kind === sample.kind);
-      if (glideSwish) {
+      if (strokeReview) {
         if (["swish", "swishFast"].includes(sample.kind))
-          assert(sample.peakWindowRms >= 0.008, `${sample.kind}: the short cue remains audible`);
+          assert(sample.peakWindowRms >= 0.008, `${sample.kind}: the stroke remains audible`);
         continue;
       }
       if (airSwish) {

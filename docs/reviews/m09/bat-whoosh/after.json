@@ -1,0 +1,75 @@
+{
+  "samples": [
+    {
+      "kind": "swishRest",
+      "duration": 2,
+      "music": 0.2,
+      "effects": 1,
+      "peak": 0,
+      "rms": 0,
+      "peakWindowRms": 0,
+      "channels": 2
+    },
+    {
+      "kind": "swishSlow",
+      "duration": 2,
+      "music": 0.2,
+      "effects": 1,
+      "peak": 0,
+      "rms": 0,
+      "peakWindowRms": 0,
+      "channels": 2
+    },
+    {
+      "kind": "swish",
+      "duration": 2,
+      "music": 0.2,
+      "effects": 1,
+      "peak": 0.08284425735473633,
+      "rms": 0.0058012582644796935,
+      "peakWindowRms": 0.02356946836182447,
+      "channels": 2
+    },
+    {
+      "kind": "swishFast",
+      "duration": 2,
+      "music": 0.2,
+      "effects": 1,
+      "peak": 0.15348932147026062,
+      "rms": 0.009574318266446303,
+      "peakWindowRms": 0.03846479060778626,
+      "channels": 2
+    },
+    {
+      "kind": "swishGesture",
+      "duration": 5,
+      "music": 0.2,
+      "effects": 1,
+      "peak": 0.12238317728042603,
+      "rms": 0.01019861829289353,
+      "peakWindowRms": 0.03515606364667571,
+      "channels": 2
+    },
+    {
+      "kind": "swishGameMix",
+      "duration": 8,
+      "music": 0.2,
+      "effects": 1,
+      "peak": 0.6142703294754028,
+      "rms": 0.0373658698818109,
+      "peakWindowRms": 0.2052486837742114,
+      "channels": 2
+    },
+    {
+      "kind": "swishMuted",
+      "duration": 2,
+      "music": 0.2,
+      "effects": 0,
+      "peak": 0,
+      "rms": 0,
+      "peakWindowRms": 0,
+      "channels": 2
+    }
+  ],
+  "errors": []
+}

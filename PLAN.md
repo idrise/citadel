@@ -953,6 +953,19 @@ limits. All 707 unit tests, format/lint/types, root release/local builds and fiv
 production audio/Settings browser checks pass. Existing bundle-size advice remains.
 The sound needs owner listening review; no push or deployment is authorised.
 
+19 November unpitched-swipe listening amendment: the owner heard the short sine
+glide as a tom drum. Removed its oscillator and pitched body. A filtered pink-noise
+pass now has a gradual cosine rise and longer fall over 280ms, low body/high edge
+reduction and no resonant filter. Retained packet grouping to avoid the earlier
+paper-like input flutter; increased the retrigger interval to 300ms so complete
+swells cannot overlap or be chopped short. The actual game capture uses lowered
+music, maximum effects and normal virtual steering, with no page errors. All 708
+unit tests, format/lint/types, release/local builds and five production browser
+checks pass. Seven matched audio fixtures stay below the peak bound; rest, tiny
+corrections and mute are silent. See `docs/BAT_WHOOSH_REVIEW.md` for before/after
+and in-game listening evidence. Existing bundle advice and device limits remain;
+owner listening approval is pending. No push/deployment is authorised.
+
 17 November level-owned roster amendment: the owner requested removal of player-count
 selection, then refined the tuning format from JSON to TypeScript formulas with per-level
 overrides. `apps/web/src/simulation/levels.ts` now owns every existing level feature,
@@ -1835,4 +1848,4 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/BAT_GLIDE_REVIEW.md`, `docs/LOCAL_BUILD_REVIEW.md`, `docs/BAT_AIR_REVIEW.md`, `docs/CONTAINER_PROTECTION_REVIEW.md`, `docs/GRAPHICS_QUALITY_REVIEW.md`, `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using `docs/BAT_WHOOSH_REVIEW.md`, `docs/BAT_GLIDE_REVIEW.md`, `docs/LOCAL_BUILD_REVIEW.md`, `docs/BAT_AIR_REVIEW.md`, `docs/CONTAINER_PROTECTION_REVIEW.md`, `docs/GRAPHICS_QUALITY_REVIEW.md`, `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.

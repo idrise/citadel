@@ -1,0 +1,9 @@
+{
+  "kind": "Native real-time game with ordinary document-local movement input; small corrections, repeated strokes and rest",
+  "seed": 2026,
+  "music": 0.2,
+  "effects": 1,
+  "phase": "playing",
+  "health": "3",
+  "errors": []
+}

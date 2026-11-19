@@ -1,15 +1,15 @@
 import { expect, it } from "vite-plus/test";
-import { createSwishTrigger, swishParameters } from "./paddle-swish";
+import { createSwishTrigger, swishParameters, SWISH_ENVELOPE } from "./paddle-swish";
 
 it("keeps tiny corrections silent and bounds deliberate strokes in either direction", () => {
   for (const velocity of [0, 0.1, 1, 1.59, NaN, Infinity, -Infinity])
     expect(swishParameters(velocity, NaN).gain).toBe(0);
   const slow = swishParameters(2, -1),
     fast = swishParameters(16, 1);
-  expect(slow.gain).toBeGreaterThan(0.04);
-  expect(fast.gain).toBeLessThanOrEqual(0.08);
+  expect(slow.gain).toBeGreaterThan(0.2);
+  expect(fast.gain).toBeLessThanOrEqual(0.4);
   expect(fast.frequency).toBeGreaterThan(slow.frequency);
-  expect(fast.endFrequency).toBeLessThan(fast.frequency);
+  expect(fast.frequency).toBeLessThanOrEqual(1800);
   expect(slow.pan).toBe(-fast.pan);
   expect(swishParameters(-16, 1)).toEqual(fast);
   expect(swishParameters(100, 10)).toEqual(fast);
@@ -41,13 +41,13 @@ it("requires an 80ms rest before repeating a stroke in the same direction", () =
   expect(trigger(4, 0, 0.39)).not.toBeNull();
 });
 
-it("bounds even rapid reversals to one cue per 180ms", () => {
+it("bounds even rapid reversals to one cue per 300ms", () => {
   const trigger = createSwishTrigger();
   expect(trigger(16, 0, 0)).not.toBeNull();
-  expect(trigger(-16, 0, 0.179)).toBeNull();
-  expect(trigger(-16, 0, 0.18)).not.toBeNull();
-  expect(trigger(16, 0, 0.359)).toBeNull();
-  expect(trigger(16, 0, 0.36)).not.toBeNull();
+  expect(trigger(-16, 0, 0.299)).toBeNull();
+  expect(trigger(-16, 0, 0.3)).not.toBeNull();
+  expect(trigger(16, 0, 0.599)).toBeNull();
+  expect(trigger(16, 0, 0.6)).not.toBeNull();
 });
 
 it("rejects invalid/backwards timestamps and invalid speed without consuming the next stroke", () => {
@@ -56,5 +56,20 @@ it("rejects invalid/backwards timestamps and invalid speed without consuming the
   expect(trigger(Infinity, 0, 0)).toBeNull();
   expect(trigger(16, NaN, 1)?.pan).toBe(0);
   expect(trigger(-16, 0, 0.5)).toBeNull();
-  expect(trigger(-16, 0, 1.2)).not.toBeNull();
+  expect(trigger(-16, 0, 1.31)).not.toBeNull();
+});
+
+it("uses a smooth single swell with no sharp attack and an exact silent end", () => {
+  expect(SWISH_ENVELOPE[0]).toBe(0);
+  expect(SWISH_ENVELOPE.at(-1)).toBe(0);
+  expect(SWISH_ENVELOPE[1]).toBeLessThan(0.01);
+  expect(Math.max(...SWISH_ENVELOPE)).toBeGreaterThan(0.999);
+  const peak = SWISH_ENVELOPE.indexOf(Math.max(...SWISH_ENVELOPE));
+  for (let i = 1; i < SWISH_ENVELOPE.length; i++) {
+    expect(SWISH_ENVELOPE[i]).toBeGreaterThanOrEqual(0);
+    expect(SWISH_ENVELOPE[i]).toBeLessThanOrEqual(1);
+    expect(Math.abs(SWISH_ENVELOPE[i]! - SWISH_ENVELOPE[i - 1]!)).toBeLessThan(0.09);
+    if (i <= peak) expect(SWISH_ENVELOPE[i]).toBeGreaterThanOrEqual(SWISH_ENVELOPE[i - 1]!);
+    else expect(SWISH_ENVELOPE[i]).toBeLessThanOrEqual(SWISH_ENVELOPE[i - 1]!);
+  }
 });

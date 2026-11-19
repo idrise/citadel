@@ -1,5 +1,9 @@
 # Bat movement: brief electronic glide — 19 November
 
+The owner subsequently heard this cue as a tom drum. It is superseded by the
+[smooth unpitched swipe](BAT_WHOOSH_REVIEW.md); the capture below records the
+rejected pitched experiment.
+
 The owner reported that the continuous air sound resembled shuffling papers in
 play. This revision removes the noise source and broad-band filter entirely.
 One reusable sine voice plays a short, rounded electronic glide on deliberate
