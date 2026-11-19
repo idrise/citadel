@@ -6,8 +6,8 @@ const state = vi.hoisted(() => ({
   nodes: [] as {
     kind: string;
     options: Record<string, unknown>;
-    frequency: { setTargetAtTime: ReturnType<typeof vi.fn> };
-    gain: { setTargetAtTime: ReturnType<typeof vi.fn> };
+    frequency: Record<string, ReturnType<typeof vi.fn>>;
+    gain: Record<string, ReturnType<typeof vi.fn>>;
     pan: { setTargetAtTime: ReturnType<typeof vi.fn> };
     connect: ReturnType<typeof vi.fn>;
     start: ReturnType<typeof vi.fn>;
@@ -16,8 +16,18 @@ const state = vi.hoisted(() => ({
 }));
 vi.mock("tone", () => {
   class Node {
-    frequency = { setTargetAtTime: vi.fn() };
-    gain = { setTargetAtTime: vi.fn() };
+    frequency = {
+      cancelScheduledValues: vi.fn(),
+      setValueAtTime: vi.fn(),
+      exponentialRampToValueAtTime: vi.fn(),
+    };
+    gain = {
+      cancelAndHoldAtTime: vi.fn(),
+      linearRampToValueAtTime: vi.fn(),
+      exponentialRampToValueAtTime: vi.fn(),
+      setValueAtTime: vi.fn(),
+      setTargetAtTime: vi.fn(),
+    };
     pan = { setTargetAtTime: vi.fn() };
     connect = vi.fn(() => this);
     start = vi.fn(() => this);
@@ -30,7 +40,7 @@ vi.mock("tone", () => {
     }
   }
   return Object.fromEntries(
-    ["Noise", "Filter", "Gain", "Panner"].map((kind) => [
+    ["Oscillator", "Gain", "Panner"].map((kind) => [
       kind,
       class extends Node {
         constructor(options: Record<string, unknown>) {
@@ -44,43 +54,49 @@ beforeEach(() => {
   state.nodes.length = 0;
 });
 
-it("uses one broad filtered noise source and reuses its graph throughout rapid steering", () => {
+it("reuses one sine oscillator through rapid steering and releases the whole graph", () => {
   const output = {} as never;
   const swish = createPaddleSwish({} as never, output);
-  const [pan, gain, filter, noise] = state.nodes;
-  expect(noise!.options.type).toBe("pink");
-  expect(filter!.options).toMatchObject({ type: "bandpass", Q: 0.5 });
-  expect(noise!.connect).toHaveBeenCalledWith(filter);
-  expect(filter!.connect).toHaveBeenCalledWith(gain);
+  const [pan, gain, voice] = state.nodes;
+  expect(voice!.options.type).toBe("sine");
+  expect(voice!.connect).toHaveBeenCalledWith(gain);
   expect(gain!.connect).toHaveBeenCalledWith(pan);
   expect(pan!.connect).toHaveBeenCalledWith(output);
   for (let frame = 0; frame < 600; frame++)
     swish.steer(Math.sin(frame) * 16, Math.cos(frame), frame / 60);
-  expect(state.nodes).toHaveLength(4);
-  expect(noise!.start).toHaveBeenCalledTimes(1);
+  expect(state.nodes).toHaveLength(3);
+  expect(voice!.start).toHaveBeenCalledTimes(1);
   swish.dispose();
   for (const node of state.nodes) expect(node.dispose).toHaveBeenCalledTimes(1);
 });
 
-it("smooths air brightness, amplitude and stereo at the supplied audio time, then releases to silence", () => {
+it("gives each stroke a rounded attack, a short pitch glide and a finite silent end", () => {
   const swish = createPaddleSwish({ immediate: () => 12 } as never, {} as never);
-  const [pan, gain, filter, noise] = state.nodes;
+  const [pan, gain, voice] = state.nodes;
   const parameters = swishParameters(3.2, -0.5);
   swish.steer(3.2, -0.5, 10);
-  expect(filter!.frequency.setTargetAtTime).toHaveBeenCalledWith(parameters.frequency, 10, 0.04);
-  expect(gain!.gain.setTargetAtTime).toHaveBeenCalledWith(parameters.gain, 10, 0.012);
+  expect(voice!.frequency.setValueAtTime).toHaveBeenCalledWith(parameters.frequency, 10);
+  expect(voice!.frequency.exponentialRampToValueAtTime).toHaveBeenCalledWith(
+    parameters.endFrequency,
+    10.11,
+  );
+  expect(gain!.gain.linearRampToValueAtTime).toHaveBeenCalledWith(parameters.gain, 10.015);
+  expect(gain!.gain.setValueAtTime).toHaveBeenCalledWith(0, 10.14);
   expect(pan!.pan.setTargetAtTime).toHaveBeenCalledWith(parameters.pan, 10, 0.025);
-  expect(noise!.frequency.setTargetAtTime).not.toHaveBeenCalled();
+  for (let frame = 1; frame <= 30; frame++) swish.steer(3.2, 0, 10 + frame / 60);
+  expect(voice!.frequency.setValueAtTime).toHaveBeenCalledTimes(1);
   swish.steer(0, 0);
-  expect(gain!.gain.setTargetAtTime).toHaveBeenLastCalledWith(0, 12, 0.04);
+  expect(gain!.gain.cancelAndHoldAtTime).toHaveBeenCalledTimes(1);
+  swish.steer(3.2, 0, 12.2);
+  expect(gain!.gain.cancelAndHoldAtTime).toHaveBeenLastCalledWith(12.2);
   swish.dispose();
 });
 
-it("schedules finite silent parameters for invalid movement input", () => {
+it("does not schedule a voice for idle, tiny or invalid movement", () => {
   const swish = createPaddleSwish({} as never, {} as never);
-  for (const velocity of [NaN, Infinity, -Infinity]) swish.steer(velocity, NaN, 3);
-  expect(state.nodes[1]!.gain.setTargetAtTime).toHaveBeenLastCalledWith(0, 3, 0.04);
-  expect(state.nodes[0]!.pan.setTargetAtTime).toHaveBeenLastCalledWith(0, 3, 0.025);
-  expect(state.nodes[2]!.frequency.setTargetAtTime).toHaveBeenLastCalledWith(1200, 3, 0.04);
+  for (const velocity of [0, 0.1, 1, NaN, Infinity, -Infinity]) swish.steer(velocity, NaN, 3);
+  swish.steer(16, 0, NaN);
+  expect(state.nodes[2]!.frequency.setValueAtTime).not.toHaveBeenCalled();
+  expect(state.nodes[1]!.gain.linearRampToValueAtTime).not.toHaveBeenCalled();
   swish.dispose();
 });

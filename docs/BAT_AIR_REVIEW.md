@@ -1,5 +1,9 @@
 # Bat movement: air texture — 18 November
 
+19 November: the owner found this texture papery during gameplay. It is superseded
+by the [brief electronic glide](BAT_GLIDE_REVIEW.md); this file preserves the earlier
+experiment and its measurements.
+
 The bat now makes a soft, filtered rush of air. The pitched FM oscillator and its
 modulation sweep are replaced by one pink-noise source through a broad, low-resonance
 band-pass filter. Speed controls brightness and loudness; the existing bat position

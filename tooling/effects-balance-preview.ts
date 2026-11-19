@@ -17,6 +17,7 @@ export const EFFECTS_REVIEW_CASES = [
   "swish",
   "swishSlow",
   "swishGesture",
+  "swishGameMix",
   "swishRest",
   "swishFast",
   "swishMusic",
@@ -30,7 +31,8 @@ export const EFFECTS_REVIEW_CASES = [
 export type EffectsReviewCase = (typeof EFFECTS_REVIEW_CASES)[number];
 /** Real score and event cues, with the user's quiet-music/max-effects balance. */
 export async function renderEffectsBalance(kind: EffectsReviewCase) {
-  const duration = kind === "mixed" ? 8 : kind === "swishGesture" ? 5 : 2;
+  const duration =
+    kind === "mixed" || kind === "swishGameMix" ? 8 : kind === "swishGesture" ? 5 : 2;
   let instruments: ReturnType<typeof createInstruments> | undefined;
   let limiter: Tone.Limiter | undefined;
   const buffer = await Tone.Offline(
@@ -58,10 +60,16 @@ export async function renderEffectsBalance(kind: EffectsReviewCase) {
         };
         instruments!.play(director.observe(frame, [event]), time, "effects");
       };
-      if (kind === "music" || kind === "mixed" || kind === "stressMusic" || kind === "swishMusic")
+      if (
+        kind === "music" ||
+        kind === "mixed" ||
+        kind === "stressMusic" ||
+        kind === "swishMusic" ||
+        kind === "swishGameMix"
+      )
         for (let step = 0; 0.1 + step * SIXTEENTH < duration - 0.5; step++)
           instruments!.play(director.step(256 + step), 0.1 + step * SIXTEENTH, "music");
-      if (kind === "mixed") {
+      if (kind === "mixed" || kind === "swishGameMix") {
         play("launch", 0.4);
         play("wall", 0.9);
         play("paddle", 1.3);
@@ -71,33 +79,15 @@ export async function renderEffectsBalance(kind: EffectsReviewCase) {
         play("elimination", 4.1, 1);
         play("supply", 4.9);
         play("victory", 5.7);
-        instruments.steer(3.2, 0.2, 0.4);
-        instruments.steer(0, 0, 0.75);
+        if (kind === "mixed") {
+          instruments.steer(3.2, 0.2, 0.4);
+          instruments.steer(0, 0, 0.75);
+        }
       } else if (kind === "stress" || kind === "stressMusic") {
         for (let i = 0; i < 16; i++) play(i % 2 ? "paddle" : "wall", 0.25 + i * 0.01);
         play("damage", 0.3);
         play("damage", 0.35, 1);
         play("elimination", 0.4, 1);
-      } else if (kind === "swishGesture") {
-        // Slow brush, fast reverse flick, then several alternating strokes and a full stop.
-        let position = 0;
-        for (let frame = 0; frame < duration * 60; frame++) {
-          const time = frame / 60;
-          const velocity =
-            time < 0.5 || time >= 4.2
-              ? 0
-              : time < 1.5
-                ? 3.2 * Math.sin((time - 0.5) * Math.PI)
-                : time < 2
-                  ? 0
-                  : time < 2.5
-                    ? -16 * Math.sin((time - 2) * Math.PI * 2)
-                    : time < 3
-                      ? 0
-                      : 10 * Math.sin((time - 3) * Math.PI * 4);
-          position = Math.max(-1, Math.min(1, position + velocity / 60));
-          instruments.steer(velocity, position, time);
-        }
       } else if (
         kind === "swish" ||
         kind === "swishSlow" ||
@@ -112,12 +102,38 @@ export async function renderEffectsBalance(kind: EffectsReviewCase) {
           0.25,
         );
         instruments.steer(0, 0, 0.65);
-      } else if (kind !== "music") {
+      } else if (kind !== "music" && kind !== "swishGesture") {
         play(
           kind === "muted" ? "paddle" : kind === "breach" ? "damage" : kind,
           0.25,
           kind === "breach" || kind === "elimination" ? 1 : 0,
         );
+      }
+      if (kind === "swishGesture" || kind === "swishGameMix") {
+        // Slow brush, fast reverse flick, then several alternating strokes and a full stop.
+        let position = 0;
+        for (let frame = 0; frame < duration * 60; frame++) {
+          const time = frame / 60;
+          const strokeTime = time % 5;
+          const velocity =
+            strokeTime < 0.5 || strokeTime >= 4.2
+              ? 0
+              : strokeTime < 1.5
+                ? 3.2 * Math.sin((strokeTime - 0.5) * Math.PI)
+                : strokeTime < 2
+                  ? 0
+                  : strokeTime < 2.5
+                    ? -16 * Math.sin((strokeTime - 2) * Math.PI * 2)
+                    : strokeTime < 3
+                      ? 0
+                      : 10 * Math.sin((strokeTime - 3) * Math.PI * 4);
+          position = Math.max(-1, Math.min(1, position + velocity / 60));
+          instruments.steer(
+            kind === "swishGameMix" && frame % 7 === 6 ? 0 : velocity,
+            position,
+            time,
+          );
+        }
       }
     },
     duration,
