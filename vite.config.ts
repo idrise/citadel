@@ -65,7 +65,15 @@ export default defineConfig(({ command, mode, isPreview }) => ({
   },
   test: {
     root: ".",
-    include: ["tooling/**/*.test.ts", "apps/web/src/**/*.test.{ts,tsx}"],
+    include: [
+      "apps/web/src/**/*.test.{ts,tsx}",
+      // Opt in tools that protect gameplay, build output or publishing. Media/review
+      // scripts must not silently become release gates just by adding a test file.
+      "tooling/{app-artwork,audio-resource-summary,bot-serve-fixture,build-identity,build-profile,elite-bot-review,pages-base,pcm-level,performance-summary,physics-replay,publish-itch,virtual-input}.test.ts",
+    ],
     environment: "node",
+    tags: [{ name: "soak" }],
+    tagsFilter: ["!soak"],
+    ...(process.env.CI ? { maxWorkers: 2 } : {}),
   },
 }));

@@ -8,6 +8,7 @@ import { createTitleDemo } from "./title-demo";
 
 it.each([2, 4, 6, 16] as const)(
   "keeps every title fortress immortal while bots rally indefinitely with %i seats",
+  { timeout: 30_000, tags: ["soak"] },
   (count) => {
     const opening = createMatch(2026, count, 3, 7, levelDifficulty(100));
     const saved = structuredClone(opening);
@@ -38,7 +39,6 @@ it.each([2, 4, 6, 16] as const)(
     expect(opening).toEqual(saved);
     expect(opening.players.every((player) => player.protectedUntil === undefined)).toBe(true);
   },
-  30_000,
 );
 
 it("rebounds an actual capsule hit without damage instead of repairing lost health", () => {

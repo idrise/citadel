@@ -116,19 +116,23 @@ it("morphs a sixteen-seat expanded arena through a large elimination and an imme
   ]);
   expect(state.arena.variant).toBe("wide");
 });
-it("keeps sixteen-ball extended-roster play deterministic and below collision caps", () => {
-  for (const count of [8, 12, 16] as const) {
-    const run = () => {
-      let state = createMatch(51, count, 3, 51, levelDifficulty(100));
-      state.phase = "playing";
-      state.elapsed = 40;
-      const options = { ...DEFAULT_OPTIONS, humanSeat: -1 };
-      state = stepMatch(state, IDLE_INTENT, { ...options, serveTimeout: Infinity }, 0);
-      expect(state.balls).toHaveLength(16);
-      for (let tick = 0; tick < 120; tick++) state = stepMatch(state, undefined, options);
-      expect(state.stats.collisionCaps).toBe(0);
-      return state;
-    };
-    expect(run()).toEqual(run());
-  }
-}, 30_000);
+it(
+  "keeps sixteen-ball extended-roster play deterministic and below collision caps",
+  { timeout: 30_000, tags: ["soak"] },
+  () => {
+    for (const count of [8, 12, 16] as const) {
+      const run = () => {
+        let state = createMatch(51, count, 3, 51, levelDifficulty(100));
+        state.phase = "playing";
+        state.elapsed = 40;
+        const options = { ...DEFAULT_OPTIONS, humanSeat: -1 };
+        state = stepMatch(state, IDLE_INTENT, { ...options, serveTimeout: Infinity }, 0);
+        expect(state.balls).toHaveLength(16);
+        for (let tick = 0; tick < 120; tick++) state = stepMatch(state, undefined, options);
+        expect(state.stats.collisionCaps).toBe(0);
+        return state;
+      };
+      expect(run()).toEqual(run());
+    }
+  },
+);

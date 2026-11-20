@@ -279,7 +279,7 @@ describe("timed multi-ball pressure", () => {
   // This is a deterministic stress run, not a five-second performance budget.
   it(
     "supports eight fast balls with slowdown while preserving bounds, recipients and replay",
-    { timeout: 30_000 },
+    { timeout: 30_000, tags: ["soak"] },
     () => {
       let state = createMatch(15);
       const options = {

@@ -185,6 +185,17 @@ pnpm build
 ```
 
 `pnpm check` runs formatting, lint and TypeScript checks through Vite+.
+`pnpm test` runs fast game regressions plus an explicit list of build/publishing
+tool checks. Teaser generation and media review scripts are manual workflows,
+and their chosen match outcomes do not gate CI or deployment. CI, Pages and itch
+all use this same selection, with two test workers in CI.
+
+Long gameplay soak tests are tagged `soak` and excluded from the default run.
+Run them explicitly with `pnpm exec vp test run --tagsFilter=soak`. These retain
+the longer title-demo, dense-ball and multi-round stress coverage without
+slowing each release. The browser release jobs run their existing short smoke
+checks rather than the full browser playtest suite.
+
 `pnpm build` compiles the web app to static HTML, CSS and JavaScript in `dist/`.
 No application server is needed in production. Its Settings panel omits the local
 **Report** and **Test** actions; Reset progress fills that row.

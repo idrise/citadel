@@ -57,6 +57,9 @@ with the source score and rejects an excessive boost.
 
 ## Reproduction
 
+For the exact delivered v4 footage, use commit `e8849c4`. Later physics changes
+can change seeded match outcomes and the take timings used by the capture tools.
+
 With a local Vite server on port 5190:
 
 ```sh
@@ -76,7 +79,7 @@ or the system mouse. Production game code, saved progress and preferences are
 unchanged. These assets were captured from 1.0.0, before the 1.0.1 patch-version
 bump. Committing the media does not publish it to itch.io or deploy the game.
 
-## Validation
+## Validation at export
 
 All 782 unit tests across 134 files pass, along with `vp check` and `vp build`.
 The build retains its existing large-chunk advisory. The final movie fully
@@ -85,3 +88,7 @@ The actual-synth pitch regression and full exported-score probe pass. The
 intro's relative level differs from the source by only 0.42 dB. Final sampled
 frames, board transitions, render parity and all three screenshots were
 visually reviewed. Capture reports record no browser errors or collision caps.
+
+Teaser tests were subsequently removed from the game's default suite. Export
+assertions and pitch probes run only when these media tools are invoked manually;
+clip selection and media-generation work do not gate CI/CD.

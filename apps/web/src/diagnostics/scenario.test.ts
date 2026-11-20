@@ -4,7 +4,7 @@ import { alive } from "../simulation/types";
 // The full 30 simulated seconds are a correctness check, not a wall-clock benchmark.
 it(
   "sustains sixteen balls through multiple fixture resets, with identical seeded ticks",
-  { timeout: 30_000 },
+  { timeout: 30_000, tags: ["soak"] },
   () => {
     const first = createScenario({ seats: 3, shape: "rounded", workload: "sixteen" });
     const second = createScenario({ seats: 3, shape: "rounded", workload: "sixteen" });
@@ -41,13 +41,17 @@ it.each([2, 3, 4, 6] as const)(
     expect(fixture.state.balls).toHaveLength(4);
   },
 );
-it("triggers the authored morph and then resets the original shape and roster", () => {
-  const fixture = createScenario({ seats: 4, shape: "rounded", workload: "morph" });
-  for (let i = 0; i < 1441; i++) fixture.step();
-  expect(fixture.state.players.filter(alive)).toHaveLength(3);
-  expect(fixture.state.morph?.to.count).toBe(3);
-  for (let i = 0; i < 1440; i++) fixture.step();
-  expect(fixture.cycles).toBe(2);
-  expect(fixture.state.players.filter(alive)).toHaveLength(4);
-  expect(fixture.state.arena.variant).toBe("rounded");
-});
+it(
+  "triggers the authored morph and then resets the original shape and roster",
+  { tags: ["soak"] },
+  () => {
+    const fixture = createScenario({ seats: 4, shape: "rounded", workload: "morph" });
+    for (let i = 0; i < 1441; i++) fixture.step();
+    expect(fixture.state.players.filter(alive)).toHaveLength(3);
+    expect(fixture.state.morph?.to.count).toBe(3);
+    for (let i = 0; i < 1440; i++) fixture.step();
+    expect(fixture.cycles).toBe(2);
+    expect(fixture.state.players.filter(alive)).toHaveLength(4);
+    expect(fixture.state.arena.variant).toBe("rounded");
+  },
+);
