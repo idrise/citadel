@@ -274,6 +274,16 @@ One-time repository setup: in **Settings → Pages → Build and deployment**, c
 No deployment or repository-setting changes have been performed by this scaffold.
 The actual site URL is reported by the deployment job.
 
+## itch.io
+
+`.github/workflows/itch.yml` validates the portable `dist-itch/` build and uploads
+it with Butler on `main` pushes or an intentional manual run from the default
+branch. Publishing is enabled by setting the repository variable `ITCH_IO_TARGET`
+to `username/game-slug` and the Actions secret `BUTLER_API_KEY` to your Butler key.
+The channel defaults to `html5`; override it with `ITCH_IO_CHANNEL` if needed.
+Follow [the itch.io publishing setup](docs/ITCH_PUBLISHING.md) for key creation
+and the required first-upload **playable in the browser** setting.
+
 Ask for the user's authorisation before committing, leaving room for review and
 tweaks. Pushing, manually deploying and using `gh` also require the user's explicit
 instruction. See [AGENTS.md](AGENTS.md) and [PLAN.md](PLAN.md).

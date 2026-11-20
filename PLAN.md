@@ -763,6 +763,27 @@ the reviewed app icons, platform artwork, sharp downscales, portable itch build,
 tests, documentation and commit-permission working agreement. This authorises
 the local checkpoint only; no push, publication or milestone approval is implied.
 
+20 November itch.io CI publishing amendment: the owner requested Butler uploads
+from CI and instructions for configuring credentials. `.github/workflows/itch.yml`
+validates the portable itch build before uploading the exact tested artifact.
+Configured default-branch pushes and intentional default-branch manual runs
+publish to `ITCH_IO_TARGET`, using the `BUTLER_API_KEY` Actions secret and an
+optional `ITCH_IO_CHANNEL` (default `html5`). PRs cannot publish. Uploads remain
+disabled until the target variable is configured. `docs/ITCH_PUBLISHING.md`
+documents the wharf key, repository settings and itch.io's required one-time
+playable-in-browser flag. The upload helper has local stub-based unit coverage.
+The owner subsequently authorised committing this workflow, helper, tests and
+setup documentation. No push, remote workflow, credential setup or itch.io
+upload was performed. Existing
+milestone reviews and physical-device checks remain open.
+Validation: `vp check`, 764 unit tests across 129 files (including 13 upload-helper
+tests), production-mode itch build, shell/YAML syntax and `git diff --check` pass.
+All five focused Chromium checks pass beneath `/uploads/citadel/`, using the
+existing document-local input fixtures. The first browser attempt could not bind
+the sandboxed preview port; the permitted rerun passed. The existing bundle-size
+advisory remains. The actual GitHub Actions run, Butler authentication/upload and
+live itch.io embed remain unverified pending owner configuration and publication.
+
 17 November debug-key capture follow-up: the owner requests quick +/− level stepping
 without Settings opening. A document-local browser reproduction rejected an immediate
 pointer re-capture and showed the previous code opening Resume/Settings. Debug resets

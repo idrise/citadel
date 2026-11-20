@@ -82,6 +82,10 @@ so itch's nested upload URLs can find JavaScript, icons and the manifest. See
 [itch.io's HTML5 upload documentation](https://itch.io/docs/creators/html5).
 This does not publish the game or change its Pages build.
 
+For automated Butler uploads, follow [the CI publishing setup](ITCH_PUBLISHING.md).
+It uses the same portable build and requires a repository secret, target variable
+and one-time playable-in-browser setting on itch.io.
+
 ## Artwork provenance and regeneration
 
 The built-in imagegen tool produced [`landscape-master.png`](artwork/landscape-master.png)
