@@ -37,6 +37,18 @@ export function createTouchInput(
     target = null;
     launch = false;
   }
+  // Pointer cancellation and touch-action do not suppress every iOS selection/callout
+  // gesture. Consume the native action only on the active game canvas; controls
+  // elsewhere retain their normal taps and range-slider interaction.
+  const preventNativeAction = (event: Event) => {
+    if (enabled) event.preventDefault();
+  };
+  canvas.addEventListener("touchstart", preventNativeAction, {
+    passive: false,
+    signal: abort.signal,
+  });
+  canvas.addEventListener("contextmenu", preventNativeAction, { signal: abort.signal });
+  canvas.addEventListener("selectstart", preventNativeAction, { signal: abort.signal });
   canvas.addEventListener(
     "pointerdown",
     (event) => {

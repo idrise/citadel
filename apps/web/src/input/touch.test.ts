@@ -73,6 +73,30 @@ it("never serves a long press and cancels a lost gesture without trailing moveme
   input.dispose();
 });
 
+it.each(["touchstart", "contextmenu", "selectstart"])(
+  "suppresses native %s during play without interrupting a tap or drag",
+  (type) => {
+    const { canvas, input, send, home } = fixture();
+    send("pointerdown", 100);
+    expect(canvas.dispatchEvent(new Event(type, { cancelable: true }))).toBe(false);
+    send("pointerup", 100);
+    expect(input.read().launch).toBe(true);
+    expect(input.read().launch).toBe(false);
+    send("pointerdown", 100);
+    send("pointermove", 150);
+    expect(canvas.dispatchEvent(new Event(type, { cancelable: true }))).toBe(false);
+    send("pointerup", 150);
+    expect(input.read()).toMatchObject({ launch: false });
+    expect(input.read().targetAngle).toBeGreaterThan(home);
+    input.release();
+    expect(canvas.dispatchEvent(new Event(type, { cancelable: true }))).toBe(true);
+    input.capture();
+    expect(canvas.dispatchEvent(new Event(type, { cancelable: true }))).toBe(false);
+    input.dispose();
+    expect(canvas.dispatchEvent(new Event(type, { cancelable: true }))).toBe(true);
+  },
+);
+
 it("serves once on a tap, ignores extra fingers and discards cancelled gestures", () => {
   const { input, send } = fixture();
   send("pointerdown", 100);

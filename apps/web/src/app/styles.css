@@ -25,6 +25,15 @@ body,
   height: 100dvh;
   overflow: hidden;
 }
+/* Game surfaces and their transparent controls are not selectable document text. */
+.game-root,
+.game-root canvas,
+.game-root button,
+.scene-settings-controls {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
 .viewport canvas {
   display: block;
   width: 100%;

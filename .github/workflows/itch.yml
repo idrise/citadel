@@ -41,8 +41,8 @@ jobs:
       - run: vp exec playwright install --with-deps chromium
       - name: Browser smoke, release Settings and nested asset paths
         run: >-
-          vp exec playwright test tests/scaffold.spec.ts tests/app-artwork.spec.ts
-          --grep "production game fills the viewport|Settings diagnostic actions match the build profile|browser and Home Screen icons|Facebook preview"
+          vp exec playwright test tests/scaffold.spec.ts tests/app-artwork.spec.ts tests/ios-touch.spec.ts
+          --grep "production game fills the viewport|Settings diagnostic actions match the build profile|browser and Home Screen icons|Facebook preview|touch serving blocks iOS"
           --workers=1
       - uses: actions/upload-artifact@v7.0.2
         with:

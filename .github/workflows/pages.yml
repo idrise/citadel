@@ -43,8 +43,8 @@ jobs:
       - run: vp exec playwright install --with-deps chromium
       - name: Browser smoke and release Settings
         run: >-
-          vp exec playwright test tests/scaffold.spec.ts
-          --grep "production game fills the viewport|Settings diagnostic actions match the build profile"
+          vp exec playwright test tests/scaffold.spec.ts tests/ios-touch.spec.ts
+          --grep "production game fills the viewport|Settings diagnostic actions match the build profile|touch serving blocks iOS"
           --workers=1
         env:
           CITADEL_BUILD_MODE: production

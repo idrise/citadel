@@ -784,6 +784,29 @@ the sandboxed preview port; the permitted rerun passed. The existing bundle-size
 advisory remains. The actual GitHub Actions run, Butler authentication/upload and
 live itch.io embed remain unverified pending owner configuration and publication.
 
+20 November iOS Home Screen selection-menu correction: the owner reports that
+tapping to serve opened Copy / Look Up / Translate / Share in the installed app.
+The canvas blocked scrolling but lacked native selection/callout protection.
+Game surfaces now disable text selection and WebKit touch callouts. The touch
+adapter cancels native touchstart, contextmenu and selectstart actions only on
+the active canvas, preserving separate button and range-slider interaction.
+Three new unit regressions failed before the fix and pass after it; all 767 unit
+tests pass. A mobile browser regression covers serving, dragging, selection
+guards and Settings, and is included in CI, Pages and itch publishing checks.
+See `docs/IOS_TOUCH_REVIEW.md` for evidence, check results and device retest steps.
+No simulation changes; M09 remains awaiting review. The owner subsequently
+authorised committing and pushing this correction to `main`, which triggers the
+configured Pages and itch.io publishing workflows. Workflow success and the
+physical-device retest must be verified separately.
+Validation: `vp check`, Pages/itch builds, YAML syntax and `git diff --check` pass.
+Software Chromium passes the new regression and touch Settings check; the older
+desktop Settings check exceeds its 30-second limit. The native-GPU rerun passes
+all three checks. Desktop WebKit also passes the new mobile-viewport regression,
+including its WebKit-only callout style. Rendered evidence was inspected in both
+engines. The existing bundle advisory remains. Local demo:
+`http://127.0.0.1:5189/citadel/`. Physical iOS Home Screen behaviour still requires
+the owner's retest after an authorised deployment.
+
 17 November debug-key capture follow-up: the owner requests quick +/− level stepping
 without Settings opening. A document-local browser reproduction rejected an immediate
 pointer re-capture and showed the previous code opening Resume/Settings. Debug resets
