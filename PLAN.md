@@ -879,6 +879,57 @@ pass for 1.0.1. Existing large-chunk advisories remain. The browser checks use
 the installed preview executable directly because the pnpm wrapper attempted
 an unnecessary dependency install; no dependency or lockfile changes were made.
 
+20 November rounded-wall rally correction: the owner reported balls trapped
+between walls and requested spin after more than four wall bounces, increasing
+on further bounces. Added per-ball wall history, cleared by bat returns and
+serves. The first four wall responses remain exact; later wall contacts add a
+growing, bounded spin nudge through the existing wall grip and flight decay.
+Speed and shot credit are preserved, with no new RNG. Pickups/shields do not
+count as walls, and bot forecasts share the new response. The reproduction
+previously made 21 banks with no defence contact in 20 seconds; it now reaches
+a bat at 6.85 seconds after three nudges. Unit regressions initially failed on
+the old response and now cover threshold, growth, resets, bounds, shared/isolated
+solvers, immutable deterministic state and forecasts. Historical impact logs
+remain identical until each ball's fifth wall contact; reviewed new digests
+cover intentionally changed later paths. Current gameplay can change the old
+seeded teaser outcomes; delivered media is unchanged and points to its exact
+historical commit. Rendered desktop/phone
+evidence and the local comparison are in `docs/WALL_ESCAPE_REVIEW.md`.
+The media/version checkpoint is committed as `e8849c4`; this new gameplay fix
+remains uncommitted for owner review. No push or deployment is authorised.
+Final validation: 794 unit tests / 135 files, format/lint/types, Pages and itch
+builds, six native-Chromium serving/version checks and the desktop/phone rendered
+comparison pass. Existing large-chunk advisories remain; physical-device
+performance is not established by viewport emulation.
+
+20 November CI test-scope correction: the owner reported failed and slow teaser
+tests in CI and requested only useful, fast release checks. Deleted the five
+teaser/export test files, including assertions about exact chosen-clip outcomes.
+The default suite now collects game tests and an explicit list of relevant
+gameplay/build/publishing tool tests. New media/review tests cannot join CI
+implicitly through a broad tooling glob. Long title-demo, diagnostic and dense
+gameplay stress runs are tagged `soak`, excluded by default and runnable manually
+with `vp test run --tagsFilter=soak`. CI caps unit-test workers at two; all three
+workflows use the same fast selection and retain their short browser smoke
+gates. Capture-time validation stays in the manually invoked media exporters.
+The default five-second unit timeout is unchanged. This is a test/configuration
+correction; the pending rounded-wall gameplay fix remains separate and
+uncommitted. No commit, push or deployment is authorised by this request.
+Validation: the exact CI-mode selection (`CI=true vp test run`) passes 771 tests
+in the working tree, with eight soak cases excluded and no media tests collected.
+The slowest individual test was about one second locally. An isolated snapshot
+of committed `e8849c4` plus only this CI/test-scope correction also passes all
+759 applicable tests, independent of the pending wall-bounce fix. The manual
+soak command was verified with the four title-demo cases. `vp check`, workflow
+YAML parsing, Pages/itch builds and `git diff --check` pass. Existing bundle-size
+advisories remain. No remote workflow was triggered.
+
+20 November publication authorisation: the owner explicitly requested committing
+and pushing the pending wall-rally fix and CI test-scope correction. Prepare
+focused CI and gameplay commits, then push `main`; the configured CI, Pages and
+itch workflows may run from that push. Their remote outcomes still require
+separate verification. M09 review status and later milestone gates are unchanged.
+
 17 November debug-key capture follow-up: the owner requests quick +/− level stepping
 without Settings opening. A document-local browser reproduction rejected an immediate
 pointer re-capture and showed the previous code opening Resume/Settings. Debug resets

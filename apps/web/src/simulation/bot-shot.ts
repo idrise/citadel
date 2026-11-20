@@ -1,7 +1,8 @@
 import { advanceRally, rallyBaseSpeed } from "./rally";
 import { ARENA, clampPaddleAngle } from "./arena";
 import { paddleReturn, sweepCircle, sweepPaddle, sweepWalls, type Contact } from "./collision";
-import { curveFlight, spinBounce, spinReturn, swipeCurve } from "./flight";
+import { curveFlight, spinReturn, swipeCurve } from "./flight";
+import { bounceWall } from "./wall-escape";
 import { SUPPLIES } from "./supplies";
 import { alive, type MatchState } from "./types";
 import { add, clamp, dot, length, scale, sub, type Vec2 } from "./vector";
@@ -65,7 +66,14 @@ function segmentDistance(point: Vec2, start: Vec2, end: Vec2) {
 export function planBotShot(
   state: MatchState,
   seat: number,
-  contact: { point: Vec2; velocity: Vec2; angle: number; spin?: number; rallyTime?: number },
+  contact: {
+    point: Vec2;
+    velocity: Vec2;
+    angle: number;
+    spin?: number;
+    rallyTime?: number;
+    ballId?: number;
+  },
   speed: number,
   precision = 1,
 ): BotShot {
@@ -94,6 +102,7 @@ export function planBotShot(
       };
       const baseSpeed = state.difficulty?.ballSpeed ?? rallyBaseSpeed(forecast);
       let spin = swipeCurve(swipe, contact.velocity, hit.normal);
+      let wallBounces = 0;
       let score = -0.005 * Math.abs(swipe) - 0.002 * Math.abs(offset);
       for (let step = 0; step < steps; step++) {
         const dt = 1 / steps;
@@ -143,7 +152,11 @@ export function planBotShot(
         position = end;
         if (wall) {
           position = add(position, scale(wall.normal, (wall.separation ?? 0) + 0.001));
-          const rebound = spinBounce(velocity, wall.normal, spin);
+          const rebound = bounceWall(
+            { id: contact.ballId ?? 0, velocity, spin, wallBounces },
+            wall.normal,
+          );
+          wallBounces = rebound.wallBounces;
           velocity = rebound.velocity;
           spin = rebound.spin;
           // Remaining substep deliberately omitted: this is a bounded aim estimate.

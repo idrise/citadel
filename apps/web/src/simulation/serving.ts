@@ -47,6 +47,7 @@ export function readyBall(state: MatchState, seat: number, id = 0): BallState {
     velocity: { x: 0, y: 0 },
     slowSeat: null,
     spin: 0,
+    wallBounces: 0,
   };
 }
 export function launchBall(state: MatchState, ball: BallState, options: MatchOptions): void {
@@ -57,6 +58,7 @@ export function launchBall(state: MatchState, ball: BallState, options: MatchOpt
   ball.striker = ball.seat;
   ball.slowSeat = null;
   ball.spin = serveCurve(state.players[ball.seat]?.swipe);
+  ball.wallBounces = 0;
   emit(state, "launch", ball.position, ball.seat, null, { ballId: ball.id });
 }
 export function damagePiece(

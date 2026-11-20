@@ -117,8 +117,8 @@ export function replayPhysics(name: PhysicsCase, fps = 120) {
         swipes: state.players.map((p) => p.swipe),
         stats: state.stats,
         winner: state.winner,
-        // Ownership is new metadata; retain the reviewed eight-piece collision trace.
-        balls: state.balls.map((ball) => ({ ...ball, striker: undefined })),
+        // Retain the old digest schema; motion/events still cover the new bank response.
+        balls: state.balls.map((ball) => ({ ...ball, striker: undefined, wallBounces: undefined })),
         events: state.events,
       };
       hash.update(

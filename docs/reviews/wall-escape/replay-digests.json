@@ -1,0 +1,65 @@
+{
+  "description": "Reviewed escape-enabled physical traces. Original impact logs remain unchanged through each ball's first four wall banks; fifth and later banks now add spin. Ownership and wall-count metadata are excluded from the physical digest.",
+  "cases": [
+    {
+      "name": "corner-240",
+      "ticks": 240,
+      "traceDigest": "c2751caeda5890032502b4b1ff7fab0da8799e0263063d9827d3c39f242a96f6",
+      "collisionCaps": 0
+    },
+    {
+      "name": "grazing-120",
+      "ticks": 240,
+      "traceDigest": "c0e48f67e9e5bee6db838f15ae6c5f02d2612c7ca402fec05cb4fe710dbd2942",
+      "collisionCaps": 0
+    },
+    {
+      "name": "swipe-positive",
+      "ticks": 240,
+      "traceDigest": "07e3af3b64e64981c456f8513928e14353000a62154b3ee2ea89cf14090dacfc",
+      "collisionCaps": 0
+    },
+    {
+      "name": "swipe-negative",
+      "ticks": 240,
+      "traceDigest": "33196aa0681031b5c332d2a6b8298e709ca08e469ab796aacbd685e8e4bdfc4e",
+      "collisionCaps": 0
+    },
+    {
+      "name": "health-gap",
+      "ticks": 240,
+      "traceDigest": "91ae54666e4ca1aae3e4ac4bc67e195f9682834e043e672e3460bafd50c0c804",
+      "collisionCaps": 0
+    },
+    {
+      "name": "empty-sector",
+      "ticks": 240,
+      "traceDigest": "0fe56650bf9a4f0dc3170f930d1467957d5c62d06a9c05f57d937294fce34fb5",
+      "collisionCaps": 0
+    },
+    {
+      "name": "eight-curves",
+      "ticks": 240,
+      "traceDigest": "3488d959bc3c9f9a2c4ccd768923379470f853da6ba7368aa337943e0f2e98c9",
+      "collisionCaps": 0
+    },
+    {
+      "name": "ball-swept",
+      "ticks": 240,
+      "traceDigest": "7d061e3f036f39d33f4f45bf0df7f4cb591fdf0815a7e65fa87713166969d9e9",
+      "collisionCaps": 0
+    },
+    {
+      "name": "ball-chain",
+      "ticks": 240,
+      "traceDigest": "63971650935cd570aa868eb88cd5508f8706990833fcfd7268ba44c99de2fef0",
+      "collisionCaps": 0
+    },
+    {
+      "name": "wall-ball",
+      "ticks": 240,
+      "traceDigest": "3c1c51ec6c7c10542e3eed6b4e78b808ba88ddcf53d311b306a0fb6b37fb6acf",
+      "collisionCaps": 0
+    }
+  ]
+}

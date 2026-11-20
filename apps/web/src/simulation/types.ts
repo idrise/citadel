@@ -50,6 +50,8 @@ export interface SupplyDrop {
   age: number;
 }
 export interface BallState {
+  /** Wall contacts since the last bat return or serve; missing in older snapshots. */
+  wallBounces?: number;
   /** Active-flight seconds since this ball last scored; absent in legacy fixed-speed replays. */
   rallyTime?: number;
   striker?: number;

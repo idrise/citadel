@@ -3,6 +3,7 @@ import { advanceRally, rallyBaseSpeed } from "./rally";
 import { ARENA, fortress } from "./arena";
 import { sweepCircle, sweepPaddle, sweepWalls } from "./collision";
 import { curveFlight, spinBounce } from "./flight";
+import { bounceWall } from "./wall-escape";
 import { alive, type MatchState } from "./types";
 import { add, angleDifference, angleOf, length, scale, sub, type Vec2 } from "./vector";
 
@@ -37,7 +38,8 @@ export function planIntercept(
     const baseSpeed = state.difficulty?.ballSpeed ?? rallyBaseSpeed(source);
     let position = { ...source.position },
       velocity = { ...source.velocity },
-      spin = source.spin;
+      spin = source.spin,
+      wallBounces = source.wallBounces ?? 0;
     for (let elapsed = 0; elapsed < horizon - 1e-8; elapsed += 1 / 30) {
       const dt = Math.min(1 / 30, horizon - elapsed);
       forecast.velocity = velocity;
@@ -124,7 +126,11 @@ export function planIntercept(
           add(position, scale(velocity, wall.time)),
           scale(wall.normal, (wall.separation ?? 0) + 0.0001),
         );
-        const rebound = spinBounce(velocity, wall.normal, spin);
+        const rebound =
+          wall.pickup >= 0
+            ? spinBounce(velocity, wall.normal, spin)
+            : bounceWall({ id: source.id, velocity, spin: spin ?? 0, wallBounces }, wall.normal);
+        if (wall.pickup < 0) wallBounces++;
         velocity = rebound.velocity;
         spin = rebound.spin;
         position = add(position, scale(velocity, dt - wall.time));

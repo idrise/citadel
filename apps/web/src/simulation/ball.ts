@@ -8,6 +8,7 @@ import { alive, type BallState, type MatchOptions, type MatchState } from "./typ
 import { add, length, scale, sub, type Vec2 } from "./vector";
 import { approachSlowdown } from "./slowdown";
 import { contactSwipe, curveFlight, spinBounce, spinReturn, swipeCurve } from "./flight";
+import { bounceWall } from "./wall-escape";
 
 export interface Impact extends Contact {
   type: "paddle" | "piece" | "wall" | "pickup";
@@ -196,6 +197,7 @@ export function resolveBallImpact(
     return;
   }
   if (hit.type === "paddle") {
+    ball.wallBounces = 0;
     ball.striker = hit.seat;
     const angularVelocity =
       (state.players[hit.seat]!.angle -
@@ -225,9 +227,7 @@ export function resolveBallImpact(
       },
     });
   } else {
-    const rebound = spinBounce(ball.velocity, hit.normal, ball.spin);
-    ball.velocity = rebound.velocity;
-    ball.spin = rebound.spin;
+    Object.assign(ball, bounceWall(ball, hit.normal));
     emit(state, "wall", ball.position, -1, null, {
       ballId: ball.id,
       impact: {

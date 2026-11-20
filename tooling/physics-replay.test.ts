@@ -42,15 +42,46 @@ it.each(PHYSICS_CASES)(
   },
 );
 
-it("matches the reversed-swipe and ball-contact golden impact logs and state trace digests", () => {
+it("retains reviewed impacts through four wall banks and matches the escape-enabled traces", () => {
   const golden = JSON.parse(
     readFileSync(
       new URL("../docs/reviews/m09/replay-tokens-collisions/replays.json", import.meta.url),
       "utf8",
     ),
+  ) as {
+    cases: {
+      name: (typeof PHYSICS_CASES)[number];
+      traceDigest: string;
+      events: ReturnType<typeof replayPhysics>["events"];
+    }[];
+  };
+  const updated = JSON.parse(
+    readFileSync(
+      new URL("../docs/reviews/wall-escape/replay-digests.json", import.meta.url),
+      "utf8",
+    ),
   ) as { cases: { name: (typeof PHYSICS_CASES)[number]; traceDigest: string }[] };
-  for (const fixture of golden.cases)
-    expect(replayPhysics(fixture.name).traceDigest).toBe(fixture.traceDigest);
+  for (const fixture of golden.cases) {
+    const replay = replayPhysics(fixture.name),
+      banks = new Map<number, number>();
+    const firstNudge = fixture.events.findIndex((event) => {
+      if (event.ballId === undefined) return false;
+      if (["paddle", "launch", "damage"].includes(event.type)) banks.set(event.ballId, 0);
+      if (event.type !== "wall") return false;
+      const count = (banks.get(event.ballId) ?? 0) + 1;
+      banks.set(event.ballId, count);
+      return count > 4;
+    });
+    if (firstNudge < 0) expect(replay.traceDigest).toBe(fixture.traceDigest);
+    else
+      // Stored JSON normalises signed zero; compare in the same representation.
+      expect(JSON.parse(JSON.stringify(replay.events.slice(0, firstNudge)))).toEqual(
+        fixture.events.slice(0, firstNudge),
+      );
+    expect(replay.traceDigest).toBe(
+      updated.cases.find((item) => item.name === fixture.name)!.traceDigest,
+    );
+  }
   const corner = replayPhysics("corner-240");
   expect(corner.events.slice(0, 2).map((event) => event.impact!.normal)).toEqual([
     { x: -1, y: 0 },
