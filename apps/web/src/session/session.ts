@@ -30,6 +30,7 @@ import { ARENA, fortress, type PlayerCount } from "../simulation/arena";
 import { createMatch, stepMatch } from "../simulation/match";
 import { alive, type GameEvent, type MatchState } from "../simulation/types";
 import { createFixedClock } from "./fixed-clock";
+import { createTitleDemo } from "./title-demo";
 import { createSettings, matchOptions, type GameSettings } from "./settings";
 import { createGameMusic, type MusicSnapshot } from "../audio/music-session";
 import type { SceneAction } from "../rendering/scene-menu";
@@ -53,6 +54,7 @@ export interface SessionSnapshot {
   initialSettings: GameSettings | null;
   endingTime: number;
   titleMoving: boolean;
+  titleDemo: { state: MatchState; running: boolean } | null;
   debug: boolean;
   ballOwners: ReadonlyMap<number, number>;
 }
@@ -107,16 +109,17 @@ export function createSession(
     });
   }
   function reportContext() {
+    const displayed = started ? state : titleDemo.state;
     return {
       seed,
       supplySeed,
-      tick: state.tick,
-      simulationSeconds: state.elapsed,
+      tick: displayed.tick,
+      simulationSeconds: displayed.elapsed,
       level,
       initialSeats: count,
-      liveSeats: state.players.filter(alive).length,
-      arenaShape: state.arena.variant ?? "classic",
-      phase: state.phase,
+      liveSeats: displayed.players.filter(alive).length,
+      arenaShape: displayed.arena.variant ?? "classic",
+      phase: displayed.phase,
       paused,
       settings: { ...settings },
     };
@@ -129,6 +132,7 @@ export function createSession(
   let replayTokens = MAX_REPLAY_TOKENS;
   let supplySeed = roundSeed(window.location.search, undefined, "supplySeed");
   let state = createMatch(seed, count, ARENA.startingPieces, supplySeed, levelDifficulty(level));
+  let titleDemo = createTitleDemo(state);
   let demotion: Demotion | null = null;
   let resultFor = createProgressRecorder(humanSeat, level);
   const viewport = createViewport(
@@ -208,6 +212,8 @@ export function createSession(
   let frame = 0;
   let music = createGameMusic(seed, humanSeat);
   let touchMode = window.matchMedia("(pointer: coarse)").matches;
+  const titleDemoRunning = () =>
+    !started && !settingsOpen && !document.hidden && document.hasFocus();
   const report = () =>
     onSnapshot({
       state,
@@ -228,6 +234,7 @@ export function createSession(
       initialSettings,
       endingTime,
       titleMoving: viewport.titleMoving,
+      titleDemo: started ? null : { state: titleDemo.state, running: titleDemoRunning() },
       ballOwners: observer.owners(),
       music: music.snapshot(),
     });
@@ -339,6 +346,9 @@ export function createSession(
     const delta = lastTimestamp ? Math.min((timestamp - lastTimestamp) / 1000, 0.1) : 0;
     lastTimestamp = timestamp;
     const events: GameEvent[] = [];
+    const demoRunning = titleDemoRunning();
+    const demoEvents = demoRunning ? titleDemo.advance(delta) : [];
+    if (!demoRunning) titleDemo.pause();
     if (!paused && state.phase !== "finished")
       clock.advance(delta, () => {
         state = stepMatch(
@@ -366,8 +376,12 @@ export function createSession(
     music.setPlaying(started && !paused && state.phase !== "finished");
     if (started && state.phase === "finished" && !paused) endingTime += delta;
     const audioMs = performance.now() - audioBegin;
-    present(observed, paused && started ? 0 : delta);
-    viewport.frameBudget(intervalMs, simulationMs + audioMs, !paused && state.phase === "playing");
+    present(started ? observed : demoEvents, paused && started ? 0 : delta);
+    viewport.frameBudget(
+      intervalMs,
+      simulationMs + audioMs,
+      demoRunning || (!paused && state.phase === "playing"),
+    );
     if (state.phase === "finished" || !alive(state.players[humanSeat]!)) {
       input.release();
       touch.release();
@@ -399,17 +413,18 @@ export function createSession(
             type: event.type,
             detail: String(event.seat),
           });
+      const displayed = started ? state : titleDemo.state;
       previousFrame = {
         simulationMs,
         audioMs,
         ...viewport.performance,
         level,
-        balls: state.balls.length,
+        balls: displayed.balls.length,
         atMs: timestamp,
         phase,
-        tick: state.tick,
-        simulationSeconds: state.elapsed,
-        seats: state.players.filter(alive).length,
+        tick: displayed.tick,
+        simulationSeconds: displayed.elapsed,
+        seats: displayed.players.filter(alive).length,
         frameCpuMs: performance.now() - frameBegin,
       };
     }
@@ -419,7 +434,7 @@ export function createSession(
     const human = state.players[humanSeat]!;
     const home = fortress(humanSeat, state.arena);
     music.steer(
-      !paused && alive(human)
+      started && !paused && alive(human)
         ? (human.swipe?.velocity ?? 0) * Math.min(1, (human.swipe?.remaining ?? 0) / 0.1)
         : 0,
       (human.angle - home.direction) / home.halfAngle,
@@ -427,7 +442,8 @@ export function createSession(
     const musicVisuals = music.visuals();
     const view: ViewOptions = {
       humanSeat,
-      ballOwners: observer.owners(),
+      titleDemo: !started,
+      ballOwners: started ? observer.owners() : titleDemo.owners(),
       menu: {
         ...(started && !paused && !menuSuppressed && state.phase === "playing" && !alive(human)
           ? { spectator: { level: continuationLevel, demotion } }
@@ -476,7 +492,7 @@ export function createSession(
       musicPulse: settings.musicLights ? musicVisuals.pulse : 0,
       musicWave: settings.musicLights ? musicVisuals.phase : -1,
     };
-    viewport.render({ ...state, events }, dt, view);
+    viewport.render({ ...(started ? state : titleDemo.state), events }, dt, view);
   }
   present([], 0);
   frame = requestAnimationFrame(animate);
@@ -495,6 +511,8 @@ export function createSession(
       debug.active,
     ).duration;
     state = { ...state, countdown: introDuration };
+    // Rebase event IDs while the visible demo actors hand over to the opening poses.
+    if (!started) viewport.transitionTitle(state, humanSeat, true, true);
     started = true;
     settingsOpen = false;
     menuSuppressed = false;
@@ -556,6 +574,7 @@ export function createSession(
     lossLevel = debug.active ? level : pendingLossLevel;
     previousLevel = debug.active ? debug.previous : pendingPreviousLevel;
     state = nextState;
+    titleDemo = createTitleDemo(nextState);
     started = false;
     settingsOpen = false;
     paused = true;

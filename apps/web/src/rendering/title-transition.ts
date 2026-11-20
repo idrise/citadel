@@ -2,10 +2,12 @@ import { MAX_PLAYERS } from "../simulation/player-count";
 import { arenaTransition, transitionPosts, type PostReveal } from "../simulation/arena-transition";
 import { createArena, fortress, type ArenaGeometry } from "../simulation/arena";
 import { blendPresentationOutline, matchPresentationOutlines } from "./presentation-outline";
+import { protectionPulse } from "./health-protection";
 import type { MatchState, PlayerState } from "../simulation/types";
 import { add, angleDifference, scale, type Vec2 } from "../simulation/vector";
 
 export const TITLE_TRANSITION_SECONDS = 1.25;
+export const START_TRANSITION_SECONDS = 0.65;
 export interface TitleFrame {
   posts?: PostReveal;
   state: MatchState;
@@ -15,6 +17,7 @@ export interface TitleFrame {
   marks?: Vec2[];
   lights?: Vec2[];
   pieceScales?: number[][];
+  protection?: number[];
   railGain?: number;
   victoryFraming?: number;
 }
@@ -40,6 +43,7 @@ export function createTitleTransition() {
         seat: number;
         elapsed: number;
         duration: number;
+        stationaryOutline: boolean;
         outline: ReturnType<typeof matchPresentationOutlines>;
       }
     | undefined;
@@ -47,7 +51,14 @@ export function createTitleTransition() {
     capture(frame: TitleFrame) {
       current = frame;
     },
-    begin(target: MatchState, seat: number, animate: boolean) {
+    begin(target: MatchState, seat: number, animate: boolean, starting = false) {
+      const sameOutline =
+        current &&
+        current.state.arena.vertices.length === target.arena.vertices.length &&
+        current.state.arena.vertices.every(
+          (p, i) =>
+            Math.hypot(p.x - target.arena.vertices[i]!.x, p.y - target.arena.vertices[i]!.y) < 1e-6,
+        );
       transition =
         animate && current
           ? {
@@ -55,7 +66,13 @@ export function createTitleTransition() {
               target,
               seat,
               elapsed: 0,
-              duration: current.state.phase === "finished" ? 1.4 : TITLE_TRANSITION_SECONDS,
+              duration:
+                starting && sameOutline
+                  ? START_TRANSITION_SECONDS
+                  : current.state.phase === "finished"
+                    ? 1.4
+                    : TITLE_TRANSITION_SECONDS,
+              stationaryOutline: Boolean(sameOutline),
               outline: matchPresentationOutlines(
                 current.state.arena.vertices,
                 target.arena.vertices,
@@ -63,8 +80,19 @@ export function createTitleTransition() {
             }
           : undefined;
     },
-    update(state: MatchState, seat: number, dt: number, reduced: boolean): TitleFrame {
-      if (!transition || reduced || state.phase === "playing" || state.phase === "finished") {
+    update(
+      state: MatchState,
+      seat: number,
+      dt: number,
+      reduced: boolean,
+      titleDemo = false,
+    ): TitleFrame {
+      if (
+        !transition ||
+        reduced ||
+        (state.phase === "playing" && !titleDemo) ||
+        state.phase === "finished"
+      ) {
         transition = undefined;
         current = { state, scales: scalesFor(state), yaw: yawFor(state, seat), moving: false };
         return current;
@@ -76,7 +104,9 @@ export function createTitleTransition() {
         current = { state, scales: scalesFor(state), yaw: yawFor(state, seat), moving: false };
         return current;
       }
-      const t = arenaTransition(time).shape,
+      const t = transition.stationaryOutline
+          ? time * time * (3 - 2 * time)
+          : arenaTransition(time).shape,
         before = transition.from.state;
       const targetScales = scalesFor(state);
       const born = (id: number) => (transition!.from.scales[id] ?? 0) === 0;
@@ -152,11 +182,17 @@ export function createTitleTransition() {
           );
         });
       current = {
-        posts: transitionPosts(
-          time,
-          transition.from.posts ?? { vertices: before.arena.vertices, lift: 1 },
-          state.arena.vertices,
-        ),
+        posts: transition.stationaryOutline
+          ? {
+              vertices: state.arena.vertices,
+              lift:
+                (transition.from.posts?.lift ?? 1) + (1 - (transition.from.posts?.lift ?? 1)) * t,
+            }
+          : transitionPosts(
+              time,
+              transition.from.posts ?? { vertices: before.arena.vertices, lift: 1 },
+              state.arena.vertices,
+            ),
         marks: positions(0.9, transition.from.marks),
         lights: positions(2.7, transition.from.lights),
         railGain: (transition.from.railGain ?? 1) + (1 - (transition.from.railGain ?? 1)) * t,
@@ -170,6 +206,20 @@ export function createTitleTransition() {
             return source + (target - source) * t;
           }),
         ),
+        protection: players.map((p) => {
+          const source = before.players.find((a) => a.id === p.id);
+          const from =
+            transition!.from.protection?.[p.id] ??
+            (source && before.phase === "playing"
+              ? protectionPulse(source, before.elapsed, reduced)
+              : 0);
+          const target = state.players.find((a) => a.id === p.id);
+          const to =
+            target && state.phase === "playing"
+              ? protectionPulse(target, state.elapsed, reduced)
+              : 0;
+          return from + (to - from) * t;
+        }),
         state: { ...state, arena, players, balls: [] },
         scales: scalesFor(state).map(
           (target, id) =>

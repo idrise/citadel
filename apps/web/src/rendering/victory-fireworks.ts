@@ -107,14 +107,11 @@ export function createVictoryFireworks(root: Object3D) {
         elapsed = 0;
         emitted = 0;
         wasActive = false;
-        for (const p of bursts) p.group.visible = false;
-        return;
       }
       if (active && !wasActive) {
         reward = null;
         elapsed = 0;
         emitted = 0;
-        for (const p of bursts) p.age = 10;
         wasActive = true;
       }
       if (active) {
@@ -130,6 +127,7 @@ export function createVictoryFireworks(root: Object3D) {
         if (reward.elapsed >= 2.3) reward = null;
       }
       for (const burst of bursts) {
+        if (reduced) burst.age = 10;
         burst.age += Math.max(0, dt);
         burst.group.visible = !reduced && burst.age < 1.8;
         if (!burst.group.visible) continue;

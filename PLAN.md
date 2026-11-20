@@ -693,6 +693,43 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 
 ### Progress / approval ledger
 
+20 November title-demo commit approval: the owner approved the live bot title
+screen and smooth handoff, then explicitly requested a local commit. This
+supersedes the earlier no-commit instruction for this work. Include the feature,
+transition fixes, tests, rendered evidence and review documentation together;
+no push, deployment or milestone advancement is authorised.
+
+20 November title handoff continuity follow-up: the owner reported a Start flick
+and requested upward ball exits, smooth bat recentering and a wider transition
+audit. Start now blends the visible actors/tint over 0.65 seconds, while outgoing
+balls rise out of view with their existing colours, spin and trails. Same-outline
+resets retain standing posts; real outline changes and interrupted morphs preserve
+the existing mechanical sequence. Reset/victory ball exits, incoming ball/halo
+reveals, capsule tint and fireworks decay are also continuous. Round timing,
+physics, seeded openings and progress remain independent of presentation.
+See `docs/TITLE_HANDOFF_REVIEW.md` for audit details, 2/4/6-seat and phone-sized
+captures and video. Validation: 751 unit tests / 128 files, format/lint/types,
+production build and 15 native-GPU browser checks pass, including real elimination
+Back/Retry and a real win/rematch; existing bundle advisory
+and physical iPhone/Safari limits remain. Still an uncommitted experiment, with
+no milestone approval or advance, push or deployment.
+
+20 November live title-screen experiment: the owner requested a playing bot
+match behind the title with immortal capsules and explicitly prohibited commits.
+An isolated demo uses the real bots and shield rebounds, with steady protection
+on all fortresses, up to three balls and no pickups. Normal Start uses the
+untouched opening state and clears demo presentation events. Settings and
+hidden/unfocused windows suspend the demo; saved progress and actual round stats
+do not advance. See `docs/TITLE_DEMO_REVIEW.md` for local review, desktop 2/4/6-seat
+and phone-sized captures, video, tuning and validation. This is an uncommitted
+experiment awaiting owner feedback, not milestone approval or advancement.
+Validation: 741 unit tests / 127 files, format/lint/types, production build and
+seven native-GPU browser checks pass. The existing bundle advisory remains.
+Software rendering passes the three new demo checks but exceeds the four older
+preview tests' 30-second limits; the native rerun passes all four. Apple M2 Pro
+Metal renders and a 26-second clip are in `docs/reviews/title-demo/`. Local demo:
+`http://127.0.0.1:5188/`. Physical phone/Safari behaviour remains unverified.
+
 20 November app artwork and working-agreement amendment: the owner requested
 commit permission before committing so visual tweaks can remain uncommitted.
 `AGENTS.md`, the active plan contract and README now require explicit commit

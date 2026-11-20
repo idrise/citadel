@@ -41,8 +41,12 @@ itch.io, Reddit/Devvit and Facebook artwork, dimensions and setup notes are in
 [the app artwork guide](docs/APP_ARTWORK.md). `pnpm build:itch` creates a portable
 HTML5 build in `dist-itch/` with relative asset paths.
 
-Press **START** on the procedural 3D title. Each saved level chooses its own player count;
-there is no player-count selector. The title and level introductions rise from the floor
+Press **START** on the procedural 3D title. Its experimental background plays an
+all-bot match with immortal capsules.
+Start begins a fresh normal round. The background pauses in Settings and when the
+page loses focus. See [the title demo review](docs/TITLE_DEMO_REVIEW.md).
+Each saved level chooses its own player count; there is no player-count selector.
+The title and level introductions rise from the floor
 with reflected lettering. Controls stay fixed as the board changes between levels.
 **Settings** opens a scene-rendered panel with **Resume**, **Restart**, **Sound Effects**,
 **Music**, **Ball guide**, **Reset progress**, and desktop **Sensitivity**. **Reset progress**

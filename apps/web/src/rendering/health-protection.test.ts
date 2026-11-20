@@ -4,6 +4,15 @@ import { createMatch } from "../simulation/match";
 import { protectionPulse } from "./health-protection";
 import { createHealthFactory } from "./health-piece";
 import { disposeScene } from "./dispose-scene";
+it("renders immortal title capsules with a finite steady tint at any elapsed time", () => {
+  const player = createMatch().players[0]!;
+  player.protectedUntil = Infinity;
+  for (const elapsed of [0, 2, 120, 1e12])
+    for (const reduced of [false, true])
+      expect(protectionPulse(player, elapsed, reduced)).toBe(0.6);
+  player.health.fill(false);
+  expect(protectionPulse(player, 2, false)).toBe(0);
+});
 it("pulses protected containers with simulation time, keeps a visible floor and stops exactly at expiry", () => {
   const player = createMatch().players[0]!;
   player.protectedUntil = 12;

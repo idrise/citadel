@@ -1,8 +1,98 @@
 import { expect, it } from "vite-plus/test";
 import { createMatch } from "../simulation/match";
-import { createTitleTransition, TITLE_TRANSITION_SECONDS } from "./title-transition";
+import {
+  createTitleTransition,
+  TITLE_TRANSITION_SECONDS,
+  START_TRANSITION_SECONDS,
+} from "./title-transition";
 import type { PlayerCount } from "../simulation/arena";
 import { length, sub } from "../simulation/vector";
+
+it("keeps posts standing on a same-layout Restart while returning the visible bats smoothly", () => {
+  const before = createMatch(2, 4),
+    after = createMatch(3, 4);
+  before.players[0]!.angle += 0.4;
+  const transition = createTitleTransition();
+  transition.update(before, 0, 0, false);
+  transition.begin(after, 0, true);
+  const middle = transition.update(after, 0, TITLE_TRANSITION_SECONDS / 2, false);
+  expect(middle.posts!.lift).toBe(1);
+  expect(middle.state.players[0]!.angle).toBeCloseTo(after.players[0]!.angle + 0.2);
+});
+
+it.each([2, 4, 6] as const)(
+  "hands the live %i-seat title poses and protection to Start without moving the board posts",
+  (count) => {
+    const demo = createMatch(2026, count),
+      opening = createMatch(2026, count);
+    demo.phase = "playing";
+    demo.players.forEach((player, id) => {
+      player.angle += id % 2 ? -0.3 : 0.3;
+      player.protectedUntil = Infinity;
+    });
+    const savedDemo = structuredClone(demo),
+      savedOpening = structuredClone(opening);
+    const transition = createTitleTransition();
+    transition.update(demo, 0, 0, false, true);
+    transition.begin(opening, 0, true, true);
+    const first = transition.update(opening, 0, 0, false);
+    expect(first.moving).toBe(true);
+    for (const player of demo.players) {
+      expect(first.state.players[player.id]!.angle).toBe(player.angle);
+      expect(first.protection![player.id]).toBe(0.6);
+    }
+    const middle = transition.update(opening, 0, START_TRANSITION_SECONDS / 2, false);
+    expect(middle.posts!.lift).toBe(1);
+    expect(middle.state.arena.vertices).toEqual(opening.arena.vertices);
+    for (const player of opening.players) {
+      expect(middle.state.players[player.id]!.angle).toBeCloseTo(
+        (player.angle + demo.players[player.id]!.angle) / 2,
+      );
+      expect(middle.protection![player.id]).toBeCloseTo(0.3);
+    }
+    const frozen = transition.update(opening, 0, 0, false);
+    expect(frozen.state.players.map((p) => p.angle)).toEqual(
+      middle.state.players.map((p) => p.angle),
+    );
+    expect(transition.update(opening, 0, START_TRANSITION_SECONDS, false).state).toBe(opening);
+    expect(demo).toEqual(savedDemo);
+    expect(opening).toEqual(savedOpening);
+  },
+);
+
+it("Start during a roster morph continues from the exact visible geometry and bat poses", () => {
+  const a = createMatch(2, 2),
+    b = createMatch(2, 6);
+  a.phase = b.phase = "playing";
+  const transition = createTitleTransition();
+  transition.update(a, 0, 0, false, true);
+  transition.begin(b, 0, true);
+  const visible = transition.update(b, 0, 0.45, false, true);
+  const opening = createMatch(2, 6);
+  transition.begin(opening, 0, true, true);
+  const first = transition.update(opening, 0, 0, false);
+  expect(first.state.arena.vertices).toEqual(visible.state.arena.vertices);
+  expect(first.state.players.map((p) => p.angle)).toEqual(
+    visible.state.players.map((p) => p.angle),
+  );
+  expect(first.posts!.lift).toBe(visible.posts!.lift);
+  expect(transition.update(opening, 0, TITLE_TRANSITION_SECONDS, false).state).toBe(opening);
+});
+
+it("keeps preview morphs running for a live title demo and still cancels them for normal gameplay", () => {
+  const a = createMatch(2, 2),
+    b = createMatch(2, 6);
+  b.phase = "playing";
+  const transition = createTitleTransition();
+  transition.update(a, 0, 0, false);
+  transition.begin(b, 0, true);
+  expect(transition.update(b, 0, 0.4, false, true).moving).toBe(true);
+  const end = transition.update(b, 0, TITLE_TRANSITION_SECONDS, false, true);
+  expect(end.moving).toBe(false);
+  expect(end.state).toBe(b);
+  transition.begin(a, 0, true);
+  expect(transition.update(b, 0, 0.1, false).moving).toBe(false);
+});
 
 it("morphs every pair of title layouts with continuous actor poses, then returns the exact target state", () => {
   for (const from of [2, 3, 4, 5, 6] as PlayerCount[])

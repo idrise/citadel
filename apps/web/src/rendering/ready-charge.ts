@@ -57,7 +57,13 @@ export function createReadyCharge(root: Group) {
   }
   root.add(ring, arrow);
   return {
-    update(state: MatchState, reduced: boolean, hide = false, quality: EffectsQuality = "high") {
+    update(
+      state: MatchState,
+      reduced: boolean,
+      hide = false,
+      quality: EffectsQuality = "high",
+      appearance: (id: number) => number = () => 1,
+    ) {
       let rings = 0,
         arrows = 0;
       if (!hide && state.phase === "playing")
@@ -76,7 +82,7 @@ export function createReadyCharge(root: Group) {
           for (let part = 0; part < count; part++) {
             const size = part === 0 ? pulse : 1.15 + phase * 0.95;
             point.set(ball.position.x, 0.58 + part * 0.04, ball.position.y);
-            scale.setScalar(size);
+            scale.setScalar(size * appearance(ball.id));
             matrix.compose(point, flat, scale);
             ring.setMatrixAt(rings, matrix);
             colour
@@ -88,7 +94,7 @@ export function createReadyCharge(root: Group) {
             direction.set(aim.x, 0, aim.y);
             rotation.setFromUnitVectors(up, direction);
             point.set(ball.position.x + aim.x * distance, 0.22, ball.position.y + aim.y * distance);
-            scale.setScalar(part === 0 ? 1 : 0.8);
+            scale.setScalar((part === 0 ? 1 : 0.8) * appearance(ball.id));
             matrix.compose(point, rotation, scale);
             arrow.setMatrixAt(arrows, matrix);
             colour

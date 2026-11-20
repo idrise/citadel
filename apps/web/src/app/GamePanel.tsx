@@ -89,6 +89,7 @@ export function GamePanel({
     initialSettings: null,
     endingTime: 0,
     titleMoving: false,
+    titleDemo: null,
     debug: false,
     ballOwners: new Map(),
     music: {

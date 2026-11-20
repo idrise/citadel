@@ -3,6 +3,21 @@ import { expect, it } from "vite-plus/test";
 import { createNeonLettering } from "./neon-lettering";
 import { createSceneMenu } from "./scene-menu";
 import { createVictoryFireworks } from "./victory-fireworks";
+
+it("lets visible fireworks fade after leaving victory instead of clearing them on a mode change", () => {
+  const root = new Group(),
+    fireworks = createVictoryFireworks(root);
+  fireworks.update(0.3, true, false, 0xff5c46);
+  const visible = root.children.filter((item) => item.visible);
+  expect(visible.length).toBeGreaterThan(0);
+  fireworks.update(0, false, false, 0xff5c46);
+  expect(root.children.filter((item) => item.visible)).toEqual(visible);
+  fireworks.update(0.2, false, false, 0xff5c46);
+  expect(root.children.some((item) => item.visible)).toBe(true);
+  fireworks.update(2, false, false, 0xff5c46);
+  expect(root.children.every((item) => !item.visible)).toBe(true);
+  disposeScene(root);
+});
 import { disposeScene } from "./dispose-scene";
 import { createMenuOverlay, MENU_BACKGROUND_GAIN } from "./menu-overlay";
 

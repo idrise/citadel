@@ -39,6 +39,10 @@ export function createSpinView(root: Group) {
   let ballId = -1;
   let phase = 0;
   return {
+    place(height: number, appearance = 1) {
+      group.position.y = height;
+      group.scale.multiplyScalar(appearance);
+    },
     update(ball: BallState | undefined, tick: number, reduced: boolean) {
       const spin = ball?.spin ?? 0;
       const strength = spinStrength(spin);

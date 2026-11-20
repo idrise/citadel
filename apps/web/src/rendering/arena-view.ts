@@ -34,6 +34,8 @@ import { createVictoryMorph } from "./victory-morph";
 import { visibleCorners } from "./presentation-outline";
 
 export interface ViewOptions {
+  /** Live all-bot title background, with a stable camera and preview morphs. */
+  titleDemo?: boolean;
   floorReflection?: boolean;
   wallReflections?: boolean;
   posts?: PostReveal;
@@ -51,6 +53,7 @@ export interface ViewOptions {
   actorScales?: readonly number[];
   actorMarks?: readonly Vec2[];
   actorPieceScales?: readonly (readonly number[])[];
+  actorProtection?: readonly number[];
   railGain?: number;
   victoryFraming?: number;
   cameraAnchor?: { x: number; y: number };
@@ -90,6 +93,7 @@ export function createArenaView(
   let victoryLight: { x: number; y: number } | undefined;
   let endingTime = 0;
   let lastEvent = -1;
+  let lastProtection: number[] = [];
   return {
     root: stage.root,
     placeTitle(camera: PerspectiveCamera, width: number, height: number) {
@@ -99,7 +103,11 @@ export function createArenaView(
     captureTransition(frame: TitleFrame): TitleFrame {
       const ending = lastEnding;
       if (!ending)
-        return frame.state.morph ? { ...frame, posts: morphPosts(frame.state.morph) } : frame;
+        return {
+          ...frame,
+          protection: [...lastProtection],
+          ...(frame.state.morph ? { posts: morphPosts(frame.state.morph) } : {}),
+        };
       const positions = (distance: number) =>
         createArena(MAX_PLAYERS).fortresses.map((template) => {
           const home = frame.state.arena.fortresses.find((f) => f.id === template.id) ?? template;
@@ -114,6 +122,7 @@ export function createArenaView(
       lights[ending.winner] = ending.light;
       return {
         ...frame,
+        protection: [...lastProtection],
         posts: ending.posts,
         railGain: 0,
         victoryFraming: ending.progress,
@@ -141,11 +150,12 @@ export function createArenaView(
         },
       };
     },
-    reset() {
+    reset(animate = false) {
       lastEvent = -1;
       supplies.reset();
       paddleBlur.reset();
-      effects.reset();
+      if (animate) balls.depart();
+      else effects.reset();
     },
     get displayArena() {
       return displayArena;
@@ -293,11 +303,13 @@ export function createArenaView(
           paddle.position.set(ending.paddle.position.x, 0.95, ending.paddle.position.y);
           paddle.rotation.y = -ending.paddle.angle;
         }
-        stage.healthProtection[player.id]!(
-          state.phase === "playing"
+        const protection =
+          options.actorProtection?.[player.id] ??
+          (state.phase === "playing"
             ? protectionPulse(player, state.elapsed, options.reducedEffects)
-            : 0,
-        );
+            : 0);
+        lastProtection[player.id] = protection;
+        stage.healthProtection[player.id]!(protection);
         stage.health[player.id]!.forEach((piece, index) => {
           piece.visible = Boolean(player.health[index]);
           const body = player.pieces[index];
@@ -329,8 +341,9 @@ export function createArenaView(
         options.reducedEffects,
         profile.trails,
         options.ballOwners,
-        options.menu?.mode === "title" || options.menu?.mode === "level",
+        (options.menu?.mode === "title" && !options.titleDemo) || options.menu?.mode === "level",
         options.quality,
+        dt,
       );
       guide.hide();
       const defender = state.players[options.humanSeat];

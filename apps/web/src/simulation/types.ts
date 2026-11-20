@@ -24,7 +24,7 @@ export interface PlayerState {
   pieces: PieceBody[];
   swipe?: BatSwipe;
   collectedFormation?: boolean;
-  /** Playing-time deadline after losing a container; absent until the first loss. */
+  /** Playing-time deadline after a loss; Infinity is reserved for the isolated title demo. */
   protectedUntil?: number;
 }
 export interface BotState {

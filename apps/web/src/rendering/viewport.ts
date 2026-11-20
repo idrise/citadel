@@ -161,12 +161,12 @@ export function createViewport(
     get titleMoving() {
       return titleMoving;
     },
-    transitionTitle(state: MatchState, seat: number, animate: boolean) {
+    transitionTitle(state: MatchState, seat: number, animate: boolean, starting = false) {
       if (lastPresentation) title.capture(arena.captureTransition(lastPresentation));
-      title.begin(state, seat, animate);
-      fireworks.reset();
+      title.begin(state, seat, animate, starting);
+      if (!animate) fireworks.reset();
       lastCelebrationEvent = -1;
-      arena.reset();
+      arena.reset(animate);
     },
     pointFromClient(x: number, y: number) {
       const rect = canvas.getBoundingClientRect();
@@ -191,7 +191,13 @@ export function createViewport(
         renderer.setPixelRatio(pixelRatio);
         bloom.resize(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1));
       }
-      const presentation = title.update(state, options.humanSeat, dt, options.reducedEffects);
+      const presentation = title.update(
+        state,
+        options.humanSeat,
+        dt,
+        options.reducedEffects,
+        options.titleDemo,
+      );
       lastPresentation = presentation;
       titleMoving = presentation.moving;
       const displayed = presentation.state;
@@ -209,6 +215,7 @@ export function createViewport(
         ...(presentation.posts ? { posts: presentation.posts } : {}),
         ...(presentation.marks ? { actorMarks: presentation.marks } : {}),
         ...(presentation.pieceScales ? { actorPieceScales: presentation.pieceScales } : {}),
+        ...(presentation.protection ? { actorProtection: presentation.protection } : {}),
         ...(presentation.railGain !== undefined ? { railGain: presentation.railGain } : {}),
         ...(presentation.victoryFraming !== undefined
           ? { victoryFraming: presentation.victoryFraming }
@@ -250,14 +257,14 @@ export function createViewport(
       motion.follow(presentation.yaw);
       motion.scale(Math.max(1, ...displayArena.vertices.map((p) => Math.hypot(p.x, p.y) / 15)));
       const paddleOffset =
-        state.phase === "playing"
+        state.phase === "playing" && !options.titleDemo
           ? (state.players[options.humanSeat]!.angle - home.direction) / home.halfAngle
           : 0;
       motion.update(
         dt,
         options.reducedEffects,
         paddleOffset,
-        cameraDanger(state, options.humanSeat),
+        options.titleDemo ? 0 : cameraDanger(state, options.humanSeat),
       );
       // Acute star tips have longer wall miters; include the plinth during the reveal.
       const victoryFraming = Math.max(arena.victoryProgress, presentation.victoryFraming ?? 0);

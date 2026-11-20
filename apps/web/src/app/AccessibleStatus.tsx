@@ -68,6 +68,24 @@ export function AccessibleStatus({
         </>
       )}
       <output aria-label="Arena preview">{snapshot.titleMoving ? "moving" : "settled"}</output>
+      {snapshot.titleDemo && (
+        <>
+          <output aria-label="Title background">
+            {snapshot.titleDemo.running ? "playing" : "paused"}
+          </output>
+          <output aria-label="Title elapsed">{snapshot.titleDemo.state.elapsed.toFixed(2)}</output>
+          <output aria-label="Title returns">{snapshot.titleDemo.state.stats.paddleHits}</output>
+          <output aria-label="Title damage">{snapshot.titleDemo.state.stats.damage}</output>
+          <output aria-label="Title balls">{snapshot.titleDemo.state.balls.length}</output>
+          <output aria-label="Title protected fortresses">
+            {
+              snapshot.titleDemo.state.players.filter((player) =>
+                containersProtected(player, snapshot.titleDemo!.state.elapsed),
+              ).length
+            }
+          </output>
+        </>
+      )}
       <output aria-label="Round phase">{state.phase}</output>
       <output aria-label="Round winner" aria-live="polite">
         {state.phase === "finished"
