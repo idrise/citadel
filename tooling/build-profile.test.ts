@@ -7,7 +7,7 @@ it.each(["development", "production", "test"])(
   "keeps release builds closed and local diagnostics available regardless of NODE_ENV=%s",
   (nodeEnv) => {
     vi.stubEnv("NODE_ENV", nodeEnv);
-    for (const mode of ["production", "development", "staging", "test"]) {
+    for (const mode of ["production", "development", "staging", "test", "itch"]) {
       expect(localDiagnosticsEnabled("build", mode)).toBe(false);
       expect(localDiagnosticsEnabled("serve", mode)).toBe(true);
       expect(localDiagnosticsEnabled("serve", mode, true)).toBe(false);

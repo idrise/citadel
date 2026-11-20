@@ -9,6 +9,7 @@
     "test": "vp test run",
     "test:browser": "playwright test",
     "build": "vp build",
+    "build:itch": "vp build --mode itch",
     "build:local": "vp build --mode local-debug",
     "preview": "vp preview",
     "preview:local": "vp preview --mode local-debug",

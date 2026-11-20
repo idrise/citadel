@@ -36,6 +36,11 @@ Touch Start/Resume requests fullscreen on supporting browsers. On iPhone, use
 Share → Add to Home Screen, enable Open as Web App if offered, then launch the
 Citadel icon to play without Safari's browser bars.
 
+The supplied artwork is used for the favicon and Home Screen icon. Upload-ready
+itch.io, Reddit/Devvit and Facebook artwork, dimensions and setup notes are in
+[the app artwork guide](docs/APP_ARTWORK.md). `pnpm build:itch` creates a portable
+HTML5 build in `dist-itch/` with relative asset paths.
+
 Press **START** on the procedural 3D title. Each saved level chooses its own player count;
 there is no player-count selector. The title and level introductions rise from the floor
 with reflected lettering. Controls stay fixed as the board changes between levels.
@@ -265,5 +270,6 @@ One-time repository setup: in **Settings → Pages → Build and deployment**, c
 No deployment or repository-setting changes have been performed by this scaffold.
 The actual site URL is reported by the deployment job.
 
-Local commits are frequent. Pushing, manually deploying and using `gh` require the
-user's explicit instruction. See [AGENTS.md](AGENTS.md) and [PLAN.md](PLAN.md).
+Ask for the user's authorisation before committing, leaving room for review and
+tweaks. Pushing, manually deploying and using `gh` also require the user's explicit
+instruction. See [AGENTS.md](AGENTS.md) and [PLAN.md](PLAN.md).

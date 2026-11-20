@@ -1,7 +1,7 @@
 # CITADEL — PLAN.md
 
 **Status:** Shared design in progress; confirmed rules and provisional prototype experiments distinguished below.  
-**Updated:** 19 November 2026\
+**Updated:** 20 November 2026\
 **Genre:** Fast, competitive, polygon-arena paddle/ball survival  
 **Target:** Understandable, tense matches that usually resolve in approximately **two minutes**. Difficulty is ramped as the game goes on.
 **Players:** 2–16 seats as an experimental local test ceiling, initially **one human and the remaining seats filled by bots**\
@@ -285,7 +285,8 @@ game rules, responsive controls, procedural art and the visual hierarchy.
 This is a separately requested optimisation track, **not** an approval of M09 or
 a change to the normal milestone resume order. P01–P04 are proposed reviewable
 checkpoints; begin one only when the owner requests it, record its results here,
-commit coherent task-related changes and stop for review before proceeding.
+prepare coherent task-related changes and stop for review before proceeding.
+Ask for explicit commit authorisation before committing, as required by `AGENTS.md`.
 Coordinate physical mobile measurements and accessibility with M10 rather than
 claiming that this track completes M10. M09's existing review and device gates
 remain open.
@@ -509,7 +510,7 @@ explicit open gate. **STOP: REVIEW REQUIRED — P04.**
 3. Run typecheck, lint, relevant tests and production build. Start a usable local demo when appropriate. Never report a test passed unless it ran.
 4. Report changes, commands, results, failures, known limits and specific user-review questions. Include screenshots or short recordings when applicable.
 5. Finish with **`REVIEW REQUIRED — Mxx`**. **Stop**. Only the user can approve or request amendments; do not self-approve or begin the next milestone.
-6. Make frequent scoped local commits at coherent checkpoints during implementation; commits do not require milestone approval and do not imply it. Record relevant commit IDs and approval separately in the ledger. Explicit `APPROVE Mxx` is sufficient; asking to do the next milestone while Mxx is awaiting review also approves Mxx and authorises the next milestone. In the latter case, finish recording Mxx, commit any remaining task changes, then proceed with the next milestone in the same turn. Approval alone does not authorise starting another milestone. **Never push or manually trigger a remote deployment unless the user explicitly asks.** Milestone requests, approvals and local commits are not permission to push. See `AGENTS.md` for the concise working agreement.
+6. Prepare coherent, scoped checkpoints and ask the user before committing; leave changes uncommitted until explicitly authorised. An explicit request to commit covers its stated scope. Implementation requests, milestone approval and requests to continue do not authorise commits. Record relevant commit IDs and milestone approval separately in the ledger. Explicit `APPROVE Mxx` is sufficient for milestone approval; asking to do the next milestone while Mxx is awaiting review also approves Mxx and authorises the next milestone. In the latter case, finish recording Mxx, preserve any uncommitted task changes, then proceed with the next milestone in the same turn. Approval alone does not authorise starting another milestone. **Never push or manually trigger a remote deployment unless the user explicitly asks.** Milestone requests, approvals and local commits are not permission to push. See `AGENTS.md` for the concise working agreement.
 7. No purchasing, public service deployment, secrets creation in shared code, production data migration or unapproved external account actions. The requested GitHub Pages publishing workflow follows the authorisation and trigger policy above; new Cloudflare resources still need explicit authorisation.
 8. Preserve the no-textures rule, polygon topology, local-first progression and architecture. Implementation convenience is not permission to reverse those decisions.
 
@@ -691,6 +692,39 @@ amendments do not authorise M06 pacing changes, M09, publishing, pushing or `gh`
 - **Permanent boundary:** Music observes events only. Musical quantisation delays sounds, never collisions, rules, inputs, health, spawning or RNG. No music-driven camera motion. User accepted the detour for now and requested M05; full M06/M07 remain unstarted.
 
 ### Progress / approval ledger
+
+20 November app artwork and working-agreement amendment: the owner requested
+commit permission before committing so visual tweaks can remain uncommitted.
+`AGENTS.md`, the active plan contract and README now require explicit commit
+authorisation, separate from milestone approval or continuation. The supplied
+512-pixel artwork now supplies the favicon, Apple Home Screen icon and manifest
+icons. Landscape exports preserve the CITADEL title and START button for itch.io,
+Reddit/Devvit and Facebook placements; provenance, verified dimensions
+and unverified Meta game dashboard requirements are in `docs/APP_ARTWORK.md`.
+The separate `pnpm build:itch` output uses relative paths for nested HTML5 hosting.
+This amendment does not approve or advance a milestone. Changes remain
+uncommitted; no push, publication, SDK integration or platform submission.
+Validation: `pnpm check`, 733 unit tests, root/Pages/itch builds and eight focused
+browser checks pass, including nested itch startup/refresh. The existing bundle
+advisory remains. Artwork was rendered and inspected; ZIP integrity passes.
+Local review is available at `http://127.0.0.1:5186/`. Physical iPhone installation
+and live platform upload/review remain unverified.
+
+20 November artwork sharpness follow-up: the owner reported blurry smaller
+exports. Regenerated all downsized covers, splashes, Apple/manifest icons and
+16/32/48-pixel favicon frames directly from their respective masters using
+LanczosSharp with a final unsharp mask. The source artwork, crops, title and
+START button are preserved. Native-size before/after evidence is in
+`docs/artwork/downscale-comparison.png`; the regeneration settings are in
+`docs/APP_ARTWORK.md`. Changes remain uncommitted.
+Validation: 15 asset tests and `pnpm check` pass; production and itch builds pass
+with the existing bundle advisory. Refreshed `dist-itch.zip`; ZIP integrity and
+`git diff --check` pass. Browser checks were not repeated for this pixel-only change.
+
+20 November local commit authorisation: the owner explicitly requested committing
+the reviewed app icons, platform artwork, sharp downscales, portable itch build,
+tests, documentation and commit-permission working agreement. This authorises
+the local checkpoint only; no push, publication or milestone approval is implied.
 
 17 November debug-key capture follow-up: the owner requests quick +/− level stepping
 without Settings opening. A document-local browser reproduction rejected an immediate

@@ -2,7 +2,7 @@
 
 - Read `PLAN.md` before working. It owns the design, milestone checklist, acceptance criteria and current progress.
 - “Do the next milestone” means follow the plan's resume rules, implement one milestone, update its work record and stop for review. Do not start later milestones automatically.
-- Commit frequently at coherent, reviewable checkpoints. Local commits do not require milestone approval. Use focused messages, inspect the diff and run checks appropriate to the change. Include only task-related files; preserve unrelated user work.
+- Ask the user before committing work, so they can review and tweak changes first. Leave changes uncommitted until the user explicitly authorises a commit; a request to implement work, milestone approval or a request to continue is not commit permission. An explicit request to commit is sufficient authorisation for its stated scope. When authorised, use coherent, reviewable commits with focused messages, inspect the diff and run checks appropriate to the change. Include only task-related files; preserve unrelated user work.
 - Never push unless the user explicitly asks. A milestone request, approval or local commit is not permission to push. Never trigger a remote deployment manually unless asked. An authorised default-branch push may publish through the planned Pages workflow.
 - Ask before using the `gh` command, including read-only operations.
 - Automated browser checks must keep input inside the page: use `tests/fixtures.ts` and `window.__citadelTestInput`, never native pointer lock/fullscreen or the system mouse. Standalone session reviewers must install the same hook before starting a game.

@@ -21,14 +21,19 @@ export default defineConfig(({ command, mode, isPreview }) => ({
       ),
     ),
   },
-  base: pagesBase(process.env.PAGES_BASE_PATH),
+  base: command === "build" && mode === "itch" ? "./" : pagesBase(process.env.PAGES_BASE_PATH),
   plugins: [react()],
   build: {
     minify: "oxc",
     cssMinify: true,
     cssCodeSplit: true,
     sourcemap: false,
-    outDir: mode === "local-debug" ? "../../dist-local" : "../../dist",
+    outDir:
+      mode === "local-debug"
+        ? "../../dist-local"
+        : mode === "itch"
+          ? "../../dist-itch"
+          : "../../dist",
     emptyOutDir: true,
     rolldownOptions: {
       treeshake: true,
@@ -40,9 +45,24 @@ export default defineConfig(({ command, mode, isPreview }) => ({
   },
   lint: {
     options: { typeAware: true, typeCheck: true },
-    ignorePatterns: ["dist/**", "dist-local/**", "test-results/**", "playwright-report/**"],
+    ignorePatterns: [
+      "dist/**",
+      "dist-local/**",
+      "dist-itch/**",
+      "test-results/**",
+      "playwright-report/**",
+    ],
   },
-  fmt: { ignorePatterns: ["dist-local/**", "PLAN.md", "AGENTS.md", "LICENSE", "pnpm-lock.yaml"] },
+  fmt: {
+    ignorePatterns: [
+      "dist-local/**",
+      "dist-itch/**",
+      "PLAN.md",
+      "AGENTS.md",
+      "LICENSE",
+      "pnpm-lock.yaml",
+    ],
+  },
   test: {
     root: ".",
     include: ["tooling/**/*.test.ts", "apps/web/src/**/*.test.{ts,tsx}"],

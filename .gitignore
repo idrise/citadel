@@ -1,6 +1,8 @@
 node_modules/
 dist/
 dist-local/
+dist-itch/
+dist-itch.zip
 .vite/
 .vite-plus/
 playwright-report/
