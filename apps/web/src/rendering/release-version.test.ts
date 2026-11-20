@@ -13,7 +13,7 @@ it("shows the release version in the bottom-right corner at a stable readable si
       overlay.update({ mode, count: 6, elapsed: 0, reduced: false }, 0, width, height);
       overlay.camera.updateMatrixWorld(true);
       const root = overlay.scene.getObjectByName("release-version")!;
-      expect(root.userData.text).toBe("V1.0.0");
+      expect(root.userData.text).toBe("V1.0.1");
       expect(overlay.visible).toBe(true);
       const bounds = new Box3().setFromObject(root),
         min = bounds.min.clone().project(overlay.camera),

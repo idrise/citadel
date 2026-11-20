@@ -1,0 +1,30 @@
+{
+  "reference": {
+    "sampleRate": 48000,
+    "expectedHz": 293.6647679174076,
+    "correct": 0.004562469557232219,
+    "shifted": 0.000054947652652099425,
+    "shiftedToCorrect": 0.012043401487468318
+  },
+  "oldMixedRate": {
+    "sampleRate": 44100,
+    "expectedHz": 293.6647679174076,
+    "correct": 0.004216601351005873,
+    "shifted": 0.004213674771214833,
+    "shiftedToCorrect": 0.9993059387057441
+  },
+  "corrected": {
+    "sampleRate": 48000,
+    "expectedHz": 293.6647679174076,
+    "correct": 0.004562469557232219,
+    "shifted": 0.000054947652652099425,
+    "shiftedToCorrect": 0.012043401487468318
+  },
+  "exportedScore": {
+    "sampleRate": 48000,
+    "expectedHz": 293.6647679174076,
+    "correct": 0.0013269326313226487,
+    "shifted": 0.000018134413346053324,
+    "shiftedToCorrect": 0.0136664160018263
+  }
+}

@@ -14,15 +14,15 @@ for (const viewport of [
     page.on("pageerror", (error) => errors.push(error.message));
     await openGame(page, false);
     const version = page.getByLabel("Release version", { exact: true });
-    await expect(version).toHaveText("V1.0.0");
+    await expect(version).toHaveText("V1.0.1");
     await page.screenshot({ path: testInfo.outputPath("title.png") });
     await configureGame(page, { effectsQuality: "low" });
     await play(page);
     await finishIntroduction(page);
-    await expect(version).toHaveText("V1.0.0");
+    await expect(version).toHaveText("V1.0.1");
     await page.screenshot({ path: testInfo.outputPath("playing-low.png") });
     await pause(page);
-    await expect(version).toHaveText("V1.0.0");
+    await expect(version).toHaveText("V1.0.1");
     await page.screenshot({ path: testInfo.outputPath("paused.png") });
     expect(errors).toEqual([]);
   });

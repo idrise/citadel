@@ -1,0 +1,43 @@
+{
+  "effects": {
+    "peak": 0.8480183482170105,
+    "rms": 0.039065013001961954,
+    "peakWindowRms": 0.2113522889556183,
+    "channels": 2
+  },
+  "score": {
+    "peak": 0.3526594638824463,
+    "rms": 0.02785062199851907,
+    "peakWindowRms": 0.07487176120039463,
+    "channels": 2,
+    "duration": 39.81666666666667,
+    "sampleRate": 48000,
+    "bpm": 136,
+    "sections": [
+      {
+        "section": "intro",
+        "rms": 0.0031436701494356365
+      },
+      {
+        "section": "groove",
+        "rms": 0.029815137787477533
+      },
+      {
+        "section": "breakdown",
+        "rms": 0.0189485804180559
+      },
+      {
+        "section": "build",
+        "rms": 0.027901822750176226
+      },
+      {
+        "section": "drop",
+        "rms": 0.039964189011108646
+      },
+      {
+        "section": "melodic",
+        "rms": 0
+      }
+    ]
+  }
+}

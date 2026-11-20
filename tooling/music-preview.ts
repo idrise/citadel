@@ -10,6 +10,7 @@ import { encodeWave } from "./pcm-wave";
 export async function renderMusicPreview(
   options: {
     duration?: number;
+    sampleRate?: number;
     voices?: readonly Voice[];
     hits?: boolean;
     balls?: number;
@@ -18,6 +19,7 @@ export async function renderMusicPreview(
   } = {},
 ) {
   const duration = options.duration ?? 74;
+  const sampleRate = options.sampleRate ?? 44100;
   let instruments: ReturnType<typeof createInstruments> | undefined,
     limiter: Tone.Limiter | undefined;
   const only = (cues: readonly MusicCue[]) =>
@@ -47,7 +49,7 @@ export async function renderMusicPreview(
             : 1 + Math.min(3, Math.floor(time / 15)));
         const frame = { elapsed: time, balls, alive: [true, true, true, true] };
         director.observe(frame, []);
-        instruments!.play(only(director.step(musicalStep)), time);
+        instruments!.play(only(director.step(musicalStep)), time, "music");
         const events: GameEvent[] = [];
         if (options.hits !== false && step >= 32 && step % 14 === 4)
           events.push({
@@ -80,7 +82,7 @@ export async function renderMusicPreview(
     },
     duration,
     2,
-    44100,
+    sampleRate,
   );
   const channels = [audio.getChannelData(0), audio.getChannelData(1)];
   const sections = [
@@ -91,19 +93,20 @@ export async function renderMusicPreview(
     { section: "drop", from: 256, to: 384 },
     { section: "melodic", from: 384, to: 512 },
   ].map(({ section, from, to }) => {
-    const start = Math.floor(((from * 60) / MUSIC_BPM / 4) * 44100),
-      end = Math.min(channels[0]!.length, Math.floor(((to * 60) / MUSIC_BPM / 4) * 44100));
+    const start = Math.floor(((from * 60) / MUSIC_BPM / 4) * sampleRate),
+      end = Math.min(channels[0]!.length, Math.floor(((to * 60) / MUSIC_BPM / 4) * sampleRate));
     let sum = 0;
     for (let i = start; i < end; i++) sum += channels[0]![i]! ** 2;
     return { section, rms: end > start ? Math.sqrt(sum / (end - start)) : 0 };
   });
-  const encoded = encodeWave(channels, 44100);
+  const encoded = encodeWave(channels, sampleRate);
   instruments?.dispose();
   limiter?.dispose();
   audio.dispose();
   return {
     ...encoded,
     duration,
+    sampleRate,
     bpm: MUSIC_BPM,
     sections: options.demo || options.startStep ? [] : sections,
   };

@@ -807,6 +807,78 @@ engines. The existing bundle advisory remains. Local demo:
 `http://127.0.0.1:5189/citadel/`. Physical iOS Home Screen behaviour still requires
 the owner's retest after an authorised deployment.
 
+20 November teaser-media request: the owner requested a title push-in, curved
+shots, two-player and sixteen-player gameplay with one continuous soundtrack,
+retaining gameplay effects, plus three promotional screenshots. Delivered
+`artifacts/citadel-teaser/citadel-teaser-1080p60.mp4` (38.82s / 1080p60) and three
+2560×1440 PNGs. The edit uses the actual renderer and physics: seeded all-bot
+levels 30 (two players) and 63 (sixteen), plus staged swipe-serve opening poses
+with normal curve physics. Both crowded clips retain all sixteen defenders.
+The original score is rendered once across the edit; the game's original effects
+are synthesised from recorded event/steering timestamps, including swishes.
+No Settings panels appear. Cinematic crops and action tracking are confined to
+capture tooling. Production game code, preferences and progress are unchanged.
+Frame-count/duration/codec checks and complete decoding pass; stills and sampled
+video frames were inspected. All 770 unit tests, format/lint/types and crop/
+timeline checks pass. Media and reproduction notes are in the artifact folder.
+This is an uncommitted media deliverable, not milestone approval or permission
+to upload, publish, push or begin a later milestone.
+
+20 November teaser correction: the owner reported badly detuned music in the
+video and rejected the added bottom caption. The separate soundtrack render had
+followed a 48 kHz effects render with a 44.1 kHz score render; Tone's cached
+PeriodicWave objects produced a second lead voice about 1.47 semitones flat.
+An actual-synth browser regression reproduces the mixed-rate failure and passes
+with uniform 48 kHz rendering; the corrected full score also passes its pitch
+probe. The normal game event conductor now schedules the retained sound effects
+against the video's continuous music clock. The score remains a separate,
+uninterrupted stem, and the added CLICK PLAY lettering is removed. No production
+game audio or simulation rules changed. Revised export and validation are in
+`artifacts/citadel-teaser/`; changes remain uncommitted and unpublished.
+Validation: all 773 unit tests / 131 files, `vp check`, uniform-rate stem checks,
+the actual-browser pitch regression, full exported-score pitch probe, and all
+2,329 decoded video frames pass. The revised closing shot was inspected and has
+no added caption. The failed first export is kept outside the delivery folder;
+the corrected movie is `citadel-teaser-v2-1080p60.mp4`.
+
+20 November teaser revision: the owner requested a successful curved hit,
+level-100 pressure, authentic bloom and elimination-driven board transitions,
+suggesting one starting capsule for the transition shot. The final
+`artifacts/citadel-teaser/citadel-teaser-v4-1080p60.mp4` replaces the earlier
+exports. Seeded bot play now supplies the actual curved capsule break, active
+two/sixteen-player clips, regular level-100 sixteen-ball pressure and a separate
+one-capsule level-100 fixture showing five eliminations, with board morphs active
+in 197 of its 212 frames. The health override affects capture only. Removed the
+earlier staged serve poses. Native Retina pixel ratio and the original score's
+kick/pad lighting envelopes restore the game's bloom without shader changes;
+matched rendered evidence is in the artifact review folder. Dynamic loudness
+normalisation caused the clap-like intro by disproportionately boosting its
+quiet hats; fixed gain and a limiter without automatic makeup preserve the
+original balance (final/source intro difference 0.42 dB). Continuous music and
+game effects remain separate, uniformly 48 kHz; no added captions or Settings
+panels appear. Updated all three screenshots and reproduction notes.
+Validation: 782 unit tests / 134 files, `vp check`, `vp build`, actual-synth and
+exported-score pitch probes, audio balance assertions and full final-video
+decoding pass. Inspected final frames, board morphs, screenshots and matched
+native/capture rendering. Browser capture reports no errors or collision caps.
+The existing large-chunk build advisory remains. Offline frame capture is not
+device performance evidence. Changes remain uncommitted and unpublished;
+milestone status and production gameplay are unchanged.
+
+20 November media checkpoint: the owner authorised committing the teaser work
+and incrementing the patch version from 1.0.0 to 1.0.1. Release-label unit/browser
+expectations follow the new version. The prior audit compared all 299 tracked
+game files and nine build/CI inputs against `f9e239d` byte for byte, finding no
+game changes from media production. The capture modules are absent from the
+game's import graph and use isolated browser sessions. Existing media retains
+its original 1.0.0 capture; the patch bump changes the game's version label only.
+This authorises a local commit, with no push or manual deployment.
+Validation: `vp check`, all 782 unit tests, Pages and itch production builds,
+and two native-Chromium release-label checks at desktop/phone viewport sizes
+pass for 1.0.1. Existing large-chunk advisories remain. The browser checks use
+the installed preview executable directly because the pnpm wrapper attempted
+an unnecessary dependency install; no dependency or lockfile changes were made.
+
 17 November debug-key capture follow-up: the owner requests quick +/− level stepping
 without Settings opening. A document-local browser reproduction rejected an immediate
 pointer re-capture and showed the previous code opening Resume/Settings. Debug resets

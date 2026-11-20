@@ -1,0 +1,468 @@
+{
+  "shots": [
+    {
+      "id": "title",
+      "start": 0,
+      "end": 424,
+      "frames": 424,
+      "seconds": 7.066666666666666
+    },
+    {
+      "id": "duel",
+      "start": 424,
+      "end": 847,
+      "frames": 423,
+      "seconds": 7.05
+    },
+    {
+      "id": "curve-left",
+      "start": 847,
+      "end": 1059,
+      "frames": 212,
+      "seconds": 3.533333333333333
+    },
+    {
+      "id": "level100-intro",
+      "start": 1059,
+      "end": 1271,
+      "frames": 212,
+      "seconds": 3.533333333333333
+    },
+    {
+      "id": "crowd",
+      "start": 1271,
+      "end": 1694,
+      "frames": 423,
+      "seconds": 7.05
+    },
+    {
+      "id": "chaos",
+      "start": 1694,
+      "end": 2118,
+      "frames": 424,
+      "seconds": 7.066666666666666
+    },
+    {
+      "id": "end",
+      "start": 2118,
+      "end": 2329,
+      "frames": 211,
+      "seconds": 3.5166666666666666
+    }
+  ],
+  "summaries": [
+    {
+      "count": 4,
+      "level": 3,
+      "seed": 2026,
+      "initial": {
+        "elapsed": 0,
+        "survivors": 4,
+        "arena": 4
+      },
+      "speed": 1,
+      "survivors": 4,
+      "phase": "playing",
+      "balls": 1,
+      "peakBalls": 1,
+      "elapsed": 7.066666666666808,
+      "stats": {
+        "paddleHits": 5,
+        "damage": 0,
+        "collisionCaps": 0
+      },
+      "selectedSpin": 0,
+      "curveHit": false,
+      "peakSpin": 0.71364424783469,
+      "musicPulse": 0,
+      "pixelRatio": 2,
+      "id": "title",
+      "frames": 424,
+      "maxSpin": 1.1135570414581428,
+      "maxPulse": 0,
+      "eventTypes": {},
+      "environment": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)",
+        "shadows": false,
+        "effects": {
+          "bloom": true,
+          "reflections": true,
+          "environment": true,
+          "pixelRatio": 2
+        },
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "maxTextureSize": 16384,
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "devicePixelRatio": 2,
+        "drawingBuffer": {
+          "width": 2560,
+          "height": 1440
+        }
+      }
+    },
+    {
+      "count": 2,
+      "level": 30,
+      "seed": 2026,
+      "initial": {
+        "elapsed": 8.000000000000187,
+        "survivors": 2,
+        "arena": 2
+      },
+      "speed": 1,
+      "survivors": 2,
+      "phase": "playing",
+      "balls": 3,
+      "peakBalls": 3,
+      "elapsed": 15.049999999999786,
+      "stats": {
+        "paddleHits": 11,
+        "damage": 4,
+        "collisionCaps": 0
+      },
+      "selectedSpin": 0,
+      "curveHit": false,
+      "peakSpin": 0,
+      "musicPulse": 0.08610001283334186,
+      "pixelRatio": 2,
+      "id": "duel",
+      "frames": 423,
+      "maxSpin": 1.7496638332581946,
+      "maxPulse": 0.7252906796736731,
+      "eventTypes": {
+        "wall": 19,
+        "launch": 3,
+        "collection": 1,
+        "damage": 3,
+        "paddle": 5,
+        "arrival": 1
+      },
+      "environment": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)",
+        "shadows": false,
+        "effects": {
+          "bloom": true,
+          "reflections": true,
+          "environment": true,
+          "pixelRatio": 2
+        },
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "maxTextureSize": 16384,
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "devicePixelRatio": 2,
+        "drawingBuffer": {
+          "width": 2560,
+          "height": 1440
+        }
+      }
+    },
+    {
+      "count": 16,
+      "level": 63,
+      "seed": 1,
+      "initial": {
+        "elapsed": 0.8999999999999992,
+        "survivors": 16,
+        "arena": 16
+      },
+      "speed": 0.75,
+      "survivors": 16,
+      "phase": "playing",
+      "balls": 2,
+      "peakBalls": 2,
+      "elapsed": 3.54999999999999,
+      "stats": {
+        "paddleHits": 1,
+        "damage": 1,
+        "collisionCaps": 0
+      },
+      "selectedSpin": 1.4593260264055175,
+      "curveHit": true,
+      "peakSpin": 0,
+      "musicPulse": 0,
+      "pixelRatio": 2,
+      "id": "curve-left",
+      "frames": 212,
+      "maxSpin": 1.4593260264055175,
+      "maxPulse": 0.3573739322377777,
+      "eventTypes": {
+        "launch": 1,
+        "paddle": 1,
+        "wall": 1,
+        "damage": 1,
+        "arrival": 1
+      },
+      "environment": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)",
+        "shadows": false,
+        "effects": {
+          "bloom": true,
+          "reflections": true,
+          "environment": true,
+          "pixelRatio": 2
+        },
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "maxTextureSize": 16384,
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "devicePixelRatio": 2,
+        "drawingBuffer": {
+          "width": 2560,
+          "height": 1440
+        }
+      }
+    },
+    {
+      "count": 12,
+      "level": 100,
+      "seed": 2026,
+      "initial": {
+        "elapsed": 6.600000000000118,
+        "survivors": 10,
+        "arena": 10
+      },
+      "speed": 1,
+      "survivors": 5,
+      "phase": "playing",
+      "balls": 6,
+      "peakBalls": 6,
+      "elapsed": 10.133333333333399,
+      "stats": {
+        "paddleHits": 17,
+        "damage": 7,
+        "collisionCaps": 0
+      },
+      "selectedSpin": 0,
+      "morphFrames": 197,
+      "eliminationsShown": 5,
+      "initialPieces": 1,
+      "curveHit": false,
+      "peakSpin": 0.13499486839906932,
+      "musicPulse": 0,
+      "pixelRatio": 2,
+      "id": "level100-intro",
+      "frames": 212,
+      "maxSpin": 1.7475610110775928,
+      "maxPulse": 0.36077892430784375,
+      "eventTypes": {
+        "wall": 11,
+        "damage": 5,
+        "elimination": 5,
+        "launch": 5,
+        "arrival": 2,
+        "paddle": 4
+      },
+      "environment": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)",
+        "shadows": false,
+        "effects": {
+          "bloom": true,
+          "reflections": true,
+          "environment": true,
+          "pixelRatio": 2
+        },
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "maxTextureSize": 16384,
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "devicePixelRatio": 2,
+        "drawingBuffer": {
+          "width": 2560,
+          "height": 1440
+        }
+      }
+    },
+    {
+      "count": 16,
+      "level": 63,
+      "seed": 2026,
+      "initial": {
+        "elapsed": 10.500000000000044,
+        "survivors": 16,
+        "arena": 16
+      },
+      "speed": 1,
+      "survivors": 16,
+      "phase": "playing",
+      "balls": 6,
+      "peakBalls": 6,
+      "elapsed": 17.549999999999645,
+      "stats": {
+        "paddleHits": 49,
+        "damage": 13,
+        "collisionCaps": 0
+      },
+      "selectedSpin": 0,
+      "curveHit": false,
+      "peakSpin": 1.5460527999983549,
+      "musicPulse": 0,
+      "pixelRatio": 2,
+      "id": "crowd",
+      "frames": 423,
+      "maxSpin": 1.798604832304724,
+      "maxPulse": 0.7215578486156605,
+      "eventTypes": {
+        "paddle": 25,
+        "wall": 16,
+        "damage": 10,
+        "launch": 11,
+        "shield": 2,
+        "arrival": 2
+      },
+      "environment": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)",
+        "shadows": false,
+        "effects": {
+          "bloom": true,
+          "reflections": true,
+          "environment": true,
+          "pixelRatio": 2
+        },
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "maxTextureSize": 16384,
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "devicePixelRatio": 2,
+        "drawingBuffer": {
+          "width": 2560,
+          "height": 1440
+        }
+      }
+    },
+    {
+      "count": 12,
+      "level": 100,
+      "seed": 4,
+      "initial": {
+        "elapsed": 25.999999999999165,
+        "survivors": 6,
+        "arena": 8
+      },
+      "speed": 1,
+      "survivors": 2,
+      "phase": "playing",
+      "balls": 16,
+      "peakBalls": 16,
+      "elapsed": 33.066666666665434,
+      "stats": {
+        "paddleHits": 153,
+        "damage": 36,
+        "collisionCaps": 0
+      },
+      "selectedSpin": 0,
+      "curveHit": false,
+      "peakSpin": 1.100898405338914,
+      "musicPulse": 0.09861664949898793,
+      "pixelRatio": 2,
+      "id": "chaos",
+      "frames": 424,
+      "maxSpin": 1.8,
+      "maxPulse": 0.8612826821124867,
+      "eventTypes": {
+        "arrival": 3,
+        "paddle": 48,
+        "wall": 124,
+        "launch": 13,
+        "damage": 7,
+        "ball": 22,
+        "shield": 5,
+        "supply": 1,
+        "elimination": 4,
+        "collection": 1
+      },
+      "environment": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)",
+        "shadows": false,
+        "effects": {
+          "bloom": true,
+          "reflections": true,
+          "environment": true,
+          "pixelRatio": 2
+        },
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "maxTextureSize": 16384,
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "devicePixelRatio": 2,
+        "drawingBuffer": {
+          "width": 2560,
+          "height": 1440
+        }
+      }
+    },
+    {
+      "count": 4,
+      "level": 3,
+      "seed": 2026,
+      "initial": {
+        "elapsed": 3.9999999999999885,
+        "survivors": 4,
+        "arena": 4
+      },
+      "speed": 1,
+      "survivors": 4,
+      "phase": "playing",
+      "balls": 1,
+      "peakBalls": 1,
+      "elapsed": 7.51666666666683,
+      "stats": {
+        "paddleHits": 5,
+        "damage": 0,
+        "collisionCaps": 0
+      },
+      "selectedSpin": 0,
+      "curveHit": false,
+      "peakSpin": 0.25010492226220216,
+      "musicPulse": 0.10545871715351095,
+      "pixelRatio": 2,
+      "id": "end",
+      "frames": 211,
+      "maxSpin": 0.7730815845999428,
+      "maxPulse": 0.8487630890646445,
+      "eventTypes": {},
+      "environment": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M2 Pro, Unspecified Version)",
+        "vendor": "Google Inc. (Apple)",
+        "shadows": false,
+        "effects": {
+          "bloom": true,
+          "reflections": true,
+          "environment": true,
+          "pixelRatio": 2
+        },
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "maxTextureSize": 16384,
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "devicePixelRatio": 2,
+        "drawingBuffer": {
+          "width": 2560,
+          "height": 1440
+        }
+      }
+    }
+  ],
+  "errors": []
+}
