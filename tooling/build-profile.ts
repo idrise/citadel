@@ -4,5 +4,5 @@ export function localDiagnosticsEnabled(
   mode: string,
   isPreview = false,
 ) {
-  return mode === "local-debug" || (command === "serve" && !isPreview);
+  return mode !== "reddit" && (mode === "local-debug" || (command === "serve" && !isPreview));
 }

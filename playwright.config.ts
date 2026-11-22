@@ -14,6 +14,7 @@ const previewUrl = `http://127.0.0.1:4173${basePath}`;
 
 export default defineConfig({
   testDir: "./tests",
+  testIgnore: ["**/reddit.spec.ts"], // Dedicated target: playwright.reddit.config.ts.
   fullyParallel: true,
   // WebGL software rendering competes for the same GPU/CPU resources.
   workers: 2,

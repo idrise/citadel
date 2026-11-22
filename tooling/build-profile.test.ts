@@ -3,6 +3,12 @@ import { localDiagnosticsEnabled } from "./build-profile";
 
 afterEach(() => vi.unstubAllEnvs());
 
+it("keeps the Reddit embedded target on release settings even during local development", () => {
+  expect(localDiagnosticsEnabled("build", "reddit")).toBe(false);
+  expect(localDiagnosticsEnabled("serve", "reddit")).toBe(false);
+  expect(localDiagnosticsEnabled("serve", "reddit", true)).toBe(false);
+});
+
 it.each(["development", "production", "test"])(
   "keeps release builds closed and local diagnostics available regardless of NODE_ENV=%s",
   (nodeEnv) => {

@@ -1,6 +1,6 @@
 import { qualityStep } from "../rendering/quality";
 import { changeSetting } from "./settings-change";
-import { BUILD_INFO, LOCAL_DIAGNOSTICS } from "../app/build-info";
+import { BUILD_INFO, LOCAL_DIAGNOSTICS, REDDIT_BUILD } from "../app/build-info";
 import { createPerformanceReport, browserEnvironment } from "./performance-report";
 import { downloadJSON } from "./download-json";
 import {
@@ -21,6 +21,7 @@ import {
 } from "./progression";
 import { createRoundObserver, type RoundTotals } from "./round-observer";
 import { createDesktopInput } from "../input/desktop";
+import { createEmbeddedDesktopInput } from "../input/embedded-desktop";
 import { createTouchInput } from "../input/touch";
 import { enterMobileFullscreen, fullscreenActive } from "../input/fullscreen";
 import { createViewport } from "../rendering/viewport";
@@ -266,17 +267,25 @@ export function createSession(
     report();
   };
   const makeInput = () =>
-    createDesktopInput(
-      viewport.canvas,
-      humanSeat,
-      () => state.players[humanSeat]!.angle,
-      () => setPaused(true),
-      () => {
-        if (started && state.phase !== "finished") setPaused(true);
-      },
-      () => settings.mouseSensitivity,
-      () => state.arena,
-    );
+    REDDIT_BUILD
+      ? createEmbeddedDesktopInput(
+          viewport.canvas,
+          humanSeat,
+          () => setPaused(true),
+          () => settings.mouseSensitivity,
+          () => state.arena,
+        )
+      : createDesktopInput(
+          viewport.canvas,
+          humanSeat,
+          () => state.players[humanSeat]!.angle,
+          () => setPaused(true),
+          () => {
+            if (started && state.phase !== "finished") setPaused(true);
+          },
+          () => settings.mouseSensitivity,
+          () => state.arena,
+        );
   const input = makeInput();
   const makeTouch = () =>
     createTouchInput(
@@ -498,7 +507,7 @@ export function createSession(
   frame = requestAnimationFrame(animate);
   report();
   const start = () => {
-    if (touchMode) void enterMobileFullscreen();
+    if (touchMode && !REDDIT_BUILD) void enterMobileFullscreen();
     mark("start");
     initialSettings ??= { ...settings };
     lossLevel = debug.active ? level : pendingLossLevel;
@@ -523,7 +532,7 @@ export function createSession(
   };
   function resume() {
     settingsOpen = false;
-    if (touchMode && started) void enterMobileFullscreen();
+    if (touchMode && started && !REDDIT_BUILD) void enterMobileFullscreen();
     menuSuppressed = false;
     if (!started) {
       present([], 0);

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
+  "name": "citadel-game",
+  "post": {
+    "dir": "dist-reddit/client",
+    "entrypoints": {
+      "default": {
+        "entry": "reddit.html",
+        "height": "tall"
+      },
+      "game": {
+        "entry": "reddit-game.html"
+      },
+      "_gameplay": {
+        "entry": "reddit-game.html"
+      },
+      "_direct_launch": {
+        "entry": "reddit-game.html"
+      }
+    }
+  },
+  "server": {
+    "dir": "dist-reddit/server",
+    "entry": "index.cjs"
+  },
+  "permissions": {
+    "reddit": {
+      "enable": true
+    },
+    "http": {
+      "enable": false
+    },
+    "redis": true
+  },
+  "menu": {
+    "items": [
+      {
+        "label": "Create a CITADEL game post",
+        "description": "Add a playable CITADEL post to this community.",
+        "location": "subreddit",
+        "forUserType": "moderator",
+        "endpoint": "/internal/menu/create-post"
+      }
+    ]
+  },
+  "marketingAssets": {
+    "icon": "apps/reddit/assets/icon.png"
+  },
+  "scripts": {
+    "build": "vp run build:reddit",
+    "dev": "vp run build:reddit && vp build --mode reddit --watch"
+  },
+  "sourceIgnores": ["artifacts/", "test-results/", "playwright-report/"],
+  "dev": {
+    "subreddit": "citadel_game_dev"
+  }
+}

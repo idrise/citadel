@@ -4,13 +4,14 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   validate:
@@ -35,6 +36,8 @@ jobs:
       - run: vp build --mode production
         env:
           NODE_ENV: production
+      - name: Build Reddit SDK package
+        run: vp run build:reddit
       - run: vp exec playwright install --with-deps chromium
       - name: Browser smoke and release Settings
         run: >-
@@ -43,3 +46,30 @@ jobs:
           --workers=1
         env:
           CITADEL_BUILD_MODE: production
+
+  upload-reddit:
+    needs: validate
+    if: >-
+      github.event_name != 'pull_request' &&
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: reddit-upload
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: voidzero-dev/setup-vp@v1.22.0
+        with:
+          version: 1.5.1
+          node-version-file: .node-version
+          cache: true
+          run-install: false
+      - run: vp install --frozen-lockfile
+      - name: Authenticate and upload private Reddit version
+        env:
+          DEVVIT_AUTH_TOKEN: ${{ secrets.DEVVIT_AUTH_TOKEN }}
+          NODE_ENV: production
+        run: bash tooling/publish-reddit.sh

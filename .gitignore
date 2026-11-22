@@ -2,6 +2,9 @@ node_modules/
 dist/
 dist-local/
 dist-itch/
+dist-reddit/
+.devvit/
+.pnpm-store/
 dist-itch.zip
 .vite/
 .vite-plus/
@@ -11,3 +14,4 @@ test-results/
 .env.*
 !.env.example
 .DS_Store
+artifacts/reviews/

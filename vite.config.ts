@@ -9,6 +9,7 @@ import { pagesBase } from "./tooling/pages-base.ts";
 export default defineConfig(({ command, mode, isPreview }) => ({
   root: "apps/web",
   define: {
+    __CITADEL_REDDIT__: JSON.stringify(mode === "reddit"),
     __CITADEL_LOCAL_DIAGNOSTICS__: JSON.stringify(
       localDiagnosticsEnabled(command, mode, isPreview),
     ),
@@ -21,7 +22,12 @@ export default defineConfig(({ command, mode, isPreview }) => ({
       ),
     ),
   },
-  base: command === "build" && mode === "itch" ? "./" : pagesBase(process.env.PAGES_BASE_PATH),
+  base:
+    mode === "reddit"
+      ? "/"
+      : command === "build" && mode === "itch"
+        ? "./"
+        : pagesBase(process.env.PAGES_BASE_PATH),
   plugins: [react()],
   build: {
     minify: "oxc",
@@ -31,16 +37,24 @@ export default defineConfig(({ command, mode, isPreview }) => ({
     outDir:
       mode === "local-debug"
         ? "../../dist-local"
-        : mode === "itch"
-          ? "../../dist-itch"
-          : "../../dist",
+        : mode === "reddit"
+          ? "../../dist-reddit/client"
+          : mode === "itch"
+            ? "../../dist-itch"
+            : "../../dist",
     emptyOutDir: true,
     rolldownOptions: {
       treeshake: true,
-      input: {
-        game: fileURLToPath(new URL("./apps/web/index.html", import.meta.url)),
-        diagnostics: fileURLToPath(new URL("./apps/web/diagnostics.html", import.meta.url)),
-      },
+      input:
+        mode === "reddit"
+          ? {
+              splash: fileURLToPath(new URL("./apps/web/reddit.html", import.meta.url)),
+              game: fileURLToPath(new URL("./apps/web/reddit-game.html", import.meta.url)),
+            }
+          : {
+              game: fileURLToPath(new URL("./apps/web/index.html", import.meta.url)),
+              diagnostics: fileURLToPath(new URL("./apps/web/diagnostics.html", import.meta.url)),
+            },
     },
   },
   lint: {
@@ -49,6 +63,7 @@ export default defineConfig(({ command, mode, isPreview }) => ({
       "dist/**",
       "dist-local/**",
       "dist-itch/**",
+      "dist-reddit/**",
       "test-results/**",
       "playwright-report/**",
     ],
@@ -57,6 +72,7 @@ export default defineConfig(({ command, mode, isPreview }) => ({
     ignorePatterns: [
       "dist-local/**",
       "dist-itch/**",
+      "dist-reddit/**",
       "PLAN.md",
       "AGENTS.md",
       "LICENSE",
@@ -67,9 +83,10 @@ export default defineConfig(({ command, mode, isPreview }) => ({
     root: ".",
     include: [
       "apps/web/src/**/*.test.{ts,tsx}",
+      "apps/reddit/**/*.test.ts",
       // Opt in tools that protect gameplay, build output or publishing. Media/review
       // scripts must not silently become release gates just by adding a test file.
-      "tooling/{app-artwork,audio-resource-summary,bot-serve-fixture,build-identity,build-profile,elite-bot-review,pages-base,pcm-level,performance-summary,physics-replay,publish-itch,virtual-input}.test.ts",
+      "tooling/{app-artwork,audio-resource-summary,bot-serve-fixture,build-identity,build-profile,elite-bot-review,pages-base,pcm-level,performance-summary,physics-replay,publish-itch,publish-reddit,virtual-input}.test.ts",
     ],
     environment: "node",
     tags: [{ name: "soak" }],
