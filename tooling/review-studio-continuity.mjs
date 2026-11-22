@@ -38,7 +38,7 @@ try {
   }
   assert.deepEqual(errors, []);
   await writeFile(
-    "docs/reviews/morph-studio/studio-continuity.json",
+    "artifacts/reviews/morph-studio/studio-continuity.json",
     JSON.stringify({ first, held, samples, errors }, null, 2) + "\n",
   );
   console.log({ held: true, scenarios: samples.length, sameCanvas: true, errors });

@@ -45,7 +45,7 @@ it.each(PHYSICS_CASES)(
 it("retains reviewed impacts through four wall banks and matches the escape-enabled traces", () => {
   const golden = JSON.parse(
     readFileSync(
-      new URL("../docs/reviews/m09/replay-tokens-collisions/replays.json", import.meta.url),
+      new URL("./fixtures/physics/pre-wall-escape-replays.json", import.meta.url),
       "utf8",
     ),
   ) as {
@@ -56,10 +56,7 @@ it("retains reviewed impacts through four wall banks and matches the escape-enab
     }[];
   };
   const updated = JSON.parse(
-    readFileSync(
-      new URL("../docs/reviews/wall-escape/replay-digests.json", import.meta.url),
-      "utf8",
-    ),
+    readFileSync(new URL("./fixtures/physics/wall-escape-digests.json", import.meta.url), "utf8"),
   ) as { cases: { name: (typeof PHYSICS_CASES)[number]; traceDigest: string }[] };
   for (const fixture of golden.cases) {
     const replay = replayPhysics(fixture.name),

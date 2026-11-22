@@ -2,7 +2,7 @@ import { chromium } from "@playwright/test";
 import { fileURLToPath } from "node:url";
 import { mkdir } from "node:fs/promises";
 const origin = process.argv[2] ?? "http://127.0.0.1:5180",
-  directory = "docs/reviews/m09/windows-feedback";
+  directory = "artifacts/reviews/m09/windows-feedback";
 await mkdir(directory, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" });
 try {

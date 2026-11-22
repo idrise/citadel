@@ -1,8 +1,7 @@
-TODO implementations are ready for local review; Windows and physical-mobile validation limits are recorded below. See
-[the feedback review](docs/MOBILE_FEEDBACK_REVIEW.md) and
-[the triangle/rally review](docs/TRIANGLE_RALLY_REVIEW.md), and
-[the scene Retry and wall-gap correction](docs/SCENE_RETRY_GAP_REVIEW.md) for checks, screenshots,
-audio, measurements and physical-device limits. The [18 November follow-up](docs/TODO_FOLLOWUP_REVIEW.md) covers Settings alignment, bat pass-through regressions, percussion and guide removal. See also [the pre-signoff tweaks](docs/PRESIGNOFF_TWEAKS_REVIEW.md), [roster/layout variety](docs/ROSTER_VARIETY_REVIEW.md), and [curved serves and bot tactics](docs/SERVING_TACTICS_REVIEW.md). Awaiting M09 review.
+TODO implementations are ready for local review. [DOCS.md](DOCS.md) summarises
+current behavior, superseded experiments and Windows/physical-mobile validation
+limits. [PLAN.md](PLAN.md) retains the work record and milestone gates. Detailed
+historical reports and captures are available in Git history. Awaiting M09 review.
 
 - [x] Use **Citadel** consistently in the page title, manifest, accessible UI, package and documentation.
 - [x] Enlarge the mobile portrait arena while retaining every opponent and container; use a steeper camera and tighter safe framing.
@@ -29,7 +28,7 @@ audio, measurements and physical-device limits. The [18 November follow-up](docs
 ## Playtest feedback — 14 November 2026
 
 Implemented and committed locally for review; no push or publication. See the
-[playtest feedback review](docs/PLAYTEST_FEEDBACK_REVIEW.md) for evidence and separate camera rollback patches.
+[presentation summary](DOCS.md#presentation-and-sound); historical evidence and camera rollback patches remain in Git history.
 David may share the existing public playtest link, as confirmed by the owner on 14 November.
 
 - [x] **Centre the arena when the bat is centred.** Remove autonomous time-driven camera yaw/tilt drift during play. Keep a small, symmetric bat-driven shimmy around the current fortress bisector, with a centre dead zone and damped return to exact neutral. Retain the danger zoom and camera-independent steering. Verify neutral alignment after waiting, restarting, resizing and elimination morphs.
@@ -37,13 +36,13 @@ David may share the existing public playtest link, as confirmed by the owner on 
 - [x] **Introduce level-specific bat profiles.** Add shallow, standard and deeper convex bows, assigned deterministically across the level ladder and shared by every player in that level. Preserve the existing width/difficulty ramp and announce profile changes in the level introduction. Rendering, collisions, contact aiming, forecasts and bot planning must use the same authoritative profile; check wall clearance and reachable bank shots across all supported rosters.
 - [x] **Confirm playtest sharing permission.** The owner confirmed that David may share the existing public playtest link, https://citadel.davidjelliott.com/. No external message, sharing UI or deployment was needed.
 - [x] **Give the foreground more breathing room.** Adjust camera framing to reserve roughly 6% of viewport height below the front wall and human fortress as an initial tuning target. Preserve the complete playable board, mobile safe areas and the fixed bottom-menu/title anchors. Check the margin through resize, portrait/landscape rotation, maximum danger zoom and arena morphs; avoid adding an opaque letterbox or changing gameplay geometry.
-- [x] **Give Settings buttons breathing room inside the panel.** Increase bottom padding beneath Resume and Restart from 10px to 24px, matching the side inset. Keep the rendered panel and accessible targets aligned, retain 44px controls and avoid slider/button overlap on short landscape screens. Desktop, phone and rotation checks pass; see [rendered examples](docs/PLAYTEST_FEEDBACK_REVIEW.md#settings-padding-correction).
+- [x] **Give Settings buttons breathing room inside the panel.** Increase bottom padding beneath Resume and Restart from 10px to 24px, matching the side inset. Keep the rendered panel and accessible targets aligned, retain 44px controls and avoid slider/button overlap on short landscape screens. Desktop, phone and rotation checks pass; see [presentation notes](DOCS.md#presentation-and-sound); historical rendered examples remain in Git history.
 - [x] **Make the victory star upright on screen.** Capture a viewer-relative orientation at victory start, with one outer point facing screen-top, away from the camera. Carry that orientation through the existing continuous morph without a final snap; retain the centred winner's bat/containers and smooth return to the next arena. Verify every selectable human seat across 2–16 players, portrait/landscape and reduced motion.
 
 ## Further playtest feedback — 14 November 2026, 15:02–15:22
 
 Implemented and committed locally at the owner's request; no push or publication. See
-[the Windows feedback review](docs/WINDOWS_FEEDBACK_REVIEW.md). Tester: David Brown,
+[the performance summary](DOCS.md#diagnostics-and-performance). Tester: David Brown,
 Chrome on Windows with roughly six tabs open. The owner also finds the curved
 launch guide confusing; prefer their later feedback over retaining that forecast.
 
@@ -60,7 +59,7 @@ Windows stutter investigation limit: four local 30s native Chromium captures, a 
 
 David Brown's feedback from the previous night's play, implemented at the owner's
 request on 18 November. Ready for local review; see
-[replay tokens, spin and collisions](docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md).
+[replay tokens, spin and collisions](DOCS.md#gameplay-and-progression).
 
 - [x] **Spin direction.** David suspects the spin goes the wrong way: with the bat moving right at impact, he expects anticlockwise ball spin and a curve to the left, based on ping pong. If the assumption is correct then reverse the curvature.
 - [x] **Show replay tokens at the top left.** Review a visible token count as a way to add psychological pressure during play.

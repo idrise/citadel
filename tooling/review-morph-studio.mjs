@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { installVirtualBrowserControls } from "../tests/virtual-input.ts";
 
-const directory = "docs/reviews/morph-studio";
+const directory = "artifacts/reviews/morph-studio";
 const origin = process.argv[2] ?? "http://127.0.0.1:5177";
 await mkdir(directory, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" });

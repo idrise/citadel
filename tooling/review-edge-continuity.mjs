@@ -22,7 +22,7 @@ try {
   );
   console.log(JSON.stringify({ samples, legacy, errors }));
   await writeFile(
-    "docs/reviews/morph-studio/edge-continuity.json",
+    "artifacts/reviews/morph-studio/edge-continuity.json",
     JSON.stringify({ samples, legacy, errors }, null, 2) + "\n",
   );
   if (process.argv.includes("--assert")) {

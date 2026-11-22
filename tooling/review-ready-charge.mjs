@@ -2,7 +2,7 @@ import { chromium } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
-const directory = "docs/reviews/m09/ready-charge",
+const directory = "artifacts/reviews/m09/ready-charge",
   origin = process.argv[2] ?? "http://localhost:5177";
 await mkdir(directory, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" }),

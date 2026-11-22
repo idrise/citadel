@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { installVirtualBrowserControls } from "../tests/virtual-input.ts";
 
 const origin = process.argv[2] ?? "http://127.0.0.1:5193";
-const directory = process.argv[3] ?? "docs/reviews/wall-escape";
+const directory = process.argv[3] ?? "artifacts/reviews/wall-escape";
 await mkdir(directory, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" });
 const errors = [],

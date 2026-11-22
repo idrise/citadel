@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 
 const origin = process.argv[2] ?? "http://127.0.0.1:5188";
-const directory = process.argv[3] ?? "docs/reviews/title-demo";
+const directory = process.argv[3] ?? "artifacts/reviews/title-demo";
 await mkdir(directory, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" });
 try {

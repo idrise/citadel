@@ -3,7 +3,7 @@ import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 const origin = process.argv[2] ?? "http://localhost:5177",
-  directory = "docs/reviews/music/motif-return";
+  directory = "artifacts/reviews/music/motif-return";
 const browser = await chromium.launch({ channel: "chromium" });
 try {
   const page = await browser.newPage(),

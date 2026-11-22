@@ -2,7 +2,7 @@ import { chromium } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 const origin = process.argv[2] ?? "http://localhost:5177",
-  directory = "docs/reviews/m09/mobile-todos";
+  directory = "artifacts/reviews/m09/mobile-todos";
 const browser = await chromium.launch({ channel: "chromium" });
 try {
   const page = await browser.newPage();

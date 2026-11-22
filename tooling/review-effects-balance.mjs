@@ -11,7 +11,7 @@ const airSwish = process.argv.includes("--air-swish");
 const strokeReview = whoosh || glideSwish;
 const textureReview = strokeReview || airSwish;
 const swishReview = textureReview || process.argv.includes("--swish");
-const directory = `docs/reviews/m09/${whoosh ? "bat-whoosh" : glideSwish ? "bat-glide" : airSwish ? "bat-air" : swishReview ? "bat-swish" : "effects-balance"}`;
+const directory = `artifacts/reviews/m09/${whoosh ? "bat-whoosh" : glideSwish ? "bat-glide" : airSwish ? "bat-air" : swishReview ? "bat-swish" : "effects-balance"}`;
 const before = process.argv.includes("--before");
 const revision = whoosh
   ? "b00feae"

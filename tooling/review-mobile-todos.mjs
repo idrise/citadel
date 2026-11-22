@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { chromium, webkit } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 const origin = process.argv[2] ?? "http://localhost:5177";
-const directory = process.argv[3] ?? "docs/reviews/m09/mobile-todos";
+const directory = process.argv[3] ?? "artifacts/reviews/m09/mobile-todos";
 const engine = process.argv[4] === "webkit" ? "webkit" : "chromium";
 await mkdir(directory, { recursive: true });
 const browser = await (engine === "webkit" ? webkit : chromium).launch(

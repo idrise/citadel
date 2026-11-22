@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { installVirtualBrowserControls } from "../tests/virtual-input.ts";
 const origin = process.argv.find((arg) => arg.startsWith("http")) ?? "http://127.0.0.1:5181";
-const directory = "docs/reviews/m09/todo-followup";
+const directory = "artifacts/reviews/m09/todo-followup";
 await mkdir(directory, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" });
 const errors = [],

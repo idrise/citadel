@@ -8,7 +8,7 @@ import { installVirtualBrowserControls } from "../tests/virtual-input.ts";
 // modifies a live match, and keeps all browser input inside the page.
 const before = process.argv[2] ?? "http://127.0.0.1:5180/";
 const after = process.argv[3] ?? "http://127.0.0.1:5179/";
-const directory = process.argv[4] ?? "docs/reviews/m09/replay-tokens-collisions";
+const directory = process.argv[4] ?? "artifacts/reviews/m09/replay-tokens-collisions";
 await mkdir(directory, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" });
 const devices = {

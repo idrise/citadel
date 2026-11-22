@@ -1,7 +1,7 @@
 # CITADEL — PLAN.md
 
 **Status:** Shared design in progress; confirmed rules and provisional prototype experiments distinguished below.  
-**Updated:** 20 November 2026\
+**Updated:** 22 November 2026\
 **Genre:** Fast, competitive, polygon-arena paddle/ball survival  
 **Target:** Understandable, tense matches that usually resolve in approximately **two minutes**. Difficulty is ramped as the game goes on.
 **Players:** 2–16 seats as an experimental local test ceiling, initially **one human and the remaining seats filled by bots**\
@@ -9,6 +9,13 @@
 **Hosting:** Static game on GitHub Pages; Cloudflare matchmaking/signalling only in the final phase
 
 > **Product rule:** Prove that the game is fun against bots *before* spending time finding human testers, building mobile controls, or running network infrastructure. The first externally playable build is a single-player-versus-bots desktop web game.
+
+Documentation note (22 November 2026): current contributor/deployment instructions
+are in [CONTRIBUTING.md](CONTRIBUTING.md); condensed behavior and review limits are
+in [DOCS.md](DOCS.md). Historical work records below retain the original paths of
+reports/captures formerly stored under `docs/`; those committed files are available
+in Git history, not the current working tree. New captures use ignored
+`artifacts/reviews/`. Milestone approval gates are unchanged.
 
 ---
 
@@ -256,10 +263,11 @@ packages/
   simulation/          Fixed-step physics, health, bots, pacing, replays
   protocol/            Types, validators, message versions (added for networking)
   testing/             Optional shared replay/load fixtures (only if useful)
-docs/
-  MATCH_PACING.md      Created during M06
-  PLAYTEST.md          Created during M08
-  SECURITY.md          Created during M13
+tooling/fixtures/     Small reviewed regression data
+artifacts/reviews/    Generated manual captures (ignored)
+README.md             Player-facing game description
+CONTRIBUTING.md       Development, checks and publishing
+DOCS.md               Condensed behavior, tuning and review limits
 AGENTS.md              Working conventions, if used with Codex
 PLAN.md                This file
 ```
@@ -929,6 +937,86 @@ and pushing the pending wall-rally fix and CI test-scope correction. Prepare
 focused CI and gameplay commits, then push `main`; the configured CI, Pages and
 itch workflows may run from that push. Their remote outcomes still require
 separate verification. M09 review status and later milestone gates are unchanged.
+
+20 November Reddit deployment target: the owner requested a new build that can
+be uploaded using Reddit's SDK. Added pinned Devvit Web/CLI 0.15.4 dependencies,
+`devvit.json`, separate Reddit client/CommonJS server outputs, a lightweight
+inline launch page using the real SDK expanded-mode effect, direct gameplay
+entries, and a moderator-only create-post endpoint. The app slug remains the
+documented placeholder `citadel-game` pending owner account details. The SDK's
+current configuration parser validates the project. A dedicated embedded mouse
+adapter avoids pointer lock, while touch Start/Resume avoids native fullscreen;
+regular web/itch controls and gameplay modules retain their behavior. Browser
+and server TypeScript conditions are separated. The existing art supplies the
+launch view and a 1024px marketing icon compressed below 500 KB. Reddit's SDK
+requires Redis permission for menu actions; external HTTP is disabled. Existing
+browser-local progress is retained with the documented reset-on-app-update
+limitation; cross-version/account persistence is not implemented. CI builds
+the SDK outputs without uploading and keeps fast test selection. Setup, login,
+private upload, playtest and review steps are in `docs/REDDIT_DEPLOYMENT.md`.
+This request authorises preparing the target, not registering an app, publishing
+a post, uploading, committing, pushing or starting later plan milestones.
+The owner confirmed they do not yet have a Devvit app or test subreddit; the
+guide therefore includes first-time registration and moderator playtest setup.
+Validation: 781 fast unit tests (eight opt-in soak cases excluded), format/lint/
+types, separate backend type checking, Pages/itch/Reddit builds, SDK static config
+validation, three native and three software Reddit sandbox checks, and six
+regular-build browser serving/version checks pass. The initial software run of
+the full animated intro exceeded its budget; software smoke now limits itself
+to Low-quality start/input/pause, while native review verifies High-quality
+playing frames. Frozen offline installation passes. The server is self-contained
+CommonJS with only Node built-ins, and the normal web bundle excludes Reddit's
+SDK runtime. Launcher/desktop/phone screenshots were inspected and are in
+`docs/reviews/reddit/`. Existing chunk-size warnings remain; authenticated Reddit
+Playtest and physical-device validation are still pending. No simulation/audio
+modules changed, no API keys were created, and the target remains uncommitted.
+
+22 November documentation cleanup: the owner requested player-facing README
+copy for the Reddit listing, contributor instructions in CONTRIBUTING.md and
+removal of the large docs folder. README now introduces the actual solo game,
+100-level challenge, curves/banks, changing arena and controls. CONTRIBUTING
+retains setup, fast/opt-in checks, module ownership and Pages/itch/Devvit setup.
+DOCS condenses current gameplay, tuning, presentation/audio, artwork provenance,
+performance limits and remaining review gates, including the authored two-player
+opening. Removed the former 649 MB report/capture folder. Four exact reviewed
+physics JSON fixtures were preserved under tooling/fixtures/physics/; replay
+checks and historical comparison generators now read them there. Manual review
+tools write to ignored artifacts/reviews/ rather than recreating docs. TODO and
+current plan instructions link to the root summaries; historical work records
+retain their former evidence paths, explicitly marked as historical above.
+Production game, artwork and delivered teaser assets are unchanged by this
+cleanup. Existing uncommitted Reddit integration is preserved. This request does
+not authorise commit, push, upload or later milestone work.
+Validation: 781 fast unit tests pass across 132 files, with eight opt-in soak
+cases excluded. Vite+ format/lint/TypeScript checks, backend type checking and
+web/itch/Reddit client/server builds pass. Both historical replay generators run
+successfully with the relocated fixtures and zero collision caps. Local Markdown
+links resolve and no active tooling refers to the removed folder. Existing
+large-chunk build advisories remain. Browser checks were not repeated for this
+documentation/path-only cleanup. Initial package-wrapper checks were blocked by
+missing local dependencies and an ignored dependency build script; after restoring
+packages, validation used the repository's local Vite+ executables.
+
+22 November Reddit upload and publication authorisation: the owner explicitly
+requested committing and pushing the prepared Reddit integration and documentation
+cleanup, then checking for an uploaded Reddit build. CI now uploads a private
+Devvit version only after validation succeeds on the default branch. The separate
+upload job serialises uploads, supplies DEVVIT_AUTH_TOKEN only to the upload step,
+checks authentication before building/uploading, and never submits public review.
+The contributor guide records the complete-token-file GitHub secret command.
+Four fast shell-gate tests cover missing credentials, auth failure, successful
+command ordering without token output, and upload failure propagation. The unit
+allowlist includes that focused test. Dependency lifecycle decisions are explicit
+for protobufjs/esbuild; local package caches are ignored. This authorises the
+requested commits, default-branch push and resulting configured deployments; it
+does not approve M09, later milestones or public Reddit review submission.
+Validation: 785 fast unit tests pass across 133 files, with eight soak cases
+excluded. Vite+ format/lint/TypeScript checks, workflow YAML and upload-gate
+validation, shell syntax, production web build and Reddit client/server build
+all pass. The four upload tests use a local CLI stand-in and never contact Reddit.
+The earlier cleanup checks also passed the itch build and replay generators.
+Existing bundle-size advisories remain. Remote push/upload verification follows
+the requested commits; no authenticated Reddit upload is claimed yet.
 
 17 November debug-key capture follow-up: the owner requests quick +/− level stepping
 without Settings opening. A document-local browser reproduction rejected an immediate
@@ -2018,7 +2106,7 @@ When a player dies, then the board slowly morphs to the new layout, not so quick
 
 #### M06 — Curved shots, multiple balls and **pacing design gate**
 
-**Implement:** Add measured paddle spin and bounded curving trajectories. Extend the M01 multi-ball foundations and tune the approved timed-addition direction using evidence across layouts, revenge serves and simultaneous contacts. Revalidate any approved approach slowdown and preview under multiple-ball pressure. Add a tuning interface and replay harness. Create `docs/MATCH_PACING.md` comparing **at least three** escalation systems, test the best two, run seeded bot benchmarks by arena size, and report distribution of match length and damage. Propose (do not silently lock) a default escalation curve and anti-stall rule.
+**Implement:** Add measured paddle spin and bounded curving trajectories. Extend the M01 multi-ball foundations and tune the approved timed-addition direction using evidence across layouts, revenge serves and simultaneous contacts. Revalidate any approved approach slowdown and preview under multiple-ball pressure. Add a tuning interface and replay harness. Add a match-pacing section to `DOCS.md` comparing **at least three** escalation systems, test the best two, run seeded bot benchmarks by arena size, and report distribution of match length and damage. Propose (do not silently lock) a default escalation curve and anti-stall rule.
 
 **Acceptance:** Zero-spin behaves normally; replayable fixtures hold for simultaneous balls; bot-only pacing data is clearly labelled. **Review:** Pick escalation, ball counts, spin limits and approximate 2-minute profile based on evidence. **STOP: REVIEW REQUIRED — M06.**
 
@@ -2026,13 +2114,13 @@ When a player dies, then the board slowly morphs to the new layout, not so quick
 
 **Implement:** Implement only the approved escalation. Polish luminous thick-edged geometric materials, useful shot-attribution marks if approved, spin trails, paddle sparks, struck-piece fracture/burst, elim/victory states and restraint under high ball density. Add *original generated/synthesised* sound cues (serve, ricochet, breach, elimination, rising tension), volume/mute and readable in-arena cues, preserving pure gameplay without an overlaid HUD. Provide Low/Medium/High effects options. No textures outside the permitted particle optimisation exception.
 
-**Existing music work:** Build on `docs/MUSIC_REVIEW.md` rather than replacing the detour prototype. Retain music mute/volume and pause/teardown handling; review its musical mix and pulse subtlety. Audio observes gameplay only; musical drops never trigger gameplay changes.
+**Existing music work:** Build on the music summary in `DOCS.md` rather than replacing the detour prototype. Retain music mute/volume and pause/teardown handling; review its musical mix and pulse subtlety. Audio observes gameplay only; musical drops never trigger gameplay changes.
 
 **Acceptance:** Ball and health remain trackable at 2/4/6 players; screenshots show genuine 2.5D depth; desktop feel and sound enhance rather than hide gameplay; tests still pass. **Review:** Is this visually recognisable and pleasant at speed? **STOP: REVIEW REQUIRED — M07.**
 
 #### M08 — **Desktop browser MVP release and idea-validation gate**
 
-**Implement:** Make a procedural 3D **CITADEL** title above the arena using the neon edge shader, −/+ total-player controls bounded to 2–6, and **START**. Keep winning in the scene with neon-shader fireworks, a resolving musical phrase and scene rematch controls; keep loss/results in the scene too. Retain compact solo settings, help, statistics and local export in Pause by explicit user choice. Colour balls/trails from the read-only last-striker observer and distinguish the default human from arena cyan. Every rival capsule needs a reliable break sound independent of wall throttling. Keep gameplay pure fullscreen canvas; any controls help or build/version information belongs in menus. Revalidate the M01 GitHub Pages workflow and asset base against the actual repository URL; verify the deployed build when repository publishing is enabled. Follow the established publishing trigger policy rather than introducing a new per-release approval prompt. Write `docs/PLAYTEST.md` with repeatable scripted checks, observations and optional external feedback prompts. Add Playwright desktop smoke tests and a simple local stats export.
+**Implement:** Make a procedural 3D **CITADEL** title above the arena using the neon edge shader, −/+ total-player controls bounded to 2–6, and **START**. Keep winning in the scene with neon-shader fireworks, a resolving musical phrase and scene rematch controls; keep loss/results in the scene too. Retain compact solo settings, help, statistics and local export in Pause by explicit user choice. Colour balls/trails from the read-only last-striker observer and distinguish the default human from arena cyan. Every rival capsule needs a reliable break sound independent of wall throttling. Keep gameplay pure fullscreen canvas; any controls help or build/version information belongs in menus. Revalidate the M01 GitHub Pages workflow and asset base against the actual repository URL; verify the deployed build when repository publishing is enabled. Follow the established publishing trigger policy rather than introducing a new per-release approval prompt. Maintain the playtest section of `DOCS.md` with repeatable scripted checks, observations and optional external feedback prompts. Add Playwright desktop smoke tests and a simple local stats export.
 
 **Acceptance:** Complete one-human-versus-five-bots match from a freshly opened desktop URL; clean startup, no console-breaking errors, no account, clear replay. Document what a few testers find confusing, actual match times and the next design changes. **Decision:** Go to mobile only if the core interaction has earned it. **STOP: REVIEW REQUIRED — M08.**
 
@@ -2066,7 +2154,7 @@ When a player dies, then the board slowly morphs to the new layout, not so quick
 
 #### M13 — **Security foundation before exposing open matchmaking**
 
-**Implement:** Create `docs/SECURITY.md` containing threat model, trust boundaries, data-retention policy, cost budget and incident/disable procedure. Harden broker Worker/DO endpoints with schema validation, bounded payloads, strict state-machine transitions, route-specific quotas, anonymous short-lived credentials, single-use match tickets, short expiries, idempotent join/cancel/reconnect, per-session active-queue limits, and server-side Cloudflare Turnstile validation for untrusted queue entry or suspicious reuse. Use Worker rate limits for coarse protection, plus DO-atomic limits for strict per-session/global invariants. Secure WebSocket origin checks as a defence-in-depth measure, **not** authentication. No credential or secret in client code.
+**Implement:** Add a security section to `DOCS.md` containing threat model, trust boundaries, data-retention policy, cost budget and incident/disable procedure. Harden broker Worker/DO endpoints with schema validation, bounded payloads, strict state-machine transitions, route-specific quotas, anonymous short-lived credentials, single-use match tickets, short expiries, idempotent join/cancel/reconnect, per-session active-queue limits, and server-side Cloudflare Turnstile validation for untrusted queue entry or suspicious reuse. Use Worker rate limits for coarse protection, plus DO-atomic limits for strict per-session/global invariants. Secure WebSocket origin checks as a defence-in-depth measure, **not** authentication. No credential or secret in client code.
 
 **Security test cases:** automated join floods, rapid reconnects, queue churn, fake ready signals, replayed/expired tickets, forged membership/host messages, oversized or malformed SDP/ICE data, conflicting double-joins, repeated room allocations, idle sessions, high-cost requests, IPv4/IPv6 changes and many users behind one mobile NAT. Verify quotas and cleanup under concurrency. Add operational kill switches and cost monitoring.
 
@@ -2147,4 +2235,13 @@ Potential extensions **only after validation**: campaign-like bot challenges, ti
 
 ## 10. Next action
 
-**Review M09** using `docs/PRODUCTION_BUILD_REVIEW.md`, `docs/BAT_WHOOSH_REVIEW.md`, `docs/BAT_GLIDE_REVIEW.md`, `docs/LOCAL_BUILD_REVIEW.md`, `docs/BAT_AIR_REVIEW.md`, `docs/CONTAINER_PROTECTION_REVIEW.md`, `docs/GRAPHICS_QUALITY_REVIEW.md`, `docs/EFFECTS_BALANCE_REVIEW.md`, `docs/TODO_FOLLOWUP_REVIEW.md`, `docs/REPLAY_TOKENS_COLLISIONS_REVIEW.md`, `docs/PLAYTEST_FEEDBACK_REVIEW.md`, `docs/BRIEFING_TIMING_REVIEW.md`, `docs/LEVEL_BRIEFING_REVIEW.md`, `docs/BACK_RETRY_REVIEW.md`, `docs/MOTIF_RETURN_REVIEW.md`, `docs/SCENE_RETRY_GAP_REVIEW.md`, `docs/TRIANGLE_RALLY_REVIEW.md`, `docs/MOBILE_FEEDBACK_REVIEW.md` and `TODO.md`, especially the sixteen-ball ramp, portrait framing, wall/pillar morphs, short touch steering, reflected title, mobile audio and immediate Retry. Re-test Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does not close the physical-device gate. M09 awaits owner approval; do not begin M10 automatically. M08 still needs public-site verification and M06 remains unstarted. No push, manual deployment or `gh` is authorised.
+**Review M09** using [DOCS.md](DOCS.md#review-status-and-retained-evidence) and
+[TODO.md](TODO.md), with [CONTRIBUTING.md](CONTRIBUTING.md) for local build/check
+commands. Focus on the sixteen-ball ramp, portrait framing, wall/pillar morphs,
+short touch steering, reflected title, mobile audio and immediate Retry. Re-test
+Safari standalone on the reported iPad and iPhone; desktop WebKit evidence does
+not close the physical-device gate. M09 awaits owner approval; do not begin M10
+automatically. M08 still needs public-site verification and M06 remains unstarted.
+The owner subsequently authorised committing and pushing the prepared Reddit and
+documentation work on 22 November, including the configured CI upload. No public
+Reddit review submission, separate manual deployment or `gh` use is authorised.

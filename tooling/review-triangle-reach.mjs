@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { installVirtualBrowserControls } from "../tests/virtual-input.ts";
 const origin = process.argv[2] ?? "http://127.0.0.1:5192";
-const directory = process.argv[3] ?? "docs/reviews/triangle-reach";
+const directory = process.argv[3] ?? "artifacts/reviews/triangle-reach";
 await mkdir(directory, { recursive: true });
 const browser = await chromium.launch({ channel: "chromium" }),
   errors = [],

@@ -5,7 +5,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 const origin = process.argv.find((arg) => arg.startsWith("http")) ?? "http://127.0.0.1:5181";
-const directory = "docs/reviews/m09/todo-followup";
+const directory = "artifacts/reviews/m09/todo-followup";
 const before = process.argv.includes("--before");
 const revision = "cabef60";
 await mkdir(directory, { recursive: true });

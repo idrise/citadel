@@ -1,9 +1,9 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { PHYSICS_CASES, replayPhysics } from "./physics-fixtures";
-const directory = new URL("../docs/reviews/m09/spin-bounce/", import.meta.url);
+const directory = new URL("../artifacts/reviews/m09/spin-bounce/", import.meta.url);
 await mkdir(directory, { recursive: true });
 const before = JSON.parse(
-  await readFile(new URL("../docs/reviews/m09/paddle-aim/replays.json", import.meta.url), "utf8"),
+  await readFile(new URL("./fixtures/physics/paddle-aim-replays.json", import.meta.url), "utf8"),
 ) as { cases: { name: string; traceDigest: string }[] };
 const cases = PHYSICS_CASES.map((name) => {
   const replay = replayPhysics(name);

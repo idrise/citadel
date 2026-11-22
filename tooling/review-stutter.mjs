@@ -2,7 +2,7 @@ import { chromium } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 const origin = process.argv[2] ?? "http://127.0.0.1:5180",
-  directory = "docs/reviews/m09/windows-feedback";
+  directory = "artifacts/reviews/m09/windows-feedback";
 const pressure = process.argv.includes("--pressure"),
   trace = process.argv.includes("--trace");
 await mkdir(directory, { recursive: true });
