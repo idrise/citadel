@@ -35,7 +35,7 @@ export function createSettings(reducedEffects = false): GameSettings {
     preview: false,
     slowdown: false,
     reducedEffects,
-    mouseSensitivity: 1,
+    mouseSensitivity: 1.3,
     serveTimeout: 1.8,
     music: true,
     musicVolume: 0.45,
