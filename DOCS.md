@@ -97,6 +97,23 @@ and bat movement uses a short smooth unpitched air pass. The rejected synthetic
 crowd and its expensive audio graph were removed. Judge changes in the actual
 gameplay mix, including low music/max SFX and dense action at maximum music.
 
+## Platform metrics
+
+A typed signal adapter observes session snapshots outside gameplay. Reddit tracks
+one journey per real level attempt: readiness, explicit start, first return/score,
+monotonic opponent-elimination progress, resume and a single end. Wins/losses use
+`game.win`; the attempted level is included in start/outcome details. Score counts
+rival capsules credited to the human. Abandonment is separate from a loss. Title
+animation, debug attempts and bot spectating do not generate journeys.
+
+`citadel.davidjelliott.com` uses no-op signals and sends no metrics. itch.io also
+has no custom tracking and retains its built-in page analytics. Reddit's SDK and
+server router exist only in its target; local preview has no live host context.
+Only whitelisted level/roster/outcome/score data is added, and analytics errors
+cannot stop a game. Reddit approval/allowlisting is required before live events
+are accepted; implementation alone does not activate collection. See
+[the adapter and journey map](CONTRIBUTING.md#metrics-adapters).
+
 ## Diagnostics and performance
 
 Use `build:local` / `preview:local` for Report/Test actions and

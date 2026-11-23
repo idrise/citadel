@@ -92,6 +92,8 @@ For browser checks against that output, use
 - `apps/web/src/rendering/`: Three.js presentation and GPU resource lifecycle.
 - `apps/web/src/audio/`: musical direction, lifecycle and lazy Tone.js synthesis.
 - `apps/web/src/reddit/`, `apps/reddit/`: SDK launcher and post-creation backend.
+- `apps/web/src/events/`: typed session signals, inert by default.
+- `apps/web/src/metrics/`: read-only attempt-to-journey observer; provider calls live in adapters.
 - `tooling/`: build helpers, reproducible benchmarks and manual review tools.
 - `tests/`: production-browser checks and page-local virtual input fixtures.
 
@@ -244,6 +246,56 @@ is still required to validate installation and host responses. See the official
 [configuration](https://developers.reddit.com/docs/capabilities/devvit-web/devvit_web_configuration),
 [CLI](https://developers.reddit.com/docs/guides/tools/devvit_cli) and
 [platform overview](https://developers.reddit.com/docs/capabilities/devvit-web/devvit_web_overview).
+
+## Metrics adapters
+
+The shared UI publishes `ready`, `sessionUpdated` and `sessionClosed` signals at
+its existing session boundary. Simulation, input and rendering contain no metrics
+calls. `app/mount.tsx` takes the signal set; the normal web entry uses inert
+`NO_GAME_SIGNALS`. The itch build uses that same entry and relies on itch.io's
+built-in page analytics, as requested. No custom tracking provider is configured
+for either target. Their generated bundles exclude the Reddit analytics client.
+
+The Reddit entry creates live signals and connects `reddit/journeys.ts` only when
+Reddit supplies a host context. `metrics/attempt-journey.ts` observes snapshots
+without changing them. Local Reddit previews have no host context and stay inert.
+The SDK's official telemetry router is mounted in the Reddit-only Express backend,
+with `permissions.journeys: true` in `devvit.json`. The analytics SDK matches the
+pinned Devvit version; no new credential is required.
+
+Each normal level attempt is one journey:
+
+| Signal / milestone                  | Reddit event                                                                  |
+| ----------------------------------- | ----------------------------------------------------------------------------- |
+| Interactive title available         | `App.Ready`, once per app view, including React StrictMode                    |
+| Player commits Start/Retry/Next     | `Journey.Start`, followed by `level_started` with level and player count      |
+| First return / first scored capsule | One `first_return` / `first_score` interaction per attempt                    |
+| Opponents eliminated                | Monotonic `Journey.Progress` from 0–1                                         |
+| Resume                              | `resumed`; passive focus-loss pauses are not labelled as clicks               |
+| Win                                 | `level_won` details and `Journey.End` with `complete: true`, `game.win: true` |
+| Human eliminated                    | `level_lost` details and end with `complete: false`, `game.win: false`        |
+| Restart, Back, unmount or page exit | `level_abandoned` and end with `complete: false`, without inventing a loss    |
+
+`actionDetails` contains a JSON string with the attempted level; outcome details
+also include score. `game.score` is the number of rival capsules credited to the
+human, not the level number. No username, post ID, seed, input trace or other
+personal fields are added. The title demo, debug play and continued bot spectating
+do not create journeys. Saved next-level updates cannot relabel an old attempt.
+
+Calls are serialised so delayed responses cannot merge retries. Failed/denied
+starts suppress later milestone calls to prevent SDK auto-start. Requests time
+out after five seconds; a 64-event backlog disables further telemetry for that
+view rather than grow without bound. Failures never block gameplay or show a
+panel. Page-exit delivery is best effort. Tests use fake SDK clients or intercepted
+local endpoints and never submit real metrics.
+
+Reddit requires review/allowlisting of the journey map before it accepts events.
+Provide the map above in the app review; non-allowlisted/playtest receipts may be
+denied even with correct wiring. This implementation does not request review or
+claim live collection. Accepted metrics appear on the app's **Analytics** tab;
+the standard dashboard's available breakdowns are controlled by Reddit, not this
+client. See [Devvit Journeys](https://developers.reddit.com/docs/capabilities/analytics/devvit-journeys)
+and [Journeys Dashboard](https://developers.reddit.com/docs/capabilities/analytics/journeys-dashboard).
 
 ## Working agreement
 

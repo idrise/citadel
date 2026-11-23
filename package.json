@@ -23,7 +23,9 @@
     "format": "vp fmt"
   },
   "dependencies": {
+    "@devvit/analytics": "0.15.4",
     "@devvit/web": "0.15.4",
+    "express": "5.3.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "three": "0.187.0",
@@ -31,6 +33,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",
+    "@types/express": "5.0.6",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",

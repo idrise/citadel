@@ -1,5 +1,64 @@
 import { expect, test } from "./fixtures";
 
+test("Reddit journeys observe real starts, abandonment and retries without tracking title views", async ({
+  page,
+}) => {
+  const events: { endpoint: string; body: Record<string, unknown> }[] = [];
+  await page.clock.install();
+  await page.addInitScript(() => {
+    Object.assign(window, {
+      devvit: { context: { postId: "t3_review", username: "private-fixture-name" } },
+    });
+    localStorage.setItem(
+      "citadel.solo.v1",
+      JSON.stringify({
+        version: 1,
+        count: 4,
+        humanSeat: 0,
+        settings: { effectsQuality: "low", music: false, effectsVolume: 0 },
+      }),
+    );
+  });
+  await page.route("**/api/telemetry/journey/*", async (route) => {
+    const endpoint = new URL(route.request().url()).pathname.split("/").at(-1)!;
+    const body = route.request().postDataJSON() ?? {};
+    events.push({ endpoint, body });
+    const receipt = { status: "JOURNEY_RECEIPT_VALID", message: "Recorded" };
+    await route.fulfill({
+      json:
+        endpoint === "start"
+          ? { journeyId: `journey-${events.filter((e) => e.endpoint === "start").length}`, receipt }
+          : { receipt },
+    });
+  });
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("./reddit-game.html");
+  await page.getByRole("button", { name: "Start", exact: true }).waitFor();
+  await expect.poll(() => events.filter((e) => e.endpoint === "app-ready").length).toBe(1);
+  expect(events.map((e) => e.endpoint)).toEqual(["app-ready"]);
+  await page.getByRole("button", { name: "Start", exact: true }).click();
+  await expect.poll(() => events.filter((e) => e.endpoint === "start").length).toBe(1);
+  await expect.poll(() => events.some((e) => e.body.action === "level_started")).toBe(true);
+  const started = events.find((e) => e.body.action === "level_started")!;
+  expect(JSON.parse(String(started.body.actionDetails))).toEqual({ level: 1, players: 2 });
+  await page.evaluate(() => window.__citadelTestInput.key("Escape", true));
+  await page.getByRole("button", { name: "Restart", exact: true }).click();
+  await expect.poll(() => events.filter((e) => e.endpoint === "end").length).toBe(1);
+  expect(events.find((e) => e.endpoint === "end")!.body).toEqual({
+    journeyId: "journey-1",
+    complete: false,
+  });
+  expect(events.find((e) => e.body.action === "level_abandoned")!.body.actionDetails).toBe(
+    '{"level":1}',
+  );
+  await page.getByRole("button", { name: "Start", exact: true }).click();
+  await expect.poll(() => events.filter((e) => e.endpoint === "start").length).toBe(2);
+  expect(events.filter((e) => e.endpoint === "app-ready")).toHaveLength(1);
+  expect(JSON.stringify(events)).not.toContain("private-fixture-name");
+  expect(errors).toEqual([]);
+});
+
 test("the inline launcher requests Reddit expanded mode only after a real Play click", async ({
   page,
 }, info) => {
@@ -80,9 +139,39 @@ for (const touch of [false, true])
       await frame.evaluate(() =>
         window.__citadelTestInput.session!.configure({ music: false, effectsVolume: 0 }),
       );
+      const canvas = frame.getByRole("application", { name: "Citadel arena" });
+      if (!touch) {
+        const original = await canvas.elementHandle();
+        if (!original) throw new Error("Missing game canvas");
+        await page.clock.runFor(1000);
+        for (const size of [
+          { width: 390, height: 844 },
+          { width: 1000, height: 700 },
+          { width: 1280, height: 900 },
+        ]) {
+          await page.setViewportSize(size);
+          await page.clock.runFor(30);
+          await expect
+            .poll(() =>
+              canvas.evaluate((element) => {
+                const box = element.getBoundingClientRect();
+                return { width: box.width, height: box.height };
+              }),
+            )
+            .toEqual(size);
+          expect(
+            await original.evaluate((element) => element === document.querySelector("canvas")),
+          ).toBe(true);
+          // ResizeObserver clears the drawing buffer; allow fresh rendered frames
+          // after the layout check before capturing evidence.
+          await page.clock.runFor(150);
+          await page.screenshot({ path: info.outputPath(`reddit-resize-${size.width}.png`) });
+        }
+      }
       const start = frame.getByRole("button", { name: "Start", exact: true });
       if (touch) await start.tap();
       else await start.click();
+      await expect(canvas).not.toHaveCSS("cursor", "none");
       if (process.env.PLAYWRIGHT_RENDERER === "hardware") {
         const remaining = Number(
           await frame.getByLabel("Introduction remaining", { exact: true }).textContent(),
@@ -112,6 +201,7 @@ for (const touch of [false, true])
         await frame.getByRole("button", { name: "Pause", exact: true }).click();
       } else await frame.evaluate(() => window.__citadelTestInput.key("Escape", true));
       await expect(frame.getByRole("button", { name: "Resume", exact: true })).toBeVisible();
+      await expect(canvas).not.toHaveCSS("cursor", "none");
       await expect(frame.getByRole("button", { name: "Save performance report" })).toHaveCount(0);
       expect(await frame.evaluate(() => document.pointerLockElement)).toBeNull();
       expect(

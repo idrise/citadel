@@ -1,7 +1,7 @@
 # CITADEL — PLAN.md
 
 **Status:** Shared design in progress; confirmed rules and provisional prototype experiments distinguished below.  
-**Updated:** 22 November 2026\
+**Updated:** 23 November 2026\
 **Genre:** Fast, competitive, polygon-arena paddle/ball survival  
 **Target:** Understandable, tense matches that usually resolve in approximately **two minutes**. Difficulty is ramped as the game goes on.
 **Players:** 2–16 seats as an experimental local test ceiling, initially **one human and the remaining seats filled by bots**\
@@ -1017,6 +1017,105 @@ all pass. The four upload tests use a local CLI stand-in and never contact Reddi
 The earlier cleanup checks also passed the itch build and replay generators.
 Existing bundle-size advisories remain. Remote push/upload verification follows
 the requested commits; no authenticated Reddit upload is claimed yet.
+
+22 November Reddit mouse and simulator feedback (cursor/pause experiment rejected
+and reverted below): the owner reports that the
+Mobile/Desktop/Fullscreen dropdown does nothing and the free mouse distracts
+from play. Those size controls match Reddit's documented UI Simulator; the game
+has no such dropdown and already resizes through ResizeObserver. Reddit's open
+upstream pointer-lock issue documents the missing host sandbox permission; the
+app cannot grant itself that permission. The in-app browser control tool is not
+available in this session, so the actual authenticated Reddit dropdown has not
+been inspected. Improved the existing Reddit-only fallback by hiding the cursor
+while active, restoring it on pause/disposal, and pausing/clearing input once if
+the mouse exits the canvas. Touch/pen exits do not trigger desktop pause. This
+does not claim true capture or a fix to Reddit's host UI. Added focused unit
+coverage and browser assertions for cursor lifecycle plus mobile/desktop/full
+viewport changes without remounting the canvas. Regular web/itch controls,
+simulation, sound and milestone gates are unchanged. No commit/push is authorised
+by this feedback; leave changes for review.
+Validation: 788 fast unit tests pass across 133 files (eight soak cases excluded),
+including ten embedded-input cases. Vite+ format/lint/TypeScript checks and Reddit
+client/server build pass. Three native Chromium SDK browser checks pass, covering
+launcher expansion, desktop/touch start/steer/pause, cursor lifecycle and actual
+390x844 / 1000x700 / 1280x900 viewport changes with the original canvas retained.
+Native API guards remain untouched: no automated pointer lock/fullscreen occurs.
+Inspected rendered portrait and desktop frames; the initial resize capture was
+taken before redraw, so capture now waits for fresh frames after buffer clearing.
+Evidence is in ignored artifacts/reviews/reddit-input/. Review the local build at
+http://127.0.0.1:5196/reddit-game.html. Existing chunk-size advisories remain. No
+physical-device or authenticated Reddit host-dropdown verification is claimed;
+this local correction has not been committed, pushed or uploaded.
+
+22 November cursor/pause rollback: the owner reports that hiding the free cursor
+and pausing on canvas exit makes the Settings panel seem to appear randomly.
+That workaround was wrong for an uncaptured mouse. Restored the Reddit input
+adapter exactly to the committed behavior: the cursor remains visible and a
+pointer exit does not open Pause/Settings or clear gameplay input. Removed the
+rejected behavior from current contributor/project notes. Retained independent
+viewport-resize browser coverage and added regression checks for visible cursor,
+no pause on pointer exit and preserved queued controls. Real focus loss and the
+normal Escape/P pause controls are unchanged. The earlier experimental capture
+notes are historical and do not describe the restored implementation. No commit,
+push or Reddit upload is authorised by this correction.
+Validation: eight focused embedded-input unit cases and all three native Chromium
+Reddit sandbox browser checks pass, including computed visible-cursor assertions
+during play and pause. Vite+ format/lint/TypeScript checks, Reddit client/server
+build and git diff --check pass. The production embedded adapter is byte-for-byte
+identical to HEAD; only regression/resize tests and this work record remain
+uncommitted. The local preview at http://127.0.0.1:5196/reddit-game.html serves the
+rebuilt rollback after refresh. Existing bundle-size advisories remain; no live
+Reddit capture/host-dropdown fix is claimed and no changes were pushed.
+
+22 November platform metrics: the owner requested Devvit Journeys through signals
+without spreading provider calls through gameplay, with no metrics on the normal
+citadel.davidjelliott.com deployment. They confirmed itch should rely on built-in
+page analytics with no custom tracking, and requested wins/losses and level number.
+Added typed session notifications at the existing GamePanel boundary and a shared
+mount composition. Web/itch receive inert signals; the Reddit entry alone connects
+a read-only attempt observer and its SDK adapter when a host context exists. Each
+normal attempt starts explicitly and ends once on win, human elimination or
+abandonment. Outcomes retain the attempted level and score (human-attributed rival
+capsules), with win/loss separate from quitting. Title demo, debug play and continued
+bot spectating are excluded. Resume is tracked, without labelling passive focus-loss
+pauses as clicks. Calls are serialised, time-bounded and capped; failures cannot
+interrupt a match or silently auto-start a journey after a denied start.
+Mounted the official SDK router in a Reddit-only Express composition and enabled
+Journeys permission. The analytics SDK is pinned to 0.15.4 like the existing SDK.
+The root contributor guide records the map and Reddit approval/allowlist requirement.
+No review request, telemetry submission, upload, commit, push or milestone advance
+is authorised by this implementation. Preserve the separate pending mouse-regression
+and viewport tests, plus user-authored settings edits.
+Validation: 803 fast unit tests pass across 137 files (eight soak cases excluded),
+including 17 focused signal/observer/SDK adapter/server tests. Vite+ formatting,
+lint and TypeScript pass, including the separate backend check. Web, itch and
+Reddit client/CommonJS server builds pass with existing chunk-size advisories.
+The pinned SDK validates Journeys permission, and the server bundle requires only
+Node built-ins. Audited built JS: neither web nor itch includes telemetry endpoints,
+receipt names or journey event labels; Reddit does. Four native Chromium Reddit
+checks pass, including the actual SDK client against intercepted local endpoints:
+once-only readiness, explicit start, abandoned end, distinct retry and whitelisted
+level metadata. No real metrics are submitted by those tests. The initial normal
+web smoke run used the browser configuration's /citadel/ default against a root
+build and failed; the matched-root rerun passes all four normal web/iOS smoke
+checks. Existing user-authored
+mouse sensitivity remains intact. No live Reddit acceptance or approval is claimed,
+and this work remains uncommitted/unpushed.
+
+23 November commit review: the owner explicitly authorised committing the current
+changes that are of value. Reviewed and retained the isolated Reddit Journeys
+integration, provider-free shared signals, no-op web/itch defaults, SDK server
+router, docs and the cursor/viewport regressions. The rejected cursor-hiding and
+pause-on-exit implementation is absent. Leave the separate user-authored default
+mouse-sensitivity adjustment (1 to 1.3) untouched and outside this commit.
+Fresh checks pass: 803 fast tests across 137 files (eight opt-in soaks skipped),
+Vite+ format/lint/types, all web/itch/Reddit client/server builds, four native Reddit
+browser cases and four root web/iOS smoke cases. Built web/itch JavaScript excludes
+Journeys endpoints and event labels; the Reddit bundle includes the adapter.
+Existing large-chunk advisories remain. Prior SDK schema and CommonJS dependency
+audits remain applicable. Tests use intercepted telemetry endpoints; no live data
+collection is claimed. This request authorises a local commit, not push, deployment
+or a Reddit review submission. Existing milestone approval gates remain unchanged.
 
 17 November debug-key capture follow-up: the owner requests quick +/− level stepping
 without Settings opening. A document-local browser reproduction rejected an immediate

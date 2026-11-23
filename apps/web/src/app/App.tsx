@@ -12,8 +12,9 @@ import type { PlayerCount } from "../simulation/arena";
 import { useState, useEffect } from "react";
 import { GamePanel } from "./GamePanel";
 import { loadPreferences, savePreferences } from "../session/preferences";
+import type { GameSignals } from "../events/game-signals";
 
-export function App() {
+export function App({ signals }: { signals: GameSignals }) {
   const [initial] = useState(() =>
     loadPreferences(window.matchMedia("(prefers-reduced-motion: reduce)").matches),
   );
@@ -35,6 +36,7 @@ export function App() {
     <main className="game-root">
       <h1 className="sr-only">Citadel</h1>
       <GamePanel
+        signals={signals}
         level={levelFor(progress)}
         bestLevel={progress.best}
         replayTokens={progress.replayTokens}

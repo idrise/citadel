@@ -13,8 +13,10 @@ import { createSession, type GameSession, type SessionSnapshot } from "../sessio
 import { createMatch } from "../simulation/match";
 import { AccessibleStatus } from "./AccessibleStatus";
 import type { GameSettings } from "../session/settings";
+import type { GameSignals } from "../events/game-signals";
 
 export function GamePanel({
+  signals,
   humanSeat,
   count,
   onCount,
@@ -31,6 +33,7 @@ export function GamePanel({
   demotion,
   onComplete,
 }: {
+  signals: GameSignals;
   level: number;
   bestLevel: number;
   replayTokens: number;
@@ -114,7 +117,10 @@ export function GamePanel({
         container.current,
         seed,
         humanSeat,
-        setSnapshot,
+        (snapshot) => {
+          setSnapshot(snapshot);
+          signals.sessionUpdated.emit(snapshot);
+        },
         count,
         (action) => {
           if (action === "rematch" || action === "retry")
@@ -168,9 +174,11 @@ export function GamePanel({
           );
         },
       });
+      signals.ready.emit();
       return () => {
         detach();
         game.dispose();
+        signals.sessionClosed.emit();
         session.current = null;
       };
     } catch {

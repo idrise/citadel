@@ -24,6 +24,7 @@
     "entry": "index.cjs"
   },
   "permissions": {
+    "journeys": true,
     "reddit": {
       "enable": true
     },

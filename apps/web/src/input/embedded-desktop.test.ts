@@ -5,6 +5,7 @@ import { clampPaddleAngle, fortress, SQUARE_ARENA } from "../simulation/arena";
 afterEach(() => vi.unstubAllGlobals());
 function fixture() {
   const canvas = new EventTarget() as HTMLCanvasElement;
+  Object.assign(canvas, { style: { cursor: "crosshair" } });
   const doc = {
     activeElement: null as unknown,
     pointerLockElement: null,
@@ -113,4 +114,23 @@ it("clears queued mouse clicks on reset/release and removes listeners on disposa
   f.key("Space");
   f.mouse(900);
   expect(f.controls.read()).toMatchObject({ steer: 0, targetAngle: null, launch: false });
+});
+
+it("keeps the uncaptured cursor visible and does not open pause when it leaves the canvas", () => {
+  const f = fixture();
+  f.controls.capture();
+  expect(f.canvas.style.cursor).toBe("crosshair");
+  f.mouse(900);
+  f.key("Space");
+  for (const pointerType of ["mouse", "touch", "pen"])
+    f.canvas.dispatchEvent(Object.assign(new Event("pointerleave"), { pointerType }));
+  expect(f.pause).not.toHaveBeenCalled();
+  expect(f.controls.read()).toMatchObject({ launch: true });
+  expect(f.controls.read().targetAngle).not.toBeNull();
+  expect(f.canvas.style.cursor).toBe("crosshair");
+  f.controls.release();
+  f.controls.capture();
+  f.controls.dispose();
+  expect(f.canvas.style.cursor).toBe("crosshair");
+  expect(f.requestLock).not.toHaveBeenCalled();
 });
